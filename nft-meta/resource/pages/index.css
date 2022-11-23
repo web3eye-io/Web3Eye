@@ -1,0 +1,68 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+
+h1{
+    margin-block-start: 0.3rem;
+    margin-block-end: 0.3rem;
+}
+
+#content{
+    width: 50%;
+    position: absolute;
+    top: 20%;
+    left: 25%;
+    /* transform: translate(-50%, -50%); */
+}
+
+.item{
+    margin-top: 0.3rem;
+}
+
+.item_key{
+    width: 4.5rem;
+    display: inline-block;
+} 
+
+.item_input{
+    width: 10rem;
+    height: 1.1rem;
+    border-color: gray;
+    border-width: 1px;
+    font-size: 0.8rem;
+}
+
+#images{
+    column-count: 3;
+    column-gap: 0;
+}
+.img_item{
+    margin: 2px;
+    position: relative;
+    counter-increment: bianhao;
+    font-size: 0.7rem;
+    margin-bottom: 10px;
+}
+.img_item img{
+    width: 100%;           
+}
+.img_item::after{
+    content: counter(bianhao);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+    background-color: black;
+    line-height: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: white;
+    border-bottom-left-radius: 50%;
+    
+}

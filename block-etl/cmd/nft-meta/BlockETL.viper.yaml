@@ -1,0 +1,10 @@
+---
+config:
+  hostname: "block-etl.npool.top"
+  http_port: 50490
+  grpc_port: 50491
+  prometheus_port: 50492
+  appid: "89089012783789789719823798127398"
+  serviceid: "3edd2010-4ac0-11ed-ad71-0fb51dc0b6a2"
+  logdir: "./"
+  apolloAccessKey: "0147fb70b815403790e8634b899fac07"
