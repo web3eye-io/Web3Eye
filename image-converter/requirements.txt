@@ -1,0 +1,14 @@
+pymilvus==2.0.0
+towhee==0.6.0
+bottle==0.12.23
+urllib3
+scipy
+pandas
+torch
+torchvision
+opencv-python
+matplotlib
+pillow
+numpy
+opencv-python-headless
+scikit-image

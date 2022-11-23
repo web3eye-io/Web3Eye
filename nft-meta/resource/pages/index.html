@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>cyber tracer</title>
+
+</head>
+
+<body>
+    <h3 style="margin-left: 1rem;color: dimgray;">web3eye.io</h3>
+    <div id="content">
+        <div>
+            <div class="item">
+                <h2 style="display: inline-block;height: 3rem;">Cyber Tracer</h2>
+            </div>
+            <div class="item">
+                <input type="file" name="upload" style="style:block-inline;width:13rem" class="item_key"
+                    @change="searchFile" />
+            </div>
+            <div style="height:3rem">
+            </div>
+            <div id="images" class="item">
+                <div class="img_item " v-for="info in tokenInfos">
+                    <img :src='info.ImageURL' alt="">
+                    <div>
+                        Distance:{{info.Distance}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const SearchFile = {
+        url: "/search/file",
+        method: "POST",
+        args: {
+            to: "",
+            amount: "",
+            id: "",
+        },
+    }
+    const {
+        createApp
+    } = Vue
+    app = createApp({
+        data() {
+            return {
+                tokenInfos: [],
+            }
+        },
+        mounted() {},
+        methods: {
+            searchFile(event) {
+                this.tokenInfos=[]
+                const files = event.target.files
+                if (files) {
+                    const uploadedFile = files[0]
+                    const formData = new FormData()
+                    formData.append('upload', uploadedFile)
+                    // 使用node模拟上传接口
+                    axios.post(SearchFile.url, formData, {
+                        headers: {
+                            "Content-Type": 'multipart/form-data'
+                        }
+                    }).then(resp => {
+                        tokens = resp.data.data.sort(compare("Distance"))
+                        tokens=dealIPFS_URL(tokens)
+                        this.tokenInfos = tokens
+                        console.log('tokens', tokens)
+                    }).catch(error => {})
+                }
+            },
+        },
+    }).mount('#content')
+
+    function compare(p) { //这是比较函数
+        return function (m, n) {
+            var a = m[p];
+            var b = n[p];
+            return a - b; //升序
+        }
+    }
+
+    function dealIPFS_URL(tokens) {
+        for (let i = 0; i < tokens.length; i++) {
+                 tokens[i].ImageURL=tokens[i].ImageURL.replace("ipfs://", "https://ipfs.io/ipfs/")
+        }
+        return tokens
+    }
+</script>
+
+</html>

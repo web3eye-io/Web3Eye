@@ -1,0 +1,4 @@
+# Declare files that will always have LF line endings on checkout.
+*.go text eol=lf
+*.md text eol=lf
+*.json text eol=lf

@@ -1,0 +1,8 @@
+/output
+/bin
+tmp
+*.json
+.apollo-base-config
+*.log
+./deploy.sh
+./main.go
