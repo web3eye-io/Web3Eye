@@ -17,8 +17,9 @@ import (
 // TransferUpdate is the builder for updating Transfer entities.
 type TransferUpdate struct {
 	config
-	hooks    []Hook
-	mutation *TransferMutation
+	hooks     []Hook
+	mutation  *TransferMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the TransferUpdate builder.
@@ -290,6 +291,12 @@ func (tu *TransferUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (tu *TransferUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransferUpdate {
+	tu.modifiers = append(tu.modifiers, modifiers...)
+	return tu
+}
+
 func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -481,6 +488,7 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: transfer.FieldRemark,
 		})
 	}
+	_spec.Modifiers = tu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transfer.Label}
@@ -495,9 +503,10 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // TransferUpdateOne is the builder for updating a single Transfer entity.
 type TransferUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *TransferMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *TransferMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -776,6 +785,12 @@ func (tuo *TransferUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (tuo *TransferUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransferUpdateOne {
+	tuo.modifiers = append(tuo.modifiers, modifiers...)
+	return tuo
+}
+
 func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -984,6 +999,7 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 			Column: transfer.FieldRemark,
 		})
 	}
+	_spec.Modifiers = tuo.modifiers
 	_node = &Transfer{config: tuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

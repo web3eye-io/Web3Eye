@@ -1,7 +1,7 @@
 package transfer
 
 import (
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/transfer"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/transfer"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 )
 

@@ -10,4 +10,4 @@ RUN pip install  -r /code/requirements.txt
 
 # Load the operator ahead of time
 RUN python3 init.py
-CMD ["python3","main.py"]
+CMD ["python3","cmd/image-converter/main.py"]

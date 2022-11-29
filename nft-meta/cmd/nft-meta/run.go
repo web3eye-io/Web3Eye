@@ -10,12 +10,12 @@ import (
 	"time"
 
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/cyber-tracer/config"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/servermux"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/config"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -33,20 +33,6 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		err := config.Init("./", serviceName)
-		if err != nil {
-			panic(fmt.Sprintf("fail to init config %v: %v", serviceName, err))
-		}
-
-		err = logger.Init(logger.DebugLevel, fmt.Sprintf("%v/%v.log", logDir, serviceName))
-		if err != nil {
-			panic(fmt.Errorf("fail to init logger: %v", err))
-		}
-
-		// TODO: elegent set or get env
-		config.SetENV(&config.ENVInfo{
-			LogDir: logDir,
-		})
 		return nil
 	},
 	Flags: []cli.Flag{
@@ -70,8 +56,8 @@ var runCmd = &cli.Command{
 		if err != nil {
 			panic(fmt.Errorf("mysql Init err: %v", err))
 		}
-		go runHTTPServer(config.GetInt(config.KeyHTTPPort))
-		runGRPCServer(config.GetInt(config.KeyGRPCPort))
+		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort)
+		runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
 		return nil
 	},
 }

@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/config"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/endpoints"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/utils"
+	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/cyber-tracer/utils"
 )
 
 const (
@@ -63,7 +63,7 @@ func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Co
 		client      *ethclient.Client
 	)
 
-	endpointmgr, err := endpoints.NewManager(config.KeyEthWallets)
+	endpointmgr, err := endpoints.NewManager(config.GetConfig().ETH.Wallets)
 	if err != nil {
 		return err
 	}

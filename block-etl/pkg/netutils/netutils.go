@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,25 +15,26 @@ import (
 	"strings"
 	"time"
 
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/config"
+	"github.com/web3eye-io/cyber-tracer/config"
 )
 
 const (
-	defaultHTTPTimeout             = 30
-	defaultHTTPKeepAlive           = 600
-	defaultHTTPMaxIdleConns        = 100
-	defaultHTTPMaxIdleConnsPerHost = 100
+	defaultHTTPTimeout = 30
+
+// defaultHTTPKeepAlive           = 600
+// defaultHTTPMaxIdleConns        = 100
+// defaultHTTPMaxIdleConnsPerHost = 100
 )
 
 var (
-	DefaultHTTPClient           = newHTTPClientForRPC(true)
-	defaultMetricsHandler       = metricsHandler{}
-	maxRespBodySize       int64 = 1024 * 1024 * 1024
-	errDataTooLarge             = errors.New("data too large")
+	DefaultHTTPClient = newHTTPClientForRPC()
+	// defaultMetricsHandler       = metricsHandler{}
+	maxRespBodySize int64 = 1024 * 1024 * 1024
+	errDataTooLarge       = errors.New("data too large")
 )
 
 // metricsHandler traces RPC records that get logged by the RPC client
-type metricsHandler struct{}
+// type metricsHandler struct{}
 
 // ErrHTTP represents an error returned from an HTTP request
 type ErrHTTP struct {
@@ -86,7 +86,7 @@ func getContentHeaders(ctx context.Context, url string) (contentType string, con
 }
 
 func getHeaders(ctx context.Context, method, url string) (http.Header, error) {
-	req, err := http.NewRequestWithContext(ctx, method, url, nil)
+	req, err := http.NewRequestWithContext(ctx, method, url, http.NoBody)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func getHeaders(ctx context.Context, method, url string) (http.Header, error) {
 }
 
 // newHTTPClientForRPC returns an http.Client configured with default settings intended for RPC calls.
-func newHTTPClientForRPC(continueTrace bool) *http.Client {
+func newHTTPClientForRPC() *http.Client {
 	// get x509 cert pool
 	pool, err := x509.SystemCertPool()
 	if err != nil {
@@ -113,14 +113,14 @@ func newHTTPClientForRPC(continueTrace bool) *http.Client {
 	}
 
 	// walk every file in the tls directory and add them to the cert pool
-	filepath.WalkDir("_deploy/root-certs", func(path string, d fs.DirEntry, err error) error {
+	err = filepath.WalkDir("_deploy/root-certs", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if d.IsDir() {
 			return nil
 		}
-		bs, err := ioutil.ReadFile(path)
+		bs, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
@@ -133,23 +133,29 @@ func newHTTPClientForRPC(continueTrace bool) *http.Client {
 		return nil
 	})
 
+	// TODO: process the err
+	if err != nil {
+		return nil
+	}
+
 	return &http.Client{
 		Timeout: time.Second * defaultHTTPTimeout,
 	}
 }
+
 func GetHTTPHeaders(ctx context.Context, url string) (contentType string, contentLength int64, err error) {
 	return getContentHeaders(ctx, url)
 }
 
 // GetIPFSHeaders returns the headers for the given IPFS hash
 func GetIPFSHeaders(ctx context.Context, path string) (contentType string, contentLength int64, err error) {
-	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.KeyIPFSURL), path)
+	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.GetConfig().IPFS.HTTPGateway), path)
 	return getContentHeaders(ctx, url)
 }
 
 func GetIPFSData(ctx context.Context, path string) ([]byte, error) {
-	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.KeyIPFSURL), path)
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.GetConfig().IPFS.HTTPGateway), path)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +185,6 @@ func GetIPFSData(ctx context.Context, path string) ([]byte, error) {
 
 // GetURIPath takes a uri in any form and returns just the path
 func GetURIPath(initial string, withoutQuery bool) string {
-
 	var path string
 
 	path = strings.TrimSpace(initial)
@@ -207,7 +212,7 @@ func GetURIPath(initial string, withoutQuery bool) string {
 }
 
 func GetArweaveDataHTTPReader(ctx context.Context, id string) (io.ReadCloser, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://arweave.net/%s", id), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://arweave.net/%s", id), http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("error getting data: %s", err.Error())
 	}
@@ -224,7 +229,7 @@ func GetArweaveDataHTTP(ctx context.Context, id string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Close()
-	data, err := ioutil.ReadAll(resp)
+	data, err := io.ReadAll(resp)
 	if err != nil {
 		return nil, fmt.Errorf("error reading data: %s", err.Error())
 	}

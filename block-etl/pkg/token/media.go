@@ -59,7 +59,7 @@ var postfixesToMediaTypes = map[string]mediaWithContentType{
 	"svg":  {MediaTypeImage, "image/svg+xml"},
 }
 
-func predictTrueURLs(ctx context.Context, curImg, curV string) (string, string) {
+func predictTrueURLs(ctx context.Context, curImg, curV string) (iURL, vURL string) {
 	imgMediaType, _, _, err := PredictMediaType(ctx, curImg)
 	if err != nil {
 		return curImg, curV
@@ -113,7 +113,7 @@ func IsMorePriorityThan(m, other MediaType) bool {
 }
 
 // PredictMediaType guesses the media type of the given URL.
-func PredictMediaType(pCtx context.Context, url string) (MediaType, string, int64, error) {
+func PredictMediaType(pCtx context.Context, url string) (mType MediaType, contentType string, length int64, err error) {
 	spl := strings.Split(url, ".")
 	if len(spl) > 1 {
 		ext := spl[len(spl)-1]

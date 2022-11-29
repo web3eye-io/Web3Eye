@@ -10,7 +10,7 @@ import (
 	"net/http"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/token"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 
 	"github.com/google/uuid"
 	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/token"

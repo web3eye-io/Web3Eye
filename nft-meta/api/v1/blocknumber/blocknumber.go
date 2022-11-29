@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/blocknumber"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/blocknumber"
 
 	"github.com/google/uuid"
 )
@@ -148,6 +148,7 @@ func (s *Server) ExistBlockNumber(ctx context.Context, in *npool.ExistBlockNumbe
 	}, nil
 }
 
+//nolint:lll
 func (s *Server) ExistBlockNumberConds(ctx context.Context, in *npool.ExistBlockNumberCondsRequest) (*npool.ExistBlockNumberCondsResponse, error) {
 	var err error
 

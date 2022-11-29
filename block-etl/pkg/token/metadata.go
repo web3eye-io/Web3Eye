@@ -30,7 +30,7 @@ const (
 	URITypeJSON URIType = "json"
 	// URITypeBase64SVG represents a base64 encoded SVG
 	URITypeBase64SVG URIType = "base64svg"
-	//URITypeBase64BMP represents a base64 encoded BMP
+	// URITypeBase64BMP represents a base64 encoded BMP
 	URITypeBase64BMP URIType = "base64bmp"
 	// URITypeSVG represents an SVG
 	URITypeSVG URIType = "svg"
@@ -44,7 +44,22 @@ const (
 	URITypeNone URIType = "none"
 )
 
-var mediaTypePriorities = []MediaType{MediaTypeHTML, MediaTypeAudio, MediaTypeAnimation, MediaTypeVideo, MediaTypeBase64BMP, MediaTypeGIF, MediaTypeSVG, MediaTypeImage, MediaTypeJSON, MediaTypeBase64Text, MediaTypeText, MediaTypeSyncing, MediaTypeUnknown, MediaTypeInvalid}
+var mediaTypePriorities = []MediaType{
+	MediaTypeHTML,
+	MediaTypeAudio,
+	MediaTypeAnimation,
+	MediaTypeVideo,
+	MediaTypeBase64BMP,
+	MediaTypeGIF,
+	MediaTypeSVG,
+	MediaTypeImage,
+	MediaTypeJSON,
+	MediaTypeBase64Text,
+	MediaTypeText,
+	MediaTypeSyncing,
+	MediaTypeUnknown,
+	MediaTypeInvalid,
+}
 
 var (
 	AnimationKeywords  = []string{"animation", "video"}
@@ -86,16 +101,18 @@ func (m TokenMetadata) MarshallJSON() ([]byte, error) {
 }
 
 func TokenURIType(uri string) URIType {
-	asString := uri
-	asString = strings.TrimSpace(uri)
+	asString := strings.TrimSpace(uri)
 	switch {
-	case strings.HasPrefix(asString, "ipfs"), strings.HasPrefix(asString, "Qm"):
+	case strings.HasPrefix(asString, "ipfs"),
+		strings.HasPrefix(asString, "Qm"):
 		return URITypeIPFS
-	case strings.HasPrefix(asString, "ar://"), strings.HasPrefix(asString, "arweave://"):
+	case strings.HasPrefix(asString, "ar://"),
+		strings.HasPrefix(asString, "arweave://"):
 		return URITypeArweave
 	case strings.HasPrefix(asString, "data:application/json;base64,"):
 		return URITypeBase64JSON
-	case strings.HasPrefix(asString, "data:image/svg+xml;base64,"), strings.HasPrefix(asString, "data:image/svg xml;base64,"):
+	case strings.HasPrefix(asString, "data:image/svg+xml;base64,"),
+		strings.HasPrefix(asString, "data:image/svg xml;base64,"):
 		return URITypeBase64SVG
 	case strings.HasPrefix(asString, "data:image/bmp;base64,"):
 		return URITypeBase64BMP
@@ -103,11 +120,18 @@ func TokenURIType(uri string) URIType {
 		return URITypeIPFSAPI
 	case strings.Contains(asString, "/ipfs/"):
 		return URITypeIPFSGateway
-	case strings.HasPrefix(asString, "http"), strings.HasPrefix(asString, "https"):
+	case strings.HasPrefix(asString, "http"),
+		strings.HasPrefix(asString, "https"):
 		return URITypeHTTP
-	case strings.HasPrefix(asString, "{"), strings.HasPrefix(asString, "["), strings.HasPrefix(asString, "data:application/json"), strings.HasPrefix(asString, "data:text/plain,{"):
+	case strings.HasPrefix(asString, "{"),
+		strings.HasPrefix(asString, "["),
+		strings.HasPrefix(asString, "data:application/json"),
+		strings.HasPrefix(asString, "data:text/plain,{"):
 		return URITypeJSON
-	case strings.HasPrefix(asString, "<svg"), strings.HasPrefix(asString, "data:image/svg+xml;utf8,"), strings.HasPrefix(asString, "data:image/svg+xml,"), strings.HasPrefix(asString, "data:image/svg xml,"):
+	case strings.HasPrefix(asString, "<svg"),
+		strings.HasPrefix(asString, "data:image/svg+xml;utf8,"),
+		strings.HasPrefix(asString, "data:image/svg+xml,"),
+		strings.HasPrefix(asString, "data:image/svg xml,"):
 		return URITypeSVG
 	case strings.HasSuffix(asString, ".ens"):
 		return URITypeENS
@@ -120,7 +144,7 @@ func TokenURIType(uri string) URIType {
 	}
 }
 
-func FindNameAndDescription(ctx context.Context, metadata TokenMetadata) (string, string) {
+func FindNameAndDescription(ctx context.Context, metadata TokenMetadata) (name, desc string) {
 	name, ok := GetValueFromMapUnsafe(metadata, "name", DefaultSearchDepth).(string)
 	if !ok {
 		name = ""
@@ -134,9 +158,12 @@ func FindNameAndDescription(ctx context.Context, metadata TokenMetadata) (string
 	return name, description
 }
 
-func FindImageAndAnimationURLs(ctx context.Context, metadata TokenMetadata, turi string, animationKeywords, imageKeywords []string, predict bool) (imgURL string, vURL string) {
-	into := &TokenMetadata{}
-	DecodeMetadataFromURI(context.Background(), turi, into)
+func FindImageAndAnimationURLs(ctx context.Context,
+	metadata TokenMetadata,
+	turi string,
+	animationKeywords,
+	imageKeywords []string,
+	predict bool) (imgURL, vURL string) {
 	for _, keyword := range animationKeywords {
 		if it, ok := GetValueFromMapUnsafe(metadata, keyword, DefaultSearchDepth).(string); ok && it != "" {
 			vURL = it
@@ -161,7 +188,10 @@ func FindImageAndAnimationURLs(ctx context.Context, metadata TokenMetadata, turi
 	return imgURL, vURL
 }
 
-// GetValueFromMap is a function that returns the value at the first occurence of a given key in a map that potentially contains nested maps
+// GetValueFromMap is a function
+// that returns the value at the first occurrence
+// of a given key in a map
+// that potentially contains nested maps
 func GetValueFromMap(m map[string]interface{}, key string, searchDepth int) interface{} {
 	if searchDepth == 0 {
 		return nil
@@ -192,8 +222,11 @@ func GetValueFromMap(m map[string]interface{}, key string, searchDepth int) inte
 	return nil
 }
 
-// GetValueFromMapUnsafe is a function that returns the value at the first occurence of a given key in a map that potentially contains nested maps
-// This function is unsafe because it will also return if the specified key is a substring of any key found in the map
+// GetValueFromMapUnsafe is a function
+// that returns the value at the first occurrence of a given key
+// in a map that potentially contains nested maps.
+// This function is unsafe because it will also return
+// if the specified key is a substring of any key found in the map
 func GetValueFromMapUnsafe(m map[string]interface{}, key string, searchDepth int) interface{} {
 	if searchDepth == 0 {
 		return nil
@@ -202,7 +235,6 @@ func GetValueFromMapUnsafe(m map[string]interface{}, key string, searchDepth int
 		return m[key]
 	}
 	for k, v := range m {
-
 		if strings.Contains(strings.ToLower(k), strings.ToLower(key)) {
 			return v
 		}
@@ -227,7 +259,6 @@ func GetValueFromMapUnsafe(m map[string]interface{}, key string, searchDepth int
 
 // GetMetadataFromURI parses and returns the NFT metadata for a given token URI
 func GetMetadataFromURI(ctx context.Context, turi string) (TokenMetadata, error) {
-
 	ctx, cancel := context.WithTimeout(ctx, time.Minute*2)
 	defer cancel()
 	var meta TokenMetadata
@@ -237,19 +268,18 @@ func GetMetadataFromURI(ctx context.Context, turi string) (TokenMetadata, error)
 	}
 
 	return meta, nil
-
 }
 
 // DecodeMetadataFromURI calls URI and decodes the data into a metadata map
+//nolint:gocyclo
 func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata) error {
-
 	asString := turi
 
 	switch TokenURIType(turi) {
 	case URITypeBase64JSON:
 		// decode the base64 encoded json
 		b64data := asString[strings.IndexByte(asString, ',')+1:]
-		decoded, err := base64.StdEncoding.DecodeString(string(b64data))
+		decoded, err := base64.StdEncoding.DecodeString(b64data)
 		if err != nil {
 			return fmt.Errorf("error decoding base64 data: %s \n\n%s", err, b64data)
 		}
@@ -257,12 +287,15 @@ func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata
 		return json.Unmarshal(RemoveBOM(decoded), into)
 	case URITypeBase64SVG:
 		b64data := asString[strings.IndexByte(asString, ',')+1:]
-		decoded, err := base64.StdEncoding.DecodeString(string(b64data))
+		decoded, err := base64.StdEncoding.DecodeString(b64data)
 		if err != nil {
 			return fmt.Errorf("error decoding base64 data: %s \n\n%s", err, b64data)
 		}
-		into = &TokenMetadata{"image": string(decoded)}
-		return nil
+		data, err := json.Marshal(TokenMetadata{"image": decoded})
+		if err != nil {
+			return fmt.Errorf("error decoding base64 data: %s \n\n%s", err, b64data)
+		}
+		return json.Unmarshal(data, into)
 	case URITypeIPFS, URITypeIPFSGateway:
 		bs, err := netutils.GetIPFSData(ctx, netutils.GetURIPath(asString, false))
 		if err != nil {
@@ -282,7 +315,7 @@ func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata
 		}
 		return json.Unmarshal(result, into)
 	case URITypeHTTP:
-		req, err := http.NewRequestWithContext(ctx, "GET", asString, nil)
+		req, err := http.NewRequestWithContext(ctx, "GET", asString, http.NoBody)
 		if err != nil {
 			return fmt.Errorf("error creating request: %s", err)
 		}
@@ -318,7 +351,6 @@ func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata
 	default:
 		return fmt.Errorf("unknown token URI type: %s", TokenURIType(turi))
 	}
-
 }
 
 // RemoveBOM removes the byte order mark from a byte array

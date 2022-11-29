@@ -8,8 +8,8 @@ import (
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/blocknumber"
 	"github.com/google/uuid"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 )

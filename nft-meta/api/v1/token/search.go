@@ -8,12 +8,12 @@ import (
 	"log"
 	"net/http"
 
-	val "github.com/NpoolPlatform/message/npool"
+	val "github.com/web3eye-io/cyber-tracer/message/cybertracer"
 	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/token"
 	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/token"
 	res "github.com/web3eye-io/cyber-tracer/nft-meta/resource"
 
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/token"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/servermux"

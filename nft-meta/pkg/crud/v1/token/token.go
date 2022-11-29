@@ -8,8 +8,8 @@ import (
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/token"
 	"github.com/google/uuid"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 )
@@ -30,6 +30,7 @@ func Create(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -104,6 +105,7 @@ func CreateBulk(ctx context.Context, in []*npool.TokenReq) ([]*ent.Token, error)
 	return rows, nil
 }
 
+//nolint:gocyclo
 func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	var err error
 	var info *ent.Token

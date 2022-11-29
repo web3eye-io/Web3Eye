@@ -4,8 +4,6 @@ import (
 	"errors"
 	"math/rand"
 	"strings"
-
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/config"
 )
 
 var (
@@ -23,11 +21,7 @@ type Manager struct {
 	localAddrs []string
 }
 
-func NewManager(envKey string) (*Manager, error) {
-	envStr, ok := config.LookupEnv(envKey)
-	if !ok {
-		return nil, ErrEndpointsEmpty
-	}
+func NewManager(envStr string) (*Manager, error) {
 	envStr = strings.Trim(envStr, " ")
 	_walletAddrs := strings.Split(envStr, AddrSplitter)
 

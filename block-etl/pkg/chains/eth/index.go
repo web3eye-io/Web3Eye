@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/NpoolPlatform/message/npool"
-	contractProto "github.com/NpoolPlatform/message/npool/nftmeta/v1/contract"
-	tokenProto "github.com/NpoolPlatform/message/npool/nftmeta/v1/token"
-	transferProto "github.com/NpoolPlatform/message/npool/nftmeta/v1/transfer"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/redis"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/token"
+	ctMessage "github.com/web3eye-io/cyber-tracer/message/cybertracer"
+	contractProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/contract"
+	tokenProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
+	transferProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/transfer"
 	contractNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/contract"
 	tokenNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/token"
 	transferNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/transfer"
@@ -186,6 +186,7 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 	return nil
 }
 
+//nolint:gocyclo
 func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) error {
 	for _, transfer := range transfers {
 		identifier := tokenIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract, transfer.TokenID)
@@ -196,19 +197,19 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		tokenType := string(transfer.TokenType)
 		remark := ""
 		conds := &tokenProto.Conds{
-			ChainType: &npool.StringVal{
+			ChainType: &ctMessage.StringVal{
 				Value: string(transfer.ChainType),
 				Op:    "eq",
 			},
-			ChainID: &npool.Int32Val{
+			ChainID: &ctMessage.Int32Val{
 				Value: transfer.ChainID,
 				Op:    "eq",
 			},
-			Contract: &npool.StringVal{
+			Contract: &ctMessage.StringVal{
 				Value: transfer.Contract,
 				Op:    "eq",
 			},
-			TokenID: &npool.StringVal{
+			TokenID: &ctMessage.StringVal{
 				Value: transfer.TokenID,
 				Op:    "eq",
 			},
@@ -289,15 +290,15 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	}
 
 	conds := &contractProto.Conds{
-		ChainType: &npool.StringVal{
+		ChainType: &ctMessage.StringVal{
 			Value: string(transfer.ChainType),
 			Op:    "eq",
 		},
-		ChainID: &npool.Int32Val{
+		ChainID: &ctMessage.Int32Val{
 			Value: transfer.ChainID,
 			Op:    "eq",
 		},
-		Address: &npool.StringVal{
+		Address: &ctMessage.StringVal{
 			Value: transfer.Contract,
 			Op:    "eq",
 		},

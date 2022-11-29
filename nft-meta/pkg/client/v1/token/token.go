@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/token"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

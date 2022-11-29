@@ -4,11 +4,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/chains/eth"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/config"
 )
 
 var (
@@ -18,11 +15,6 @@ var (
 )
 
 func main() {
-	// set environment
-	os.Setenv(config.KeyEthWallets, "https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0")
-	os.Setenv(config.KeyIPFSURL, "https://ipfs.io/")
-	logger.Init(logger.DebugLevel, "/tmp/block-etl.log")
-
 	// test redis
 	// redisCli, err := redis.GetClient()
 	// if err != nil {

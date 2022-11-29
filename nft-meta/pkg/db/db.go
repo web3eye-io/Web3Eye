@@ -16,15 +16,18 @@ import (
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 
-	// TODO: just for _GetConn()
 	crudermigrate "github.com/NpoolPlatform/libent-cruder/pkg/migrate"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/runtime"
 )
 
+const (
+	maxLifeTime = time.Minute * 5
+	maxConns    = 100
+)
+
 func client() (*ent.Client, error) {
-	// TODO: current code:conn, err := mysql.GetConn()
-	conn, err := _GetConn()
+	conn, err := GetConn()
 	if err != nil {
 		return nil, err
 	}
@@ -37,8 +40,7 @@ var (
 	conn *sql.DB
 )
 
-// TODO: temporary useness,must be removed
-func _GetConn() (*sql.DB, error) {
+func GetConn() (*sql.DB, error) {
 	mu.Lock()
 	defer mu.Unlock()
 	if conn != nil {
@@ -58,13 +60,11 @@ func _GetConn() (*sql.DB, error) {
 		return nil, err
 	}
 
-	MaxLifeTime := time.Minute * 3
-	MaxConns := 100
 	// https://github.com/go-sql-driver/mysql
 	// See "Important settings" section.
-	conn.SetConnMaxLifetime(MaxLifeTime)
-	conn.SetMaxOpenConns(MaxConns)
-	conn.SetMaxIdleConns(MaxConns)
+	conn.SetConnMaxLifetime(maxLifeTime)
+	conn.SetMaxOpenConns(maxConns)
+	conn.SetMaxIdleConns(maxConns)
 
 	return conn, nil
 }

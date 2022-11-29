@@ -1,0 +1,5 @@
+resources:
+  - 01-block-etl.viper.yaml
+  - 02-block-etl.yaml
+  - 03-strip-prefix.yaml
+  - 04-service-monitor.yaml

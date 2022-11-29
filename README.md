@@ -6,6 +6,27 @@
 - [ ] 支持多副本
 - [ ] 合并成一个git项目
 - [ ] 服务发现和配置管理
+  
+#### CICD
+- [ ] Docker Compose
+- [ ] K8s
+- [ ] Jenkins
+Golang
+- [x] Verify
+    - [x] lint
+    - [x] spell
+    - [x] build
+- [ ] Test
+- [x] Dockerfile
+
+Python
+- [ ] Verify
+    - [ ] lint
+    - [ ] spell
+    - [ ] build
+- [ ] Test
+- [x] Dockerfile
+
 
 #### NFT-META
 存储nft信息
@@ -38,3 +59,35 @@
 - [x] ipfs图片向量化（采用http方式解析）
 - [ ] ipfs图片向量化
 - [ ] 链上图片数据向量化
+- [ ] 架构更换或打包优化（现在的docker镜像太大）
+
+### CyberTracer 目录结构
+服务一（golang）:
+- [ ] 代码
+- [ ] Dockerfile、K8s_yaml
+- [ ] Script
+  - [ ] Build
+  - [ ] Test
+  
+服务二（golang）  
+服务三（python）  
+服务四（typescript）  
+
+公共代码: 
+- [ ] network
+- [ ] math
+- [ ] ...
+
+hack:
+- [ ] Verify (Lint、Spell...)
+- [ ] ProjectManager(ToolsInstall\ Message\abi-gen\Deps ...)
+
+Makefile:  
+- [ ] Verify
+- [ ] Test
+- [ ] Build
+- [ ] Run
+- [ ] ProjectManager
+
+DockerCompose    
+Jenkinsfile  

@@ -1,7 +1,7 @@
 package blocknumber
 
 import (
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/blocknumber"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/blocknumber"
 	"google.golang.org/grpc"
 )
 

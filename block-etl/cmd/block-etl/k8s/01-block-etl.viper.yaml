@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: block-etl-config
+  namespace: kube-system
+data:
+  service-conf: |
+    config:
+      hostname: "block-etl.npool.top"
+      http_port: 50490
+      grpc_port: 50491
+      prometheus_port: 50492
+      logdir: "./"

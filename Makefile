@@ -6,11 +6,8 @@ SHELL:=/usr/bin/env bash
 COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
-SUBCMDS=$(wildcard cmd/*)
-SERVICES=$(SUBCMDS:cmd/%=%)
-SERVICEIMAGES=$(SERVICES:%=%-image)
-SERVICEIMAGERELEASES=$(SERVICES:%=%-release)
-SERVICEK8SDEPLOYS=$(SERVICES:%=%-k8s-deploy)
+
+PROJECTS=  nft-meta block-etl image-converter
 
 ##@ init project
 init:
@@ -34,11 +31,8 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 	git config --local core.hooksPath "${REPO_ROOT}/.githooks"
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
-verify: go.mod verify-build verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
+verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
-
-verify-build: ## Builds the project for a chosen set of platforms
-	${REPO_ROOT}/hack/verify-build.sh ...
 
 verify-go-mod: ## Runs the go module linter
 	${REPO_ROOT}/hack/verify-go-mod.sh
@@ -52,27 +46,38 @@ verify-shellcheck: ## Runs shellcheck
 verify-spelling: ## Verifies spelling.
 	${REPO_ROOT}/hack/verify-spelling.sh
 
+
 gen-ent:
-	go get entgo.io/ent/cmd/ent
-	go run entgo.io/ent/cmd/ent generate --feature entql,sql/upsert,privacy,schema/snapshot,sql/modifier ./pkg/db/ent/schema
+	go get entgo.io/ent/cmd/ent@v0.11.2
+	go run entgo.io/ent/cmd/ent generate --feature entql,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
 
-all: verify-build
+ifdef AIMPROJECT
+PROJECTS= $(AIMPROJECT)
+endif
+ifndef DEVELOPMENT
+DEVELOPMENT= proj
+endif
+ifndef DOCKER_REGISTRY
+DOCKER_REGISTRY= x
+endif	
+ifndef TAG
+TAG= latest
+endif	
+.PHONY: build-docker release-docker deploy-to-k8s-cluster
 
-${SERVICES}:
-	${REPO_ROOT}/hack/verify-build.sh $@
-
-${SERVICEIMAGES}:
-	${REPO_ROOT}/hack/generate-docker-image.sh $(@:%-image=%) $(DEVELOPMENT) $(DOCKER_REGISTRY)
-
-${SERVICEIMAGERELEASES}:
-	${REPO_ROOT}/hack/release-docker-image.sh $(@:%-release=%) $(TAG) $(DOCKER_REGISTRY)
-
-${SERVICEK8SDEPLOYS}:
-	${REPO_ROOT}/hack/deploy-to-k8s-cluster.sh $(@:%-k8s-deploy=%) $(TAG)
-
-generate-docker-images: ${SERVICES} ${SERVICEIMAGES}
-release-docker-images: ${generate-docker-images} ${SERVICEIMAGERELEASES}
-deploy-to-k8s-cluster: ${SERVICEK8SDEPLOYS}
+build-docker:
+	@for x in $(PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/generate-docker-image.sh $(DEVELOPMENT) $(DOCKER_REGISTRY);\
+	done
+release-docker:
+	@for x in $(PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/release-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
+	done
+deploy-to-k8s-cluster:
+	@for x in $(PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
+	done
+	 
 
 ##@ Tests
 

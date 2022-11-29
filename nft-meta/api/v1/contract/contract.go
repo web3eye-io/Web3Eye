@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1/contract"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/contract"
 
 	"github.com/google/uuid"
 )

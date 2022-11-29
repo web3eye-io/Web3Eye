@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -454,30 +453,10 @@ func (bnq *BlockNumberQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
-// updated, deleted or "selected ... for update" by other sessions, until the transaction is
-// either committed or rolled-back.
-func (bnq *BlockNumberQuery) ForUpdate(opts ...sql.LockOption) *BlockNumberQuery {
-	if bnq.driver.Dialect() == dialect.Postgres {
-		bnq.Unique(false)
-	}
-	bnq.modifiers = append(bnq.modifiers, func(s *sql.Selector) {
-		s.ForUpdate(opts...)
-	})
-	return bnq
-}
-
-// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
-// on any rows that are read. Other sessions can read the rows, but cannot modify them
-// until your transaction commits.
-func (bnq *BlockNumberQuery) ForShare(opts ...sql.LockOption) *BlockNumberQuery {
-	if bnq.driver.Dialect() == dialect.Postgres {
-		bnq.Unique(false)
-	}
-	bnq.modifiers = append(bnq.modifiers, func(s *sql.Selector) {
-		s.ForShare(opts...)
-	})
-	return bnq
+// Modify adds a query modifier for attaching custom logic to queries.
+func (bnq *BlockNumberQuery) Modify(modifiers ...func(s *sql.Selector)) *BlockNumberSelect {
+	bnq.modifiers = append(bnq.modifiers, modifiers...)
+	return bnq.Select()
 }
 
 // BlockNumberGroupBy is the group-by builder for BlockNumber entities.
@@ -570,4 +549,10 @@ func (bns *BlockNumberSelect) sqlScan(ctx context.Context, v interface{}) error 
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (bns *BlockNumberSelect) Modify(modifiers ...func(s *sql.Selector)) *BlockNumberSelect {
+	bns.modifiers = append(bns.modifiers, modifiers...)
+	return bns
 }

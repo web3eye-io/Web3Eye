@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	npool "github.com/NpoolPlatform/message/npool/nftmeta/v1"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/contract"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/token"

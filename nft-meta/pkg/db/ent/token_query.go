@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -454,30 +453,10 @@ func (tq *TokenQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ForUpdate locks the selected rows against concurrent updates, and prevent them from being
-// updated, deleted or "selected ... for update" by other sessions, until the transaction is
-// either committed or rolled-back.
-func (tq *TokenQuery) ForUpdate(opts ...sql.LockOption) *TokenQuery {
-	if tq.driver.Dialect() == dialect.Postgres {
-		tq.Unique(false)
-	}
-	tq.modifiers = append(tq.modifiers, func(s *sql.Selector) {
-		s.ForUpdate(opts...)
-	})
-	return tq
-}
-
-// ForShare behaves similarly to ForUpdate, except that it acquires a shared mode lock
-// on any rows that are read. Other sessions can read the rows, but cannot modify them
-// until your transaction commits.
-func (tq *TokenQuery) ForShare(opts ...sql.LockOption) *TokenQuery {
-	if tq.driver.Dialect() == dialect.Postgres {
-		tq.Unique(false)
-	}
-	tq.modifiers = append(tq.modifiers, func(s *sql.Selector) {
-		s.ForShare(opts...)
-	})
-	return tq
+// Modify adds a query modifier for attaching custom logic to queries.
+func (tq *TokenQuery) Modify(modifiers ...func(s *sql.Selector)) *TokenSelect {
+	tq.modifiers = append(tq.modifiers, modifiers...)
+	return tq.Select()
 }
 
 // TokenGroupBy is the group-by builder for Token entities.
@@ -570,4 +549,10 @@ func (ts *TokenSelect) sqlScan(ctx context.Context, v interface{}) error {
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (ts *TokenSelect) Modify(modifiers ...func(s *sql.Selector)) *TokenSelect {
+	ts.modifiers = append(ts.modifiers, modifiers...)
+	return ts
 }

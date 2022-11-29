@@ -3,7 +3,7 @@ package version
 import (
 	"fmt"
 
-	npool "github.com/NpoolPlatform/message/npool"
+	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer"
 
 	logger "github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	cv "github.com/NpoolPlatform/go-service-framework/pkg/version"

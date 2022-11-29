@@ -17,8 +17,9 @@ import (
 // ContractUpdate is the builder for updating Contract entities.
 type ContractUpdate struct {
 	config
-	hooks    []Hook
-	mutation *ContractMutation
+	hooks     []Hook
+	mutation  *ContractMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the ContractUpdate builder.
@@ -387,6 +388,12 @@ func (cu *ContractUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cu *ContractUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ContractUpdate {
+	cu.modifiers = append(cu.modifiers, modifiers...)
+	return cu
+}
+
 func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -620,6 +627,7 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: contract.FieldRemark,
 		})
 	}
+	_spec.Modifiers = cu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{contract.Label}
@@ -634,9 +642,10 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // ContractUpdateOne is the builder for updating a single Contract entity.
 type ContractUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *ContractMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *ContractMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1012,6 +1021,12 @@ func (cuo *ContractUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (cuo *ContractUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ContractUpdateOne {
+	cuo.modifiers = append(cuo.modifiers, modifiers...)
+	return cuo
+}
+
 func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1262,6 +1277,7 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 			Column: contract.FieldRemark,
 		})
 	}
+	_spec.Modifiers = cuo.modifiers
 	_node = &Contract{config: cuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

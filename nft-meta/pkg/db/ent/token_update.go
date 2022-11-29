@@ -17,8 +17,9 @@ import (
 // TokenUpdate is the builder for updating Token entities.
 type TokenUpdate struct {
 	config
-	hooks    []Hook
-	mutation *TokenMutation
+	hooks     []Hook
+	mutation  *TokenMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the TokenUpdate builder.
@@ -400,6 +401,12 @@ func (tu *TokenUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (tu *TokenUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TokenUpdate {
+	tu.modifiers = append(tu.modifiers, modifiers...)
+	return tu
+}
+
 func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -639,6 +646,7 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: token.FieldRemark,
 		})
 	}
+	_spec.Modifiers = tu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{token.Label}
@@ -653,9 +661,10 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // TokenUpdateOne is the builder for updating a single Token entity.
 type TokenUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *TokenMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *TokenMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1044,6 +1053,12 @@ func (tuo *TokenUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (tuo *TokenUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TokenUpdateOne {
+	tuo.modifiers = append(tuo.modifiers, modifiers...)
+	return tuo
+}
+
 func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -1300,6 +1315,7 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 			Column: token.FieldRemark,
 		})
 	}
+	_spec.Modifiers = tuo.modifiers
 	_node = &Token{config: tuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

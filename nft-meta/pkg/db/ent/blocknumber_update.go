@@ -17,8 +17,9 @@ import (
 // BlockNumberUpdate is the builder for updating BlockNumber entities.
 type BlockNumberUpdate struct {
 	config
-	hooks    []Hook
-	mutation *BlockNumberMutation
+	hooks     []Hook
+	mutation  *BlockNumberMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the BlockNumberUpdate builder.
@@ -220,6 +221,12 @@ func (bnu *BlockNumberUpdate) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (bnu *BlockNumberUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BlockNumberUpdate {
+	bnu.modifiers = append(bnu.modifiers, modifiers...)
+	return bnu
+}
+
 func (bnu *BlockNumberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -342,6 +349,7 @@ func (bnu *BlockNumberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: blocknumber.FieldDescription,
 		})
 	}
+	_spec.Modifiers = bnu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, bnu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{blocknumber.Label}
@@ -356,9 +364,10 @@ func (bnu *BlockNumberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 // BlockNumberUpdateOne is the builder for updating a single BlockNumber entity.
 type BlockNumberUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *BlockNumberMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *BlockNumberMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -567,6 +576,12 @@ func (bnuo *BlockNumberUpdateOne) defaults() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (bnuo *BlockNumberUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *BlockNumberUpdateOne {
+	bnuo.modifiers = append(bnuo.modifiers, modifiers...)
+	return bnuo
+}
+
 func (bnuo *BlockNumberUpdateOne) sqlSave(ctx context.Context) (_node *BlockNumber, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -706,6 +721,7 @@ func (bnuo *BlockNumberUpdateOne) sqlSave(ctx context.Context) (_node *BlockNumb
 			Column: blocknumber.FieldDescription,
 		})
 	}
+	_spec.Modifiers = bnuo.modifiers
 	_node = &BlockNumber{config: bnuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
