@@ -33,6 +33,10 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
+		err := logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogDir)
+		if err != nil {
+			panic(err)
+		}
 		return nil
 	},
 	Flags: []cli.Flag{
@@ -49,13 +53,14 @@ var runCmd = &cli.Command{
 	Action: func(c *cli.Context) error {
 		err := db.Init()
 		if err != nil {
-			panic(fmt.Errorf("mysql Init err: %v", err))
+			panic(fmt.Errorf("mysql init err: %v", err))
 		}
 
 		err = milvusdb.Init(context.Background())
 		if err != nil {
-			panic(fmt.Errorf("mysql Init err: %v", err))
+			panic(fmt.Errorf("milvus init err: %v", err))
 		}
+
 		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort)
 		runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
 		return nil
@@ -79,7 +84,7 @@ func runGRPCServer(grpcPort int) {
 
 func runHTTPServer(httpPort int) {
 	endpoint := fmt.Sprintf(":%v", httpPort)
-
+	fmt.Println(endpoint)
 	err := http.ListenAndServe(endpoint, servermux.AppServerMux())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

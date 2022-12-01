@@ -32,6 +32,8 @@ fi
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
+OrginazeName=coastlinesss
+# OrginazeName=web3eye
 
 if [[ ${!2-x} != x  && "x" != $2 ]]; then
   registry=$2/
@@ -42,7 +44,7 @@ echo "Release docker image for $PLATFORM -- $version"
 
 user=`whoami`
 if [ "$user" == "root" ]; then
-    docker push ${registry}web3eye/$service_name:$version
+    docker push ${registry}${OrginazeName}/$service_name:$version
 else
-    sudo docker push ${registry}web3eye/$service_name:$version
+    sudo docker push ${registry}${OrginazeName}/$service_name:$version
 fi

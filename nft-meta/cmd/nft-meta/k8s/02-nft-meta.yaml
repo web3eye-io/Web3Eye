@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nft-meta
-  namespace: kube-system
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
 spec:
@@ -17,27 +16,28 @@ spec:
     spec:
       containers:
         - name: nft-meta
-          image: uhub.service.ucloud.cn/entropypool/nft-meta:latest
+          # image: web3eye/nft-meta:latest
+          image: coastlinesss/nft-meta:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
               mountPath: /etc/NFTMeta
           env:
-            - name: ENV_ENVIRONMENT_TARGET
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.target
-            - name: ENV_CONSUL_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.consul_host
-            - name: ENV_CONSUL_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.consul_port
+            # - name: ENV_ENVIRONMENT_TARGET
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.target
+            # - name: ENV_CONSUL_HOST
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.consul_host
+            # - name: ENV_CONSUL_PORT
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.consul_port
             - name: ENV_CLUSTER_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -54,20 +54,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nft-meta
-  namespace: kube-system
 spec:
   ports:
     - name: http
-      port: 50490
-      targetPort: 50490
+      port: 30100
+      targetPort: 30100
     - name: grpc
-      port: 50491
-      targetPort: 50491
+      port: 30101
+      targetPort: 30101
     - name: healthz
-      port: 50493
-      targetPort: 50493
-    - name: prometheus
-      port: 50492
-      targetPort: 50492
+      port: 30102
+      targetPort: 30102
   selector:
     app: nft-meta

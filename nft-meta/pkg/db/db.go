@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/web3eye-io/cyber-tracer/config"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 
@@ -48,11 +49,32 @@ func GetConn() (*sql.DB, error) {
 	}
 	var err error
 
+	myConfig := config.GetConfig().MySQL
+
+	withoutDBMSN := fmt.Sprintf("%v:%v@tcp(%v:%v)/?parseTime=true&interpolateParams=true",
+		myConfig.User, myConfig.Password,
+		myConfig.IP,
+		myConfig.Port,
+	)
+
+	createSQL := fmt.Sprintf("create database if not exists %v;", myConfig.Database)
+	conn, err := sql.Open("mysql", withoutDBMSN)
+	if err != nil {
+		logger.Sugar().Warnf("call Open error: %v", err)
+		return nil, err
+	}
+
+	_, err = conn.Exec(createSQL)
+	if err != nil {
+		panic(err)
+	}
+	conn.Close()
+
 	dataSourceName := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=true&interpolateParams=true",
-		"root", "12345679",
-		"127.0.0.1",
-		"3306",
-		"nft_meta",
+		myConfig.User, myConfig.Password,
+		myConfig.IP,
+		myConfig.Port,
+		myConfig.Database,
 	)
 	conn, err = sql.Open("mysql", dataSourceName)
 	if err != nil {

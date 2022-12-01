@@ -36,6 +36,8 @@ fi
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
+OrginazeName=coastlinesss
+# OrginazeName=web3eye
 
 if [[ ${!2-x} != x  && "x" != $2 ]]; then
   registry=$2/
@@ -60,7 +62,7 @@ cd $output_d
 
 user=`whoami`
 if [ "$user" == "root" ]; then
-    docker build -t ${registry}web3eye/$service_name:$version .
+    docker build -t ${registry}${OrginazeName}/$service_name:$version .
 else
-    sudo docker build -t ${registry}web3eye/$service_name:$version .
+    sudo docker build -t ${registry}${OrginazeName}/$service_name:$version .
 fi

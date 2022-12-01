@@ -1,10 +1,10 @@
 # cyber tracer
 
 ### 功能计划
-- [ ] 拆分成web3eye独立的message
+- [x] 拆分成web3eye独立的message
 - [ ] 支持k8s
 - [ ] 支持多副本
-- [ ] 合并成一个git项目
+- [x] 合并成一个git项目
 - [ ] 服务发现和配置管理
   
 #### CICD
@@ -91,3 +91,8 @@ Makefile:
 
 DockerCompose    
 Jenkinsfile  
+
+## 第三方组件搭建方案
+### mysql
+### milvus
+### redis

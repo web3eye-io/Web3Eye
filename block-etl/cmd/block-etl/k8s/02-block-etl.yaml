@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: block-etl
-  namespace: kube-system
+  # namespace: kube-system
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: block-etl
@@ -17,27 +17,27 @@ spec:
     spec:
       containers:
         - name: block-etl
-          image: uhub.service.ucloud.cn/entropypool/block-etl:latest
+          image: coastlinesss/block-etl:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
               mountPath: /etc/BlockETL
           env:
-            - name: ENV_ENVIRONMENT_TARGET
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.target
-            - name: ENV_CONSUL_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.consul_host
-            - name: ENV_CONSUL_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: system-environment
-                  key: environment.consul_port
+            # - name: ENV_ENVIRONMENT_TARGET
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.target
+            # - name: ENV_CONSUL_HOST
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.consul_host
+            # - name: ENV_CONSUL_PORT
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: system-environment
+            #       key: environment.consul_port
             - name: ENV_CLUSTER_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -54,8 +54,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: block-etl
-  namespace: kube-system
+  # namespace: kube-system
 spec:
+  selector:
+    app: block-etl  
+  # clusterIP: None
   ports:
     - name: http
       port: 50490
@@ -69,5 +72,4 @@ spec:
     - name: prometheus
       port: 50492
       targetPort: 50492
-  selector:
-    app: block-etl
+

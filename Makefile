@@ -67,7 +67,7 @@ endif
 
 build-docker:
 	@for x in $(PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/generate-docker-image.sh $(DEVELOPMENT) $(DOCKER_REGISTRY);\
+		${REPO_ROOT}/$${x}/script/build-docker-image.sh $(DEVELOPMENT) $(DOCKER_REGISTRY);\
 	done
 release-docker:
 	@for x in $(PROJECTS); do \
