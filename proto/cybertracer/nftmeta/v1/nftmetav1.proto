@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package nftmeta.v1;
+
+option go_package = "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "cybertracer/cybertracerv1.proto";
+
+service Manager {
+  rpc Version(google.protobuf.Empty) returns (cybertracer.v1.VersionResponse) {
+    option (google.api.http) = {
+      post : "/v1/version"
+      body : "*"
+    };
+  }
+}

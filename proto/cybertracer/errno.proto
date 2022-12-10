@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cybertracer.v1;
+
+option go_package = "github.com/web3eye-io/cyber-tracer/message/cybertracer";
+
+enum ERR {
+  OK = 0;
+
+  START = 10000;
+}

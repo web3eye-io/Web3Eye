@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package nftmeta.v1.contract;
+
+option go_package = "github.com/web3eye-io/cyber-tracer/pkg/proto/contract";
+import "cybertracer/cybertracerv1.proto";
+
+service Manager {
+  rpc CreateContract(CreateContractRequest) returns (CreateContractResponse) {}
+  rpc CreateContracts(CreateContractsRequest)
+      returns (CreateContractsResponse) {}
+  rpc UpdateContract(UpdateContractRequest) returns (UpdateContractResponse) {}
+  rpc GetContract(GetContractRequest) returns (GetContractResponse) {}
+  rpc GetContractOnly(GetContractOnlyRequest)
+      returns (GetContractOnlyResponse) {}
+  rpc GetContracts(GetContractsRequest) returns (GetContractsResponse) {}
+  rpc ExistContract(ExistContractRequest) returns (ExistContractResponse) {}
+  rpc ExistContractConds(ExistContractCondsRequest)
+      returns (ExistContractCondsResponse) {}
+  rpc CountContracts(CountContractsRequest) returns (CountContractsResponse) {}
+  rpc DeleteContract(DeleteContractRequest) returns (DeleteContractResponse) {}
+}
+
+message ContractReq {
+  optional string ID = 10;
+  optional string ChainType = 20;
+  optional int32 ChainID = 30;
+  optional string Address = 40;
+  optional string Name = 50;
+  optional string Symbol = 60;
+  optional string Creator = 70;
+  optional uint64 BlockNum = 80;
+  optional string TxHash = 90;
+  optional uint32 TxTime = 100;
+  optional string ProfileURL = 110;
+  optional string BaseURL = 120;
+  optional string BannerURL = 130;
+  optional string Description = 140;
+  optional string Remark = 150;
+}
+
+message Contract {
+  string ID = 10;
+  string ChainType = 20;
+  int32 ChainID = 30;
+  string Address = 40;
+  string Name = 50;
+  string Symbol = 60;
+  string Creator = 70;
+  uint64 BlockNum = 80;
+  string TxHash = 90;
+  uint32 TxTime = 100;
+  string ProfileURL = 110;
+  string BaseURL = 120;
+  string BannerURL = 130;
+  string Description = 140;
+  string Remark = 150;
+}
+
+message Conds {
+  cybertracer.v1.StringVal ID = 10;
+  cybertracer.v1.StringVal ChainType = 20;
+  cybertracer.v1.Int32Val ChainID = 30;
+  cybertracer.v1.StringVal Address = 40;
+  cybertracer.v1.StringVal Name = 50;
+  cybertracer.v1.StringVal Symbol = 60;
+  cybertracer.v1.StringVal Creator = 70;
+  cybertracer.v1.Uint64Val BlockNum = 80;
+  cybertracer.v1.StringVal TxHash = 90;
+  cybertracer.v1.Uint32Val TxTime = 100;
+  cybertracer.v1.StringVal ProfileURL = 110;
+  cybertracer.v1.StringVal BaseURL = 120;
+  cybertracer.v1.StringVal BannerURL = 130;
+  cybertracer.v1.StringVal Description = 140;
+  cybertracer.v1.StringVal Remark = 150;
+  cybertracer.v1.StringSliceVal IDs = 160;
+}
+
+message CreateContractRequest { ContractReq Info = 10; }
+
+message CreateContractResponse { Contract Info = 10; }
+
+message CreateContractsRequest { repeated ContractReq Infos = 10; }
+
+message CreateContractsResponse { repeated Contract Infos = 10; }
+
+message GetContractRequest { string ID = 10; }
+
+message GetContractResponse { Contract Info = 10; }
+
+message GetContractsRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetContractsResponse {
+  repeated Contract Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetContractOnlyRequest { Conds Conds = 10; }
+
+message GetContractOnlyResponse { Contract Info = 10; }
+
+message UpdateContractRequest { ContractReq Info = 10; }
+
+message UpdateContractResponse { Contract Info = 10; }
+
+message ExistContractRequest { string ID = 10; }
+
+message ExistContractResponse { bool Info = 10; }
+
+message ExistContractCondsRequest { Conds Conds = 10; }
+
+message ExistContractCondsResponse { bool Info = 10; }
+
+message CountContractsRequest { Conds Conds = 10; }
+
+message CountContractsResponse { uint32 Info = 10; }
+
+message DeleteContractRequest { string ID = 10; }
+
+message DeleteContractResponse { Contract Info = 10; }
