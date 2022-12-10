@@ -13,9 +13,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/cyber-tracer/message/cybertracer"
-	"github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/cttype"
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/synctask"
+	"github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
 
 	"github.com/google/uuid"
 )

@@ -7,7 +7,7 @@
 package token
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/message/cybertracer"
+	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

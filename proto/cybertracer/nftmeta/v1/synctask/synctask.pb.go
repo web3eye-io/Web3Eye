@@ -7,8 +7,8 @@
 package synctask
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/message/cybertracer"
-	cttype "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/cttype"
+	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	cttype "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

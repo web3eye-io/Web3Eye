@@ -1,9 +1,9 @@
 package synctask
 
 import (
-	"github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/cttype"
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
 )
 
 func Ent2Grpc(row *ent.SyncTask) *npool.SyncTask {

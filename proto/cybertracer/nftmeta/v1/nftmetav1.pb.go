@@ -7,7 +7,7 @@
 package v1
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/message/cybertracer"
+	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"

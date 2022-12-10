@@ -11,13 +11,13 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/token"
 	"github.com/web3eye-io/cyber-tracer/common/ctredis"
-	ctMessage "github.com/web3eye-io/cyber-tracer/message/cybertracer"
-	contractProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/contract"
-	tokenProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
-	transferProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/transfer"
 	contractNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/contract"
 	tokenNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/token"
 	transferNMCli "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/client/v1/transfer"
+	ctMessage "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	contractProto "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/contract"
+	tokenProto "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	transferProto "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/transfer"
 )
 
 const (

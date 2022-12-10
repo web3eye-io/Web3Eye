@@ -9,9 +9,9 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/google/uuid"
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/transfer"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/transfer"
 )
 
 func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {

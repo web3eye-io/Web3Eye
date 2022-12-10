@@ -1,8 +1,8 @@
 package token
 
 import (
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
 )
 
 func Ent2Grpc(row *ent.Token) *npool.Token {

@@ -4,7 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/cttype"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 
 	"github.com/google/uuid"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/mixin"

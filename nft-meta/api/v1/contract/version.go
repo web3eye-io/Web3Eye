@@ -7,8 +7,8 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/version"
+	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"

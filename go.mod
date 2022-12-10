@@ -27,7 +27,6 @@ require (
 	google.golang.org/protobuf v1.28.1
 )
 
-
 require (
 	github.com/NpoolPlatform/message v0.0.0-20220501030927-34f296682c0c // indirect
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package cybertracer.v1;
 
-option go_package = "github.com/web3eye-io/cyber-tracer/message/cybertracer";
+option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer";
 
 enum ERR {
   OK = 0;

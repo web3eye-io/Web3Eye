@@ -8,7 +8,7 @@ package v1
 
 import (
 	context "context"
-	cybertracer "github.com/web3eye-io/cyber-tracer/message/cybertracer"
+	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
