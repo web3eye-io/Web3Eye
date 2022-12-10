@@ -11,8 +11,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/migrate"
 
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
 
@@ -25,10 +25,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// BlockNumber is the client for interacting with the BlockNumber builders.
-	BlockNumber *BlockNumberClient
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
+	// SyncTask is the client for interacting with the SyncTask builders.
+	SyncTask *SyncTaskClient
 	// Token is the client for interacting with the Token builders.
 	Token *TokenClient
 	// Transfer is the client for interacting with the Transfer builders.
@@ -46,8 +46,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.BlockNumber = NewBlockNumberClient(c.config)
 	c.Contract = NewContractClient(c.config)
+	c.SyncTask = NewSyncTaskClient(c.config)
 	c.Token = NewTokenClient(c.config)
 	c.Transfer = NewTransferClient(c.config)
 }
@@ -81,12 +81,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		BlockNumber: NewBlockNumberClient(cfg),
-		Contract:    NewContractClient(cfg),
-		Token:       NewTokenClient(cfg),
-		Transfer:    NewTransferClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Contract: NewContractClient(cfg),
+		SyncTask: NewSyncTaskClient(cfg),
+		Token:    NewTokenClient(cfg),
+		Transfer: NewTransferClient(cfg),
 	}, nil
 }
 
@@ -104,19 +104,19 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		BlockNumber: NewBlockNumberClient(cfg),
-		Contract:    NewContractClient(cfg),
-		Token:       NewTokenClient(cfg),
-		Transfer:    NewTransferClient(cfg),
+		ctx:      ctx,
+		config:   cfg,
+		Contract: NewContractClient(cfg),
+		SyncTask: NewSyncTaskClient(cfg),
+		Token:    NewTokenClient(cfg),
+		Transfer: NewTransferClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		BlockNumber.
+//		Contract.
 //		Query().
 //		Count(ctx)
 //
@@ -139,101 +139,10 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.BlockNumber.Use(hooks...)
 	c.Contract.Use(hooks...)
+	c.SyncTask.Use(hooks...)
 	c.Token.Use(hooks...)
 	c.Transfer.Use(hooks...)
-}
-
-// BlockNumberClient is a client for the BlockNumber schema.
-type BlockNumberClient struct {
-	config
-}
-
-// NewBlockNumberClient returns a client for the BlockNumber from the given config.
-func NewBlockNumberClient(c config) *BlockNumberClient {
-	return &BlockNumberClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `blocknumber.Hooks(f(g(h())))`.
-func (c *BlockNumberClient) Use(hooks ...Hook) {
-	c.hooks.BlockNumber = append(c.hooks.BlockNumber, hooks...)
-}
-
-// Create returns a builder for creating a BlockNumber entity.
-func (c *BlockNumberClient) Create() *BlockNumberCreate {
-	mutation := newBlockNumberMutation(c.config, OpCreate)
-	return &BlockNumberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of BlockNumber entities.
-func (c *BlockNumberClient) CreateBulk(builders ...*BlockNumberCreate) *BlockNumberCreateBulk {
-	return &BlockNumberCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for BlockNumber.
-func (c *BlockNumberClient) Update() *BlockNumberUpdate {
-	mutation := newBlockNumberMutation(c.config, OpUpdate)
-	return &BlockNumberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *BlockNumberClient) UpdateOne(bn *BlockNumber) *BlockNumberUpdateOne {
-	mutation := newBlockNumberMutation(c.config, OpUpdateOne, withBlockNumber(bn))
-	return &BlockNumberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *BlockNumberClient) UpdateOneID(id uuid.UUID) *BlockNumberUpdateOne {
-	mutation := newBlockNumberMutation(c.config, OpUpdateOne, withBlockNumberID(id))
-	return &BlockNumberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for BlockNumber.
-func (c *BlockNumberClient) Delete() *BlockNumberDelete {
-	mutation := newBlockNumberMutation(c.config, OpDelete)
-	return &BlockNumberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *BlockNumberClient) DeleteOne(bn *BlockNumber) *BlockNumberDeleteOne {
-	return c.DeleteOneID(bn.ID)
-}
-
-// DeleteOne returns a builder for deleting the given entity by its id.
-func (c *BlockNumberClient) DeleteOneID(id uuid.UUID) *BlockNumberDeleteOne {
-	builder := c.Delete().Where(blocknumber.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &BlockNumberDeleteOne{builder}
-}
-
-// Query returns a query builder for BlockNumber.
-func (c *BlockNumberClient) Query() *BlockNumberQuery {
-	return &BlockNumberQuery{
-		config: c.config,
-	}
-}
-
-// Get returns a BlockNumber entity by its id.
-func (c *BlockNumberClient) Get(ctx context.Context, id uuid.UUID) (*BlockNumber, error) {
-	return c.Query().Where(blocknumber.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *BlockNumberClient) GetX(ctx context.Context, id uuid.UUID) *BlockNumber {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *BlockNumberClient) Hooks() []Hook {
-	hooks := c.hooks.BlockNumber
-	return append(hooks[:len(hooks):len(hooks)], blocknumber.Hooks[:]...)
 }
 
 // ContractClient is a client for the Contract schema.
@@ -325,6 +234,97 @@ func (c *ContractClient) GetX(ctx context.Context, id uuid.UUID) *Contract {
 func (c *ContractClient) Hooks() []Hook {
 	hooks := c.hooks.Contract
 	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
+}
+
+// SyncTaskClient is a client for the SyncTask schema.
+type SyncTaskClient struct {
+	config
+}
+
+// NewSyncTaskClient returns a client for the SyncTask from the given config.
+func NewSyncTaskClient(c config) *SyncTaskClient {
+	return &SyncTaskClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `synctask.Hooks(f(g(h())))`.
+func (c *SyncTaskClient) Use(hooks ...Hook) {
+	c.hooks.SyncTask = append(c.hooks.SyncTask, hooks...)
+}
+
+// Create returns a builder for creating a SyncTask entity.
+func (c *SyncTaskClient) Create() *SyncTaskCreate {
+	mutation := newSyncTaskMutation(c.config, OpCreate)
+	return &SyncTaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SyncTask entities.
+func (c *SyncTaskClient) CreateBulk(builders ...*SyncTaskCreate) *SyncTaskCreateBulk {
+	return &SyncTaskCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SyncTask.
+func (c *SyncTaskClient) Update() *SyncTaskUpdate {
+	mutation := newSyncTaskMutation(c.config, OpUpdate)
+	return &SyncTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SyncTaskClient) UpdateOne(st *SyncTask) *SyncTaskUpdateOne {
+	mutation := newSyncTaskMutation(c.config, OpUpdateOne, withSyncTask(st))
+	return &SyncTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SyncTaskClient) UpdateOneID(id uuid.UUID) *SyncTaskUpdateOne {
+	mutation := newSyncTaskMutation(c.config, OpUpdateOne, withSyncTaskID(id))
+	return &SyncTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SyncTask.
+func (c *SyncTaskClient) Delete() *SyncTaskDelete {
+	mutation := newSyncTaskMutation(c.config, OpDelete)
+	return &SyncTaskDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SyncTaskClient) DeleteOne(st *SyncTask) *SyncTaskDeleteOne {
+	return c.DeleteOneID(st.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *SyncTaskClient) DeleteOneID(id uuid.UUID) *SyncTaskDeleteOne {
+	builder := c.Delete().Where(synctask.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SyncTaskDeleteOne{builder}
+}
+
+// Query returns a query builder for SyncTask.
+func (c *SyncTaskClient) Query() *SyncTaskQuery {
+	return &SyncTaskQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a SyncTask entity by its id.
+func (c *SyncTaskClient) Get(ctx context.Context, id uuid.UUID) (*SyncTask, error) {
+	return c.Query().Where(synctask.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SyncTaskClient) GetX(ctx context.Context, id uuid.UUID) *SyncTask {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SyncTaskClient) Hooks() []Hook {
+	hooks := c.hooks.SyncTask
+	return append(hooks[:len(hooks):len(hooks)], synctask.Hooks[:]...)
 }
 
 // TokenClient is a client for the Token schema.

@@ -1,0 +1,6 @@
+commonLabels:
+  # app: deployment-box
+
+resources:
+- 01-development-pvc.yaml
+- 02-deployment.yaml

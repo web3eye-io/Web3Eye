@@ -9,19 +9,6 @@ import (
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 )
 
-// The BlockNumberFunc type is an adapter to allow the use of ordinary
-// function as BlockNumber mutator.
-type BlockNumberFunc func(context.Context, *ent.BlockNumberMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f BlockNumberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.BlockNumberMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BlockNumberMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The ContractFunc type is an adapter to allow the use of ordinary
 // function as Contract mutator.
 type ContractFunc func(context.Context, *ent.ContractMutation) (ent.Value, error)
@@ -31,6 +18,19 @@ func (f ContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	mv, ok := m.(*ent.ContractMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContractMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The SyncTaskFunc type is an adapter to allow the use of ordinary
+// function as SyncTask mutator.
+type SyncTaskFunc func(context.Context, *ent.SyncTaskMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SyncTaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SyncTaskMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SyncTaskMutation", m)
 	}
 	return f(ctx, mv)
 }

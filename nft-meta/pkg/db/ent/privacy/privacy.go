@@ -150,30 +150,6 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The BlockNumberQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type BlockNumberQueryRuleFunc func(context.Context, *ent.BlockNumberQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f BlockNumberQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.BlockNumberQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BlockNumberQuery", q)
-}
-
-// The BlockNumberMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type BlockNumberMutationRuleFunc func(context.Context, *ent.BlockNumberMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f BlockNumberMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.BlockNumberMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BlockNumberMutation", m)
-}
-
 // The ContractQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ContractQueryRuleFunc func(context.Context, *ent.ContractQuery) error
@@ -196,6 +172,30 @@ func (f ContractMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContractMutation", m)
+}
+
+// The SyncTaskQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SyncTaskQueryRuleFunc func(context.Context, *ent.SyncTaskQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SyncTaskQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SyncTaskQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SyncTaskQuery", q)
+}
+
+// The SyncTaskMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SyncTaskMutationRuleFunc func(context.Context, *ent.SyncTaskMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SyncTaskMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SyncTaskMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SyncTaskMutation", m)
 }
 
 // The TokenQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -281,9 +281,9 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *ent.BlockNumberQuery:
-		return q.Filter(), nil
 	case *ent.ContractQuery:
+		return q.Filter(), nil
+	case *ent.SyncTaskQuery:
 		return q.Filter(), nil
 	case *ent.TokenQuery:
 		return q.Filter(), nil
@@ -296,9 +296,9 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *ent.BlockNumberMutation:
-		return m.Filter(), nil
 	case *ent.ContractMutation:
+		return m.Filter(), nil
+	case *ent.SyncTaskMutation:
 		return m.Filter(), nil
 	case *ent.TokenMutation:
 		return m.Filter(), nil

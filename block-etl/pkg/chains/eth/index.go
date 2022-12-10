@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/redis"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/token"
+	"github.com/web3eye-io/cyber-tracer/common/ctredis"
 	ctMessage "github.com/web3eye-io/cyber-tracer/message/cybertracer"
 	contractProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/contract"
 	tokenProto "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
@@ -190,7 +190,7 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) error {
 	for _, transfer := range transfers {
 		identifier := tokenIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract, transfer.TokenID)
-		if _, err := redis.Get(identifier); err == nil {
+		if _, err := ctredis.Get(identifier); err == nil {
 			return nil
 		}
 
@@ -216,17 +216,17 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		}
 
 		if exist, err := tokenNMCli.ExistTokenConds(ctx, conds); exist && err == nil {
-			err = redis.Set(identifier, true, redisExpireDefaultTime)
+			err = ctredis.Set(identifier, true, redisExpireDefaultTime)
 			if err != nil {
 				logger.Sugar().Error(err)
 			}
 			return nil
 		}
 
-		err := redis.Set(identifier, false, redisExpireDefaultTime)
+		err := ctredis.Set(identifier, false, redisExpireDefaultTime)
 		if err != nil {
 			logger.Sugar().Error(err)
-			err = redis.Del(identifier)
+			err = ctredis.Del(identifier)
 			if err != nil {
 				logger.Sugar().Error(err)
 			}
@@ -285,7 +285,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 
 func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) error {
 	identifier := contractIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract)
-	if _, err := redis.Get(identifier); err == nil {
+	if _, err := ctredis.Get(identifier); err == nil {
 		return nil
 	}
 
@@ -305,16 +305,16 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	}
 
 	if exist, err := contractNMCli.ExistContractConds(ctx, conds); exist && err == nil {
-		err = redis.Set(identifier, true, redisExpireDefaultTime)
+		err = ctredis.Set(identifier, true, redisExpireDefaultTime)
 		if err != nil {
 			logger.Sugar().Error(err)
 		}
 		return nil
 	}
-	err := redis.Set(identifier, false, redisExpireDefaultTime)
+	err := ctredis.Set(identifier, false, redisExpireDefaultTime)
 	if err != nil {
 		logger.Sugar().Error(err)
-		err = redis.Del(identifier)
+		err = ctredis.Del(identifier)
 		if err != nil {
 			logger.Sugar().Error(err)
 		}

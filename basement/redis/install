@@ -1,0 +1,4 @@
+helm repo add my-repo https://charts.bitnami.com/bitnami
+helm install redis my-repo/redis
+
+helm install redis --set auth.password="q123"  my-repo/redis

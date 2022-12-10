@@ -4,8 +4,8 @@ import (
 	"context"
 
 	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/contract"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api/v1/transfer"
 
@@ -22,7 +22,7 @@ func Register(server grpc.ServiceRegistrar) {
 	token.Register(server)
 	transfer.Register(server)
 	contract.Register(server)
-	blocknumber.Register(server)
+	synctask.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

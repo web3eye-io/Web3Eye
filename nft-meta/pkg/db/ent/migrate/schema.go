@@ -8,32 +8,6 @@ import (
 )
 
 var (
-	// BlockNumbersColumns holds the columns for the "block_numbers" table.
-	BlockNumbersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "created_at", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeUint32},
-		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "chain_type", Type: field.TypeString},
-		{Name: "chain_id", Type: field.TypeInt32},
-		{Name: "identifier", Type: field.TypeString},
-		{Name: "current_num", Type: field.TypeUint64},
-		{Name: "topic", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-	}
-	// BlockNumbersTable holds the schema information for the "block_numbers" table.
-	BlockNumbersTable = &schema.Table{
-		Name:       "block_numbers",
-		Columns:    BlockNumbersColumns,
-		PrimaryKey: []*schema.Column{BlockNumbersColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "blocknumber_identifier_topic",
-				Unique:  false,
-				Columns: []*schema.Column{BlockNumbersColumns[6], BlockNumbersColumns[8]},
-			},
-		},
-	}
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -65,6 +39,35 @@ var (
 				Name:    "contract_chain_type_chain_id_address",
 				Unique:  true,
 				Columns: []*schema.Column{ContractsColumns[4], ContractsColumns[5], ContractsColumns[6]},
+			},
+		},
+	}
+	// SyncTasksColumns holds the columns for the "sync_tasks" table.
+	SyncTasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "chain_type", Type: field.TypeString, Nullable: true, Default: "Unkown"},
+		{Name: "chain_id", Type: field.TypeInt32},
+		{Name: "start", Type: field.TypeUint64},
+		{Name: "end", Type: field.TypeUint64},
+		{Name: "current", Type: field.TypeUint64},
+		{Name: "topic", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "sync_state", Type: field.TypeString, Nullable: true, Default: "Default"},
+		{Name: "remark", Type: field.TypeString, Nullable: true},
+	}
+	// SyncTasksTable holds the schema information for the "sync_tasks" table.
+	SyncTasksTable = &schema.Table{
+		Name:       "sync_tasks",
+		Columns:    SyncTasksColumns,
+		PrimaryKey: []*schema.Column{SyncTasksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "synctask_topic",
+				Unique:  false,
+				Columns: []*schema.Column{SyncTasksColumns[9]},
 			},
 		},
 	}
@@ -143,8 +146,8 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		BlockNumbersTable,
 		ContractsTable,
+		SyncTasksTable,
 		TokensTable,
 		TransfersTable,
 	}

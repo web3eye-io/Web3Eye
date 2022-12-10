@@ -60,7 +60,6 @@ var runCmd = &cli.Command{
 		if err != nil {
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
-
 		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort)
 		runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
 		return nil
@@ -84,7 +83,6 @@ func runGRPCServer(grpcPort int) {
 
 func runHTTPServer(httpPort int) {
 	endpoint := fmt.Sprintf(":%v", httpPort)
-	fmt.Println(endpoint)
 	err := http.ListenAndServe(endpoint, servermux.AppServerMux())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

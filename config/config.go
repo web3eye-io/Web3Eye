@@ -14,32 +14,54 @@ import (
 var ConfigFS string
 
 type Config struct {
-	Version  string   `toml:"version" env:"version"`
-	NFTMeta  NFTMeta  `toml:"nft-meta" env:"nft_meta"`
-	BlockETL BlockETL `toml:"block-etl" env:"block_etl"`
-	ETH      ETH      `toml:"eth" env:"eth"`
-	IPFS     IPFS     `toml:"ipfs" env:"ipfs"`
-	MySQL    MySQL    `toml:"mysql" env:"mysql"`
+	Version        string         `toml:"version" env:"version"`
+	NFTMeta        NFTMeta        `toml:"nft-meta" env:"nft_meta"`
+	BlockETL       BlockETL       `toml:"block-etl" env:"block_etl"`
+	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
+	ETH            ETH            `toml:"eth" env:"eth"`
+	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
+	MySQL          MySQL          `toml:"mysql" env:"mysql"`
+	Kafka          Kafka          `toml:"kafka" env:"kafka"`
+	Redis          Redis          `toml:"redis" env:"redis"`
+	Milvus         Milvus         `toml:"milvus" env:"milvus"`
 }
 
 type NFTMeta struct {
+	IP       string `toml:"ip" env:"ip"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogDir   string `toml:"log-dir" env:"log_dir"`
 }
 
 type BlockETL struct {
+	IP       string `toml:"ip" env:"ip"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogDir   string `toml:"log-dir" env:"log_dir"`
 }
 
+type IamgeConverter struct {
+	Address string `toml:"address" env:"address"`
+}
 type MySQL struct {
 	IP       string `toml:"ip" env:"ip"`
 	Port     int    `toml:"port" env:"port"`
 	User     string `toml:"user" env:"user"`
 	Password string `toml:"password" env:"password"`
 	Database string `toml:"database" env:"database"`
+}
+
+type Redis struct {
+	Address  string `toml:"address" env:"address"`
+	Password string `toml:"password" env:"password"`
+}
+
+type Kafka struct {
+	BootstrapServers string `toml:"bootstrap-servers" env:"bootstrap_servers"`
+}
+
+type Milvus struct {
+	Address string `toml:"address" env:"address"`
 }
 
 type ETH struct {

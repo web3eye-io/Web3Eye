@@ -1,14 +1,19 @@
 version="0.0.1"
 
 [nft-meta]
+ip="nft-meta"
 http-port=30100
 grpc-port=30101
 log-dir="/var/log"
 
 [block-etl]
+ip="nft-meta"
 http-port=30110
 grpc-port=30111
 log-dir="/var/log"
+
+[image-converter]
+address="http://block-etl:8080"
 
 [mysql]
 ip="mysql"
@@ -16,6 +21,16 @@ port=3306
 user="root"
 password="123123123"
 database="nft_meta"
+
+[redis]
+address="redis-cluster:6379"
+password="q123"
+
+[milvus]
+address="milvus:19530"
+
+[kafka]
+bootstrap-servers="kafka-headless:9092"
 
 [eth]
 wallets="https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0"

@@ -9,9 +9,9 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/predicate"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
 
@@ -27,950 +27,11 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeBlockNumber = "BlockNumber"
-	TypeContract    = "Contract"
-	TypeToken       = "Token"
-	TypeTransfer    = "Transfer"
+	TypeContract = "Contract"
+	TypeSyncTask = "SyncTask"
+	TypeToken    = "Token"
+	TypeTransfer = "Transfer"
 )
-
-// BlockNumberMutation represents an operation that mutates the BlockNumber nodes in the graph.
-type BlockNumberMutation struct {
-	config
-	op             Op
-	typ            string
-	id             *uuid.UUID
-	created_at     *uint32
-	addcreated_at  *int32
-	updated_at     *uint32
-	addupdated_at  *int32
-	deleted_at     *uint32
-	adddeleted_at  *int32
-	chain_type     *string
-	chain_id       *int32
-	addchain_id    *int32
-	identifier     *string
-	current_num    *uint64
-	addcurrent_num *int64
-	topic          *string
-	description    *string
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*BlockNumber, error)
-	predicates     []predicate.BlockNumber
-}
-
-var _ ent.Mutation = (*BlockNumberMutation)(nil)
-
-// blocknumberOption allows management of the mutation configuration using functional options.
-type blocknumberOption func(*BlockNumberMutation)
-
-// newBlockNumberMutation creates new mutation for the BlockNumber entity.
-func newBlockNumberMutation(c config, op Op, opts ...blocknumberOption) *BlockNumberMutation {
-	m := &BlockNumberMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeBlockNumber,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withBlockNumberID sets the ID field of the mutation.
-func withBlockNumberID(id uuid.UUID) blocknumberOption {
-	return func(m *BlockNumberMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *BlockNumber
-		)
-		m.oldValue = func(ctx context.Context) (*BlockNumber, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().BlockNumber.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withBlockNumber sets the old BlockNumber of the mutation.
-func withBlockNumber(node *BlockNumber) blocknumberOption {
-	return func(m *BlockNumberMutation) {
-		m.oldValue = func(context.Context) (*BlockNumber, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m BlockNumberMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m BlockNumberMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of BlockNumber entities.
-func (m *BlockNumberMutation) SetID(id uuid.UUID) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *BlockNumberMutation) ID() (id uuid.UUID, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *BlockNumberMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uuid.UUID{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().BlockNumber.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *BlockNumberMutation) SetCreatedAt(u uint32) {
-	m.created_at = &u
-	m.addcreated_at = nil
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *BlockNumberMutation) CreatedAt() (r uint32, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// AddCreatedAt adds u to the "created_at" field.
-func (m *BlockNumberMutation) AddCreatedAt(u int32) {
-	if m.addcreated_at != nil {
-		*m.addcreated_at += u
-	} else {
-		m.addcreated_at = &u
-	}
-}
-
-// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
-func (m *BlockNumberMutation) AddedCreatedAt() (r int32, exists bool) {
-	v := m.addcreated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *BlockNumberMutation) ResetCreatedAt() {
-	m.created_at = nil
-	m.addcreated_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *BlockNumberMutation) SetUpdatedAt(u uint32) {
-	m.updated_at = &u
-	m.addupdated_at = nil
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *BlockNumberMutation) UpdatedAt() (r uint32, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// AddUpdatedAt adds u to the "updated_at" field.
-func (m *BlockNumberMutation) AddUpdatedAt(u int32) {
-	if m.addupdated_at != nil {
-		*m.addupdated_at += u
-	} else {
-		m.addupdated_at = &u
-	}
-}
-
-// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
-func (m *BlockNumberMutation) AddedUpdatedAt() (r int32, exists bool) {
-	v := m.addupdated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *BlockNumberMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	m.addupdated_at = nil
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *BlockNumberMutation) SetDeletedAt(u uint32) {
-	m.deleted_at = &u
-	m.adddeleted_at = nil
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *BlockNumberMutation) DeletedAt() (r uint32, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// AddDeletedAt adds u to the "deleted_at" field.
-func (m *BlockNumberMutation) AddDeletedAt(u int32) {
-	if m.adddeleted_at != nil {
-		*m.adddeleted_at += u
-	} else {
-		m.adddeleted_at = &u
-	}
-}
-
-// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
-func (m *BlockNumberMutation) AddedDeletedAt() (r int32, exists bool) {
-	v := m.adddeleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *BlockNumberMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	m.adddeleted_at = nil
-}
-
-// SetChainType sets the "chain_type" field.
-func (m *BlockNumberMutation) SetChainType(s string) {
-	m.chain_type = &s
-}
-
-// ChainType returns the value of the "chain_type" field in the mutation.
-func (m *BlockNumberMutation) ChainType() (r string, exists bool) {
-	v := m.chain_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChainType returns the old "chain_type" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldChainType(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChainType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChainType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChainType: %w", err)
-	}
-	return oldValue.ChainType, nil
-}
-
-// ResetChainType resets all changes to the "chain_type" field.
-func (m *BlockNumberMutation) ResetChainType() {
-	m.chain_type = nil
-}
-
-// SetChainID sets the "chain_id" field.
-func (m *BlockNumberMutation) SetChainID(i int32) {
-	m.chain_id = &i
-	m.addchain_id = nil
-}
-
-// ChainID returns the value of the "chain_id" field in the mutation.
-func (m *BlockNumberMutation) ChainID() (r int32, exists bool) {
-	v := m.chain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChainID returns the old "chain_id" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldChainID(ctx context.Context) (v int32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChainID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChainID: %w", err)
-	}
-	return oldValue.ChainID, nil
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (m *BlockNumberMutation) AddChainID(i int32) {
-	if m.addchain_id != nil {
-		*m.addchain_id += i
-	} else {
-		m.addchain_id = &i
-	}
-}
-
-// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
-func (m *BlockNumberMutation) AddedChainID() (r int32, exists bool) {
-	v := m.addchain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetChainID resets all changes to the "chain_id" field.
-func (m *BlockNumberMutation) ResetChainID() {
-	m.chain_id = nil
-	m.addchain_id = nil
-}
-
-// SetIdentifier sets the "identifier" field.
-func (m *BlockNumberMutation) SetIdentifier(s string) {
-	m.identifier = &s
-}
-
-// Identifier returns the value of the "identifier" field in the mutation.
-func (m *BlockNumberMutation) Identifier() (r string, exists bool) {
-	v := m.identifier
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIdentifier returns the old "identifier" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldIdentifier(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIdentifier is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIdentifier requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdentifier: %w", err)
-	}
-	return oldValue.Identifier, nil
-}
-
-// ResetIdentifier resets all changes to the "identifier" field.
-func (m *BlockNumberMutation) ResetIdentifier() {
-	m.identifier = nil
-}
-
-// SetCurrentNum sets the "current_num" field.
-func (m *BlockNumberMutation) SetCurrentNum(u uint64) {
-	m.current_num = &u
-	m.addcurrent_num = nil
-}
-
-// CurrentNum returns the value of the "current_num" field in the mutation.
-func (m *BlockNumberMutation) CurrentNum() (r uint64, exists bool) {
-	v := m.current_num
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCurrentNum returns the old "current_num" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldCurrentNum(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCurrentNum is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCurrentNum requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCurrentNum: %w", err)
-	}
-	return oldValue.CurrentNum, nil
-}
-
-// AddCurrentNum adds u to the "current_num" field.
-func (m *BlockNumberMutation) AddCurrentNum(u int64) {
-	if m.addcurrent_num != nil {
-		*m.addcurrent_num += u
-	} else {
-		m.addcurrent_num = &u
-	}
-}
-
-// AddedCurrentNum returns the value that was added to the "current_num" field in this mutation.
-func (m *BlockNumberMutation) AddedCurrentNum() (r int64, exists bool) {
-	v := m.addcurrent_num
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetCurrentNum resets all changes to the "current_num" field.
-func (m *BlockNumberMutation) ResetCurrentNum() {
-	m.current_num = nil
-	m.addcurrent_num = nil
-}
-
-// SetTopic sets the "topic" field.
-func (m *BlockNumberMutation) SetTopic(s string) {
-	m.topic = &s
-}
-
-// Topic returns the value of the "topic" field in the mutation.
-func (m *BlockNumberMutation) Topic() (r string, exists bool) {
-	v := m.topic
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTopic returns the old "topic" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldTopic(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTopic is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTopic requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTopic: %w", err)
-	}
-	return oldValue.Topic, nil
-}
-
-// ResetTopic resets all changes to the "topic" field.
-func (m *BlockNumberMutation) ResetTopic() {
-	m.topic = nil
-}
-
-// SetDescription sets the "description" field.
-func (m *BlockNumberMutation) SetDescription(s string) {
-	m.description = &s
-}
-
-// Description returns the value of the "description" field in the mutation.
-func (m *BlockNumberMutation) Description() (r string, exists bool) {
-	v := m.description
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDescription returns the old "description" field's value of the BlockNumber entity.
-// If the BlockNumber object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockNumberMutation) OldDescription(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDescription requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
-	}
-	return oldValue.Description, nil
-}
-
-// ClearDescription clears the value of the "description" field.
-func (m *BlockNumberMutation) ClearDescription() {
-	m.description = nil
-	m.clearedFields[blocknumber.FieldDescription] = struct{}{}
-}
-
-// DescriptionCleared returns if the "description" field was cleared in this mutation.
-func (m *BlockNumberMutation) DescriptionCleared() bool {
-	_, ok := m.clearedFields[blocknumber.FieldDescription]
-	return ok
-}
-
-// ResetDescription resets all changes to the "description" field.
-func (m *BlockNumberMutation) ResetDescription() {
-	m.description = nil
-	delete(m.clearedFields, blocknumber.FieldDescription)
-}
-
-// Where appends a list predicates to the BlockNumberMutation builder.
-func (m *BlockNumberMutation) Where(ps ...predicate.BlockNumber) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// Op returns the operation name.
-func (m *BlockNumberMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (BlockNumber).
-func (m *BlockNumberMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *BlockNumberMutation) Fields() []string {
-	fields := make([]string, 0, 9)
-	if m.created_at != nil {
-		fields = append(fields, blocknumber.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, blocknumber.FieldUpdatedAt)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, blocknumber.FieldDeletedAt)
-	}
-	if m.chain_type != nil {
-		fields = append(fields, blocknumber.FieldChainType)
-	}
-	if m.chain_id != nil {
-		fields = append(fields, blocknumber.FieldChainID)
-	}
-	if m.identifier != nil {
-		fields = append(fields, blocknumber.FieldIdentifier)
-	}
-	if m.current_num != nil {
-		fields = append(fields, blocknumber.FieldCurrentNum)
-	}
-	if m.topic != nil {
-		fields = append(fields, blocknumber.FieldTopic)
-	}
-	if m.description != nil {
-		fields = append(fields, blocknumber.FieldDescription)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *BlockNumberMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		return m.CreatedAt()
-	case blocknumber.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case blocknumber.FieldDeletedAt:
-		return m.DeletedAt()
-	case blocknumber.FieldChainType:
-		return m.ChainType()
-	case blocknumber.FieldChainID:
-		return m.ChainID()
-	case blocknumber.FieldIdentifier:
-		return m.Identifier()
-	case blocknumber.FieldCurrentNum:
-		return m.CurrentNum()
-	case blocknumber.FieldTopic:
-		return m.Topic()
-	case blocknumber.FieldDescription:
-		return m.Description()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *BlockNumberMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case blocknumber.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case blocknumber.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case blocknumber.FieldChainType:
-		return m.OldChainType(ctx)
-	case blocknumber.FieldChainID:
-		return m.OldChainID(ctx)
-	case blocknumber.FieldIdentifier:
-		return m.OldIdentifier(ctx)
-	case blocknumber.FieldCurrentNum:
-		return m.OldCurrentNum(ctx)
-	case blocknumber.FieldTopic:
-		return m.OldTopic(ctx)
-	case blocknumber.FieldDescription:
-		return m.OldDescription(ctx)
-	}
-	return nil, fmt.Errorf("unknown BlockNumber field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *BlockNumberMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case blocknumber.FieldUpdatedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case blocknumber.FieldDeletedAt:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case blocknumber.FieldChainType:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChainType(v)
-		return nil
-	case blocknumber.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChainID(v)
-		return nil
-	case blocknumber.FieldIdentifier:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIdentifier(v)
-		return nil
-	case blocknumber.FieldCurrentNum:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCurrentNum(v)
-		return nil
-	case blocknumber.FieldTopic:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTopic(v)
-		return nil
-	case blocknumber.FieldDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDescription(v)
-		return nil
-	}
-	return fmt.Errorf("unknown BlockNumber field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *BlockNumberMutation) AddedFields() []string {
-	var fields []string
-	if m.addcreated_at != nil {
-		fields = append(fields, blocknumber.FieldCreatedAt)
-	}
-	if m.addupdated_at != nil {
-		fields = append(fields, blocknumber.FieldUpdatedAt)
-	}
-	if m.adddeleted_at != nil {
-		fields = append(fields, blocknumber.FieldDeletedAt)
-	}
-	if m.addchain_id != nil {
-		fields = append(fields, blocknumber.FieldChainID)
-	}
-	if m.addcurrent_num != nil {
-		fields = append(fields, blocknumber.FieldCurrentNum)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *BlockNumberMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		return m.AddedCreatedAt()
-	case blocknumber.FieldUpdatedAt:
-		return m.AddedUpdatedAt()
-	case blocknumber.FieldDeletedAt:
-		return m.AddedDeletedAt()
-	case blocknumber.FieldChainID:
-		return m.AddedChainID()
-	case blocknumber.FieldCurrentNum:
-		return m.AddedCurrentNum()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *BlockNumberMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCreatedAt(v)
-		return nil
-	case blocknumber.FieldUpdatedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUpdatedAt(v)
-		return nil
-	case blocknumber.FieldDeletedAt:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDeletedAt(v)
-		return nil
-	case blocknumber.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChainID(v)
-		return nil
-	case blocknumber.FieldCurrentNum:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddCurrentNum(v)
-		return nil
-	}
-	return fmt.Errorf("unknown BlockNumber numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *BlockNumberMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(blocknumber.FieldDescription) {
-		fields = append(fields, blocknumber.FieldDescription)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *BlockNumberMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *BlockNumberMutation) ClearField(name string) error {
-	switch name {
-	case blocknumber.FieldDescription:
-		m.ClearDescription()
-		return nil
-	}
-	return fmt.Errorf("unknown BlockNumber nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *BlockNumberMutation) ResetField(name string) error {
-	switch name {
-	case blocknumber.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case blocknumber.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case blocknumber.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case blocknumber.FieldChainType:
-		m.ResetChainType()
-		return nil
-	case blocknumber.FieldChainID:
-		m.ResetChainID()
-		return nil
-	case blocknumber.FieldIdentifier:
-		m.ResetIdentifier()
-		return nil
-	case blocknumber.FieldCurrentNum:
-		m.ResetCurrentNum()
-		return nil
-	case blocknumber.FieldTopic:
-		m.ResetTopic()
-		return nil
-	case blocknumber.FieldDescription:
-		m.ResetDescription()
-		return nil
-	}
-	return fmt.Errorf("unknown BlockNumber field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *BlockNumberMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *BlockNumberMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *BlockNumberMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *BlockNumberMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *BlockNumberMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *BlockNumberMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *BlockNumberMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown BlockNumber unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *BlockNumberMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown BlockNumber edge %s", name)
-}
 
 // ContractMutation represents an operation that mutates the Contract nodes in the graph.
 type ContractMutation struct {
@@ -2528,6 +1589,1230 @@ func (m *ContractMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ContractMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Contract edge %s", name)
+}
+
+// SyncTaskMutation represents an operation that mutates the SyncTask nodes in the graph.
+type SyncTaskMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	chain_type    *string
+	chain_id      *int32
+	addchain_id   *int32
+	start         *uint64
+	addstart      *int64
+	end           *uint64
+	addend        *int64
+	current       *uint64
+	addcurrent    *int64
+	topic         *string
+	description   *string
+	sync_state    *string
+	remark        *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SyncTask, error)
+	predicates    []predicate.SyncTask
+}
+
+var _ ent.Mutation = (*SyncTaskMutation)(nil)
+
+// synctaskOption allows management of the mutation configuration using functional options.
+type synctaskOption func(*SyncTaskMutation)
+
+// newSyncTaskMutation creates new mutation for the SyncTask entity.
+func newSyncTaskMutation(c config, op Op, opts ...synctaskOption) *SyncTaskMutation {
+	m := &SyncTaskMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSyncTask,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSyncTaskID sets the ID field of the mutation.
+func withSyncTaskID(id uuid.UUID) synctaskOption {
+	return func(m *SyncTaskMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SyncTask
+		)
+		m.oldValue = func(ctx context.Context) (*SyncTask, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SyncTask.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSyncTask sets the old SyncTask of the mutation.
+func withSyncTask(node *SyncTask) synctaskOption {
+	return func(m *SyncTaskMutation) {
+		m.oldValue = func(context.Context) (*SyncTask, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SyncTaskMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SyncTaskMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SyncTask entities.
+func (m *SyncTaskMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SyncTaskMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SyncTaskMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SyncTask.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SyncTaskMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SyncTaskMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *SyncTaskMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *SyncTaskMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SyncTaskMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SyncTaskMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SyncTaskMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *SyncTaskMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *SyncTaskMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SyncTaskMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SyncTaskMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SyncTaskMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *SyncTaskMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *SyncTaskMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SyncTaskMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetChainType sets the "chain_type" field.
+func (m *SyncTaskMutation) SetChainType(s string) {
+	m.chain_type = &s
+}
+
+// ChainType returns the value of the "chain_type" field in the mutation.
+func (m *SyncTaskMutation) ChainType() (r string, exists bool) {
+	v := m.chain_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChainType returns the old "chain_type" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldChainType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChainType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChainType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChainType: %w", err)
+	}
+	return oldValue.ChainType, nil
+}
+
+// ClearChainType clears the value of the "chain_type" field.
+func (m *SyncTaskMutation) ClearChainType() {
+	m.chain_type = nil
+	m.clearedFields[synctask.FieldChainType] = struct{}{}
+}
+
+// ChainTypeCleared returns if the "chain_type" field was cleared in this mutation.
+func (m *SyncTaskMutation) ChainTypeCleared() bool {
+	_, ok := m.clearedFields[synctask.FieldChainType]
+	return ok
+}
+
+// ResetChainType resets all changes to the "chain_type" field.
+func (m *SyncTaskMutation) ResetChainType() {
+	m.chain_type = nil
+	delete(m.clearedFields, synctask.FieldChainType)
+}
+
+// SetChainID sets the "chain_id" field.
+func (m *SyncTaskMutation) SetChainID(i int32) {
+	m.chain_id = &i
+	m.addchain_id = nil
+}
+
+// ChainID returns the value of the "chain_id" field in the mutation.
+func (m *SyncTaskMutation) ChainID() (r int32, exists bool) {
+	v := m.chain_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChainID returns the old "chain_id" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldChainID(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChainID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChainID: %w", err)
+	}
+	return oldValue.ChainID, nil
+}
+
+// AddChainID adds i to the "chain_id" field.
+func (m *SyncTaskMutation) AddChainID(i int32) {
+	if m.addchain_id != nil {
+		*m.addchain_id += i
+	} else {
+		m.addchain_id = &i
+	}
+}
+
+// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
+func (m *SyncTaskMutation) AddedChainID() (r int32, exists bool) {
+	v := m.addchain_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetChainID resets all changes to the "chain_id" field.
+func (m *SyncTaskMutation) ResetChainID() {
+	m.chain_id = nil
+	m.addchain_id = nil
+}
+
+// SetStart sets the "start" field.
+func (m *SyncTaskMutation) SetStart(u uint64) {
+	m.start = &u
+	m.addstart = nil
+}
+
+// Start returns the value of the "start" field in the mutation.
+func (m *SyncTaskMutation) Start() (r uint64, exists bool) {
+	v := m.start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStart returns the old "start" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldStart(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStart is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStart: %w", err)
+	}
+	return oldValue.Start, nil
+}
+
+// AddStart adds u to the "start" field.
+func (m *SyncTaskMutation) AddStart(u int64) {
+	if m.addstart != nil {
+		*m.addstart += u
+	} else {
+		m.addstart = &u
+	}
+}
+
+// AddedStart returns the value that was added to the "start" field in this mutation.
+func (m *SyncTaskMutation) AddedStart() (r int64, exists bool) {
+	v := m.addstart
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStart resets all changes to the "start" field.
+func (m *SyncTaskMutation) ResetStart() {
+	m.start = nil
+	m.addstart = nil
+}
+
+// SetEnd sets the "end" field.
+func (m *SyncTaskMutation) SetEnd(u uint64) {
+	m.end = &u
+	m.addend = nil
+}
+
+// End returns the value of the "end" field in the mutation.
+func (m *SyncTaskMutation) End() (r uint64, exists bool) {
+	v := m.end
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnd returns the old "end" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldEnd(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnd is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnd requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnd: %w", err)
+	}
+	return oldValue.End, nil
+}
+
+// AddEnd adds u to the "end" field.
+func (m *SyncTaskMutation) AddEnd(u int64) {
+	if m.addend != nil {
+		*m.addend += u
+	} else {
+		m.addend = &u
+	}
+}
+
+// AddedEnd returns the value that was added to the "end" field in this mutation.
+func (m *SyncTaskMutation) AddedEnd() (r int64, exists bool) {
+	v := m.addend
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetEnd resets all changes to the "end" field.
+func (m *SyncTaskMutation) ResetEnd() {
+	m.end = nil
+	m.addend = nil
+}
+
+// SetCurrent sets the "current" field.
+func (m *SyncTaskMutation) SetCurrent(u uint64) {
+	m.current = &u
+	m.addcurrent = nil
+}
+
+// Current returns the value of the "current" field in the mutation.
+func (m *SyncTaskMutation) Current() (r uint64, exists bool) {
+	v := m.current
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrent returns the old "current" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldCurrent(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrent: %w", err)
+	}
+	return oldValue.Current, nil
+}
+
+// AddCurrent adds u to the "current" field.
+func (m *SyncTaskMutation) AddCurrent(u int64) {
+	if m.addcurrent != nil {
+		*m.addcurrent += u
+	} else {
+		m.addcurrent = &u
+	}
+}
+
+// AddedCurrent returns the value that was added to the "current" field in this mutation.
+func (m *SyncTaskMutation) AddedCurrent() (r int64, exists bool) {
+	v := m.addcurrent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrent resets all changes to the "current" field.
+func (m *SyncTaskMutation) ResetCurrent() {
+	m.current = nil
+	m.addcurrent = nil
+}
+
+// SetTopic sets the "topic" field.
+func (m *SyncTaskMutation) SetTopic(s string) {
+	m.topic = &s
+}
+
+// Topic returns the value of the "topic" field in the mutation.
+func (m *SyncTaskMutation) Topic() (r string, exists bool) {
+	v := m.topic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTopic returns the old "topic" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldTopic(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTopic is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTopic requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTopic: %w", err)
+	}
+	return oldValue.Topic, nil
+}
+
+// ResetTopic resets all changes to the "topic" field.
+func (m *SyncTaskMutation) ResetTopic() {
+	m.topic = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *SyncTaskMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *SyncTaskMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *SyncTaskMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[synctask.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *SyncTaskMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[synctask.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *SyncTaskMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, synctask.FieldDescription)
+}
+
+// SetSyncState sets the "sync_state" field.
+func (m *SyncTaskMutation) SetSyncState(s string) {
+	m.sync_state = &s
+}
+
+// SyncState returns the value of the "sync_state" field in the mutation.
+func (m *SyncTaskMutation) SyncState() (r string, exists bool) {
+	v := m.sync_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSyncState returns the old "sync_state" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldSyncState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSyncState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSyncState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSyncState: %w", err)
+	}
+	return oldValue.SyncState, nil
+}
+
+// ClearSyncState clears the value of the "sync_state" field.
+func (m *SyncTaskMutation) ClearSyncState() {
+	m.sync_state = nil
+	m.clearedFields[synctask.FieldSyncState] = struct{}{}
+}
+
+// SyncStateCleared returns if the "sync_state" field was cleared in this mutation.
+func (m *SyncTaskMutation) SyncStateCleared() bool {
+	_, ok := m.clearedFields[synctask.FieldSyncState]
+	return ok
+}
+
+// ResetSyncState resets all changes to the "sync_state" field.
+func (m *SyncTaskMutation) ResetSyncState() {
+	m.sync_state = nil
+	delete(m.clearedFields, synctask.FieldSyncState)
+}
+
+// SetRemark sets the "remark" field.
+func (m *SyncTaskMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *SyncTaskMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the SyncTask entity.
+// If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SyncTaskMutation) OldRemark(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *SyncTaskMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[synctask.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *SyncTaskMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[synctask.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *SyncTaskMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, synctask.FieldRemark)
+}
+
+// Where appends a list predicates to the SyncTaskMutation builder.
+func (m *SyncTaskMutation) Where(ps ...predicate.SyncTask) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *SyncTaskMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (SyncTask).
+func (m *SyncTaskMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SyncTaskMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, synctask.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, synctask.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, synctask.FieldDeletedAt)
+	}
+	if m.chain_type != nil {
+		fields = append(fields, synctask.FieldChainType)
+	}
+	if m.chain_id != nil {
+		fields = append(fields, synctask.FieldChainID)
+	}
+	if m.start != nil {
+		fields = append(fields, synctask.FieldStart)
+	}
+	if m.end != nil {
+		fields = append(fields, synctask.FieldEnd)
+	}
+	if m.current != nil {
+		fields = append(fields, synctask.FieldCurrent)
+	}
+	if m.topic != nil {
+		fields = append(fields, synctask.FieldTopic)
+	}
+	if m.description != nil {
+		fields = append(fields, synctask.FieldDescription)
+	}
+	if m.sync_state != nil {
+		fields = append(fields, synctask.FieldSyncState)
+	}
+	if m.remark != nil {
+		fields = append(fields, synctask.FieldRemark)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SyncTaskMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case synctask.FieldCreatedAt:
+		return m.CreatedAt()
+	case synctask.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case synctask.FieldDeletedAt:
+		return m.DeletedAt()
+	case synctask.FieldChainType:
+		return m.ChainType()
+	case synctask.FieldChainID:
+		return m.ChainID()
+	case synctask.FieldStart:
+		return m.Start()
+	case synctask.FieldEnd:
+		return m.End()
+	case synctask.FieldCurrent:
+		return m.Current()
+	case synctask.FieldTopic:
+		return m.Topic()
+	case synctask.FieldDescription:
+		return m.Description()
+	case synctask.FieldSyncState:
+		return m.SyncState()
+	case synctask.FieldRemark:
+		return m.Remark()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SyncTaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case synctask.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case synctask.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case synctask.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case synctask.FieldChainType:
+		return m.OldChainType(ctx)
+	case synctask.FieldChainID:
+		return m.OldChainID(ctx)
+	case synctask.FieldStart:
+		return m.OldStart(ctx)
+	case synctask.FieldEnd:
+		return m.OldEnd(ctx)
+	case synctask.FieldCurrent:
+		return m.OldCurrent(ctx)
+	case synctask.FieldTopic:
+		return m.OldTopic(ctx)
+	case synctask.FieldDescription:
+		return m.OldDescription(ctx)
+	case synctask.FieldSyncState:
+		return m.OldSyncState(ctx)
+	case synctask.FieldRemark:
+		return m.OldRemark(ctx)
+	}
+	return nil, fmt.Errorf("unknown SyncTask field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SyncTaskMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case synctask.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case synctask.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case synctask.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case synctask.FieldChainType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChainType(v)
+		return nil
+	case synctask.FieldChainID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChainID(v)
+		return nil
+	case synctask.FieldStart:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStart(v)
+		return nil
+	case synctask.FieldEnd:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnd(v)
+		return nil
+	case synctask.FieldCurrent:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrent(v)
+		return nil
+	case synctask.FieldTopic:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTopic(v)
+		return nil
+	case synctask.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case synctask.FieldSyncState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSyncState(v)
+		return nil
+	case synctask.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SyncTask field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SyncTaskMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, synctask.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, synctask.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, synctask.FieldDeletedAt)
+	}
+	if m.addchain_id != nil {
+		fields = append(fields, synctask.FieldChainID)
+	}
+	if m.addstart != nil {
+		fields = append(fields, synctask.FieldStart)
+	}
+	if m.addend != nil {
+		fields = append(fields, synctask.FieldEnd)
+	}
+	if m.addcurrent != nil {
+		fields = append(fields, synctask.FieldCurrent)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SyncTaskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case synctask.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case synctask.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case synctask.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	case synctask.FieldChainID:
+		return m.AddedChainID()
+	case synctask.FieldStart:
+		return m.AddedStart()
+	case synctask.FieldEnd:
+		return m.AddedEnd()
+	case synctask.FieldCurrent:
+		return m.AddedCurrent()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SyncTaskMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case synctask.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case synctask.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case synctask.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	case synctask.FieldChainID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddChainID(v)
+		return nil
+	case synctask.FieldStart:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStart(v)
+		return nil
+	case synctask.FieldEnd:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEnd(v)
+		return nil
+	case synctask.FieldCurrent:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SyncTask numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SyncTaskMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(synctask.FieldChainType) {
+		fields = append(fields, synctask.FieldChainType)
+	}
+	if m.FieldCleared(synctask.FieldDescription) {
+		fields = append(fields, synctask.FieldDescription)
+	}
+	if m.FieldCleared(synctask.FieldSyncState) {
+		fields = append(fields, synctask.FieldSyncState)
+	}
+	if m.FieldCleared(synctask.FieldRemark) {
+		fields = append(fields, synctask.FieldRemark)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SyncTaskMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SyncTaskMutation) ClearField(name string) error {
+	switch name {
+	case synctask.FieldChainType:
+		m.ClearChainType()
+		return nil
+	case synctask.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case synctask.FieldSyncState:
+		m.ClearSyncState()
+		return nil
+	case synctask.FieldRemark:
+		m.ClearRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown SyncTask nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SyncTaskMutation) ResetField(name string) error {
+	switch name {
+	case synctask.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case synctask.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case synctask.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case synctask.FieldChainType:
+		m.ResetChainType()
+		return nil
+	case synctask.FieldChainID:
+		m.ResetChainID()
+		return nil
+	case synctask.FieldStart:
+		m.ResetStart()
+		return nil
+	case synctask.FieldEnd:
+		m.ResetEnd()
+		return nil
+	case synctask.FieldCurrent:
+		m.ResetCurrent()
+		return nil
+	case synctask.FieldTopic:
+		m.ResetTopic()
+		return nil
+	case synctask.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case synctask.FieldSyncState:
+		m.ResetSyncState()
+		return nil
+	case synctask.FieldRemark:
+		m.ResetRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown SyncTask field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SyncTaskMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SyncTaskMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SyncTaskMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SyncTaskMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SyncTaskMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SyncTaskMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SyncTaskMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SyncTask unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SyncTaskMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SyncTask edge %s", name)
 }
 
 // TokenMutation represents an operation that mutates the Token nodes in the graph.

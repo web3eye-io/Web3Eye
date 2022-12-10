@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: development-box
+  # namespace: kube-system
+spec:
+  serviceName: "development-box"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: development-box
+  template:
+    metadata:
+      labels:
+        app: development-box
+    spec:
+      containers:
+        - name: development-box
+          image: coastlinesss/development-box:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 8
+              # memory: 30Mi
+            requests:
+              cpu: 4
+              # memory: 20Mi
+          env:
+            - name: PATH
+              value: "/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin"
+            - name: GOPROXY
+              value: "https://goproxy.cn,direct"
+          command: ["sleep", "100000000000000"]
+          volumeMounts:
+            - name: work
+              mountPath: /workspace
+            - name: devdir
+              mountPath: /root/desktop
+      volumes:
+        - name: work
+          persistentVolumeClaim:
+            claimName: development-pvc
+        - name: devdir
+          persistentVolumeClaim:
+            claimName: devbox-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: development-box
+  # namespace: kube-system
+spec:
+  type: NodePort
+  ports:
+    - port: 22
+      targetPort: 22
+      nodePort: 30022
+      name: ssh
+      protocol: TCP
+  selector:
+    app: development-box

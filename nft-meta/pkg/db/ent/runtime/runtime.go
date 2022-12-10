@@ -6,9 +6,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/schema"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
 
@@ -20,38 +20,6 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	blocknumberMixin := schema.BlockNumber{}.Mixin()
-	blocknumber.Policy = privacy.NewPolicies(blocknumberMixin[0], schema.BlockNumber{})
-	blocknumber.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := blocknumber.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	blocknumberMixinFields0 := blocknumberMixin[0].Fields()
-	_ = blocknumberMixinFields0
-	blocknumberFields := schema.BlockNumber{}.Fields()
-	_ = blocknumberFields
-	// blocknumberDescCreatedAt is the schema descriptor for created_at field.
-	blocknumberDescCreatedAt := blocknumberMixinFields0[0].Descriptor()
-	// blocknumber.DefaultCreatedAt holds the default value on creation for the created_at field.
-	blocknumber.DefaultCreatedAt = blocknumberDescCreatedAt.Default.(func() uint32)
-	// blocknumberDescUpdatedAt is the schema descriptor for updated_at field.
-	blocknumberDescUpdatedAt := blocknumberMixinFields0[1].Descriptor()
-	// blocknumber.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	blocknumber.DefaultUpdatedAt = blocknumberDescUpdatedAt.Default.(func() uint32)
-	// blocknumber.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	blocknumber.UpdateDefaultUpdatedAt = blocknumberDescUpdatedAt.UpdateDefault.(func() uint32)
-	// blocknumberDescDeletedAt is the schema descriptor for deleted_at field.
-	blocknumberDescDeletedAt := blocknumberMixinFields0[2].Descriptor()
-	// blocknumber.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	blocknumber.DefaultDeletedAt = blocknumberDescDeletedAt.Default.(func() uint32)
-	// blocknumberDescID is the schema descriptor for id field.
-	blocknumberDescID := blocknumberFields[0].Descriptor()
-	// blocknumber.DefaultID holds the default value on creation for the id field.
-	blocknumber.DefaultID = blocknumberDescID.Default.(func() uuid.UUID)
 	contractMixin := schema.Contract{}.Mixin()
 	contract.Policy = privacy.NewPolicies(contractMixin[0], schema.Contract{})
 	contract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -84,6 +52,46 @@ func init() {
 	contractDescID := contractFields[0].Descriptor()
 	// contract.DefaultID holds the default value on creation for the id field.
 	contract.DefaultID = contractDescID.Default.(func() uuid.UUID)
+	synctaskMixin := schema.SyncTask{}.Mixin()
+	synctask.Policy = privacy.NewPolicies(synctaskMixin[0], schema.SyncTask{})
+	synctask.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := synctask.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	synctaskMixinFields0 := synctaskMixin[0].Fields()
+	_ = synctaskMixinFields0
+	synctaskFields := schema.SyncTask{}.Fields()
+	_ = synctaskFields
+	// synctaskDescCreatedAt is the schema descriptor for created_at field.
+	synctaskDescCreatedAt := synctaskMixinFields0[0].Descriptor()
+	// synctask.DefaultCreatedAt holds the default value on creation for the created_at field.
+	synctask.DefaultCreatedAt = synctaskDescCreatedAt.Default.(func() uint32)
+	// synctaskDescUpdatedAt is the schema descriptor for updated_at field.
+	synctaskDescUpdatedAt := synctaskMixinFields0[1].Descriptor()
+	// synctask.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	synctask.DefaultUpdatedAt = synctaskDescUpdatedAt.Default.(func() uint32)
+	// synctask.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	synctask.UpdateDefaultUpdatedAt = synctaskDescUpdatedAt.UpdateDefault.(func() uint32)
+	// synctaskDescDeletedAt is the schema descriptor for deleted_at field.
+	synctaskDescDeletedAt := synctaskMixinFields0[2].Descriptor()
+	// synctask.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	synctask.DefaultDeletedAt = synctaskDescDeletedAt.Default.(func() uint32)
+	// synctaskDescChainType is the schema descriptor for chain_type field.
+	synctaskDescChainType := synctaskFields[1].Descriptor()
+	// synctask.DefaultChainType holds the default value on creation for the chain_type field.
+	synctask.DefaultChainType = synctaskDescChainType.Default.(string)
+	// synctaskDescSyncState is the schema descriptor for sync_state field.
+	synctaskDescSyncState := synctaskFields[8].Descriptor()
+	// synctask.DefaultSyncState holds the default value on creation for the sync_state field.
+	synctask.DefaultSyncState = synctaskDescSyncState.Default.(string)
+	// synctaskDescID is the schema descriptor for id field.
+	synctaskDescID := synctaskFields[0].Descriptor()
+	// synctask.DefaultID holds the default value on creation for the id field.
+	synctask.DefaultID = synctaskDescID.Default.(func() uuid.UUID)
 	tokenMixin := schema.Token{}.Mixin()
 	token.Policy = privacy.NewPolicies(tokenMixin[0], schema.Token{})
 	token.Hooks[0] = func(next ent.Mutator) ent.Mutator {

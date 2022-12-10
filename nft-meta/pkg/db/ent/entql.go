@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
 
@@ -18,28 +18,6 @@ import (
 var schemaGraph = func() *sqlgraph.Schema {
 	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 4)}
 	graph.Nodes[0] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   blocknumber.Table,
-			Columns: blocknumber.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: blocknumber.FieldID,
-			},
-		},
-		Type: "BlockNumber",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			blocknumber.FieldCreatedAt:   {Type: field.TypeUint32, Column: blocknumber.FieldCreatedAt},
-			blocknumber.FieldUpdatedAt:   {Type: field.TypeUint32, Column: blocknumber.FieldUpdatedAt},
-			blocknumber.FieldDeletedAt:   {Type: field.TypeUint32, Column: blocknumber.FieldDeletedAt},
-			blocknumber.FieldChainType:   {Type: field.TypeString, Column: blocknumber.FieldChainType},
-			blocknumber.FieldChainID:     {Type: field.TypeInt32, Column: blocknumber.FieldChainID},
-			blocknumber.FieldIdentifier:  {Type: field.TypeString, Column: blocknumber.FieldIdentifier},
-			blocknumber.FieldCurrentNum:  {Type: field.TypeUint64, Column: blocknumber.FieldCurrentNum},
-			blocknumber.FieldTopic:       {Type: field.TypeString, Column: blocknumber.FieldTopic},
-			blocknumber.FieldDescription: {Type: field.TypeString, Column: blocknumber.FieldDescription},
-		},
-	}
-	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   contract.Table,
 			Columns: contract.Columns,
@@ -67,6 +45,31 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldBannerURL:   {Type: field.TypeString, Column: contract.FieldBannerURL},
 			contract.FieldDescription: {Type: field.TypeString, Column: contract.FieldDescription},
 			contract.FieldRemark:      {Type: field.TypeString, Column: contract.FieldRemark},
+		},
+	}
+	graph.Nodes[1] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   synctask.Table,
+			Columns: synctask.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: synctask.FieldID,
+			},
+		},
+		Type: "SyncTask",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			synctask.FieldCreatedAt:   {Type: field.TypeUint32, Column: synctask.FieldCreatedAt},
+			synctask.FieldUpdatedAt:   {Type: field.TypeUint32, Column: synctask.FieldUpdatedAt},
+			synctask.FieldDeletedAt:   {Type: field.TypeUint32, Column: synctask.FieldDeletedAt},
+			synctask.FieldChainType:   {Type: field.TypeString, Column: synctask.FieldChainType},
+			synctask.FieldChainID:     {Type: field.TypeInt32, Column: synctask.FieldChainID},
+			synctask.FieldStart:       {Type: field.TypeUint64, Column: synctask.FieldStart},
+			synctask.FieldEnd:         {Type: field.TypeUint64, Column: synctask.FieldEnd},
+			synctask.FieldCurrent:     {Type: field.TypeUint64, Column: synctask.FieldCurrent},
+			synctask.FieldTopic:       {Type: field.TypeString, Column: synctask.FieldTopic},
+			synctask.FieldDescription: {Type: field.TypeString, Column: synctask.FieldDescription},
+			synctask.FieldSyncState:   {Type: field.TypeString, Column: synctask.FieldSyncState},
+			synctask.FieldRemark:      {Type: field.TypeString, Column: synctask.FieldRemark},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -139,91 +142,6 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (bnq *BlockNumberQuery) addPredicate(pred func(s *sql.Selector)) {
-	bnq.predicates = append(bnq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the BlockNumberQuery builder.
-func (bnq *BlockNumberQuery) Filter() *BlockNumberFilter {
-	return &BlockNumberFilter{config: bnq.config, predicateAdder: bnq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *BlockNumberMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the BlockNumberMutation builder.
-func (m *BlockNumberMutation) Filter() *BlockNumberFilter {
-	return &BlockNumberFilter{config: m.config, predicateAdder: m}
-}
-
-// BlockNumberFilter provides a generic filtering capability at runtime for BlockNumberQuery.
-type BlockNumberFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *BlockNumberFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *BlockNumberFilter) WhereID(p entql.ValueP) {
-	f.Where(p.Field(blocknumber.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *BlockNumberFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(blocknumber.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *BlockNumberFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(blocknumber.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *BlockNumberFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(blocknumber.FieldDeletedAt))
-}
-
-// WhereChainType applies the entql string predicate on the chain_type field.
-func (f *BlockNumberFilter) WhereChainType(p entql.StringP) {
-	f.Where(p.Field(blocknumber.FieldChainType))
-}
-
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *BlockNumberFilter) WhereChainID(p entql.Int32P) {
-	f.Where(p.Field(blocknumber.FieldChainID))
-}
-
-// WhereIdentifier applies the entql string predicate on the identifier field.
-func (f *BlockNumberFilter) WhereIdentifier(p entql.StringP) {
-	f.Where(p.Field(blocknumber.FieldIdentifier))
-}
-
-// WhereCurrentNum applies the entql uint64 predicate on the current_num field.
-func (f *BlockNumberFilter) WhereCurrentNum(p entql.Uint64P) {
-	f.Where(p.Field(blocknumber.FieldCurrentNum))
-}
-
-// WhereTopic applies the entql string predicate on the topic field.
-func (f *BlockNumberFilter) WhereTopic(p entql.StringP) {
-	f.Where(p.Field(blocknumber.FieldTopic))
-}
-
-// WhereDescription applies the entql string predicate on the description field.
-func (f *BlockNumberFilter) WhereDescription(p entql.StringP) {
-	f.Where(p.Field(blocknumber.FieldDescription))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (cq *ContractQuery) addPredicate(pred func(s *sql.Selector)) {
 	cq.predicates = append(cq.predicates, pred)
 }
@@ -252,7 +170,7 @@ type ContractFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *ContractFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -346,6 +264,106 @@ func (f *ContractFilter) WhereDescription(p entql.StringP) {
 // WhereRemark applies the entql string predicate on the remark field.
 func (f *ContractFilter) WhereRemark(p entql.StringP) {
 	f.Where(p.Field(contract.FieldRemark))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (stq *SyncTaskQuery) addPredicate(pred func(s *sql.Selector)) {
+	stq.predicates = append(stq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SyncTaskQuery builder.
+func (stq *SyncTaskQuery) Filter() *SyncTaskFilter {
+	return &SyncTaskFilter{config: stq.config, predicateAdder: stq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SyncTaskMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SyncTaskMutation builder.
+func (m *SyncTaskMutation) Filter() *SyncTaskFilter {
+	return &SyncTaskFilter{config: m.config, predicateAdder: m}
+}
+
+// SyncTaskFilter provides a generic filtering capability at runtime for SyncTaskQuery.
+type SyncTaskFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SyncTaskFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *SyncTaskFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(synctask.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *SyncTaskFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(synctask.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *SyncTaskFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(synctask.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *SyncTaskFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(synctask.FieldDeletedAt))
+}
+
+// WhereChainType applies the entql string predicate on the chain_type field.
+func (f *SyncTaskFilter) WhereChainType(p entql.StringP) {
+	f.Where(p.Field(synctask.FieldChainType))
+}
+
+// WhereChainID applies the entql int32 predicate on the chain_id field.
+func (f *SyncTaskFilter) WhereChainID(p entql.Int32P) {
+	f.Where(p.Field(synctask.FieldChainID))
+}
+
+// WhereStart applies the entql uint64 predicate on the start field.
+func (f *SyncTaskFilter) WhereStart(p entql.Uint64P) {
+	f.Where(p.Field(synctask.FieldStart))
+}
+
+// WhereEnd applies the entql uint64 predicate on the end field.
+func (f *SyncTaskFilter) WhereEnd(p entql.Uint64P) {
+	f.Where(p.Field(synctask.FieldEnd))
+}
+
+// WhereCurrent applies the entql uint64 predicate on the current field.
+func (f *SyncTaskFilter) WhereCurrent(p entql.Uint64P) {
+	f.Where(p.Field(synctask.FieldCurrent))
+}
+
+// WhereTopic applies the entql string predicate on the topic field.
+func (f *SyncTaskFilter) WhereTopic(p entql.StringP) {
+	f.Where(p.Field(synctask.FieldTopic))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *SyncTaskFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(synctask.FieldDescription))
+}
+
+// WhereSyncState applies the entql string predicate on the sync_state field.
+func (f *SyncTaskFilter) WhereSyncState(p entql.StringP) {
+	f.Where(p.Field(synctask.FieldSyncState))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *SyncTaskFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(synctask.FieldRemark))
 }
 
 // addPredicate implements the predicateAdder interface.

@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/web3eye-io/cyber-tracer/config"
 	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/token"
 
 	"github.com/google/uuid"
@@ -18,7 +19,7 @@ import (
 )
 
 var (
-	ICServer = "http://172.16.31.31:8080"
+	ICServer = config.GetConfig().ImageConverter.Address
 )
 
 type Img2VectorResp struct {

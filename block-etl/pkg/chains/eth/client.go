@@ -7,8 +7,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/endpoints"
+	"github.com/web3eye-io/cyber-tracer/common/utils"
 	"github.com/web3eye-io/cyber-tracer/config"
-	"github.com/web3eye-io/cyber-tracer/utils"
 )
 
 const (

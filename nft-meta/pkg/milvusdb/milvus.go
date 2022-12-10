@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
+	"github.com/web3eye-io/cyber-tracer/config"
 )
 
 const (
-	milvusAddr     = `localhost:19530`
 	connectTimeout = time.Second * 5
 	contextCancel  = "context canceled"
 )
@@ -30,7 +30,7 @@ func Client(ctx context.Context) (c client.Client, err error) {
 	timeoutCtx, cancel := context.WithTimeout(ctx, connectTimeout)
 	go func() {
 		defer cancel()
-		cli, err = client.NewGrpcClient(ctx, milvusAddr)
+		cli, err = client.NewGrpcClient(ctx, config.GetConfig().Milvus.Address)
 	}()
 
 	<-timeoutCtx.Done()

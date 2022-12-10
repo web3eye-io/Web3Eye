@@ -6,11 +6,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// BlockNumber is the predicate function for blocknumber builders.
-type BlockNumber func(*sql.Selector)
-
 // Contract is the predicate function for contract builders.
 type Contract func(*sql.Selector)
+
+// SyncTask is the predicate function for synctask builders.
+type SyncTask func(*sql.Selector)
 
 // Token is the predicate function for token builders.
 type Token func(*sql.Selector)

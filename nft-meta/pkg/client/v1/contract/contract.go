@@ -3,9 +3,11 @@ package contract
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+	"github.com/web3eye-io/cyber-tracer/config"
 	npool "github.com/web3eye-io/cyber-tracer/message/cybertracer/nftmeta/v1/contract"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -18,8 +20,11 @@ type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
 func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	// TODO:should connect by config
-	conn, err := grpc.Dial("127.0.0.1:50491", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%v:%v",
+			config.GetConfig().NFTMeta.IP,
+			config.GetConfig().NFTMeta.GrpcPort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

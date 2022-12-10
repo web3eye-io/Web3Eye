@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/blocknumber"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
 )
@@ -34,10 +34,10 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
-		blocknumber.Table: blocknumber.ValidColumn,
-		contract.Table:    contract.ValidColumn,
-		token.Table:       token.ValidColumn,
-		transfer.Table:    transfer.ValidColumn,
+		contract.Table: contract.ValidColumn,
+		synctask.Table: synctask.ValidColumn,
+		token.Table:    token.ValidColumn,
+		transfer.Table: transfer.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {
