@@ -20,6 +20,10 @@ const (
 	DefaultPartitionNum = 6
 )
 
+var (
+	topicMap = make(map[string]*CTProducer)
+)
+
 func KafkaConfig() kafka.ConfigMap {
 	conf := make(map[string]kafka.ConfigValue)
 	conf["bootstrap.servers"] = strings.TrimSpace(config.GetConfig().Kafka.BootstrapServers)
@@ -31,8 +35,12 @@ type CTProducer struct {
 	Producer *kafka.Producer
 }
 
-// TODO: auto create topic
+// TODO: eventHandle setting may be reasonable
 func NewCTProducer(topic string, eventHandle func(kafka.Event)) (*CTProducer, error) {
+	if ctP := topicMap[topic]; ctP != nil {
+		return ctP, nil
+	}
+
 	conf := KafkaConfig()
 	p, err := kafka.NewProducer(&conf)
 
@@ -49,7 +57,10 @@ func NewCTProducer(topic string, eventHandle func(kafka.Event)) (*CTProducer, er
 		}
 	}()
 
-	return &CTProducer{Topic: topic, Producer: p}, nil
+	ctP := &CTProducer{Topic: topic, Producer: p}
+	topicMap[topic] = ctP
+
+	return ctP, nil
 }
 
 func (ctP *CTProducer) Produce(key, data []byte) error {

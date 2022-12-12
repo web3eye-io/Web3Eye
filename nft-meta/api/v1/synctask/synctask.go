@@ -16,8 +16,13 @@ import (
 	"github.com/web3eye-io/cyber-tracer/proto/cybertracer"
 	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
+	cttype "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 
 	"github.com/google/uuid"
+)
+
+const (
+	MaxPutTaskNumOnce = 500
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
@@ -80,6 +85,11 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	if err != nil {
 		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
+	
+	if info.End<=info.Current{
+		info.SyncState=
+	}
+
 	return &npool.GetSyncTaskResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
