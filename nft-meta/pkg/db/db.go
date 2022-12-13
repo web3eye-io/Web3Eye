@@ -143,6 +143,7 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 	if err != nil {
 		return err
 	}
+	defer cli.Close()
 
 	tx, err := cli.Tx(ctx)
 	if err != nil {
@@ -177,6 +178,7 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 	if err != nil {
 		return fmt.Errorf("fail get db client: %v", err)
 	}
+	defer cli.Close()
 
 	if err := fn(ctx, cli); err != nil {
 		return err

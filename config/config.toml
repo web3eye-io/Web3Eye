@@ -1,19 +1,19 @@
 version="0.0.1"
 
 [nft-meta]
-ip="nft-meta"
+ip="127.0.0.1"
 http-port=30100
 grpc-port=30101
-log-dir="/var/log"
+log-file="/var/log/nftmeta.log"
 
 [block-etl]
-ip="nft-meta"
+ip="block-etl"
 http-port=30110
 grpc-port=30111
-log-dir="/var/log"
+log-file="/var/log/blocketl.log"
 
 [image-converter]
-address="http://block-etl:8080"
+address="http://image-converter:8080"
 
 [mysql]
 ip="mysql"
@@ -23,7 +23,7 @@ password="123123123"
 database="nft_meta"
 
 [redis]
-address="redis-cluster:6379"
+address="redis-master:6379"
 password="q123"
 
 [milvus]

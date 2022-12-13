@@ -30,14 +30,14 @@ type NFTMeta struct {
 	IP       string `toml:"ip" env:"ip"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogDir   string `toml:"log-dir" env:"log_dir"`
+	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type BlockETL struct {
 	IP       string `toml:"ip" env:"ip"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogDir   string `toml:"log-dir" env:"log_dir"`
+	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type IamgeConverter struct {
@@ -77,7 +77,6 @@ var config = &Config{
 	NFTMeta: NFTMeta{
 		HTTPPort: 30100,
 		GrpcPort: 30101,
-		LogDir:   "/var/log",
 	},
 }
 
@@ -94,6 +93,7 @@ func DetectEnv(co *Config) (err error) {
 	return err
 }
 
+// read environment var
 func (e *envMatcher) detectEnv(t reflect.Type, preffix, _preffix string) {
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()

@@ -25,7 +25,7 @@ func (SyncTask) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
 			Unique(),
-		field.String("chain_type").Optional().Default(npool.ChainType_Unkown.String()),
+		field.String("chain_type").Optional().Default(npool.ChainType_Unknown.String()),
 		field.Int32("chain_id"),
 		field.Uint64("start"),
 		field.Uint64("end"),

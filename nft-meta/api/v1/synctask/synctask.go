@@ -6,41 +6,39 @@ import (
 	"fmt"
 
 	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
+	"github.com/web3eye-io/cyber-tracer/common/utils"
 	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/synctask"
+	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/cyber-tracer/proto/cybertracer"
-	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
-	cttype "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
 
 	"github.com/google/uuid"
 )
 
 const (
 	MaxPutTaskNumOnce = 500
+	ReportInterval    = 100
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
 	var err error
 	_info := in.GetInfo()
-	if *_info.Start >= *_info.End {
-		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "start >= end")
+	if _info == nil {
+		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "info is nil")
+	}
+
+	if _info.Start == nil || _info.End == nil || *_info.Start >= *_info.End {
+		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "start >= end or set invalid")
 	}
 
 	if _info.ChainType == nil {
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "chaintype not set")
-	}
-
-	if _info.SyncState != nil &&
-		*_info.SyncState != cttype.SyncState_Start &&
-		*_info.SyncState != cttype.SyncState_Default &&
-		*_info.SyncState != cttype.SyncState_Failed {
-		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "state must be in [start default failed]")
 	}
 
 	if _info.SyncState == nil {
@@ -60,6 +58,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 	_info.Topic = &topic
 
 	if err := ctkafka.CreateTopic(ctx, *_info.Topic); err != nil {
+		logger.Sugar().Errorw("CreateSyncTask", "error", err)
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
@@ -78,16 +77,61 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	conds := npool.Conds{
 		Topic: &cybertracer.StringVal{
 			Value: in.Topic,
-			Op:    "EQ",
+			Op:    "eq",
 		},
 	}
+
 	info, err := crud.RowOnly(ctx, &conds)
 	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
 		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	
-	if info.End<=info.Current{
-		info.SyncState=
+
+	if info.SyncState != cttype.SyncState_Start.String() {
+		return &npool.GetSyncTaskResponse{
+			Info: converter.Ent2Grpc(info),
+		}, nil
+	}
+
+	if info.Current >= info.End {
+		info.SyncState = cttype.SyncState_Finsh.String()
+	}
+	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	lastNum := info.Current
+	info.Current += MaxPutTaskNumOnce
+	if info.Current > info.End {
+		info.Current = info.End
+	}
+
+	p, err := ctkafka.NewCTProducer(in.Topic)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	for ; lastNum < info.Current; lastNum++ {
+		b, err := utils.Uint642Bytes(lastNum)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		err = p.Produce(b, b)
+		if err != nil {
+			info.Current = lastNum
+			logger.Sugar().Error(err)
+			break
+		}
+	}
+
+	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
+
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	return &npool.GetSyncTaskResponse{

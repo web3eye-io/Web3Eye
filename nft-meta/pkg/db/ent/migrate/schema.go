@@ -48,7 +48,7 @@ var (
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "chain_type", Type: field.TypeString, Nullable: true, Default: "Unkown"},
+		{Name: "chain_type", Type: field.TypeString, Nullable: true, Default: "Unknown"},
 		{Name: "chain_id", Type: field.TypeInt32},
 		{Name: "start", Type: field.TypeUint64},
 		{Name: "end", Type: field.TypeUint64},

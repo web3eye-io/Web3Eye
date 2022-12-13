@@ -26,7 +26,7 @@ func GetClient() *redis.Client {
 	}
 
 	service := config.GetConfig().Redis.Address
-	password := config.GetConfig().Redis.Address
+	password := config.GetConfig().Redis.Password
 
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     service,

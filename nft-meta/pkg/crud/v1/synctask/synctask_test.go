@@ -42,7 +42,7 @@ func prepareData() {
 	topicBase = strconv.Itoa(int(time.Now().Unix()))
 	entSyncTask = ent.SyncTask{
 		ID:          uuid.New(),
-		ChainType:   cttype.ChainType_Unkown.String(),
+		ChainType:   cttype.ChainType_Unknown.String(),
 		ChainID:     RandInt32(),
 		Start:       665,
 		End:         665,

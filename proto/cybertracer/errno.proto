@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package cybertracer.v1;
+package cybertracer;
 
 option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer";
 

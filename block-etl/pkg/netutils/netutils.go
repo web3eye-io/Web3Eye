@@ -3,14 +3,11 @@ package netutils
 import (
 	"bytes"
 	"context"
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -107,36 +104,36 @@ func getHeaders(ctx context.Context, method, url string) (http.Header, error) {
 // newHTTPClientForRPC returns an http.Client configured with default settings intended for RPC calls.
 func newHTTPClientForRPC() *http.Client {
 	// get x509 cert pool
-	pool, err := x509.SystemCertPool()
-	if err != nil {
-		panic(err)
-	}
+	// pool, err := x509.SystemCertPool()
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	// walk every file in the tls directory and add them to the cert pool
-	err = filepath.WalkDir("_deploy/root-certs", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
-		bs, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
+	// // walk every file in the tls directory and add them to the cert pool
+	// err = filepath.WalkDir("_deploy/root-certs", func(path string, d fs.DirEntry, err error) error {
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	if d.IsDir() {
+	// 		return nil
+	// 	}
+	// 	bs, err := os.ReadFile(path)
+	// 	if err != nil {
+	// 		return err
+	// 	}
 
-		// append cert to pool
-		ok := pool.AppendCertsFromPEM(bs)
-		if !ok {
-			return fmt.Errorf("failed to append cert to pool")
-		}
-		return nil
-	})
+	// 	// append cert to pool
+	// 	ok := pool.AppendCertsFromPEM(bs)
+	// 	if !ok {
+	// 		return fmt.Errorf("failed to append cert to pool")
+	// 	}
+	// 	return nil
+	// })
 
-	// TODO: process the err
-	if err != nil {
-		return nil
-	}
+	// // TODO: process the err
+	// if err != nil {
+	// 	return nil
+	// }
 
 	return &http.Client{
 		Timeout: time.Second * defaultHTTPTimeout,

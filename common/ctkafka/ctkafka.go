@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/cyber-tracer/config"
@@ -36,7 +37,7 @@ type CTProducer struct {
 }
 
 // TODO: eventHandle setting may be reasonable
-func NewCTProducer(topic string, eventHandle func(kafka.Event)) (*CTProducer, error) {
+func NewCTProducer(topic string) (*CTProducer, error) {
 	if ctP := topicMap[topic]; ctP != nil {
 		return ctP, nil
 	}
@@ -47,15 +48,6 @@ func NewCTProducer(topic string, eventHandle func(kafka.Event)) (*CTProducer, er
 	if err != nil {
 		return nil, err
 	}
-
-	// Go-routine to handle message delivery reports and
-	// possibly other event types (errors, stats, etc)
-	// TODO: it should be close by some way
-	go func() {
-		for e := range p.Events() {
-			eventHandle(e)
-		}
-	}()
 
 	ctP := &CTProducer{Topic: topic, Producer: p}
 	topicMap[topic] = ctP
@@ -92,13 +84,12 @@ func CreateTopic(ctx context.Context, topic string) error {
 }
 
 type CTConsumer struct {
-	topic     string
-	consumer  *kafka.Consumer
-	msgHandle func(*kafka.Message)
-	start     bool
+	topic    string
+	consumer *kafka.Consumer
+	start    bool
 }
 
-func NewCTConsumer(topic string, msgHandle func(*kafka.Message)) (*CTConsumer, error) {
+func NewCTConsumer(topic string) (*CTConsumer, error) {
 	conf := KafkaConfig()
 	conf["group.id"] = "default"
 	conf["enable.auto.commit"] = "true"
@@ -114,36 +105,38 @@ func NewCTConsumer(topic string, msgHandle func(*kafka.Message)) (*CTConsumer, e
 	if err != nil {
 		return nil, err
 	}
-	return &CTConsumer{topic: topic, consumer: c, start: false, msgHandle: msgHandle}, nil
+	return &CTConsumer{topic: topic, consumer: c, start: false}, nil
 }
 
-func (ctC *CTConsumer) Consume() error {
+func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(retryNum int)) error {
 	if ctC.start {
 		return fmt.Errorf("cannot start to consume,please stop current consumer")
 	}
 	ctC.start = true
-	go func() {
-		sigchan := make(chan os.Signal, 1)
-		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
-		// Process messages
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-		for ctC.start {
-			select {
-			case sig := <-sigchan:
-				fmt.Printf("Caught signal %v: terminating\n", sig)
-				ctC.start = false
-			default:
-				ev, err := ctC.consumer.ReadMessage(ReadMSGTimeout)
-				if err != nil {
-					// Errors are informational and automatically handled by the consumer
-					continue
-				}
-				ctC.msgHandle(ev)
+	retryNum := 0
+	// Process messages
+	for ctC.start {
+		select {
+		case sig := <-sigchan:
+			logger.Sugar().Errorf("Caught signal %v: terminating\n", sig)
+			ctC.start = false
+		default:
+			ev, err := ctC.consumer.ReadMessage(ReadMSGTimeout)
+			if err != nil {
+				retryNum++
+				retryHandle(retryNum)
+				// Errors are informational and automatically handled by the consumer
+				continue
 			}
+			retryNum = 0
+			msgHandle(ev)
 		}
-		ctC.consumer.Close()
-	}()
-	return nil
+	}
+
+	return ctC.consumer.Close()
 }
 
 func (ctC *CTConsumer) Close() {

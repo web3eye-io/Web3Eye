@@ -17,10 +17,6 @@ const (
 	usageText   = "Block ETL Service"
 )
 
-var (
-	logDir string
-)
-
 func main() {
 	commands := cli.Commands{runCmd}
 

@@ -5,7 +5,7 @@ package cttype;
 option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype";
 
 enum ChainType {
-  Unkown = 0;
+  Unknown = 0;
   Ethereum = 10;
   Solana = 20;
 }

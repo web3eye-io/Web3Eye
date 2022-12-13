@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nftmeta.v1.contract;
 
-option go_package = "github.com/web3eye-io/cyber-tracer/pkg/proto/contract";
-import "cybertracer/cybertracerv1.proto";
+option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/contract";
+import "cybertracer/cybertracer.proto";
 
 service Manager {
   rpc CreateContract(CreateContractRequest) returns (CreateContractResponse) {}
@@ -58,22 +58,22 @@ message Contract {
 }
 
 message Conds {
-  cybertracer.v1.StringVal ID = 10;
-  cybertracer.v1.StringVal ChainType = 20;
-  cybertracer.v1.Int32Val ChainID = 30;
-  cybertracer.v1.StringVal Address = 40;
-  cybertracer.v1.StringVal Name = 50;
-  cybertracer.v1.StringVal Symbol = 60;
-  cybertracer.v1.StringVal Creator = 70;
-  cybertracer.v1.Uint64Val BlockNum = 80;
-  cybertracer.v1.StringVal TxHash = 90;
-  cybertracer.v1.Uint32Val TxTime = 100;
-  cybertracer.v1.StringVal ProfileURL = 110;
-  cybertracer.v1.StringVal BaseURL = 120;
-  cybertracer.v1.StringVal BannerURL = 130;
-  cybertracer.v1.StringVal Description = 140;
-  cybertracer.v1.StringVal Remark = 150;
-  cybertracer.v1.StringSliceVal IDs = 160;
+  cybertracer.StringVal ID = 10;
+  cybertracer.StringVal ChainType = 20;
+  cybertracer.Int32Val ChainID = 30;
+  cybertracer.StringVal Address = 40;
+  cybertracer.StringVal Name = 50;
+  cybertracer.StringVal Symbol = 60;
+  cybertracer.StringVal Creator = 70;
+  cybertracer.Uint64Val BlockNum = 80;
+  cybertracer.StringVal TxHash = 90;
+  cybertracer.Uint32Val TxTime = 100;
+  cybertracer.StringVal ProfileURL = 110;
+  cybertracer.StringVal BaseURL = 120;
+  cybertracer.StringVal BannerURL = 130;
+  cybertracer.StringVal Description = 140;
+  cybertracer.StringVal Remark = 150;
+  cybertracer.StringSliceVal IDs = 160;
 }
 
 message CreateContractRequest { ContractReq Info = 10; }

@@ -6,10 +6,10 @@ option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmet
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "cybertracer/cybertracerv1.proto";
+import "cybertracer/cybertracer.proto";
 
 service Manager {
-  rpc Version(google.protobuf.Empty) returns (cybertracer.v1.VersionResponse) {
+  rpc Version(google.protobuf.Empty) returns (cybertracer.VersionResponse) {
     option (google.api.http) = {
       post : "/v1/version"
       body : "*"

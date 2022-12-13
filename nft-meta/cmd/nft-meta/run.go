@@ -33,7 +33,7 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		err := logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogDir)
+		err := logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogFile)
 		if err != nil {
 			panic(err)
 		}
