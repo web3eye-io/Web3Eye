@@ -30,10 +30,12 @@ const (
 	MaxDealBlockNum           = 5
 	LogIntervalHeight         = 10
 	MaxRetriesThenTriggerTask = 5
-	MaxRetriesThenStopConsume = 5
+	MaxRetriesThenStopConsume = 10
+	CheckTopicInterval        = time.Second * 10
 	// confirmedBlockNum      = 5
-	redisExpireDefaultTime = time.Minute * 5
-	maxTokenURILen         = 256
+	redisExpireDefaultTime = time.Second * 5
+	// redisExpireDefaultTime = time.Minute * 5
+	maxTokenURILen = 256
 )
 
 var (
@@ -96,10 +98,7 @@ func (e *EthIndexer) indexTransferToDB(ctx context.Context) {
 		if transferErr != nil {
 			return transferErr
 		}
-		tokenErr := e.tokenInfoToDB(ctx, transfers)
-		if tokenErr != nil {
-			return tokenErr
-		}
+		e.tokenInfoToDB(ctx, transfers)
 		return nil
 	})
 }
@@ -141,11 +140,11 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 }
 
 //nolint:gocyclo
-func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) error {
+func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) {
 	for _, transfer := range transfers {
 		identifier := tokenIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract, transfer.TokenID)
 		if _, err := ctredis.Get(identifier); err == nil {
-			return nil
+			continue
 		}
 
 		tokenType := string(transfer.TokenType)
@@ -174,7 +173,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			if err != nil {
 				logger.Sugar().Error(err)
 			}
-			return nil
+			continue
 		}
 
 		err := ctredis.Set(identifier, false, redisExpireDefaultTime)
@@ -184,7 +183,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			if err != nil {
 				logger.Sugar().Error(err)
 			}
-			return nil
+			continue
 		}
 
 		err = e.contractToDB(ctx, transfer)
@@ -228,13 +227,11 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			}
 
 			if err != nil {
-				return fmt.Errorf("create token record failed, %v", err)
+				logger.Sugar().Errorf("create token record failed, %v", err)
 			}
 			break
 		}
-		return nil
 	}
-	return nil
 }
 
 func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) error {
@@ -332,17 +329,31 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Start.String(),
+			Value: cttype.SyncState_Finsh.String(),
 			Op:    "eq",
 		},
 	}
+
+	// check wheather have task in kafka
+	tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
+	if err != nil {
+		logger.Sugar().Error(err)
+	}
+	for _, v := range tasks {
+		err = e.addTask(v.Topic)
+		if err != nil {
+			logger.Sugar().Error(err)
+			continue
+		}
+	}
+
+	conds.SyncState.Value = cttype.SyncState_Start.String()
 
 	for {
 		// TODO: limit sync topic number
 		tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
 		if err != nil {
 			logger.Sugar().Error(err)
-			continue
 		}
 		for _, v := range tasks {
 			err = e.addTask(v.Topic)
@@ -351,7 +362,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 				continue
 			}
 		}
-		time.Sleep(time.Second * 3)
+		time.Sleep(CheckTopicInterval)
 	}
 }
 
@@ -382,18 +393,15 @@ func (e *EthIndexer) addTask(topic string) error {
 				logger.Sugar().Infof("start sync %v height", num)
 			}
 		}, func(retryNum int) {
-			if retryNum >= MaxRetriesThenTriggerTask {
-				_task, err := synctaskNMCli.TriggerSyncTask(context.Background(), topic)
+			if retryNum < MaxRetriesThenTriggerTask {
+				return
+			} else {
+				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), topic)
 				if err != nil {
 					logger.Sugar().Error(err)
-					return
-				}
-
-				if _task.SyncState != cttype.SyncState_Start {
-					delete(e.taskMap, topic)
-					consumer.Close()
 				}
 			}
+
 			if retryNum >= MaxRetriesThenStopConsume {
 				logger.Sugar().Warnf("cannot consume topic %v,retry %v times", topic, MaxRetriesThenStopConsume)
 				delete(e.taskMap, topic)

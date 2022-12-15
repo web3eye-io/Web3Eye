@@ -41,7 +41,9 @@ type BlockETL struct {
 }
 
 type IamgeConverter struct {
-	Address string `toml:"address" env:"address"`
+	Address         string `toml:"address" env:"address"`
+	TaskInputTopic  string `toml:"task-input-topic" env:"task_input_topic"`
+	TaskOutputTopic string `toml:"task-output-topic" env:"task_output_topic"`
 }
 type MySQL struct {
 	IP       string `toml:"ip" env:"ip"`

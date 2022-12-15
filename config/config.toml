@@ -14,6 +14,8 @@ log-file="/var/log/blocketl.log"
 
 [image-converter]
 address="http://image-converter:8080"
+task-input-topic="image-converter-input"
+task-output-topic="image-converter-output"
 
 [mysql]
 ip="mysql"

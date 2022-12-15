@@ -7,6 +7,9 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	cli "github.com/urfave/cli/v2"
@@ -61,7 +64,12 @@ var runCmd = &cli.Command{
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
 		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort)
-		runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
+		go runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
+		sigchan := make(chan os.Signal, 1)
+		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+		<-sigchan
+		os.Exit(1)
 		return nil
 	},
 }

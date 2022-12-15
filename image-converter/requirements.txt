@@ -12,3 +12,4 @@ pillow
 numpy
 opencv-python-headless
 scikit-image
+confluent-kafka

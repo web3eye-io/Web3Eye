@@ -34,7 +34,7 @@ func (s *Server) CreateTransfers(ctx context.Context, in *npool.CreateTransfersR
 	var err error
 
 	if len(in.GetInfos()) == 0 {
-		logger.Sugar().Errorw("CreateTransfers", "error", "Infos is empty")
+		logger.Sugar().Warnw("CreateTransfers", "error", "Infos is empty")
 		return &npool.CreateTransfersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
 

@@ -1,9 +1,9 @@
 from uuid import uuid4
-from webbrowser import get
 from pkg.model.resnet50 import Resnet50
+from pkg.queue_task.queue_deal import QueueDealImageURL2Vector
 from pkg.utils import imggetter
 from pkg.utils import imgcheck
-
+import _thread
 from lib.bottle import route, run, request
 import os
 
@@ -61,4 +61,5 @@ def vectorResp(vector=[], msg="success", success=False):
 
 
 if __name__ == '__main__':
+    _thread.start_new_thread(QueueDealImageURL2Vector, ())
     run(host='0.0.0.0', port=8080, debug=True)

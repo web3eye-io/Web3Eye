@@ -27,7 +27,10 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 	}
 
 	go func() {
-		imageconvert.DealVectorState(context.Background(), info.ID)
+		err = imageconvert.QueueDealVector(info)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
 	}()
 
 	return &npool.CreateTokenResponse{
@@ -50,8 +53,11 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	}
 
 	go func() {
-		for _, info := range rows {
-			imageconvert.DealVectorState(context.Background(), info.ID)
+		for i := 0; i < len(rows); i++ {
+			err = imageconvert.QueueDealVector(rows[i])
+			if err != nil {
+				logger.Sugar().Error(err)
+			}
 		}
 	}()
 

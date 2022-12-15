@@ -4,28 +4,65 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
 	"github.com/web3eye-io/cyber-tracer/config"
 	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
 
 	"github.com/google/uuid"
 	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/token"
+	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
 )
 
 var (
 	ICServer = config.GetConfig().ImageConverter.Address
+	producer *ctkafka.CTProducer
+	consumer *ctkafka.CTConsumer
 )
 
 type Img2VectorResp struct {
 	Vector  []float32 `json:"vector"`
 	Msg     string    `json:"msg"`
 	Success bool      `json:"success"`
+}
+
+type VectorInfo struct {
+	ID      string    `json:"id"`
+	URL     string    `json:"url"`
+	Vector  []float32 `json:"vector"`
+	Msg     string    `json:"msg"`
+	Success bool      `json:"success"`
+}
+
+func init() {
+	err := ctkafka.CreateTopic(context.Background(), config.GetConfig().ImageConverter.TaskInputTopic)
+	if err != nil {
+		panic(err)
+	}
+	err = ctkafka.CreateTopic(context.Background(), config.GetConfig().ImageConverter.TaskOutputTopic)
+	if err != nil {
+		panic(err)
+	}
+	producer, err = ctkafka.NewCTProducer(config.GetConfig().ImageConverter.TaskInputTopic)
+	if err != nil {
+		panic(err)
+	}
+	consumer, err = ctkafka.NewCTConsumer(config.GetConfig().ImageConverter.TaskOutputTopic)
+	if err != nil {
+		panic(err)
+	}
+
+	go func() {
+		takeInVectorTask()
+	}()
 }
 
 func ImgURLConvertVector(imgURL string) ([]float32, error) {
@@ -73,16 +110,47 @@ func ImgURLConvertVector(imgURL string) ([]float32, error) {
 	return resp.Vector, nil
 }
 
-func DealVectorState(ctx context.Context, id uuid.UUID) {
-	// query record and check it`s vector_state
-	info, err := crud.Row(ctx, id)
+func QueueDealVector(info *ent.Token) error {
+	err := producer.Produce([]byte(info.ID.String()), []byte(info.ImageURL))
 	if err != nil {
-		logger.Sugar().Warn(err)
-		return
+		err = HTTPDealVector(context.Background(), info)
 	}
+	return err
+}
 
+func takeInVectorTask() {
+	err := consumer.Consume(func(m *kafka.Message) {
+		vectorInfo := &VectorInfo{}
+		err := json.Unmarshal(m.Value, vectorInfo)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return
+		}
+
+		infoID, err := uuid.Parse(vectorInfo.ID)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return
+		}
+		// query record and check it`s vector_state
+		info, err := crud.Row(context.Background(), infoID)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return
+		}
+		err = storeToDBAndMilvus(context.Background(), info, vectorInfo.Vector)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+	}, func(retryNum int) {})
+	if err != nil {
+		logger.Sugar().Error(err)
+	}
+}
+
+func HTTPDealVector(ctx context.Context, info *ent.Token) error {
 	if info.VectorState != npool.ConvertState_Waiting.String() {
-		return
+		return errors.New("vector state is not waiting")
 	}
 	infoID := info.ID.String()
 
@@ -91,29 +159,36 @@ func DealVectorState(ctx context.Context, id uuid.UUID) {
 	if err != nil || vector == nil {
 		info.VectorState = npool.ConvertState_Failed.String()
 		vstate := npool.ConvertState(npool.ConvertState_value[info.VectorState])
-		_, err := crud.Update(ctx, &npool.TokenReq{
+		_, upErr := crud.Update(ctx, &npool.TokenReq{
 			ID:          &infoID,
 			VectorState: &vstate,
 			VectorID:    &info.VectorID,
 		})
-		if err != nil {
-			logger.Sugar().Warn(err)
-			return
+		if upErr != nil {
+			logger.Sugar().Error(upErr)
+			return upErr
 		}
-		return
+		return err
 	}
 
+	err = storeToDBAndMilvus(ctx, info, vector)
+	if err != nil {
+		logger.Sugar().Error(err)
+	}
+	return err
+}
+
+func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) (err error) {
 	milvusmgr := milvusdb.NewNFTConllectionMGR()
+
 	err = milvusmgr.Delete(ctx, []int64{info.VectorID})
 	if err != nil {
-		logger.Sugar().Warn(err)
 		return
 	}
 
 	// store the vector to milvus
 	ids, err := milvusmgr.Create(ctx, [][milvusdb.VectorDim]float32{ToArrayVector(vector)})
 	if err != nil {
-		logger.Sugar().Warn(err)
 		return
 	}
 
@@ -121,17 +196,16 @@ func DealVectorState(ctx context.Context, id uuid.UUID) {
 	info.VectorState = npool.ConvertState_Success.String()
 	info.VectorID = ids[0]
 	vstate := npool.ConvertState(npool.ConvertState_value[info.VectorState])
+	infoID := info.ID.String()
 	_, err = crud.Update(ctx, &npool.TokenReq{
 		ID:          &infoID,
 		VectorState: &vstate,
 		VectorID:    &info.VectorID,
 	})
-	if err != nil {
-		logger.Sugar().Warn(err)
-		return
-	}
+	return
 }
 
+// converte http request with image file to vector
 func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	// get file info
 	file, handler, err := r.FormFile("upload")

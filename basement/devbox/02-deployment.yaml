@@ -32,14 +32,9 @@ spec:
               value: "https://goproxy.cn,direct"
           command: ["sleep", "100000000000000"]
           volumeMounts:
-            - name: work
-              mountPath: /workspace
             - name: devdir
               mountPath: /root/desktop
       volumes:
-        - name: work
-          persistentVolumeClaim:
-            claimName: development-pvc
         - name: devdir
           persistentVolumeClaim:
             claimName: devbox-pvc
