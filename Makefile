@@ -34,6 +34,11 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
 
+verify-build: ## Build project
+	@for x in $(PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/build.sh $${x};\
+	done
+
 verify-go-mod: ## Runs the go module linter
 	${REPO_ROOT}/hack/verify-go-mod.sh
 
