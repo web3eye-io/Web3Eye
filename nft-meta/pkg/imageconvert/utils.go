@@ -179,22 +179,23 @@ func HTTPDealVector(ctx context.Context, info *ent.Token) error {
 }
 
 func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) (err error) {
-	milvusmgr := milvusdb.NewNFTConllectionMGR()
+	if len(vector) != 0 {
+		milvusmgr := milvusdb.NewNFTConllectionMGR()
 
-	err = milvusmgr.Delete(ctx, []int64{info.VectorID})
-	if err != nil {
-		return
+		err = milvusmgr.Delete(ctx, []int64{info.VectorID})
+		if err != nil {
+			return err
+		}
+
+		// store the vector to milvus
+		ids, err := milvusmgr.Create(ctx, [][milvusdb.VectorDim]float32{ToArrayVector(vector)})
+		if err != nil {
+			return err
+		}
+		info.VectorID = ids[0]
+		info.VectorState = npool.ConvertState_Success.String()
 	}
 
-	// store the vector to milvus
-	ids, err := milvusmgr.Create(ctx, [][milvusdb.VectorDim]float32{ToArrayVector(vector)})
-	if err != nil {
-		return
-	}
-
-	// update token record to database
-	info.VectorState = npool.ConvertState_Success.String()
-	info.VectorID = ids[0]
 	vstate := npool.ConvertState(npool.ConvertState_value[info.VectorState])
 	infoID := info.ID.String()
 	_, err = crud.Update(ctx, &npool.TokenReq{

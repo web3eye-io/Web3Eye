@@ -18,10 +18,10 @@ task-input-topic="image-converter-input"
 task-output-topic="image-converter-output"
 
 [mysql]
-ip="mysql"
+ip="mysql-headless"
 port=3306
 user="root"
-password="123123123"
+password="QARo5aA6zO"
 database="nft_meta"
 
 [redis]

@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/web3eye-io/cyber-tracer/common/chains/eth"
 	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
 	"github.com/web3eye-io/cyber-tracer/common/utils"
 	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/synctask"
@@ -93,7 +94,12 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		}, nil
 	}
 
-	if info.Current >= info.End {
+	syncEnd := info.End
+	if info.End == 0 {
+		syncEnd = eth.GetCurrentConfirmedHeight(ctx)
+	}
+
+	if info.Current >= syncEnd {
 		info.SyncState = cttype.SyncState_Finsh.String()
 	}
 	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
@@ -104,8 +110,8 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 
 	lastNum := info.Current
 	info.Current += MaxPutTaskNumOnce
-	if info.Current > info.End {
-		info.Current = info.End
+	if info.Current > syncEnd {
+		info.Current = syncEnd
 	}
 
 	p, err := ctkafka.NewCTProducer(in.Topic)

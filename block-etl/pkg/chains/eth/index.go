@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/token"
+	cteth "github.com/web3eye-io/cyber-tracer/common/chains/eth"
 	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
 	"github.com/web3eye-io/cyber-tracer/common/ctredis"
 	"github.com/web3eye-io/cyber-tracer/common/utils"
@@ -58,7 +59,7 @@ type EthIndexer struct {
 
 func NewIndexer() (*EthIndexer, error) {
 	return &EthIndexer{
-		taskChan:      make(chan uint64, MaxDealBlockNum),
+		taskChan:      make(chan uint64),
 		taskMap:       make(map[string]struct{}),
 		currentHeight: 0,
 		updateTime:    0,
@@ -191,7 +192,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			logger.Sugar().Error(err)
 		}
 
-		tokenURI, err := TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
+		tokenURI, err := cteth.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
 			remark = err.Error()
 		}
@@ -273,15 +274,15 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	}
 
 	remark := ""
-	creator, err := GetContractCreator(ctx, transfer.Contract)
+	creator, err := cteth.GetContractCreator(ctx, transfer.Contract)
 	if err != nil {
-		creator = &ContractCreator{}
+		creator = &cteth.ContractCreator{}
 		remark = err.Error()
 	}
 
-	contractMeta, err := GetERC721Metadata(ctx, transfer.Contract)
+	contractMeta, err := cteth.GetERC721Metadata(ctx, transfer.Contract)
 	if err != nil {
-		contractMeta = &ERC721Metadata{}
+		contractMeta = &cteth.ERC721Metadata{}
 		remark = fmt.Sprintf("%v,%v", remark, err)
 	}
 
@@ -418,29 +419,6 @@ func (e *EthIndexer) addTask(topic string) error {
 	return err
 }
 
-// func (e *EthIndexer) getCurrentConfirmedHeight(ctx context.Context) uint64 {
-// 	gLock.Lock()
-// 	defer gLock.Unlock()
-
-// 	if e.updateTime > time.Now().Unix() {
-// 		return e.currentHeight
-// 	}
-
-// 	num, err := CurrentBlockHeight(ctx)
-// 	if err != nil {
-// 		logger.Sugar().Errorf("get block height failed, %v", err)
-// 		return e.currentHeight
-// 	}
-
-// 	if num > confirmedBlockNum {
-// 		e.currentHeight = num - confirmedBlockNum
-// 	}
-
-// 	e.updateTime = time.Now().Add(time.Minute).Unix()
-
-// 	return num
-// }
-
 func containErr(errStr string) bool {
 	for _, v := range retryErrs {
 		if strings.Contains(errStr, v) {
@@ -450,10 +428,10 @@ func containErr(errStr string) bool {
 	return false
 }
 
-func tokenIdentifier(chain ChainType, chainID int32, contract, tokenID string) string {
+func tokenIdentifier(chain cteth.ChainType, chainID int32, contract, tokenID string) string {
 	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
 }
 
-func contractIdentifier(chain ChainType, chainID int32, contract string) string {
+func contractIdentifier(chain cteth.ChainType, chainID int32, contract string) string {
 	return fmt.Sprintf("%v+%v+%v", chain, chainID, contract)
 }

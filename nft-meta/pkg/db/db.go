@@ -66,7 +66,8 @@ func GetConn() (*sql.DB, error) {
 
 	_, err = conn.Exec(createSQL)
 	if err != nil {
-		panic(err)
+		logger.Sugar().Warnf("exec sql failed: %v", err)
+		return nil, err
 	}
 	conn.Close()
 

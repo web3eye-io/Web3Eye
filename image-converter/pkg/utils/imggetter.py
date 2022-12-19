@@ -37,12 +37,12 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         return "", False
 
     meta = req.info()
-    content_type = str(meta.getheaders("Content-Type")[0])
-    try:
-        accept_ranges = str(meta.getheaders("Accept-Ranges")[0])
 
+    try:
+        content_type = str(meta.getheaders("Content-Type")[0])
         if not content_type in typedic.keys():
             return "", False
+        accept_ranges = str(meta.getheaders("Accept-Ranges")[0])
         if not accept_ranges == "bytes":
             return "", False
     except:

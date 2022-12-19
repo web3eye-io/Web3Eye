@@ -9,9 +9,6 @@ spec:
     storage: 5Gi
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs
-  nfs:
-    path: /home/coast/Desktop/
-    server: 172.16.31.31
 
 ---
 apiVersion: v1

@@ -75,8 +75,6 @@ def QueueDealImageURL2Vector():
                 image_path, ok = imggetter.DownloadUrlImg(vectorInfo.url)
                 if not ok:
                     vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
-                    print(vectorInfo.msg)
-                    print("vectorInfo.msg")
                     producer.produce(pTopic, json.dumps(
                         vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
                     continue
@@ -86,10 +84,8 @@ def QueueDealImageURL2Vector():
                 os.remove(path=image_path)
 
                 vectorInfo.success = True
-                print(vectorInfo.vector[0])
                 producer.produce(pTopic, json.dumps(
                     vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-                print("vectorInfo.vector[0]")
 
     except KeyboardInterrupt:
         pass

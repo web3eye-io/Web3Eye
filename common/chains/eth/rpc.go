@@ -6,14 +6,34 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
+	"sync"
+	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/chains/eth/contracts"
+	"github.com/web3eye-io/cyber-tracer/common/chains/eth/contracts"
 )
+
+type TokenType string
+
+const (
+	TokenTypeERC721  TokenType = "ERC-721"
+	TokenTypeERC1155 TokenType = "ERC-1155"
+	TokenTypeNoURI   TokenType = "NoURI"
+	safeBlockNum               = 6
+)
+
+type ChainType string
+
+const (
+	ChainTypeEthereumMain ChainType = "Ethereum"
+)
+
+var lock = &sync.Mutex{}
 
 func FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
 	client := Client()
@@ -207,4 +227,34 @@ func getERC721Metadata(ctx context.Context, ethClient *ethclient.Client, contrac
 func ReplaceID(tokenURI, id string) string {
 	_id := fmt.Sprintf("%064s", id)
 	return strings.TrimSpace(strings.ReplaceAll(tokenURI, "{id}", _id))
+}
+
+type confirmedBlockNum struct {
+	updateTime      int64
+	confirmedHeight uint64
+}
+
+var c = &confirmedBlockNum{}
+
+func GetCurrentConfirmedHeight(ctx context.Context) uint64 {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if c.updateTime > time.Now().Unix() {
+		return c.confirmedHeight
+	}
+
+	num, err := CurrentBlockHeight(ctx)
+	if err != nil {
+		logger.Sugar().Errorf("get block height failed, %v", err)
+		return c.confirmedHeight
+	}
+
+	if num > safeBlockNum {
+		c.confirmedHeight = num - safeBlockNum
+	}
+
+	c.updateTime = time.Now().Add(time.Minute).Unix()
+
+	return c.confirmedHeight
 }
