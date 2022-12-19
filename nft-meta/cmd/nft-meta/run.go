@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
 	"github.com/web3eye-io/cyber-tracer/config"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
@@ -21,6 +22,7 @@ import (
 	"github.com/web3eye-io/cyber-tracer/nft-meta/api"
 	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -63,7 +65,7 @@ var runCmd = &cli.Command{
 		if err != nil {
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
-		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort)
+		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort, config.GetConfig().NFTMeta.GrpcPort)
 		go runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
@@ -89,9 +91,19 @@ func runGRPCServer(grpcPort int) {
 	}
 }
 
-func runHTTPServer(httpPort int) {
-	endpoint := fmt.Sprintf(":%v", httpPort)
-	err := http.ListenAndServe(endpoint, servermux.AppServerMux())
+func runHTTPServer(httpPort, grpcPort int) {
+	httpEndpoint := fmt.Sprintf(":%v", httpPort)
+	grpcEndpoint := fmt.Sprintf(":%v", grpcPort)
+
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	err := api.RegisterGateway(mux, grpcEndpoint, opts)
+	if err != nil {
+		log.Fatalf("Fail to register gRPC gateway service endpoint: %v", err)
+	}
+
+	servermux.AppServerMux().Handle("/v1/", mux)
+	err = http.ListenAndServe(httpEndpoint, servermux.AppServerMux())
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

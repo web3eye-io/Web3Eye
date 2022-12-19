@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/web3eye-io/cyber-tracer/config"
 
 	_ "github.com/NpoolPlatform/go-service-framework/pkg/version"
 )
@@ -19,7 +20,7 @@ func TestVersion(t *testing.T) {
 
 	cli := resty.New()
 	resp, err := cli.R().
-		Post("http://localhost:50230/v2/version")
+		Post(fmt.Sprintf("http://localhost:%v/v1/version", config.GetConfig().NFTMeta.HTTPPort))
 	if assert.Nil(t, err) {
 		fmt.Println(resp)
 		assert.Equal(t, 200, resp.StatusCode())

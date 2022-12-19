@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
+ROOT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
+
+cd $ROOT_FOLDER
 
 set -o errexit
 set -o nounset
@@ -9,9 +13,5 @@ OUTPUT=./output
 
 mkdir -p $OUTPUT/$PLATFORM
 for service_name in $(ls $(pwd)/cmd); do
-    cp $(pwd)/cmd/$service_name/*.viper.yaml $OUTPUT/$PLATFORM
-    cd $OUTPUT/$PLATFORM
-    ./$service_name run | grep error &
+    kill -9 $(pidof $service_name)
 done
-
-sleep 2

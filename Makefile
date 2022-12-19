@@ -8,6 +8,7 @@ NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
 PROJECTS=  nft-meta block-etl image-converter
+GO_PROJECTS=  nft-meta block-etl
 
 ##@ init project
 init:
@@ -86,21 +87,21 @@ deploy-to-k8s-cluster:
 
 ##@ Tests
 
-.PHONY: test test-go-unit test-go-integration
+.PHONY: go-unit-test go-ut
+go-ut: unit-test
+go-unit-test: verify-build
+	@for x in $(GO_PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/before-test.sh;\
+	done
+	@for x in $(GO_PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/test-go.sh;\
+	done
+	@for x in $(GO_PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/after-test.sh;\
+	done
 
-before-test: verify-build
-	${REPO_ROOT}/hack/before-test.sh
-
-test: verify-build test-go-unit ## Runs unit tests
 test-verbose:
 	VERBOSE=1 make test
-
-after-test:
-	${REPO_ROOT}/hack/after-test.sh
-
-test-go-unit: ## Runs Golang unit tests
-	${REPO_ROOT}/hack/test-go.sh
-
 
 ##@ Helpers
 

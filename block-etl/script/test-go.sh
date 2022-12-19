@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
+ROOT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
+
+cd $ROOT_FOLDER
 
 set -o errexit
 set -o nounset

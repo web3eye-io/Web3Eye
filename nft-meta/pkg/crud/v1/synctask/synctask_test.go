@@ -47,14 +47,14 @@ func prepareData() {
 		Start:       665,
 		End:         665,
 		Current:     665,
-		Topic:       "s",
+		Topic:       uuid.NewString(),
+		SyncState:   cttype.SyncState_Default.String(),
 		Description: "asdfasdf",
-		SyncState:   "asdfasdf",
-		Remark:      "asdfasdf",
 	}
 
 	id = entSyncTask.ID.String()
 	chainT := cttype.ChainType(cttype.ChainType_value[entSyncTask.ChainType])
+	syncState := cttype.SyncState_Default
 
 	synctaskInfo = npool.SyncTaskReq{
 		ID:          &id,
@@ -64,6 +64,7 @@ func prepareData() {
 		End:         &entSyncTask.End,
 		Current:     &entSyncTask.Current,
 		Topic:       &entSyncTask.Topic,
+		SyncState:   &syncState,
 		Description: &entSyncTask.Description,
 	}
 }
@@ -105,10 +106,8 @@ func createBulk(t *testing.T) {
 			Start:       6655,
 			End:         6655,
 			Current:     6655,
-			Topic:       "ss",
+			Topic:       uuid.NewString(),
 			Description: "asdfasdf",
-			SyncState:   "asdfasdf",
-			Remark:      "asdfasdf",
 		},
 		{
 			ID:          uuid.New(),
@@ -117,10 +116,8 @@ func createBulk(t *testing.T) {
 			Start:       6656,
 			End:         6656,
 			Current:     6656,
-			Topic:       "sss",
+			Topic:       uuid.NewString(),
 			Description: "asdfasdf",
-			SyncState:   "asdfasdf",
-			Remark:      "asdfasdf",
 		},
 	}
 
