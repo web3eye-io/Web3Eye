@@ -19,7 +19,7 @@ jobs:
     - name: Test
       env:
         RUN_BY_GITHUB_ACTION: "true"
-      run: make test
+      run: make go-unit-test
 
   test-cache:
     runs-on: ubuntu-latest
