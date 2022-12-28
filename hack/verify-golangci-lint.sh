@@ -18,6 +18,7 @@ if ! command -v gofumpt; then
 fi
 
 if ! command -v golangci-lint; then
+    export CGO_ENABLED=0
     go install $URL
     PATH=$PATH:bin
 fi
