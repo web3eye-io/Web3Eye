@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git( branch: '$BRANCH_NAME', changelog: true, poll: true)
+        git(url: scm.userRemoteConfigs[0].url, branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
 
