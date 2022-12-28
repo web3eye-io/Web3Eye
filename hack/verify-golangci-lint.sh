@@ -13,15 +13,15 @@ if [[ ! -f .golangci.yml ]]; then
     exit 1
 fi
 
-# if ! command -v gofumpt; then
-#     go install mvdan.cc/gofumpt@v0.3.1
-# fi
-export CGO_ENABLED=0
-go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.0
-if ! command -v golangci-lint; then
-    curl -sfL $URL | sh -s $VERSION
-    PATH=$PATH:bin
+if ! command -v gofumpt; then
+    go install mvdan.cc/gofumpt@v0.3.1
 fi
+export CGO_ENABLED=0
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.0
+# if ! command -v golangci-lint; then
+#     curl -sfL $URL | sh -s $VERSION
+#     PATH=$PATH:bin
+# fi
 
 golangci-lint version
 golangci-lint linters
