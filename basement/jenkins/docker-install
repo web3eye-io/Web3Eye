@@ -9,12 +9,14 @@
   jenkins/jenkins
 
 docker run \
+  -u 0\
   --name jenkins \
   -d \
-  -p 8080:8080 \
+  --privileged \
+  -p 18080:8080 \
   -p 50000:50000 \
   jenkins/jenkins
 
   docker exec -it jenkins /bin/bash 
   
-  cat /var/jenkins_home/secrets/initialAdminPassword
+ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword

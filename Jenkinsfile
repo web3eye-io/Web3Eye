@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git(url: scm.userRemoteConfigs[0].url, branch: '$BRANCH_NAME', changelog: true, credentialsId: 'KK-github-key', poll: true)
+        git( branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
 
@@ -51,55 +51,27 @@ pipeline {
       }
     }
 
-    stage('Config target') {
-      when {
-        anyOf {
-          expression { BUILD_TARGET == 'true' }
-          expression { DEPLOY_TARGET == 'true' }
-        }
-      }
-      steps {
-        sh 'rm .apollo-base-config -rf'
-        sh 'git clone https://github.com/NpoolPlatform/apollo-base-config.git .apollo-base-config'
-        sh (returnStdout: false, script: '''
-          PASSWORD=`kubectl get secret --namespace "kube-system" mysql-password-secret -o jsonpath="{.data.rootpassword}" | base64 --decode`
-          kubectl exec --namespace kube-system mysql-0 -- mysql -h 127.0.0.1 -uroot -p$PASSWORD -P3306 -e "create database if not exists build_chain;"
+    // stage('Unit Tests') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh (returnStdout: false, script: '''
+    //       devboxpod=`kubectl get pods -A | grep development-box | head -n1 | awk '{print $2}'`
+    //       servicename="nft-meta"
 
-          username=`helm status rabbitmq --namespace kube-system | grep Username | awk -F ' : ' '{print $2}' | sed 's/"//g'`
-          for vhost in `cat cmd/*/*.viper.yaml | grep hostname | awk '{print $2}' | sed 's/"//g' | sed 's/\\./-/g'`; do
-            kubectl exec --namespace kube-system rabbitmq-0 -- rabbitmqctl add_vhost $vhost
-            kubectl exec --namespace kube-system rabbitmq-0 -- rabbitmqctl set_permissions -p $vhost $username ".*" ".*" ".*"
+    //       kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename after-test || true
+    //       kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename || true
+    //       kubectl cp ./ kube-system/$devboxpod:/tmp/$servicename
 
-            cd .apollo-base-config
-            ./apollo-base-config.sh $APP_ID $TARGET_ENV $vhost
-            ./apollo-item-config.sh $APP_ID $TARGET_ENV $vhost database_name build_chain
-            cd -
-          done
-        '''.stripIndent())
-      }
-    }
+    //       kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename deps before-test test after-test
+    //       kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename
 
-    stage('Unit Tests') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh (returnStdout: false, script: '''
-          devboxpod=`kubectl get pods -A | grep development-box | head -n1 | awk '{print $2}'`
-          servicename="nft-meta"
-
-          kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename after-test || true
-          kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename || true
-          kubectl cp ./ kube-system/$devboxpod:/tmp/$servicename
-
-          kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename deps before-test test after-test
-          kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename
-
-          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-          kubectl cp message/npool/*.swagger.json kube-system/$swaggeruipod:/usr/share/nginx/html || true
-        '''.stripIndent())
-      }
-    }
+    //       swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
+    //       kubectl cp message/npool/*.swagger.json kube-system/$swaggeruipod:/usr/share/nginx/html || true
+    //     '''.stripIndent())
+    //   }
+    // }
 
     stage('Generate docker image for development') {
       when {
