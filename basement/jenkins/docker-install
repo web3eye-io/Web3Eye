@@ -1,12 +1,12 @@
- docker pull jenkins/jenkins
+docker pull jenkins/jenkins:centos7
 
- docker run \
+docker run \
   --name jenkins \
   -d \
   -p 8080:8080 \
   -p 50000:50000 \
   <!-- -v jenkins-data:/var/jenkins_home \ -->
-  jenkins/jenkins
+jenkins/jenkins
 
 docker run \
   -u 0\
@@ -15,12 +15,12 @@ docker run \
   --privileged \
   -p 18080:8080 \
   -p 50000:50000 \
-  jenkins/jenkins
+  jenkins/jenkins:centos7
 
-  docker exec -it jenkins /bin/bash 
-  
- docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+docker exec -it jenkins /bin/bash 
 
- apt install make
- 安装Go插件
- 配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+apt install make
+安装Go插件
+配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
