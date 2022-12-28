@@ -32,10 +32,10 @@ linters-settings:
       - condition
       - return
     ignored-numbers:
-      - '0'
-      - '1'
-      - '2'
-      - '3'
+      - "0"
+      - "1"
+      - "2"
+      - "3"
     ignored-functions:
       - strings.SplitN
 
@@ -79,7 +79,7 @@ linters:
     - staticcheck
     - structcheck
     - stylecheck
-    - typecheck
+    # - typecheck
     - unconvert
     - unparam
     - unused
@@ -119,4 +119,4 @@ issues:
 
 run:
   timeout: 5m
-  go: '1.17' # TODO(ldez): we force to use an old version of Go for the CI and the tests.
+  go: "1.17" # TODO(ldez): we force to use an old version of Go for the CI and the tests.
