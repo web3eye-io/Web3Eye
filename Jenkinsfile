@@ -19,14 +19,14 @@ pipeline {
       }
     }
 
-    stage('Linting') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh 'make verify'
-      }
-    }
+    // stage('Linting') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh 'make verify'
+    //   }
+    // }
 
     stage('Compile') {
       when {
