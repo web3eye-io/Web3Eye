@@ -16,10 +16,9 @@ fi
 if ! command -v gofumpt; then
     go install mvdan.cc/gofumpt@v0.3.1
 fi
+export CGO_ENABLED=0
+go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.0
 
-curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.42.1
-PATH=$PATH:bin
-# export CGO_ENABLED=0
 # go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.0
 # if ! command -v golangci-lint; then
 #     curl -sfL $URL | sh -s $VERSION
