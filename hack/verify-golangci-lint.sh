@@ -18,6 +18,7 @@ if ! command -v gofumpt; then
 fi
 
 curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+PATH=$PATH:bin
 # export CGO_ENABLED=0
 # go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.0
 # if ! command -v golangci-lint; then
