@@ -5,8 +5,8 @@ set -o nounset
 set -o pipefail
 
 VERSION=v1.46.1
-URL_BASE=https://raw.githubusercontent.com/golangci/golangci-lint
-URL=$URL_BASE/$VERSION/install.sh
+
+URL=github.com/golangci/golangci-lint/cmd/golangci-lint@$VERSION
 
 if [[ ! -f .golangci.yml ]]; then
     echo 'ERROR: missing .golangci.yml in repo root' >&2
@@ -18,7 +18,7 @@ if ! command -v gofumpt; then
 fi
 
 if ! command -v golangci-lint; then
-    curl -sfL $URL | sh -s $VERSION
+    go install $URL
     PATH=$PATH:bin
 fi
 
