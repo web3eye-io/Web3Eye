@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-VERSION=v1.46.2
+VERSION=v1.46.0
 
 URL=github.com/golangci/golangci-lint/cmd/golangci-lint@$VERSION
 
