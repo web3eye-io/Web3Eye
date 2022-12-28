@@ -20,3 +20,7 @@ docker run \
   docker exec -it jenkins /bin/bash 
   
  docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+ apt install make
+ 安装Go插件
+ 配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
