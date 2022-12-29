@@ -37,6 +37,7 @@ verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs ver
 
 verify-build: ## Build project
 	@for x in $(PROJECTS); do \
+		echo $${x}; \
 		${REPO_ROOT}/$${x}/script/build.sh $${x};\
 	done
 
