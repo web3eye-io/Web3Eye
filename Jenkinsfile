@@ -39,18 +39,20 @@ pipeline {
       }
     }
 
-    stage('Switch to current cluster') {
-      when {
-        anyOf {
-          expression { BUILD_TARGET == 'true' }
-          expression { DEPLOY_TARGET == 'true' }
-        }
-      }
-      steps {
-        sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
-      }
-    }
+    // TODO: support switch k8s cluster
+    // stage('Switch to current cluster') {
+    //   when {
+    //     anyOf {
+    //       expression { BUILD_TARGET == 'true' }
+    //       expression { DEPLOY_TARGET == 'true' }
+    //     }
+    //   }
+    //   steps {
+    //     sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
+    //   }
+    // }
 
+    // TODO: support UT
     // stage('Unit Tests') {
     //   when {
     //     expression { BUILD_TARGET == 'true' }
@@ -73,15 +75,7 @@ pipeline {
     //   }
     // }
 
-    stage('Generate docker image for development') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh 'make verify-build'
-        sh 'DEVELOPMENT=development DOCKER_REGISTRY=$DOCKER_REGISTRY make generate-docker-images'
-      }
-    }
+    
 
     stage('Tag patch') {
       when {
@@ -191,6 +185,15 @@ pipeline {
       }
     }
 
+    stage('Generate docker image for development') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh 'DEVELOPMENT=development DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
+
     stage('Generate docker image for testing or production') {
       when {
         expression { BUILD_TARGET == 'true' }
@@ -202,8 +205,7 @@ pipeline {
           git reset --hard
           git checkout $tag
         '''.stripIndent())
-        sh 'make verify-build'
-        sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make generate-docker-images'
+        sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
 
@@ -212,9 +214,9 @@ pipeline {
         expression { RELEASE_TARGET == 'true' }
       }
       steps {
-        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images'
+        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
         sh(returnStdout: false, script: '''
-          images=`docker images | grep entropypool | grep nft-meta | grep none | awk '{ print $3 }'`
+          images=`docker images | grep coastlinesss | grep nft-meta | grep none | awk '{ print $3 }'`
           for image in $images; do
             docker rmi $image -f
           done
@@ -236,7 +238,7 @@ pipeline {
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
+            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
           fi
         '''.stripIndent())
       }
@@ -263,7 +265,7 @@ pipeline {
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
+            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
           fi
         '''.stripIndent())
       }

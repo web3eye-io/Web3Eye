@@ -15,6 +15,11 @@ docker run \
   --privileged \
   -p 18080:8080 \
   -p 50000:50000 \
+  -v /opt/share/jenkins:/var/lib/jenkins   \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
+  --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
+  -v /var/run/docker.sock:/var/run/docker.sock  \
+  -v /root/.kube:/root/.kube  \
   jenkins/jenkins:centos7
 
 docker exec -it jenkins /bin/bash 
@@ -23,4 +28,5 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 apt install make,gcc
 安装Go插件
+安装Kubectl插件
 配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
