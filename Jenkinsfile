@@ -13,20 +13,20 @@ pipeline {
       }
     }
 
-    stage('Prepare') {
-      steps {
-        sh 'make deps'
-      }
-    }
+    // stage('Prepare') {
+    //   steps {
+    //     sh 'make deps'
+    //   }
+    // }
 
-    stage('Linting') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh 'make verify'
-      }
-    }
+    // stage('Linting') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh 'make verify'
+    //   }
+    // }
 
     stage('Compile') {
       when {
