@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
-SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
-ROOT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
+SHELL_FOLDER=$(
+    cd "$(dirname "$0")"
+    pwd
+)
+ROOT_FOLDER=$(
+    cd $SHELL_FOLDER/../
+    pwd
+)
 
 set -o errexit
 set -o nounset
@@ -14,7 +20,10 @@ PLATFORMS=(
 OUTPUT=$ROOT_FOLDER/output
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
-service_name=$(cd $ROOT_FOLDER;basename `pwd`)
+service_name=$(
+    cd $ROOT_FOLDER
+    basename $(pwd)
+)
 
 for PLATFORM in "${PLATFORMS[@]}"; do
     OS="${PLATFORM%/*}"
@@ -35,14 +44,14 @@ for PLATFORM in "${PLATFORMS[@]}"; do
     compile_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
     git_revision=$(git rev-parse HEAD 2>/dev/null || echo unknow)
 
-    
-
     echo "Building project for $PLATFORM -- $version $compile_date $git_revision"
+    echo "sss"
     GOOS=${OS} GOARCH=${ARCH} go build -v -ldflags "-s -w \
         -X $pkg.buildDate=${compile_date} \
         -X $pkg.gitCommit=${git_revision} \
         -X $pkg.gitVersion=${version}     \
         -X $pkg.gitBranch=${git_branch}" \
-        -o "${OUTPUT}/${OS}/${ARCH}/" "$ROOT_FOLDER/cmd/$service_name" ||
-        exit 1
+        -o "${OUTPUT}/${OS}/${ARCH}/" "$ROOT_FOLDER/cmd/$service_name"
+    echo $?
+    echo "sdfasd"
 done
