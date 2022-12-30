@@ -60,9 +60,9 @@ gen-ent:
 ifdef AIMPROJECT
 PROJECTS= $(AIMPROJECT)
 endif
-# ifndef DEVELOPMENT
-# DEVELOPMENT= dev
-# endif
+ifndef DEVELOPMENT
+DEVELOPMENT= dev
+endif
 ifndef DOCKER_REGISTRY
 DOCKER_REGISTRY= x
 endif	
