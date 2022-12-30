@@ -62,7 +62,7 @@ PROJECTS= $(AIMPROJECT)
 endif
 # ifndef DEVELOPMENT
 # DEVELOPMENT= dev
-endif
+# endif
 ifndef DOCKER_REGISTRY
 DOCKER_REGISTRY= x
 endif	
