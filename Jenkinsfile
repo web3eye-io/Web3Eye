@@ -94,10 +94,10 @@ pipeline {
             patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
             case $TAG_FOR in
-              testing)
+              test)
                 patch=$(( $patch + $patch % 2 + 1 ))
                 ;;
-              production)
+              prod)
                 patch=$(( $patch + 1 ))
                 git reset --hard
                 git checkout $tag
