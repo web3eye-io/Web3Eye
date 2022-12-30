@@ -37,7 +37,7 @@ service_name=$(
 )
 
 ## For development environment, pass the second variable
-if [[ ${!1-x} == x || "xdevelopment" == "x$1" ]]; then
+if [[ ${!1-x} == x || "xdev" == "x$1" ]]; then
     version=latest
 fi
 echo $version ${!1-x} $1 $2 "version"
