@@ -210,8 +210,15 @@ pipeline {
           docker images  | grep $tag
           rc=$?
           set -e
-          if [ 0 -eq $rc ]; then
+          if [ ! 0 -eq $rc ]; then
             DEVELOPMENT=test DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
+          fi
+
+          set +e
+          docker images  | grep $tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
             TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
           fi
         '''.stripIndent())
