@@ -75,8 +75,6 @@ pipeline {
     //   }
     // }
 
-    
-
     stage('Tag patch') {
       when {
         expression { TAG_PATCH == 'true' }
@@ -112,7 +110,7 @@ pipeline {
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-ssh-private-key', gitToolName: 'git-tool')]) {
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
           sh 'git push --tag'
         }
       }
@@ -145,7 +143,7 @@ pipeline {
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-ssh-private-key', gitToolName: 'git-tool')]) {
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
           sh 'git push --tag'
         }
       }
@@ -179,7 +177,7 @@ pipeline {
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-ssh-private-key', gitToolName: 'git-tool')]) {
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
           sh 'git push --tag'
         }
       }
