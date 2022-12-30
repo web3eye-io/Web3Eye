@@ -13,31 +13,32 @@ pipeline {
       }
     }
 
-    // stage('Prepare') {
-    //   steps {
-    //     sh 'make deps'
-    //   }
-    // }
+    stage('Prepare') {
+      steps {
+        sh 'make deps'
+      }
+    }
 
-    // stage('Linting') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh 'make verify'
-    //   }
-    // }
+    stage('Linting') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh 'make verify'
+      }
+    }
 
-    // stage('Compile') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh (returnStdout: false, script: '''
-    //       make verify-build
-    //     '''.stripIndent())
-    //   }
-    // }
+    stage('Compile') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          make verify-build
+        '''.stripIndent())
+        sh 'DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
 
     // TODO: support switch k8s cluster
     // stage('Switch to current cluster') {
@@ -75,199 +76,180 @@ pipeline {
     //   }
     // }
 
-    // stage('Tag patch') {
-    //   when {
-    //     expression { TAG_PATCH == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       set +e
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       rc=$?
-    //       set -e
-    //       if [ 0 -eq $rc ]; then
-    //         tag=`git describe --tags $revlist`
-
-    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
-    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
-    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
-
-    //         case $TAG_FOR in
-    //           testing)
-    //             patch=$(( $patch + $patch % 2 + 1 ))
-    //             ;;
-    //           production)
-    //             patch=$(( $patch + 1 ))
-    //             git reset --hard
-    //             git checkout $tag
-    //             ;;
-    //         esac
-
-    //         tag=$major.$minor.$patch
-    //       else
-    //         tag=0.1.1
-    //       fi
-    //       git tag -a $tag -m "Bump version to $tag"
-    //     '''.stripIndent())
-
-    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-    //       sh 'git push --tag'
-    //     }
-    //   }
-    // }
-
-    // stage('Tag minor') {
-    //   when {
-    //     expression { TAG_MINOR == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       set +e
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       rc=$?
-    //       set -e
-    //       if [ 0 -eq $rc ]; then
-    //         tag=`git describe --tags $revlist`
-
-    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
-    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
-    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
-
-    //         minor=$(( $minor + 1 ))
-    //         patch=1
-
-    //         tag=$major.$minor.$patch
-    //       else
-    //         tag=0.1.1
-    //       fi
-    //       git tag -a $tag -m "Bump version to $tag"
-    //     '''.stripIndent())
-
-    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-    //       sh 'git push --tag'
-    //     }
-    //   }
-    // }
-
-    // stage('Tag major') {
-    //   when {
-    //     expression { TAG_MAJOR == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       set +e
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       rc=$?
-    //       set -e
-    //       if [ 0 -eq $rc ]; then
-    //         tag=`git describe --tags $revlist`
-
-    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
-    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
-    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
-
-    //         major=$(( $major + 1 ))
-    //         minor=0
-    //         patch=1
-
-    //         tag=$major.$minor.$patch
-    //       else
-    //         tag=0.1.1
-    //       fi
-    //       git tag -a $tag -m "Bump version to $tag"
-    //     '''.stripIndent())
-
-    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-    //       sh 'git push --tag'
-    //     }
-    //   }
-    // }
-
-    // stage('Generate docker image for development') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh 'DEVELOPMENT=development DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
-    //   }
-    // }
-
-    stage('Generate docker image for testing or production') {
+    stage('Tag patch') {
       when {
-        expression { BUILD_TARGET == 'true' }
+        expression { TAG_PATCH == 'true' }
       }
       steps {
         sh(returnStdout: true, script: '''
+          set +e
           revlist=`git rev-list --tags --max-count=1`
-          tag=`git describe --tags $revlist`
-          git reset --hard
-          git checkout $tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            tag=`git describe --tags $revlist`
+
+            major=`echo $tag | awk -F '.' '{ print $1 }'`
+            minor=`echo $tag | awk -F '.' '{ print $2 }'`
+            patch=`echo $tag | awk -F '.' '{ print $3 }'`
+
+            case $TAG_FOR in
+              testing)
+                patch=$(( $patch + $patch % 2 + 1 ))
+                ;;
+              production)
+                patch=$(( $patch + 1 ))
+                git reset --hard
+                git checkout $tag
+                ;;
+            esac
+
+            tag=$major.$minor.$patch
+          else
+            tag=0.1.1
+          fi
+          git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
-        sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+          sh 'git push --tag'
+        }
       }
     }
 
-    // stage('Release docker image for development') {
-    //   when {
-    //     expression { RELEASE_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
-    //     sh(returnStdout: false, script: '''
-    //       images=`docker images | grep coastlinesss | grep nft-meta | grep none | awk '{ print $3 }'`
-    //       for image in $images; do
-    //         docker rmi $image -f
-    //       done
-    //     '''.stripIndent())
-    //   }
-    // }
+    stage('Tag minor') {
+      when {
+        expression { TAG_MINOR == 'true' }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          set +e
+          revlist=`git rev-list --tags --max-count=1`
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            tag=`git describe --tags $revlist`
 
-    // stage('Release docker image for testing') {
-    //   when {
-    //     expression { RELEASE_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: false, script: '''
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       tag=`git describe --tags $revlist`
+            major=`echo $tag | awk -F '.' '{ print $1 }'`
+            minor=`echo $tag | awk -F '.' '{ print $2 }'`
+            patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
-    //       set +e
-    //       docker images | grep nft-meta | grep $tag
-    //       rc=$?
-    //       set -e
-    //       if [ 0 -eq $rc ]; then
-    //         TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
-    //       fi
-    //     '''.stripIndent())
-    //   }
-    // }
+            minor=$(( $minor + 1 ))
+            patch=1
 
-    // stage('Release docker image for production') {
-    //   when {
-    //     expression { RELEASE_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: false, script: '''
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       tag=`git describe --tags $revlist`
+            tag=$major.$minor.$patch
+          else
+            tag=0.1.1
+          fi
+          git tag -a $tag -m "Bump version to $tag"
+        '''.stripIndent())
 
-    //       major=`echo $tag | awk -F '.' '{ print $1 }'`
-    //       minor=`echo $tag | awk -F '.' '{ print $2 }'`
-    //       patch=`echo $tag | awk -F '.' '{ print $3 }'`
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+          sh 'git push --tag'
+        }
+      }
+    }
 
-    //       patch=$(( $patch - $patch % 2 ))
-    //       tag=$major.$minor.$patch
+    stage('Tag major') {
+      when {
+        expression { TAG_MINOR == 'true' }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          set +e
+          revlist=`git rev-list --tags --max-count=1`
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            tag=`git describe --tags $revlist`
 
-    //       set +e
-    //       docker images | grep nft-meta | grep $tag
-    //       rc=$?
-    //       set -e
-    //       if [ 0 -eq $rc ]; then
-    //         TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
-    //       fi
-    //     '''.stripIndent())
-    //   }
-    // }
+            major=`echo $tag | awk -F '.' '{ print $1 }'`
+            minor=`echo $tag | awk -F '.' '{ print $2 }'`
+            patch=`echo $tag | awk -F '.' '{ print $3 }'`
+
+            major=$(( $major + 1 ))
+            minor=0
+            patch=1
+
+            tag=$major.$minor.$patch
+          else
+            tag=0.1.1
+          fi
+          git tag -a $tag -m "Bump version to $tag"
+        '''.stripIndent())
+
+        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+          sh 'git push --tag'
+        }
+      }
+    }
+
+    stage('Generate docker image for development') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { TAG_FOR == 'dev' }
+      }
+      steps {
+        sh 'DEVELOPMENT=development DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
+      }
+    }
+
+    stage('Generate docker image for feature test') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { TAG_PATCH == 'true' }
+        expression { TAG_FOR == 'test' }
+      }
+      steps {
+        sh(returnStdout: false, script: '''
+          revlist=`git rev-list --tags --max-count=1`
+          tag=`git describe --tags $revlist`
+
+          set +e
+          docker images  | grep $tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            DEVELOPMENT=test DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
+            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
+          fi
+        '''.stripIndent())
+        sh ''
+      }
+    }
+
+    stage('Generate docker image for testing or production') {
+      when {
+        anyOf {
+          expression { RELEASE_TARGET == 'true' }
+          expression { TAG_PATCH == 'true' }
+          expression { TAG_FOR == 'prod' }
+        }
+      }
+      steps {
+          sh(returnStdout: false, script: '''
+          revlist=`git rev-list --tags --max-count=1`
+          tag=`git describe --tags $revlist`
+
+          major=`echo $tag | awk -F '.' '{ print $1 }'`
+          minor=`echo $tag | awk -F '.' '{ print $2 }'`
+          patch=`echo $tag | awk -F '.' '{ print $3 }'`
+
+          patch=$(( $patch - $patch % 2 ))
+          tag=$major.$minor.$patch
+
+          set +e
+          docker images | grep $tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            DEVELOPMENT=prod DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
+            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
+          fi
+        '''.stripIndent())
+      }
+    }
 
     // stage('Deploy for development') {
     //   when {
