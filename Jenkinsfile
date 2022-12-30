@@ -75,113 +75,113 @@ pipeline {
     //   }
     // }
 
-    stage('Tag patch') {
-      when {
-        expression { TAG_PATCH == 'true' }
-      }
-      steps {
-        sh(returnStdout: true, script: '''
-          set +e
-          revlist=`git rev-list --tags --max-count=1`
-          rc=$?
-          set -e
-          if [ 0 -eq $rc ]; then
-            tag=`git describe --tags $revlist`
+    // stage('Tag patch') {
+    //   when {
+    //     expression { TAG_PATCH == 'true' }
+    //   }
+    //   steps {
+    //     sh(returnStdout: true, script: '''
+    //       set +e
+    //       revlist=`git rev-list --tags --max-count=1`
+    //       rc=$?
+    //       set -e
+    //       if [ 0 -eq $rc ]; then
+    //         tag=`git describe --tags $revlist`
 
-            major=`echo $tag | awk -F '.' '{ print $1 }'`
-            minor=`echo $tag | awk -F '.' '{ print $2 }'`
-            patch=`echo $tag | awk -F '.' '{ print $3 }'`
+    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
+    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
+    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
-            case $TAG_FOR in
-              testing)
-                patch=$(( $patch + $patch % 2 + 1 ))
-                ;;
-              production)
-                patch=$(( $patch + 1 ))
-                git reset --hard
-                git checkout $tag
-                ;;
-            esac
+    //         case $TAG_FOR in
+    //           testing)
+    //             patch=$(( $patch + $patch % 2 + 1 ))
+    //             ;;
+    //           production)
+    //             patch=$(( $patch + 1 ))
+    //             git reset --hard
+    //             git checkout $tag
+    //             ;;
+    //         esac
 
-            tag=$major.$minor.$patch
-          else
-            tag=0.1.1
-          fi
-          git tag -a $tag -m "Bump version to $tag"
-        '''.stripIndent())
+    //         tag=$major.$minor.$patch
+    //       else
+    //         tag=0.1.1
+    //       fi
+    //       git tag -a $tag -m "Bump version to $tag"
+    //     '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-          sh 'git push --tag'
-        }
-      }
-    }
+    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+    //       sh 'git push --tag'
+    //     }
+    //   }
+    // }
 
-    stage('Tag minor') {
-      when {
-        expression { TAG_MINOR == 'true' }
-      }
-      steps {
-        sh(returnStdout: true, script: '''
-          set +e
-          revlist=`git rev-list --tags --max-count=1`
-          rc=$?
-          set -e
-          if [ 0 -eq $rc ]; then
-            tag=`git describe --tags $revlist`
+    // stage('Tag minor') {
+    //   when {
+    //     expression { TAG_MINOR == 'true' }
+    //   }
+    //   steps {
+    //     sh(returnStdout: true, script: '''
+    //       set +e
+    //       revlist=`git rev-list --tags --max-count=1`
+    //       rc=$?
+    //       set -e
+    //       if [ 0 -eq $rc ]; then
+    //         tag=`git describe --tags $revlist`
 
-            major=`echo $tag | awk -F '.' '{ print $1 }'`
-            minor=`echo $tag | awk -F '.' '{ print $2 }'`
-            patch=`echo $tag | awk -F '.' '{ print $3 }'`
+    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
+    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
+    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
-            minor=$(( $minor + 1 ))
-            patch=1
+    //         minor=$(( $minor + 1 ))
+    //         patch=1
 
-            tag=$major.$minor.$patch
-          else
-            tag=0.1.1
-          fi
-          git tag -a $tag -m "Bump version to $tag"
-        '''.stripIndent())
+    //         tag=$major.$minor.$patch
+    //       else
+    //         tag=0.1.1
+    //       fi
+    //       git tag -a $tag -m "Bump version to $tag"
+    //     '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-          sh 'git push --tag'
-        }
-      }
-    }
+    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+    //       sh 'git push --tag'
+    //     }
+    //   }
+    // }
 
-    stage('Tag major') {
-      when {
-        expression { TAG_MAJOR == 'true' }
-      }
-      steps {
-        sh(returnStdout: true, script: '''
-          set +e
-          revlist=`git rev-list --tags --max-count=1`
-          rc=$?
-          set -e
-          if [ 0 -eq $rc ]; then
-            tag=`git describe --tags $revlist`
+    // stage('Tag major') {
+    //   when {
+    //     expression { TAG_MAJOR == 'true' }
+    //   }
+    //   steps {
+    //     sh(returnStdout: true, script: '''
+    //       set +e
+    //       revlist=`git rev-list --tags --max-count=1`
+    //       rc=$?
+    //       set -e
+    //       if [ 0 -eq $rc ]; then
+    //         tag=`git describe --tags $revlist`
 
-            major=`echo $tag | awk -F '.' '{ print $1 }'`
-            minor=`echo $tag | awk -F '.' '{ print $2 }'`
-            patch=`echo $tag | awk -F '.' '{ print $3 }'`
+    //         major=`echo $tag | awk -F '.' '{ print $1 }'`
+    //         minor=`echo $tag | awk -F '.' '{ print $2 }'`
+    //         patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
-            major=$(( $major + 1 ))
-            minor=0
-            patch=1
+    //         major=$(( $major + 1 ))
+    //         minor=0
+    //         patch=1
 
-            tag=$major.$minor.$patch
-          else
-            tag=0.1.1
-          fi
-          git tag -a $tag -m "Bump version to $tag"
-        '''.stripIndent())
+    //         tag=$major.$minor.$patch
+    //       else
+    //         tag=0.1.1
+    //       fi
+    //       git tag -a $tag -m "Bump version to $tag"
+    //     '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
-          sh 'git push --tag'
-        }
-      }
-    }
+    //     withCredentials([gitUsernamePassword(credentialsId: 'jiangjie-git-username-passwd', gitToolName: 'git-tool')]) {
+    //       sh 'git push --tag'
+    //     }
+    //   }
+    // }
 
     // stage('Generate docker image for development') {
     //   when {
@@ -192,20 +192,20 @@ pipeline {
     //   }
     // }
 
-    // stage('Generate docker image for testing or production') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       tag=`git describe --tags $revlist`
-    //       git reset --hard
-    //       git checkout $tag
-    //     '''.stripIndent())
-    //     sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
-    //   }
-    // }
+    stage('Generate docker image for testing or production') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          revlist=`git rev-list --tags --max-count=1`
+          tag=`git describe --tags $revlist`
+          git reset --hard
+          git checkout $tag
+        '''.stripIndent())
+        sh 'DEVELOPMENT=other DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
 
     // stage('Release docker image for development') {
     //   when {
