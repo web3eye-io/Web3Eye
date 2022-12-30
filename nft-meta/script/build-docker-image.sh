@@ -40,7 +40,7 @@ service_name=$(
 if [[ ${!1-x} == x || "xdevelopment" == "x$1" ]]; then
     version=latest
 fi
-echo $version "version"
+echo $version ${!1-x} $1 $2 "version"
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
