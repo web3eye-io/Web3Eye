@@ -60,15 +60,19 @@ gen-ent:
 ifdef AIMPROJECT
 PROJECTS= $(AIMPROJECT)
 endif
+
 ifndef DEVELOPMENT
 DEVELOPMENT= dev
 endif
+
 ifndef DOCKER_REGISTRY
 DOCKER_REGISTRY= x
-endif	
+endif
+
 ifndef TAG
 TAG= latest
-endif	
+endif
+	
 .PHONY: build-docker release-docker deploy-to-k8s-cluster
 
 build-docker:

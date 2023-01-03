@@ -37,17 +37,17 @@ service_name=$(
 )
 
 ## For development environment, pass the second variable
-if [[ ${!1-x} == x || "xdev" == "x$1" ]]; then
+if [[ "xdev" == "x$1" ]]; then
     version=latest
 fi
-echo $version ${!1-x} $1 $2 "version"
+echo $version $1 $2 "version"
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
 OrginazeName=coastlinesss
 # OrginazeName=web3eye
 
-if [[ ${!2-x} != x && "x" != $2 ]]; then
+if [[ "x" != $2 ]]; then
     registry=$2/
 fi
 

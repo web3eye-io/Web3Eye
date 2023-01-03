@@ -36,7 +36,7 @@ service_name=$(
 )
 
 ## For development environment, pass the second variable
-if [[ ${!1-x} == x || "xdevelopment" == "x$1" ]]; then
+if [[ "xdevelopment" == "x$1" ]]; then
     version=latest
 fi
 
@@ -46,7 +46,7 @@ registry=""
 OrginazeName=coastlinesss
 # OrginazeName=web3eye
 
-if [[ ${!2-x} != x && "x" != $2 ]]; then
+if [[ "x" != $2 ]]; then
     registry=$2/
 fi
 
