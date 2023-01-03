@@ -277,9 +277,7 @@ pipeline {
 
   post('Report') {
     always {
-      mail  to: '670884108@qq.com'
-            subject: "test"
-            body: "test"
+      echo "sadfasdfas"
      }
     // success {
     //   script {
