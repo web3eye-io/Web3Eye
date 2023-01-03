@@ -221,56 +221,52 @@ pipeline {
     stage('Deploy for development') {
       when {
         expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV ==~ /.*development.*/ }
+        expression { TARGET_ENV == "dev" }
       }
       steps {
         sh 'TAG=latest make deploy-to-k8s-cluster'
       }
     }
 
-    // stage('Deploy for testing') {
-    //   when {
-    //     expression { DEPLOY_TARGET == 'true' }
-    //     expression { TARGET_ENV ==~ /.*testing.*/ }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       tag=`git describe --tags $revlist`
+    stage('Deploy for testing') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+        expression { TARGET_ENV == "test" }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          revlist=`git rev-list --tags --max-count=1`
+          tag=`git describe --tags $revlist`
 
-    //       git reset --hard
-    //       git checkout $tag
-    //       sed -i "s/nft-meta:latest/nft-meta:$tag/g" cmd/nft-meta/k8s/02-nft-meta.yaml
-    //       sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/nft-meta/k8s/02-nft-meta.yaml
-    //       TAG=$tag make deploy-to-k8s-cluster
-    //     '''.stripIndent())
-    //   }
-    // }
+          git reset --hard
+          git checkout $tag
+          TAG=$tag make deploy-to-k8s-cluster
+        '''.stripIndent())
+      }
+    }
 
-    // stage('Deploy for production') {
-    //   when {
-    //     expression { DEPLOY_TARGET == 'true' }
-    //     expression { TARGET_ENV ==~ /.*production.*/ }
-    //   }
-    //   steps {
-    //     sh(returnStdout: true, script: '''
-    //       revlist=`git rev-list --tags --max-count=1`
-    //       tag=`git describe --tags $revlist`
+    stage('Deploy for production') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+        expression { TARGET_ENV == "prod" }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          revlist=`git rev-list --tags --max-count=1`
+          tag=`git describe --tags $revlist`
 
-    //       major=`echo $tag | awk -F '.' '{ print $1 }'`
-    //       minor=`echo $tag | awk -F '.' '{ print $2 }'`
-    //       patch=`echo $tag | awk -F '.' '{ print $3 }'`
-    //       patch=$(( $patch - $patch % 2 ))
-    //       tag=$major.$minor.$patch
+          major=`echo $tag | awk -F '.' '{ print $1 }'`
+          minor=`echo $tag | awk -F '.' '{ print $2 }'`
+          patch=`echo $tag | awk -F '.' '{ print $3 }'`
+          patch=$(( $patch - $patch % 2 ))
+          tag=$major.$minor.$patch
 
-    //       git reset --hard
-    //       git checkout $tag
-    //       sed -i "s/nft-meta:latest/nft-meta:$tag/g" cmd/nft-meta/k8s/02-nft-meta.yaml
-    //       sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/nft-meta/k8s/02-nft-meta.yaml
-    //       TAG=$tag make deploy-to-k8s-cluster
-    //     '''.stripIndent())
-    //   }
-    // }
+          git reset --hard
+          git checkout $tag
+          TAG=$tag make deploy-to-k8s-cluster
+        '''.stripIndent())
+      }
+    }
 
     // stage('Post') {
     //   steps {
