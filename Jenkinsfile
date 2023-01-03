@@ -75,7 +75,7 @@ pipeline {
     //     '''.stripIndent())
     //   }
     // }
-    stage('Tag major') {
+    stage('Tag') {
       when {
         anyOf{
           expression { TAG_MAJOR == 'true' }
@@ -116,16 +116,18 @@ pipeline {
           fi
 
           case $TAG_FOR in
-            testing)
+            test)
               patch=$(( $patch + $patch % 2 + 1 ))
               ;;
-            production)
+            prod)
               patch=$(( $patch + ( $patch +  1 ) % 2 + 1 ))
               git reset --hard
               git checkout $tag
               ;;
           esac
 
+          tag=$major.$minor.$patch
+          
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
