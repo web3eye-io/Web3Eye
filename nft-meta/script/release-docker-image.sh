@@ -29,7 +29,7 @@ service_name=$(
   basename $(pwd)
 )
 
-if [[ ! -n "$1" ]]; then
+if [[ "x" == "x$1" ]]; then
   version=latest
 fi
 
