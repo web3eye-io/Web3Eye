@@ -218,16 +218,15 @@ pipeline {
       }
     }
 
-    // stage('Deploy for development') {
-    //   when {
-    //     expression { DEPLOY_TARGET == 'true' }
-    //     expression { TARGET_ENV ==~ /.*development.*/ }
-    //   }
-    //   steps {
-    //     sh 'sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/nft-meta/k8s/02-nft-meta.yaml'
-    //     sh 'TAG=latest make deploy-to-k8s-cluster'
-    //   }
-    // }
+    stage('Deploy for development') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+        expression { TARGET_ENV ==~ /.*development.*/ }
+      }
+      steps {
+        sh 'TAG=latest make deploy-to-k8s-cluster'
+      }
+    }
 
     // stage('Deploy for testing') {
     //   when {
