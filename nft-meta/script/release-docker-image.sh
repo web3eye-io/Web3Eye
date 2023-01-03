@@ -44,10 +44,9 @@ registry=""
 OrginazeName=coastlinesss
 # OrginazeName=web3eye
 
-# TODO: support change registry
-# if [[ "x" != $2 ]]; then
-#   registry=$2/
-# fi
+if [[ "x" != $2 ]]; then
+  registry=$2/
+fi
 
 echo "Release docker image for $PLATFORM -- $version"
 

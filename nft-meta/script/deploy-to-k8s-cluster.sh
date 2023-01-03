@@ -34,10 +34,11 @@ if [ "$1" == "dev" ]; then
   version=latest
 fi
 
+# TODO: support change registry
 ## For testing or production environment, pass the second variable
-if [[ "x" != "x$2" ]]; then
-  DOCKER_REGISTRY=$2
-fi
+# if [[ "x" != "x$2" ]]; then
+#   DOCKER_REGISTRY=$2
+# fi
 
 service_name=$(
   cd $ROOT_FOLDER
