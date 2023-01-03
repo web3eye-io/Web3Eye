@@ -4,3 +4,4 @@ metadata:
   name: nft-meta-config
 data:
   service-conf:
+    hostname: box
