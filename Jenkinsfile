@@ -268,72 +268,57 @@ pipeline {
       }
     }
 
-    // stage('Post') {
-    //   steps {
-    //     // Assemble vet and lint info.
-    //     // warnings parserConfigurations: [
-    //     //   [pattern: 'govet.txt', parserName: 'Go Vet'],
-    //     //   [pattern: 'golint.txt', parserName: 'Go Lint']
-    //     // ]
+    stage('Post') {
+      steps {
+        sh 'echo Posting'
+      }
+    }
+  }
 
-    //     // sh 'go2xunit -fail -input gotest.txt -output gotest.xml'
-    //     // junit "gotest.xml"
-    //     sh 'echo Posting'
+  post('Report') {
+    always {
+      mail  to: '670884108@qq.com'
+            subject: "test"
+            body: "test"
+     }
+    // success {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh successful')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/success_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
+    //   }
+    //  }
+    // failure {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh failure')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
+    //   }
+    //  }
+    // aborted {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh aborted')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
     //   }
     // }
   }
-  // post('Report') {
-  //   fixed {
-  //     script {
-  //       sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh fixed')
-  //    }
-  //     script {
-  //       // env.ForEmailPlugin = env.WORKSPACE
-  //       emailext attachmentsPattern: 'TestResults\\*.trx',
-  //       body: '${FILE,path="$JENKINS_HOME/email-templates/success_email_tmp.html"}',
-  //       mimeType: 'text/html',
-  //       subject: currentBuild.currentResult + " : " + env.JOB_NAME,
-  //       to: '$DEFAULT_RECIPIENTS'
-  //     }
-  //    }
-  //   success {
-  //     script {
-  //       sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh successful')
-  //    }
-  //     script {
-  //       // env.ForEmailPlugin = env.WORKSPACE
-  //       emailext attachmentsPattern: 'TestResults\\*.trx',
-  //       body: '${FILE,path="$JENKINS_HOME/email-templates/success_email_tmp.html"}',
-  //       mimeType: 'text/html',
-  //       subject: currentBuild.currentResult + " : " + env.JOB_NAME,
-  //       to: '$DEFAULT_RECIPIENTS'
-  //     }
-  //    }
-  //   failure {
-  //     script {
-  //       sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh failure')
-  //    }
-  //     script {
-  //       // env.ForEmailPlugin = env.WORKSPACE
-  //       emailext attachmentsPattern: 'TestResults\\*.trx',
-  //       body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
-  //       mimeType: 'text/html',
-  //       subject: currentBuild.currentResult + " : " + env.JOB_NAME,
-  //       to: '$DEFAULT_RECIPIENTS'
-  //     }
-  //    }
-  //   aborted {
-  //     script {
-  //       sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh aborted')
-  //    }
-  //     script {
-  //       // env.ForEmailPlugin = env.WORKSPACE
-  //       emailext attachmentsPattern: 'TestResults\\*.trx',
-  //       body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
-  //       mimeType: 'text/html',
-  //       subject: currentBuild.currentResult + " : " + env.JOB_NAME,
-  //       to: '$DEFAULT_RECIPIENTS'
-  //     }
-  //    }
-  // }
 }

@@ -4,4 +4,4 @@ metadata:
   name: block-etl-config
   # namespace: kube-system
 data:
-  service-conf: |
+  hostname: box

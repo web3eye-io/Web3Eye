@@ -46,9 +46,6 @@ spec:
         - name: service-config
           configMap:
             name: nft-meta-config
-            items:
-              - key: service-conf
-                path: NFTMeta.viper.yaml
 ---
 apiVersion: v1
 kind: Service

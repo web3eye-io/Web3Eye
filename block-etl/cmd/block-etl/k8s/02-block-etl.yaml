@@ -46,9 +46,6 @@ spec:
         - name: service-config
           configMap:
             name: block-etl-config
-            items:
-              - key: service-conf
-                path: BlockETL.viper.yaml
 ---
 apiVersion: v1
 kind: Service
