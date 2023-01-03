@@ -3,13 +3,4 @@ kind: ConfigMap
 metadata:
   name: nft-meta-config
 data:
-  service-conf: |
-    config:
-      hostname: "nft-meta.npool.top"
-      http_port: 50490
-      grpc_port: 50491
-      prometheus_port: 50492
-      appid: "89089012783789789719823798127398"
-      serviceid: "cd382628-9fb9-4f24-83c3-4f7e87532532"
-      logdir: "./"
-      apolloAccessKey: "0147fb70b815403790e8634b899fac07"
+  service-conf:

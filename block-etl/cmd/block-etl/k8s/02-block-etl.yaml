@@ -57,7 +57,7 @@ metadata:
   # namespace: kube-system
 spec:
   selector:
-    app: block-etl  
+    app: block-etl
   # clusterIP: None
   ports:
     - name: http
@@ -72,4 +72,3 @@ spec:
     - name: prometheus
       port: 50492
       targetPort: 50492
-
