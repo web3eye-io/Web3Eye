@@ -105,11 +105,11 @@ pipeline {
             minor=`echo $tag | awk -F '.' '{ print $2 }'`
             patch=`echo $tag | awk -F '.' '{ print $3 }'`
 
-            if [ $TAG_MAJOR ]; then
+            if [ '$TAG_MAJOR' -eq 'true' ]; then
               major=$(( $major + 1 ))
               minor=0
               patch=0
-            elif [ $TAG_MINOR ]; then
+            elif [ '$TAG_MINOR' -eq 'true' ]; then
               minor=$(( $minor + 1 ))
               patch=0
             fi    
