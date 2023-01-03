@@ -40,7 +40,7 @@ service_name=$(
 if [[ "xdev" == "x$1" ]]; then
     version=latest
 fi
-echo $version $1 $2 "version"
+echo $version ---$1--- ***$2*** "version"
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
