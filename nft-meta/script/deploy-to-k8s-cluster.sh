@@ -35,7 +35,7 @@ if [ "$1" == "dev" ]; then
 fi
 
 ## For testing or production environment, pass the second variable
-if [ "x" != "x$2" ]; then
+if [[ "x" != "x$2" ]]; then
   DOCKER_REGISTRY=$2
 fi
 
