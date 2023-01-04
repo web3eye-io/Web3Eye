@@ -1,0 +1,10 @@
+image:
+  repository: registry.cn-shanghai.aliyuncs.com/c7n/nfs-subdir-external-provisioner
+storageClass:
+  name: default_storage_class
+  archiveOnDelete: false
+  defaultClass: true
+nfs:
+  server: 172.23.10.83
+  path: /data/k8s_storage
+nodeSelector: {}

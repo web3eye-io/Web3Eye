@@ -12,8 +12,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-kubectl apply -f $SHELL_FOLDER/01-nfs-client.yaml
-kubectl apply -f $SHELL_FOLDER/02-nfs-client-provisioner.yaml
-kubectl apply -f $SHELL_FOLDER/03-nfs-client-class.yaml
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+helm repo update
 
-kubectl patch storageclass course-nfs-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+helm install default_nfs_provisioner \
+    nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+    -f $SHELL_FOLDER/value.yaml
