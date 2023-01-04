@@ -1,12 +1,15 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: simpleingressroute
+  name: myingressroute
+  namespace: default
+
 spec:
   entryPoints:
     - web
+
   routes:
-    - match: Host(`your.domain.com`) && PathPrefix(`/notls`)
+    - match: Host(`foo`) && PathPrefix(`/bar`)
       kind: Rule
       services:
         - name: whoami
@@ -14,17 +17,31 @@ spec:
 
 ---
 apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+kind: IngressRouteTCP
 metadata:
-  name: ingressroutetls
+  name: ingressroute.tcp
+  namespace: default
+
 spec:
   entryPoints:
-    - websecure
+    - tcpep
   routes:
-    - match: Host(`your.domain.com`) && PathPrefix(`/tls`)
-      kind: Rule
+    - match: HostSNI(`bar`)
       services:
-        - name: whoami
-          port: 80
-  tls:
-    certResolver: default
+        - name: whoamitcp
+          port: 8080
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: ingressroute.udp
+  namespace: default
+
+spec:
+  entryPoints:
+    - udpep
+  routes:
+    - services:
+        - name: whoamiudp
+          port: 8080

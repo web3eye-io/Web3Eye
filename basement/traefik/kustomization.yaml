@@ -1,5 +1,6 @@
 resources:
-  - 01-ingress-rbac.yaml
-  - 02-ingress-service.yaml
+  - 01-ingress-rd.yaml
+  - 02-ingress-rbac.yaml
   - 03-traefik.yaml
   - 04-ingress-route.yaml
+  - 05-whoami.yaml
