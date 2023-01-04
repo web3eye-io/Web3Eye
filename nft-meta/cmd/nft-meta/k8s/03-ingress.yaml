@@ -1,16 +1,27 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-nft-meta-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api/nft-meta
+
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nft-meta-ingress
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: strip-nft-meta-prefix@kubernetescrd
 
 spec:
   rules:
     - host:
       http:
         paths:
-          - path: /nft-meta/v1
+          - path: /api/nft-meta
             pathType: Exact
             backend:
               service:
