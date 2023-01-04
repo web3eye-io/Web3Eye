@@ -1,7 +1,7 @@
 image:
   repository: registry.cn-shanghai.aliyuncs.com/c7n/nfs-subdir-external-provisioner
 storageClass:
-  name: default_storage_class
+  name: default-storage-class
   archiveOnDelete: false
   defaultClass: true
 nfs:
