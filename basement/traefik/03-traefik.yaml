@@ -1,46 +1,75 @@
-apiVersion: apps/v1
-kind: DaemonSet
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: traefik-ingress-lb
   namespace: default
-  # namespace: kube-system
+  name: traefik-ingress-controller
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  namespace: default
+  name: traefik
   labels:
-    k8s-app: traefik-ingress-lb
+    app: traefik
+
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      k8s-app: traefik-ingress-lb
+      app: traefik
   template:
     metadata:
       labels:
-        k8s-app: traefik-ingress-lb
-        name: traefik-ingress-lb
+        app: traefik
     spec:
-      terminationGracePeriodSeconds: 60
-      hostNetwork: true
-      restartPolicy: Always
-      serviceAccountName: ingress
+      serviceAccountName: traefik-ingress-controller
       containers:
-      - image: traefik
-        name: traefik-ingress-lb
-        imagePullPolicy: Always
-        resources:
-          limits:
-            cpu: 200m
-            memory: 30Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        ports:
-        - name: http
-          containerPort: 80
-          hostPort: 80
-        - name: admin
-          containerPort: 8580
-          hostPort: 8580
-        args:
-        - --web
-        - --web.address=:8580
-        - --kubernetes
-      nodeSelector:
-        edgenode: "true"
+        - name: traefik
+          image: traefik:v2.0
+          args:
+            - --api
+            - --accesslog
+            - --entrypoints.web.Address=:8000
+            - --entrypoints.websecure.Address=:4443
+            - --providers.kubernetescrd
+            - --certificatesresolvers.default.acme.tlschallenge
+            - --certificatesresolvers.default.acme.email=foo@you.com
+            - --certificatesresolvers.default.acme.entrypoint=websecure
+            - --certificatesresolvers.default.acme.storage=acme.json
+            # Please note that this is the staging Let's Encrypt server.
+            # Once you get things working, you should remove that whole line altogether.
+            - --certificatesresolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+          ports:
+            - name: web
+              containerPort: 8000
+            - name: websecure
+              containerPort: 4443
+            - name: admin
+              containerPort: 8080
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  namespace: default
+  name: whoami
+  labels:
+    app: whoami
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+        - name: whoami
+          image: containous/whoami
+          ports:
+            - name: web
+              containerPort: 80

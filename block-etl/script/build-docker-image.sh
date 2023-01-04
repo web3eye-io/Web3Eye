@@ -25,21 +25,22 @@ fi
 
 set +e
 version=$(git describe --tags --abbrev=0)
+echo $version "version"
 if [ ! $? -eq 0 ]; then
     version=latest
 fi
 set -e
-
+echo $version "version"
 service_name=$(
     cd $ROOT_FOLDER
     basename $(pwd)
 )
 
 ## For development environment, pass the second variable
-if [[ "xdevelopment" == "x$1" ]]; then
+if [[ "xdev" == "x$1" ]]; then
     version=latest
 fi
-
+echo $version ---$1--- ***$2*** "version"
 # TODO: should be official registry
 # registry=uhub.service.ucloud.cn
 registry=""
