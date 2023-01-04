@@ -5,14 +5,13 @@ metadata:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: traefik
   labels:
     app: traefik
 
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: traefik
