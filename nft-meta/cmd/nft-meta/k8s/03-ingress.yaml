@@ -14,7 +14,7 @@ metadata:
   name: nft-meta-ingress
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.middlewares: strip-nft-meta-prefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: default-strip-nft-meta-prefix@kubernetescrd
 
 spec:
   rules:
