@@ -14,3 +14,7 @@ set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql bitnami/mysql
+
+# remove
+# helm uninstall mysql
+# kubectl delete pvc data-mysql-0
