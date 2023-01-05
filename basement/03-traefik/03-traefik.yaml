@@ -28,6 +28,7 @@ spec:
           ports:
             - name: web
               containerPort: 80
+              protocol: TCP
 
 ---
 apiVersion: v1
