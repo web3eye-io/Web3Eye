@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: myingress
   annotations:
+    kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web
 
 spec:
