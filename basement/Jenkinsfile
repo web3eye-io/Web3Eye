@@ -112,7 +112,7 @@ pipeline {
       when{
         expression { UNINSTALL   ==  'true' }
         anyOf {
-          TARGET
+          expression { TARGET   ==  'all' }
           expression { TARGET == 'kafka' }
         }
       }
