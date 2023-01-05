@@ -4,7 +4,7 @@ pipeline {
     // -------install tasks----------
     stage('install traefik') {
       when {
-        anyOf{
+        anyOf {
           expression { INSTALL_ALL == 'true' }
           expression { INSTALL_TREAFIK == 'true' }
         }
@@ -13,8 +13,9 @@ pipeline {
         sh 'bash 03-traefik/install.sh'
       }
     }
+
     stage('install milvus') {
-      anyOf{
+      anyOf {
           expression { INSTALL_ALL == 'true' }
           expression { INSTALL_MILVUS == 'true' }
       }
@@ -22,8 +23,9 @@ pipeline {
         sh 'bash 04-milvus/install.sh'
       }
     }
+
     stage('install redis-cluster') {
-      anyOf{
+      anyOf {
           expression { INSTALL_ALL == 'true' }
           expression { INSTALL_REDIS_CLUSTER == 'true' }
       }
@@ -31,8 +33,9 @@ pipeline {
         sh 'bash 05-redis-cluster/install.sh'
       }
     }
+
     stage('install kafka') {
-      anyOf{
+      anyOf {
           expression { INSTALL_ALL == 'true' }
           expression { INSTALL_KAFKA == 'true' }
       }
@@ -41,7 +44,7 @@ pipeline {
       }
     }
     stage('install mysql') {
-      anyOf{
+      anyOf {
           expression { INSTALL_ALL == 'true' }
           expression { INSTALL_MYSQL == 'true' }
       }
@@ -54,7 +57,7 @@ pipeline {
 
     stage('uninstall traefik') {
       when {
-        anyOf{
+        anyOf {
           expression { UNINSTALL_ALL == 'true' }
           expression { UNINSTALL_TREAFIK == 'true' }
         }
@@ -64,7 +67,7 @@ pipeline {
       }
     }
     stage('uninstall milvus') {
-      anyOf{
+      anyOf {
           expression { UNINSTALL_ALL == 'true' }
           expression { UNINSTALL_MILVUS == 'true' }
       }
@@ -73,7 +76,7 @@ pipeline {
       }
     }
     stage('uninstall redis-cluster') {
-      anyOf{
+      anyOf {
           expression { UNINSTALL_ALL == 'true' }
           expression { UNINSTALL_REDIS_CLUSTER == 'true' }
       }
@@ -82,7 +85,7 @@ pipeline {
       }
     }
     stage('uninstall kafka') {
-      anyOf{
+      anyOf {
           expression { UNINSTALL_ALL == 'true' }
           expression { UNINSTALL_KAFKA == 'true' }
       }
@@ -91,7 +94,7 @@ pipeline {
       }
     }
     stage('uninstall mysql') {
-      anyOf{
+      anyOf {
           expression { UNINSTALL_ALL == 'true' }
           expression { UNINSTALL_MYSQL == 'true' }
       }
