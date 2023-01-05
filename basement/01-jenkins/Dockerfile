@@ -22,7 +22,6 @@ RUN yum install make -y
 RUN yum install nodejs -y
 RUN yum install ansible -y
 RUN yum install git -y
-RUN yum install docker -y
 
 RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 

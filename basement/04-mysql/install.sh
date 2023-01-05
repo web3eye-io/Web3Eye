@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
@@ -14,7 +14,4 @@ set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql bitnami/mysql
-
-# remove
-# helm uninstall mysql
-# kubectl delete pvc data-mysql-0
+kubectl get pods | grep mysql

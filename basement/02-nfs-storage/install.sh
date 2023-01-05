@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
@@ -18,3 +18,4 @@ helm repo update
 helm install default-nfs-provisioner \
     nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
     -f $SHELL_FOLDER/value.yaml
+kubectl get pods | grep nfs
