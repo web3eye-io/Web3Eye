@@ -34,7 +34,6 @@ spec:
           ports:
             - name: web
               containerPort: 80
-              hostPort: 81
 
 ---
 apiVersion: v1
