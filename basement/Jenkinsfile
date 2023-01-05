@@ -11,7 +11,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 03-traefik/install.sh'
+        sh 'bash basement/03-traefik/install.sh'
       }
     }
 
@@ -24,7 +24,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 04-milvus/install.sh'
+        sh 'bash basement/04-milvus/install.sh'
       }
     }
 
@@ -37,7 +37,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 05-redis-cluster/install.sh'
+        sh 'bash basement/05-redis-cluster/install.sh'
       }
     }
 
@@ -51,7 +51,7 @@ pipeline {
       }
       
       steps {
-        sh 'bash 06-kafka/install.sh'
+        sh 'bash basement/06-kafka/install.sh'
       }
     }
 
@@ -64,7 +64,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 07-mysql/install.sh'
+        sh 'bash basement/07-mysql/install.sh'
       }
     }
     
@@ -78,7 +78,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 03-traefik/uninstall.sh'
+        sh 'bash basement/03-traefik/uninstall.sh'
       }
     }
 
@@ -91,7 +91,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 04-milvus/uninstall.sh'
+        sh 'bash basement/04-milvus/uninstall.sh'
       }
     }
 
@@ -104,7 +104,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 05-redis-cluster/uninstall.sh'
+        sh 'bash basement/05-redis-cluster/uninstall.sh'
       }
     }
 
@@ -118,7 +118,7 @@ pipeline {
       }
       
       steps {
-        sh 'bash 06-kafka/uninstall.sh'
+        sh 'bash basement/06-kafka/uninstall.sh'
       }
     }
 
@@ -131,7 +131,7 @@ pipeline {
         }
       }
       steps {
-        sh 'bash 07-mysql/uninstall.sh'
+        sh 'bash basement/07-mysql/uninstall.sh'
       }
     }
   }
