@@ -27,6 +27,8 @@ spec:
           args:
             - --entrypoints.web.address=:80
             - --providers.kubernetesingress
+            - --providers.kubernetescrd
+            - --providers.kubernetesingress.ingressclass=traefik-internet
           ports:
             - name: web
               containerPort: 80
