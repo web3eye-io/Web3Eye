@@ -13,5 +13,5 @@ set -o nounset
 set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install -f 01-kafka.yaml kafka bitnami/kafka
+helm install -f $SHELL_FOLDER/01-kafka.yaml kafka bitnami/kafka
 kubectl get pods | grep kafka
