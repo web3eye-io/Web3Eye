@@ -1,0 +1,148 @@
+pipeline {
+  agent any
+  stages {
+    // -------install tasks----------
+    stage('install traefik') {
+      when {
+        anyOf{
+          expression { INSTALL_ALL == 'true' }
+          expression { INSTALL_TREAFIK == 'true' }
+        }
+      }
+      steps {
+        sh 'bash 03-traefik/install.sh'
+      }
+    }
+    stage('install milvus') {
+      anyOf{
+          expression { INSTALL_ALL == 'true' }
+          expression { INSTALL_MILVUS == 'true' }
+      }
+      steps {
+        sh 'bash 04-milvus/install.sh'
+      }
+    }
+    stage('install redis-cluster') {
+      anyOf{
+          expression { INSTALL_ALL == 'true' }
+          expression { INSTALL_REDIS_CLUSTER == 'true' }
+      }
+      steps {
+        sh 'bash 05-redis-cluster/install.sh'
+      }
+    }
+    stage('install kafka') {
+      anyOf{
+          expression { INSTALL_ALL == 'true' }
+          expression { INSTALL_KAFKA == 'true' }
+      }
+      steps {
+        sh 'bash 06-kafka/install.sh'
+      }
+    }
+    stage('install mysql') {
+      anyOf{
+          expression { INSTALL_ALL == 'true' }
+          expression { INSTALL_MYSQL == 'true' }
+      }
+      steps {
+        sh 'bash 07-mysql/install.sh'
+      }
+    }
+    
+    // -------uninstall tasks----------
+
+    stage('uninstall traefik') {
+      when {
+        anyOf{
+          expression { UNINSTALL_ALL == 'true' }
+          expression { UNINSTALL_TREAFIK == 'true' }
+        }
+      }
+      steps {
+        sh 'bash 03-traefik/uninstall.sh'
+      }
+    }
+    stage('uninstall milvus') {
+      anyOf{
+          expression { UNINSTALL_ALL == 'true' }
+          expression { UNINSTALL_MILVUS == 'true' }
+      }
+      steps {
+        sh 'bash 04-milvus/uninstall.sh'
+      }
+    }
+    stage('uninstall redis-cluster') {
+      anyOf{
+          expression { UNINSTALL_ALL == 'true' }
+          expression { UNINSTALL_REDIS_CLUSTER == 'true' }
+      }
+      steps {
+        sh 'bash 05-redis-cluster/uninstall.sh'
+      }
+    }
+    stage('uninstall kafka') {
+      anyOf{
+          expression { UNINSTALL_ALL == 'true' }
+          expression { UNINSTALL_KAFKA == 'true' }
+      }
+      steps {
+        sh 'bash 06-kafka/uninstall.sh'
+      }
+    }
+    stage('uninstall mysql') {
+      anyOf{
+          expression { UNINSTALL_ALL == 'true' }
+          expression { UNINSTALL_MYSQL == 'true' }
+      }
+      steps {
+        sh 'bash 07-mysql/uninstall.sh'
+      }
+    }
+  }
+
+  post('Report') {
+    always {
+      echo "sadfasdfas"
+     }
+    // success {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh successful')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/success_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
+    //   }
+    //  }
+    // failure {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh failure')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
+    //   }
+    //  }
+    // aborted {
+    //   script {
+    //     sh(script: 'bash $JENKINS_HOME/wechat-templates/send_wxmsg.sh aborted')
+    //  }
+    //   script {
+    //     // env.ForEmailPlugin = env.WORKSPACE
+    //     emailext attachmentsPattern: 'TestResults\\*.trx',
+    //     body: '${FILE,path="$JENKINS_HOME/email-templates/fail_email_tmp.html"}',
+    //     mimeType: 'text/html',
+    //     subject: currentBuild.currentResult + " : " + env.JOB_NAME,
+    //     to: '$DEFAULT_RECIPIENTS'
+    //   }
+    // }
+  }
+}
