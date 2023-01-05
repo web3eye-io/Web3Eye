@@ -26,7 +26,7 @@ docker exec -it jenkins /bin/bash
 
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
-apt install make,gcc
+/root/.kube 当中的配置 IP 要指向kube-apiserver的地址不能指向127.0.0.1
 安装Go插件
 安装Kubectl插件
 配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
