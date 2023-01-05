@@ -20,6 +20,8 @@ spec:
       labels:
         app: traefik
     spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       serviceAccountName: traefik-ingress-controller
       containers:
         - name: traefik

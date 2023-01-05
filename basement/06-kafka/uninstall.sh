@@ -14,3 +14,4 @@ set -o pipefail
 
 helm uninstall kafka
 kubectl get pods | grep kafka
+kubectl get pvc | grep kafka | awk '{print $1}' | xargs -n1 kubectl delete pvc
