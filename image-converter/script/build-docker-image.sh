@@ -43,7 +43,7 @@ if [[ "x" != $2 ]]; then
   registry=$2/
 fi
 
-cp $ROOT_FOLDER
+cd $ROOT_FOLDER
 
 user=$(whoami)
 if [ "$user" == "root" ]; then
