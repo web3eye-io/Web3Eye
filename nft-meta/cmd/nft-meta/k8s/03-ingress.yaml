@@ -13,6 +13,7 @@ kind: Ingress
 metadata:
   name: nft-meta-ingress
   annotations:
+    kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.middlewares: default-strip-nft-meta-prefix@kubernetescrd
 
@@ -22,7 +23,7 @@ spec:
       http:
         paths:
           - path: /api/nft-meta
-            pathType: Exact
+            pathType: Prefix
             backend:
               service:
                 name: nft-meta
