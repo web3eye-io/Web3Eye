@@ -27,6 +27,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: mysql_password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+
       volumes:
         - name: service-config
           configMap:

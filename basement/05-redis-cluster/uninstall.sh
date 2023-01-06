@@ -13,3 +13,4 @@ set -o nounset
 set -o pipefail
 
 helm uninstall redis-cluster
+kubectl get pvc | grep redis-cluster | awk '{print $1}' | xargs -n1 kubectl delete pvc
