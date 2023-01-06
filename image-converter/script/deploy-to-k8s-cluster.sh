@@ -37,7 +37,7 @@ service_name=$(
   basename $(pwd)
 )
 
-echo "Deploy docker image for $PLATFORM -- $version"
+echo "Deploy docker image -- $version"
 
 sed -i "s/$service_name:latest/$service_name:$version/g" $ROOT_FOLDER/k8s/02-$service_name.yaml
 # sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/02-$service_name.yaml
