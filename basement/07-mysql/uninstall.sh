@@ -14,5 +14,3 @@ set -o pipefail
 
 helm uninstall mysql
 kubectl delete pvc data-mysql-0
-
-kubectl get pods | grep mysql

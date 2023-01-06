@@ -13,4 +13,3 @@ set -o nounset
 set -o pipefail
 
 helm uninstall redis-cluster
-kubectl get pods | grep redis
