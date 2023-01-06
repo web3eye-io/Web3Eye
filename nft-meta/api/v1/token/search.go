@@ -90,6 +90,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	if len(_scores) == 0 {
+		respBody["msg"] = "have no vector"
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	scores := _scores[0]
 	vIDs := []int64{}
 	for i := range scores {

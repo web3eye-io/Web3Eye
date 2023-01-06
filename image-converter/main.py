@@ -15,7 +15,7 @@ def img2ventor():
     if ext not in ('.png', '.jpg', '.jpeg'):
         return vectorResp(msg='File extension not allowed.')
 
-    image_path = "./tmp/"+str(uuid4())+ext
+    image_path = "./img/"+str(uuid4())+ext
     # appends upload.filename automatically
     upload.save(image_path)
 

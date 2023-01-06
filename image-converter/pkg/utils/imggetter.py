@@ -47,7 +47,7 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
             return "", False
     except:
         print(url, " have no accept_ranges")
-    file_path = f"./tmp/{str(uuid4())}.{typedic[content_type]}"
+    file_path = f"./img/{str(uuid4())}.{typedic[content_type]}"
     file = open(file_path, 'wb')
 
     file_size_dl = 0
