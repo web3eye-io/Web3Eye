@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-converter
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-converter
+  template:
+    metadata:
+      labels:
+        app: image-converter
+    spec:
+      containers:
+        - name: image-converter
+          # image: web3eye/image-converter:latest
+          image: coastlinesss/image-converter:latest
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-converter
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: image-converter

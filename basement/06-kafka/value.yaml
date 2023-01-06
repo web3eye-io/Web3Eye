@@ -3,3 +3,7 @@ resources:
     memory: 4Gi
   requests:
     memory: 2Gi
+
+replicaCount: 3
+zookeeper:
+  replicaCount: 3
