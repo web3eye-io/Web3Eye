@@ -25,8 +25,8 @@ password="QARo5aA6zO"
 database="nft_meta"
 
 [redis]
-address="redis-master:6379"
-password="q123"
+address="redis-cluster-headless:6379"
+password=""
 
 [milvus]
 address="milvus:19530"

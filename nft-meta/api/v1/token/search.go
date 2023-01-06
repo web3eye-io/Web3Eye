@@ -91,7 +91,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(_scores) == 0 {
-		respBody["msg"] = "have no vector"
+		respBody["msg"] = "have no result"
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
