@@ -20,7 +20,7 @@ pipeline {
         expression { INSTALL   ==  'true' }
         anyOf {
             expression { TARGET   ==  'all' }
-            expression { TARGET == 'traefik' }
+            expression { TARGET == 'milvus' }
         }
       }
       steps {
@@ -33,7 +33,7 @@ pipeline {
         expression { INSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'traefik' }
+          expression { TARGET == 'redis-cluster' }
         }
       }
       steps {
@@ -46,7 +46,7 @@ pipeline {
         expression { INSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'traefik' }
+          expression { TARGET == 'kafka' }
         }
       }
       
@@ -60,7 +60,7 @@ pipeline {
         expression { INSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'traefik' }
+          expression { TARGET == 'mysql' }
         }
       }
       steps {
@@ -87,7 +87,7 @@ pipeline {
         expression { UNINSTALL   ==  'true' }
         anyOf {
             expression { TARGET   ==  'all' }
-           expression { TARGET == 'traefik' }
+           expression { TARGET == 'milvus' }
         }
       }
       steps {
@@ -100,7 +100,7 @@ pipeline {
         expression { UNINSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'traefik' }
+          expression { TARGET == 'redis-cluster' }
         }
       }
       steps {
