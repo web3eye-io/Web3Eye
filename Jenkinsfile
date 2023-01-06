@@ -277,7 +277,7 @@ pipeline {
 
   post('Report') {
     always {
-      echo "sadfasdfas"
+      echo "Anyway,finished the job."
      }
     // success {
     //   script {
