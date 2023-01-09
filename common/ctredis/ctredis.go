@@ -9,14 +9,14 @@ import (
 )
 
 var (
-	redisClient *redis.Client
+	redisClient *redis.ClusterClient
 	poolSize    = 50
 	lk          sync.RWMutex
 
 	ErrRedisClientNotInit = errors.New("redis client not init")
 )
 
-func GetClient() *redis.Client {
+func GetClient() *redis.ClusterClient {
 	lk.Lock()
 	defer lk.Unlock()
 
@@ -28,12 +28,13 @@ func GetClient() *redis.Client {
 	service := config.GetConfig().Redis.Address
 	password := config.GetConfig().Redis.Password
 
-	redisClient = redis.NewClient(&redis.Options{
-		Addr:     service,
+	redisClient = redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs:    []string{service},
 		Password: password,
-		DB:       0,
 		PoolSize: poolSize,
 	})
+	// check wheather is cluster mode
+
 	// TODO: should check wheather is cluster,and auto start with cluster clent
 	return redisClient
 }

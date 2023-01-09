@@ -45,6 +45,7 @@ func Unlock(lockKey, lockID string) error {
 	if _lockID != lockID {
 		return errors.New("lockID not match")
 	}
+
 	err = cli.Del(ctx, lockKey).Err()
 	return ErrFilter(err)
 }

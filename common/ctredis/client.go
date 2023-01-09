@@ -48,7 +48,7 @@ func Del(key string) error {
 }
 
 func ErrFilter(err error) error {
-	if strings.Contains(err.Error(), "MOVED") {
+	if err != nil && strings.Contains(err.Error(), "MOVED") {
 		return nil
 	}
 	return err
