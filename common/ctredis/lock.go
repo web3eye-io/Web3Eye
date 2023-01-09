@@ -18,6 +18,7 @@ func TryLock(key string, expire time.Duration) (string, error) {
 	lockID := uuid.New().String()
 	resp := cli.SetNX(ctx, key, lockID, expire)
 	locked, err := resp.Result()
+	err = ErrFilter(err)
 	if err != nil {
 		return "", xerrors.Errorf("fail lock: %v", err)
 	}
@@ -36,6 +37,7 @@ func Unlock(lockKey, lockID string) error {
 	defer cancel()
 
 	_lockID, err := cli.Get(ctx, lockKey).Result()
+	err = ErrFilter(err)
 	if err != nil {
 		return err
 	}
@@ -43,6 +45,6 @@ func Unlock(lockKey, lockID string) error {
 	if _lockID != lockID {
 		return errors.New("lockID not match")
 	}
-
-	return cli.Del(ctx, lockKey).Err()
+	err = cli.Del(ctx, lockKey).Err()
+	return ErrFilter(err)
 }

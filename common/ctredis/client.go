@@ -19,7 +19,7 @@ func Set(key string, value interface{}, expire time.Duration) error {
 	defer cancel()
 
 	err := cli.Set(ctx, key, value, expire).Err()
-	return errFilter(err)
+	return ErrFilter(err)
 }
 
 func Get(key string) (interface{}, error) {
@@ -29,7 +29,7 @@ func Get(key string) (interface{}, error) {
 	defer cancel()
 
 	v, err := cli.Get(ctx, key).Result()
-	err = errFilter(err)
+	err = ErrFilter(err)
 	if err != nil {
 		return nil, xerrors.Errorf("fail get key %v: %v", key, err)
 	}
@@ -44,10 +44,10 @@ func Del(key string) error {
 	defer cancel()
 
 	err := cli.Del(ctx, key).Err()
-	return errFilter(err)
+	return ErrFilter(err)
 }
 
-func errFilter(err error) error {
+func ErrFilter(err error) error {
 	if strings.Contains(err.Error(), "MOVED") {
 		return nil
 	}
