@@ -4,9 +4,11 @@ package synctask
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/web3eye-io/cyber-tracer/common/chains/eth"
 	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
+	"github.com/web3eye-io/cyber-tracer/common/ctredis"
 	"github.com/web3eye-io/cyber-tracer/common/utils"
 	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/synctask"
@@ -25,6 +27,7 @@ import (
 const (
 	MaxPutTaskNumOnce = 500
 	ReportInterval    = 100
+	RedisLockTimeout  = time.Second * 10
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
@@ -81,12 +84,25 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 			Op:    "eq",
 		},
 	}
-
 	info, err := crud.RowOnly(ctx, &conds)
 	if err != nil {
 		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
 		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	lockKey := "TriggerSyncTask_Lock"
+	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
+	if err != nil {
+		logger.Sugar().Warn("TriggerSyncTask", "worning", err)
+		return &npool.GetSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
+	}
+
+	defer func() {
+		err := ctredis.Unlock(lockKey, lockID)
+		if err != nil {
+			logger.Sugar().Warn("TriggerSyncTask", "worning", err)
+		}
+	}()
 
 	if info.SyncState != cttype.SyncState_Start.String() {
 		return &npool.GetSyncTaskResponse{
