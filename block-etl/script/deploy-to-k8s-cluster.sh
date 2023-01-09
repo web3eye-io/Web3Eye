@@ -50,4 +50,4 @@ echo "Deploy docker image for $PLATFORM -- $version"
 sed -i "s/$service_name:latest/$service_name:$version/g" $ROOT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
 # sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/02-$service_name.yaml
 
-kubectl apply -k $ROOT_FOLDER/cmd/$service_name/k8s
+kubectl replace -k $ROOT_FOLDER/cmd/$service_name/k8s
