@@ -32,7 +32,11 @@ spec:
                 secretKeyRef:
                   name: mysql
                   key: mysql-root-password
-
+            - name: redis_password
+              valueFrom:
+                secretKeyRef:
+                  name: redis-cluster
+                  key: redis-password
       volumes:
         - name: service-config
           configMap:
