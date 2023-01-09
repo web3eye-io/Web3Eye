@@ -34,7 +34,7 @@ func GetClient() *redis.Client {
 		DB:       0,
 		PoolSize: poolSize,
 	})
-
+	// TODO: should check wheather is cluster,and auto start with cluster clent
 	return redisClient
 }
 

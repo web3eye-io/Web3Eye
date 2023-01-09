@@ -25,6 +25,7 @@ RUN mv /usr/local/go/go-go1.17.8/* /usr/local/go
 RUN rm -rf /usr/local/go/go-go1.17.8
 RUN cd /usr/local/go/src; ./all.bash
 RUN cp /usr/local/go/bin/go /usr/bin/go
+RUN curl -sSL "https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin
 
 
 ENV GOBIN=/usr/bin
