@@ -13,3 +13,6 @@ set -o nounset
 set -o pipefail
 
 kubectl apply -k $SHELL_FOLDER
+
+sleep 5
+kubectl get pods | grep traefik

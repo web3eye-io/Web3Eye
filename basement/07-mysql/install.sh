@@ -14,4 +14,6 @@ set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql bitnami/mysql
+
+sleep 5
 kubectl get pods | grep mysql

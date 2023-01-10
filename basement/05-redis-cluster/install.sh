@@ -14,4 +14,6 @@ set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install redis-cluster bitnami/redis-cluster --version 7.6.3
+
+sleep 5
 kubectl get pods | grep redis

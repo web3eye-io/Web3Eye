@@ -22,11 +22,19 @@ Linux服务器：16G内存-100G存储-8核CPU  * 3
 
 安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低。
 
-在3台机器上安装K8s集群，可选择kubeasz快速安装。
+在3台机器上安装K8s集群，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz)>)。
+
+安装Helm
+
+```shell
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
 
 #### 配置nfs为默认存储类
 
 这里使用的是NFS作为存储类，也可以替换成其他存储方案。
+
+在k8s集群中的每一台服务器上安装nfs客户端。
 
 首先选择一台机器安装nfs-server并配置一个路径提供NFS服务。
 
@@ -87,6 +95,8 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 **安装Git插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Git并安装）
 
 **配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
+
+**配置Git名称** 接受第一次连接（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 为git
 
 **安装Go插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
 
