@@ -22,7 +22,7 @@ docker run \
   -v /root/.kube:/root/.kube  \
   jenkins/jenkins:centos7
 
-docker exec -it jenkins /bin/bash 
+docker exec -it jenkins /bin/bash
 
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
