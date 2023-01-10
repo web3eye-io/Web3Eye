@@ -1,4 +1,4 @@
-# cyber tracer
+# Web3Eye
 
 [![Test](https://github.com/web3eye-io/Web3Eye/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/web3eye-io/Web3Eye/actions/workflows/main.yml)
 
