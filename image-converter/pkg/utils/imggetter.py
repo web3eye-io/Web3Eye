@@ -37,16 +37,20 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         return "", False
 
     meta = req.info()
-
     try:
         content_type = str(meta.getheaders("Content-Type")[0])
         if not content_type in typedic.keys():
             return "", False
+    except:
+        print(url, " have no Content-Type")
+        return "",False
+
+    try:
         accept_ranges = str(meta.getheaders("Accept-Ranges")[0])
         if not accept_ranges == "bytes":
             return "", False
     except:
-        print(url, " have no accept_ranges")
+        print(url, " have no Accept-Ranges")
     file_path = f"./img/{str(uuid4())}.{typedic[content_type]}"
     file = open(file_path, 'wb')
 
