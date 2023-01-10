@@ -1,13 +1,20 @@
 # cyber tracer
 
+[![Test](https://github.com/web3eye-io/cyber-tracer/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/web3eye-io/cyber-tracer/actions/workflows/main.yml)
+
+![web3eye](doc/picture/web3eye.png)
+
 目前在NFT的世界中很多关于区块链的信息索取方法是复杂且难以上手，让用户很难获取信息；再者目前的各种区块链项目数据是割裂的，获取或整理信息就变得更难了。
+
 CyberTracer是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的多链聚合搜索。
 
 ## quick start
 
-建议机器规模及配置：
-（仅为试跑规模，正式环境还需要搜集数据才能评估出来）
+建议机器规模及配置:
+
 Linux服务器：16G内存-100G存储-8核CPU  * 3
+
+仅为试跑规模，正式环境还需要搜集数据才能评估出来
 
 ### 1 安装docker和kubernetes
 
@@ -23,7 +30,7 @@ Linux服务器：16G内存-100G存储-8核CPU  * 3
 
 首先选择一台机器安装nfs-server并配置一个路径提供NFS服务。
 
-在k8s集群的master机器上把web3eye-io/cyber-tracer项目clone到服务器。配置NFS
+在k8s集群的master机器上把web3eye-io/cyber-tracer项目clone到服务器并配置NFS。
 
 ```shell
 git clone https://github.com/web3eye-io/cyber-tracer.git
@@ -64,27 +71,26 @@ docker run \
   --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
   -v /var/run/docker.sock:/var/run/docker.sock  \
   -v /root/.kube:/root/.kube  \
-  jenkins/jenkins:centos7
+  coastlinesss/jenkins
 ```
 
 #### 获取 jenkins初始密码
 
+```shell
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
 
-访问jenkins web页面(Jenkins_IP:18080)，完成Jenkins初始配置，如添加用户等
-
-在安装插件时可先安装建议插件
+访问jenkins web页面(Jenkins_IP:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
 
 #### 配置Jenkins环境
 
-安装Git插件（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Git并安装）
+**安装Git插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Git并安装）
 
-配置Git 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
+**配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
 
-安装Go插件（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
+**安装Go插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
 
-配置Go插件（Dashboard > 系统管理 > 全局工具配置 > 找到G
-o）,安装一个Go 1.17
+**配置Go插件**（Dashboard > 系统管理 > 全局工具配置 > 找到Go）,安装一个Go 1.17
 
 ### 3 安装依赖组件
 
@@ -94,27 +100,27 @@ o）,安装一个Go 1.17
 
 在basement中新建安装组件的任务（即job）
 
-任务名称：install_components
+**任务名称：**install_components
 
-选择流水线类型
+选择**流水线**类型
 
-勾选GitHub项目：
-    项目URL：<https://github.com/web3eye-io/cyber-tracer.git/>
+**勾选GitHub项目：**  
+    项目URL：<https://github.com/web3eye-io/cyber-tracer.git/>  
 
-勾选参数化构建过程：
-    增加三个字符参数分别为：
-        名称：INSTALL 默认值：true
-        名称：UNINSTALL 默认值：false
-        名称：TARGET 默认值：all
+**勾选参数化构建过程：**  
+    增加三个字符参数分别为：  
+        名称：INSTALL 默认值：true  
+        名称：UNINSTALL 默认值：false  
+        名称：TARGET 默认值：all  
 
-流水线中选择Pileline script from SCM
-    SCM:Git
-        Repositories:
-            Repository URL: <https://github.com/web3eye-io/cyber-tracer.git/>
-            Credentials: 配置一个Git的凭证，可选择SSH Username with private key或Username with password
-        Branches to build:
-            指定分支：*/master
-    脚本路径：basement/Jenkinsfile
+流水线中选择Pileline script from SCM  
+    SCM:Git  
+        Repositories:  
+            Repository URL: <https://github.com/web3eye-io/cyber-tracer.git/>  
+            Credentials: 配置一个Git的凭证，可选择SSH Username with private key或Username with password  
+        Branches to build:  
+            指定分支：*/master  
+    脚本路径：basement/Jenkinsfile  
 
 选择保存
 
@@ -122,7 +128,7 @@ o）,安装一个Go 1.17
 
 Dashboard > basement > install_components
 
-选择Build with Parameters,点击 开始构建
+选择**Build with Parameters**,点击 **开始构建**
 
 观察构建过程，全部完成后组件就安装成功了
 
@@ -185,11 +191,14 @@ whoami-58b8d4f6f6-sh2cc                                           1/1     Runnin
 
 新建deploy-dev视图，新建部署项目的任务
 
-参考 安装依赖组件 中的新建任务（可直接克隆），除了参数化构建过程中的参数不一样以及最后一步SCM中的脚本路径为Jenkinsfile外，其他配置都一致。参数化构建过程中的Jenkinsfile任务参数矩阵，选择[项目构建&部署任务](#### 项目构建&部署任务)中的d-dev取值，根据AIMPROJECT的三个取值创建成三个不同的部署任务。
+参考 安装依赖组件 中的新建任务(可直接克隆)，除了参数化构建过程中的参数不一样以及最后一步SCM中的脚本路径为Jenkinsfile外，其他配置都一致。
 
-![架构](doc/picture/jenkins-deploy-dev.jpg)
+参数化构建过程中的Jenkinsfile任务参数矩阵，选择[项目构建&部署任务](#001)中的d-dev取值，根据AIMPROJECT的三个取值创建成三个不同的部署任务。
+
+![部署任务视图](doc/picture/jenkins-deploy-dev.jpg)
 
 #### 部署项目
+
 
 依次参数化构建，建议部署顺序：nft-meta、block-etl、image-converter
 
@@ -337,6 +346,11 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 
 #### 项目构建&部署任务
 
+<p id="001">
+表头中 b-代表build、r-代表release、d-代表deploy
+</p>
+AIMPROJECT可选值：nft-meta、block-etl、image-converter
+
 | 参数名         | b-dev/b-test/b-prod | r-dev  | r-test | r-prod | d-dev  | d-test | d-prod |
 | -------------- | ------------------- | ------ | ------ | ------ | ------ | ------ | ------ |
 | BRANCH_NAME    | 不限                | 不限   | 不限   | master | 不限   | 不限   | master |
@@ -350,9 +364,7 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 | TAG_FOR        | 不生效              | dev    | test   | prod   | 不生效 | 不生效 | 不生效 |
 | TARGET_ENV     | 不生效              | 不生效 | 不生效 | 不生效 | dev    | test   | prod   |
 
-表头中 b-代表build、r-代表release、d-代表deploy
 
-AIMPROJECT可选值：nft-meta、block-etl、image-converter
 
 ## 配置
 

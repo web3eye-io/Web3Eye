@@ -30,7 +30,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 安装Go插件
 安装Kubectl插件
 配置Git 接受第一次连接（Dashboard > Manage Jenkins > Configure Global Security）
-安装docker-ce（https://yeasy.gitbook.io/docker_practice/install/centos）
+安装docker-ce（<https://yeasy.gitbook.io/docker_practice/install/centos>）
 登录Docker（docker login）
 git config --global user.email "670884108@qq.com"
 git config --global user.name "Greapefurit"
