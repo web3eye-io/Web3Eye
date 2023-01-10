@@ -1,10 +1,202 @@
 # cyber tracer
+
 目前在NFT的世界中很多关于区块链的信息索取方法是复杂且难以上手，让用户很难获取信息；再者目前的各种区块链项目数据是割裂的，获取或整理信息就变得更难了。
 CyberTracer是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的多链聚合搜索。
 
 ## quick start
 
+建议机器规模及配置：
+（仅为试跑规模，正式环境还需要搜集数据才能评估出来）
+Linux服务器：16G内存-100G存储-8核CPU  * 3
+
+### 1 安装docker和kubernetes
+
+#### 安装
+
+安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低。
+
+在3台机器上安装K8s集群，可选择kubeasz快速安装。
+
+#### 配置nfs为默认存储类
+
+这里使用的是NFS作为存储类，也可以替换成其他存储方案。
+
+首先选择一台机器安装nfs-server并配置一个路径提供NFS服务。
+
+在k8s集群的master机器上把web3eye-io/cyber-tracer项目clone到服务器。配置NFS
+
+```shell
+git clone https://github.com/web3eye-io/cyber-tracer.git
+cd cyber-tracer/basement
+cat 02-nfs-storage/value.yaml
+```
+
+主要关注server和path，修改成NFS服务的地址和路径即可
+
+nfs:
+  server: 172.23.10.83
+  path: /data/k8s_storage
+
+确认好配置后执行install.sh
+
+```shell
+bash install.sh
+```
+
+### 2 安装Jenkins及配置Jenkins环境
+
+#### 使用docker直接起一个jenkins
+
+需要按照实际情况配置端口映射关系以及文件映射关系，这里需要明确好docker.sock和.kube配置的路径。
+
+这里需要注意.kube中的kube-apiserver要指向的docker能访问的IP不能指向127.0.0.1
+
+```shell
+docker run \
+  -u 0\
+  --name jenkins \
+  -d \
+  --privileged \
+  -p 18080:8080 \
+  -p 50000:50000 \
+  -v /opt/share/jenkins:/var/lib/jenkins   \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
+  --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
+  -v /var/run/docker.sock:/var/run/docker.sock  \
+  -v /root/.kube:/root/.kube  \
+  jenkins/jenkins:centos7
+```
+
+#### 获取 jenkins初始密码
+
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+访问jenkins web页面(Jenkins_IP:18080)，完成Jenkins初始配置，如添加用户等
+
+在安装插件时可先安装建议插件
+
+#### 配置Jenkins环境
+
+安装Git插件（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Git并安装）
+
+配置Git 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
+
+安装Go插件（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
+
+配置Go插件（Dashboard > 系统管理 > 全局工具配置 > 找到G
+o）,安装一个Go 1.17
+
+### 3 安装依赖组件
+
+#### 新建安装任务
+
+登录Jenkins在Dashboard中新建视图basement，选择列表视图。
+
+在basement中新建安装组件的任务（即job）
+
+任务名称：install_components
+
+选择流水线类型
+
+勾选GitHub项目：
+    项目URL：<https://github.com/web3eye-io/cyber-tracer.git/>
+
+勾选参数化构建过程：
+    增加三个字符参数分别为：
+        名称：INSTALL 默认值：true
+        名称：UNINSTALL 默认值：false
+        名称：TARGET 默认值：all
+
+流水线中选择Pileline script from SCM
+    SCM:Git
+        Repositories:
+            Repository URL: <https://github.com/web3eye-io/cyber-tracer.git/>
+            Credentials: 配置一个Git的凭证，可选择SSH Username with private key或Username with password
+        Branches to build:
+            指定分支：*/master
+    脚本路径：basement/Jenkinsfile
+
+选择保存
+
+#### 执行安装任务
+
+Dashboard > basement > install_components
+
+选择Build with Parameters,点击 开始构建
+
+观察构建过程，全部完成后组件就安装成功了
+
+登录机器查看安装成功的组件
+
+```shell
+root@k8s-master:/home/test# kubectl get pod
+NAME                                                              READY   STATUS      RESTARTS        AGE
+default-nfs-provisioner-nfs-subdir-external-provisioner-57czz2m   1/1     Running     0               4d17h
+development-box-0                                                 1/1     Running     0               17h
+kafka-0                                                           1/1     Running     0               3d22h
+kafka-1                                                           1/1     Running     0               3d22h
+kafka-2                                                           0/1     Pending     0               3d22h
+kafka-zookeeper-0                                                 1/1     Running     0               3d22h
+kafka-zookeeper-1                                                 1/1     Running     0               3d22h
+kafka-zookeeper-2                                                 1/1     Running     0               3d22h
+milvus-datacoord-5f7b497444-28k8m                                 1/1     Running     2 (3d18h ago)   3d23h
+milvus-datanode-684c8d4986-gnpzs                                  1/1     Running     2 (3d18h ago)   3d23h
+milvus-etcd-0                                                     1/1     Running     1 (3d18h ago)   3d23h
+milvus-etcd-1                                                     1/1     Running     3 (3d18h ago)   3d23h
+milvus-etcd-2                                                     1/1     Running     1 (3d18h ago)   3d23h
+milvus-indexcoord-7df986464d-sqlzq                                1/1     Running     2 (3d18h ago)   3d23h
+milvus-indexnode-6b6c7f7797-mpxss                                 1/1     Running     1 (3d18h ago)   3d23h
+milvus-minio-0                                                    1/1     Running     0               3d23h
+milvus-minio-1                                                    1/1     Running     0               3d23h
+milvus-minio-2                                                    1/1     Running     0               3d23h
+milvus-minio-3                                                    1/1     Running     0               3d23h
+milvus-proxy-645fbb45f4-ntw94                                     1/1     Running     2 (3d18h ago)   3d23h
+milvus-pulsar-bookie-0                                            1/1     Running     0               3d23h
+milvus-pulsar-bookie-1                                            1/1     Running     0               3d23h
+milvus-pulsar-bookie-2                                            1/1     Running     0               3d23h
+milvus-pulsar-bookie-init-jsjbf                                   0/1     Completed   0               3d23h
+milvus-pulsar-broker-0                                            1/1     Running     1 (3d18h ago)   3d23h
+milvus-pulsar-proxy-0                                             1/1     Running     0               3d23h
+milvus-pulsar-pulsar-init-v9bfg                                   0/1     Completed   0               3d23h
+milvus-pulsar-recovery-0                                          1/1     Running     0               3d23h
+milvus-pulsar-zookeeper-0                                         1/1     Running     0               3d23h
+milvus-pulsar-zookeeper-1                                         1/1     Running     0               3d23h
+milvus-pulsar-zookeeper-2                                         1/1     Running     0               3d23h
+milvus-querycoord-6778454959-v6zks                                1/1     Running     2 (3d18h ago)   3d23h
+milvus-querynode-569c9db6ff-w2968                                 1/1     Running     1 (3d18h ago)   3d23h
+milvus-rootcoord-57c9dbfcd9-whttz                                 1/1     Running     2 (3d18h ago)   3d23h
+mysql-0                                                           1/1     Running     0               3d23h
+redis-cluster-0                                                   1/1     Running     1 (12h ago)     12h
+redis-cluster-1                                                   1/1     Running     1 (12h ago)     12h
+redis-cluster-2                                                   1/1     Running     1 (12h ago)     12h
+redis-cluster-3                                                   1/1     Running     1 (12h ago)     12h
+redis-cluster-4                                                   1/1     Running     1 (12h ago)     12h
+redis-cluster-5                                                   1/1     Running     1 (12h ago)     12h
+traefik-4f9vc                                                     1/1     Running     0               3d23h
+traefik-9fxc4                                                     1/1     Running     0               3d23h
+traefik-9lxvl                                                     1/1     Running     0               3d23h
+whoami-58b8d4f6f6-cklq5                                           1/1     Running     0               3d23h
+whoami-58b8d4f6f6-sh2cc                                           1/1     Running     0               3d23h
+```
+
+### 4 部署项目
+
+#### 创建视图和任务
+
+新建deploy-dev视图，新建部署项目的任务
+
+参考 安装依赖组件 中的新建任务（可直接克隆），除了参数化构建过程中的参数不一样以及最后一步SCM中的脚本路径为Jenkinsfile外，其他配置都一致。参数化构建过程中的Jenkinsfile任务参数矩阵，选择[项目构建&部署任务](#### 项目构建&部署任务)中的d-dev取值，根据AIMPROJECT的三个取值创建成三个不同的部署任务。
+
+![架构](doc/picture/jenkins-deploy-dev.jpg)
+
+#### 部署项目
+
+依次参数化构建，建议部署顺序：nft-meta、block-etl、image-converter
+
+构建完成后访问k8s-master-IP:81/api/nft-meta/可访问项目测试页面
+
 ## 架构
+
 中间件：  
 **MySql** 存储任务信息、NFT数据关系  
 **Kafka** 主要用于任务分配  
@@ -20,12 +212,15 @@ CyberTracer是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产
 
 在主要的三个微服务模块中，NFT-Meta负责提供搜索、信息存储查询、任务分发等功能，其他两个模块更多的是获取并处理任务；其中Image-Converter不只是处理从Kafka获取由NFT-Meta发送的任务，还提供HTTP服务支持直接请求获得向量，主要用来为以图搜图服务；而Block-ETL不对外提供接口，只接收任务和提交任务。
 
-### 模块设计：
-#### Image-Converter:  
+### 模块设计
+
+#### Image-Converter
+
 目前主要提供Jpg、Jepg、Png等常规图片格式的转向量操作，其他图像资源比如GIF、Base64等目前并不支持。  
 服务启动后有两个线程，一个负责提供HTTP接口方式的转向量方式，提供同步的转向量方式，支持URL和文件两种方式；还有一个负责从Kafka获取转向量任务，转换后放入Kafka中NFT-Meta获取后存入Milvus和数据库。  
 
-#### Block-ETL:  
+#### Block-ETL
+
 目前仅支持Ethereum，所以以下描述都基于ETH背景；并且目前也只支持标准的ERC721和ERC1155至于其他玩法的NFT后续提供支持。
 
 从区块链全节点（存有全部区块数据，下面称为钱包节点）中的log中**拉取transfer信息，解析出NFT交易、Token、Contract信息**；由于存在Swap合约、非标准NFT合约所以部分Token信息无法解析出资产信息（比如图片描述和图片地址）。
@@ -36,7 +231,8 @@ CyberTracer是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产
 
 在解析一个区块的transfer日志时，大部分信息都可以从钱包节点获取。但是从TokenURI中所带的信息需要从互联网或者IPFS上获取，或者直接在区块链上存储Base64、SVG等，解析TokenURI的工作目前还属于这个模块，后续考虑独立成一个单独的模块。因为这样的解析工作费时费力，同时尽量保持Block-ETL只与钱包节点交互、只做链上数据的转存工作。
 
-#### NFT-Meta:
+#### NFT-Meta
+
 分配到其他两个模块的任务都由NFT-Meta发出、存储其他两个模块处理过的数据并对外提供搜索功能。目前这个模块可能有些臃肿，比如关于搜索的功能可以独立出去、其他模块产生的数据直接与数据库交互这类问题后续会继续思考，但是前期搜索由于功能较少先放到这个模块中。
 
 NFT-Meta主要维护四个表：  
@@ -105,6 +301,7 @@ Token的主要字段如下：
 其中Contract、TokenID、URI都是可以直接从钱包节点获取的，而TokenType、ImageURL可以通过分析URI得到。而VectorID则需要在其他信息都获得之后，在NFT-Meta中插入一条Token记录时，将转向量的任务放到队列中，等待Image-Converter消费，转换完成后放入结果队列等待NFT-Meta更新VectorID字段。
 
 #### 任务分发
+
 目前用到Kafka的地方有两个，一是给Image-Converter放转向量任务，二是给Block-ETL放需要解析的区块高度。
 
 图中就是需要大量转向量对时间要求不高时的转向量任务处理过程，因为转向量时消耗网络带宽和计算资源所以采用异步的方式提高稳定性。
@@ -124,13 +321,48 @@ Blcok-ETL获取的任务（待同步的区块高度号），有两个过程：
 
 ![IC转换向量任务分配](doc/picture/block-etl-task.jpg)
 
+## CICD
+
+### Jenkins任务参数矩阵
+
+#### 安装/卸载组件任务
+
+| 参数名    | install | uninstall |
+| --------- | ------- | --------- |
+| INSTALL   | true    | false     |
+| UNINSTALL | false   | true      |
+| TARGET    | all     | all       |
+
+TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
+
+#### 项目构建&部署任务
+
+| 参数名         | b-dev/b-test/b-prod | r-dev  | r-test | r-prod | d-dev  | d-test | d-prod |
+| -------------- | ------------------- | ------ | ------ | ------ | ------ | ------ | ------ |
+| BRANCH_NAME    | 不限                | 不限   | 不限   | master | 不限   | 不限   | master |
+| BUILD_TARGET   | true                | true   | true   | true   | false  | false  | false  |
+| DEPLOY_TARGET  | false               | false  | false  | false  | true   | true   | true   |
+| RELEASE_TARGET | false               | true   | true   | true   | false  | false  | false  |
+| TAG_PATCH      | false               | false  | true   | true   | false  | false  | false  |
+| TAG_MINOR      | false               | false  | 自选   | 自选   | false  | false  | false  |
+| TAG_MINOR      | false               | false  | 自选   | 自选   | false  | false  | false  |
+| AIMPROJECT     | 项目名              | 项目名 | 项目名 | 项目名 | 项目名 | 项目名 | 项目名 |
+| TAG_FOR        | 不生效              | dev    | test   | prod   | 不生效 | 不生效 | 不生效 |
+| TARGET_ENV     | 不生效              | 不生效 | 不生效 | 不生效 | dev    | test   | prod   |
+
+表头中 b-代表build、r-代表release、d-代表deploy
+
+AIMPROJECT可选值：nft-meta、block-etl、image-converter
+
 ## 配置
+
 所有配置都在config/config.toml中，如果想修改有两种途径：  
 1.修改config/config.toml重新编译打包成Docker镜像  
 2.通过设置环境变量即可，在k8s中可设置configMap  
 
 config.toml -> environment 转换规则  
 例：
+
 ```toml
 path="/uu/ii"
 port=50515
@@ -156,11 +388,10 @@ mysql_max_connect=100
 log_dir=/var/log
 ```
 
-
-# 版本迭代计划
+## 版本迭代计划
 
 [0.1.0](doc/feature/0.1.0.md)
 
 [100.0.0](doc/feature/100.0.0.md)
 
-# 参考
+## 参考
