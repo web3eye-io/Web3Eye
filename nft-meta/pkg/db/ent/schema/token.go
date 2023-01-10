@@ -6,8 +6,8 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/mixin"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/mixin"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
 
 type Token struct {

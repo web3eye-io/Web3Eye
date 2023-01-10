@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 var (

@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package nftmeta.v1.token;
 
-option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token";
-import "cybertracer/cybertracer.proto";
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token";
+import "web3eye/web3eye.proto";
 
 service Manager {
   rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse) {}
@@ -68,24 +68,24 @@ message Token {
 }
 
 message Conds {
-  cybertracer.StringVal ID = 10;
-  cybertracer.StringVal ChainType = 20;
-  cybertracer.Int32Val ChainID = 30;
-  cybertracer.StringVal Contract = 40;
-  cybertracer.StringVal TokenType = 50;
-  cybertracer.StringVal TokenID = 60;
-  cybertracer.StringVal Owner = 70;
-  cybertracer.StringVal URI = 80;
-  cybertracer.StringVal URIType = 90;
-  cybertracer.StringVal ImageURL = 100;
-  cybertracer.StringVal VideoURL = 110;
-  cybertracer.StringVal Description = 120;
-  cybertracer.StringVal Name = 130;
-  cybertracer.StringVal VectorState = 140;
-  cybertracer.Int64Val VectorID = 150;
-  cybertracer.StringVal Remark = 160;
-  cybertracer.StringSliceVal IDs = 170;
-  cybertracer.Int64SliceVal VectorIDs = 180;
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal Contract = 40;
+  web3eye.StringVal TokenType = 50;
+  web3eye.StringVal TokenID = 60;
+  web3eye.StringVal Owner = 70;
+  web3eye.StringVal URI = 80;
+  web3eye.StringVal URIType = 90;
+  web3eye.StringVal ImageURL = 100;
+  web3eye.StringVal VideoURL = 110;
+  web3eye.StringVal Description = 120;
+  web3eye.StringVal Name = 130;
+  web3eye.StringVal VectorState = 140;
+  web3eye.Int64Val VectorID = 150;
+  web3eye.StringVal Remark = 160;
+  web3eye.StringSliceVal IDs = 170;
+  web3eye.Int64SliceVal VectorIDs = 180;
 }
 
 message CreateTokenRequest { TokenReq Info = 10; }

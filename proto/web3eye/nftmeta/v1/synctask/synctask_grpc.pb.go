@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.18.1
-// source: cybertracer/nftmeta/v1/synctask/synctask.proto
+// source: web3eye/nftmeta/v1/synctask/synctask.proto
 
 package synctask
 
@@ -425,5 +425,5 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cybertracer/nftmeta/v1/synctask/synctask.proto",
+	Metadata: "web3eye/nftmeta/v1/synctask/synctask.proto",
 }

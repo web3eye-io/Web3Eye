@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 )
 
 // SyncTask is the model entity for the SyncTask schema.

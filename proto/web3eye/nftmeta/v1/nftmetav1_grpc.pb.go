@@ -2,13 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.18.1
-// source: cybertracer/nftmeta/v1/nftmetav1.proto
+// source: web3eye/nftmeta/v1/nftmetav1.proto
 
 package v1
 
 import (
 	context "context"
-	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	web3eye "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*cybertracer.VersionResponse, error)
+	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*web3eye.VersionResponse, error)
 }
 
 type managerClient struct {
@@ -35,8 +35,8 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*cybertracer.VersionResponse, error) {
-	out := new(cybertracer.VersionResponse)
+func (c *managerClient) Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*web3eye.VersionResponse, error) {
+	out := new(web3eye.VersionResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.Manager/Version", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (c *managerClient) Version(ctx context.Context, in *emptypb.Empty, opts ...
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	Version(context.Context, *emptypb.Empty) (*cybertracer.VersionResponse, error)
+	Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -56,7 +56,7 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) Version(context.Context, *emptypb.Empty) (*cybertracer.VersionResponse, error) {
+func (UnimplementedManagerServer) Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
@@ -103,5 +103,5 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cybertracer/nftmeta/v1/nftmetav1.proto",
+	Metadata: "web3eye/nftmeta/v1/nftmetav1.proto",
 }

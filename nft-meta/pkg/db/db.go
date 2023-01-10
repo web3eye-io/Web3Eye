@@ -13,13 +13,13 @@ import (
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/cyber-tracer/config"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
+	"github.com/web3eye-io/Web3Eye/config"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 
 	crudermigrate "github.com/NpoolPlatform/libent-cruder/pkg/migrate"
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/runtime"
+	_ "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime"
 )
 
 const (

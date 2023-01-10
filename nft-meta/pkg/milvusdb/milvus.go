@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (

@@ -1,7 +1,7 @@
 package transfer
 
 import (
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/transfer"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	"google.golang.org/grpc"
 )
 

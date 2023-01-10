@@ -1,4 +1,4 @@
-module github.com/web3eye-io/cyber-tracer
+module github.com/web3eye-io/Web3Eye
 
 go 1.17
 

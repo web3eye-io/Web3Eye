@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package nftmeta.v1.synctask;
 
-option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask";
-import "cybertracer/cybertracer.proto";
-import "cybertracer/nftmeta/v1/cttype/cttype.proto";
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask";
+import "web3eye/web3eye.proto";
+import "web3eye/nftmeta/v1/cttype/cttype.proto";
 
 service Manager {
   rpc CreateSyncTask(CreateSyncTaskRequest) returns (CreateSyncTaskResponse) {}
@@ -48,17 +48,17 @@ message SyncTask {
 }
 
 message Conds {
-  cybertracer.StringVal ID = 10;
-  cybertracer.StringVal ChainType = 20;
-  cybertracer.Int32Val ChainID = 30;
-  cybertracer.Uint64Val Start = 40;
-  cybertracer.Uint64Val End = 50;
-  cybertracer.Uint64Val Current = 60;
-  cybertracer.StringVal Topic = 70;
-  cybertracer.StringVal Description = 80;
-  cybertracer.StringVal SyncState = 90;
-  cybertracer.StringVal Remark = 100;
-  cybertracer.StringSliceVal IDs = 110;
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.Int32Val ChainID = 30;
+  web3eye.Uint64Val Start = 40;
+  web3eye.Uint64Val End = 50;
+  web3eye.Uint64Val Current = 60;
+  web3eye.StringVal Topic = 70;
+  web3eye.StringVal Description = 80;
+  web3eye.StringVal SyncState = 90;
+  web3eye.StringVal Remark = 100;
+  web3eye.StringSliceVal IDs = 110;
 }
 
 message CreateSyncTaskRequest { SyncTaskReq Info = 10; }

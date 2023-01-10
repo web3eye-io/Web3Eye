@@ -15,7 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/cyber-tracer/common/chains/eth/contracts"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
 )
 
 type TokenType string

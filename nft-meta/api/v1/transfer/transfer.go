@@ -4,14 +4,14 @@ package transfer
 import (
 	"context"
 
-	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/transfer"
-	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/transfer"
+	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/transfer"
+	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/transfer"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 
 	"github.com/google/uuid"
 )

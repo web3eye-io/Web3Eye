@@ -1,7 +1,7 @@
 package synctask
 
 import (
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 	"google.golang.org/grpc"
 )
 

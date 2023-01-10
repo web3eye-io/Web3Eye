@@ -1,17 +1,17 @@
 PROTOC=$(shell which protoc)
 PROTOC-GEN-GRPC-GATEWAY=$(shell which protoc-gen-grpc-gateway)
 
-PROTO_FILE = $(shell find cybertracer -name "*.proto")
-PROTO_GW_FILE = $(shell grep -l 'google.api.http' -r cybertracer)
+PROTO_FILE = $(shell find web3eye -name "*.proto")
+PROTO_GW_FILE = $(shell grep -l 'google.api.http' -r web3eye)
 PROTO_GO_FILE = $(patsubst %.proto,%.pb.go,$(PROTO_FILE))
 PROTO_GO_GW_FILE = $(patsubst %.proto,%.pb.gw.go,$(PROTO_GW_FILE))
 PROTO_OPENAPIV2_FILE = $(patsubst %.proto,%.openapiv2.json,$(PROTO_FILE))
 
 PROTO_INCLUDE += -I.
 PROTO_INCLUDE += -I./google
-PROTO_INCLUDE += -I./cybertracer
+PROTO_INCLUDE += -I./web3eye
 
-PB_FILE = $(shell find cybertracer -name "*.pb.go")
+PB_FILE = $(shell find web3eye -name "*.pb.go")
 
 proto: $(PROTO_GO_FILE) $(PROTO_TS_FILE) $(PROTO_GO_GW_FILE) $(PROTO_OPENAPIV2_FILE)
 %.pb.go: %.proto

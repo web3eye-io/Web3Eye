@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/predicate"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 )
 
 // TokenDelete is the builder for deleting a Token entity.

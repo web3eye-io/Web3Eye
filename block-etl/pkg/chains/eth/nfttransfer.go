@@ -8,8 +8,8 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	cteth "github.com/web3eye-io/cyber-tracer/common/chains/eth"
-	"github.com/web3eye-io/cyber-tracer/common/chains/eth/contracts"
+	cteth "github.com/web3eye-io/Web3Eye/common/chains/eth"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
 )
 
 const (

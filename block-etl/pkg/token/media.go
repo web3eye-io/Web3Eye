@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/netutils"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/netutils"
 )
 
 const (

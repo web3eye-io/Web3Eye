@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
 
 func Create(ctx context.Context, in *npool.SyncTaskReq) (*ent.SyncTask, error) {

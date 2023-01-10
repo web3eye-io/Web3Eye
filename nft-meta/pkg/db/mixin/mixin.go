@@ -2,8 +2,8 @@ package mixin
 
 import (
 	"entgo.io/ent"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/privacy"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/rule"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/privacy"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/rule"
 )
 
 func (TimeMixin) Mixin() []ent.Mixin {

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package cybertracer;
+package web3eye;
 
-option go_package = "github.com/web3eye-io/cyber-tracer/proto/cybertracer";
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye";
 
 import "google/protobuf/struct.proto";
 

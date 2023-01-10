@@ -12,7 +12,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (

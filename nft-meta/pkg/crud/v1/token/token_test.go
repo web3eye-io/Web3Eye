@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"testing"
 
-	val "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	val "github.com/web3eye-io/Web3Eye/proto/web3eye"
 
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
 

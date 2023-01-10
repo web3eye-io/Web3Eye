@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.18.1
-// source: cybertracer/nftmeta/v1/cttype/cttype.proto
+// source: web3eye/nftmeta/v1/cttype/cttype.proto
 
 package cttype
 
@@ -53,11 +53,11 @@ func (x ChainType) String() string {
 }
 
 func (ChainType) Descriptor() protoreflect.EnumDescriptor {
-	return file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes[0].Descriptor()
+	return file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes[0].Descriptor()
 }
 
 func (ChainType) Type() protoreflect.EnumType {
-	return &file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes[0]
+	return &file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes[0]
 }
 
 func (x ChainType) Number() protoreflect.EnumNumber {
@@ -66,7 +66,7 @@ func (x ChainType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChainType.Descriptor instead.
 func (ChainType) EnumDescriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescGZIP(), []int{0}
+	return file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescGZIP(), []int{0}
 }
 
 type SyncState int32
@@ -108,11 +108,11 @@ func (x SyncState) String() string {
 }
 
 func (SyncState) Descriptor() protoreflect.EnumDescriptor {
-	return file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes[1].Descriptor()
+	return file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes[1].Descriptor()
 }
 
 func (SyncState) Type() protoreflect.EnumType {
-	return &file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes[1]
+	return &file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes[1]
 }
 
 func (x SyncState) Number() protoreflect.EnumNumber {
@@ -121,12 +121,12 @@ func (x SyncState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SyncState.Descriptor instead.
 func (SyncState) EnumDescriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescGZIP(), []int{1}
+	return file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescGZIP(), []int{1}
 }
 
-var File_cybertracer_nftmeta_v1_cttype_cttype_proto protoreflect.FileDescriptor
+var File_web3eye_nftmeta_v1_cttype_cttype_proto protoreflect.FileDescriptor
 
-var file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDesc = []byte{
+var file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDesc = []byte{
 	0x0a, 0x2a, 0x63, 0x79, 0x62, 0x65, 0x72, 0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2f, 0x6e, 0x66,
 	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x63, 0x74, 0x74, 0x79, 0x70, 0x65, 0x2f,
 	0x63, 0x74, 0x74, 0x79, 0x70, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x06, 0x63, 0x74,
@@ -147,23 +147,23 @@ var file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDesc = []byte{
 }
 
 var (
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescOnce sync.Once
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescData = file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDesc
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescOnce sync.Once
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescData = file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDesc
 )
 
-func file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescGZIP() []byte {
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescOnce.Do(func() {
-		file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescData = protoimpl.X.CompressGZIP(file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescData)
+func file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescGZIP() []byte {
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescOnce.Do(func() {
+		file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescData = protoimpl.X.CompressGZIP(file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescData)
 	})
-	return file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDescData
+	return file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDescData
 }
 
-var file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_cybertracer_nftmeta_v1_cttype_cttype_proto_goTypes = []interface{}{
+var file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_web3eye_nftmeta_v1_cttype_cttype_proto_goTypes = []interface{}{
 	(ChainType)(0), // 0: cttype.ChainType
 	(SyncState)(0), // 1: cttype.SyncState
 }
-var file_cybertracer_nftmeta_v1_cttype_cttype_proto_depIdxs = []int32{
+var file_web3eye_nftmeta_v1_cttype_cttype_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -171,27 +171,27 @@ var file_cybertracer_nftmeta_v1_cttype_cttype_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_cybertracer_nftmeta_v1_cttype_cttype_proto_init() }
-func file_cybertracer_nftmeta_v1_cttype_cttype_proto_init() {
-	if File_cybertracer_nftmeta_v1_cttype_cttype_proto != nil {
+func init() { file_web3eye_nftmeta_v1_cttype_cttype_proto_init() }
+func file_web3eye_nftmeta_v1_cttype_cttype_proto_init() {
+	if File_web3eye_nftmeta_v1_cttype_cttype_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDesc,
+			RawDescriptor: file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDesc,
 			NumEnums:      2,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_cybertracer_nftmeta_v1_cttype_cttype_proto_goTypes,
-		DependencyIndexes: file_cybertracer_nftmeta_v1_cttype_cttype_proto_depIdxs,
-		EnumInfos:         file_cybertracer_nftmeta_v1_cttype_cttype_proto_enumTypes,
+		GoTypes:           file_web3eye_nftmeta_v1_cttype_cttype_proto_goTypes,
+		DependencyIndexes: file_web3eye_nftmeta_v1_cttype_cttype_proto_depIdxs,
+		EnumInfos:         file_web3eye_nftmeta_v1_cttype_cttype_proto_enumTypes,
 	}.Build()
-	File_cybertracer_nftmeta_v1_cttype_cttype_proto = out.File
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_rawDesc = nil
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_goTypes = nil
-	file_cybertracer_nftmeta_v1_cttype_cttype_proto_depIdxs = nil
+	File_web3eye_nftmeta_v1_cttype_cttype_proto = out.File
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_rawDesc = nil
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_goTypes = nil
+	file_web3eye_nftmeta_v1_cttype_cttype_proto_depIdxs = nil
 }

@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	// required by schema hooks.
-	_ "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/runtime"
+	_ "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/migrate"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/migrate"
 )
 
 type (

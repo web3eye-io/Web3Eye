@@ -1,8 +1,8 @@
 package transfer
 
 import (
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/transfer"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 )
 
 func Ent2Grpc(row *ent.Transfer) *npool.Transfer {

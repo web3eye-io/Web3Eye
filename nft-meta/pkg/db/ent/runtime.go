@@ -2,4 +2,4 @@
 
 package ent
 
-// The schema-stitching logic is generated in github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/runtime/runtime.go
+// The schema-stitching logic is generated in github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime/runtime.go

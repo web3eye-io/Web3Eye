@@ -83,7 +83,7 @@ func ValidColumn(column string) bool {
 // package on the initialization of the application. Therefore,
 // it should be imported in the main as follows:
 //
-//	import _ "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/runtime"
+//	import _ "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime"
 //
 var (
 	Hooks  [1]ent.Hook

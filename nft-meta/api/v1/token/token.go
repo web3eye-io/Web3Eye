@@ -4,15 +4,15 @@ package token
 import (
 	"context"
 
-	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/token"
-	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/token"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/imageconvert"
+	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
+	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
 )

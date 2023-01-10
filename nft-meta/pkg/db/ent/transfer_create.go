@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 )
 
 // TransferCreate is the builder for creating a Transfer entity.

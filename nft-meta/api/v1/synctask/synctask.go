@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/web3eye-io/cyber-tracer/common/chains/eth"
-	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
-	"github.com/web3eye-io/cyber-tracer/common/ctredis"
-	"github.com/web3eye-io/cyber-tracer/common/utils"
-	converter "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/converter/v1/synctask"
-	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/synctask"
-	"github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth"
+	"github.com/web3eye-io/Web3Eye/common/ctkafka"
+	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
+	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/synctask"
+	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/synctask"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/cyber-tracer/proto/cybertracer"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/synctask"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 
 	"github.com/google/uuid"
 )
@@ -79,7 +79,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.GetSyncTaskResponse, error) {
 	conds := npool.Conds{
-		Topic: &cybertracer.StringVal{
+		Topic: &web3eye.StringVal{
 			Value: in.Topic,
 			Op:    "eq",
 		},

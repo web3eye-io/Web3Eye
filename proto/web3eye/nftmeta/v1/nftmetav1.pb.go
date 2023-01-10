@@ -2,12 +2,12 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.18.1
-// source: cybertracer/nftmeta/v1/nftmetav1.proto
+// source: web3eye/nftmeta/v1/nftmetav1.proto
 
 package v1
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	web3eye "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -22,9 +22,9 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-var File_cybertracer_nftmeta_v1_nftmetav1_proto protoreflect.FileDescriptor
+var File_web3eye_nftmeta_v1_nftmetav1_proto protoreflect.FileDescriptor
 
-var file_cybertracer_nftmeta_v1_nftmetav1_proto_rawDesc = []byte{
+var file_web3eye_nftmeta_v1_nftmetav1_proto_rawDesc = []byte{
 	0x0a, 0x26, 0x63, 0x79, 0x62, 0x65, 0x72, 0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2f, 0x6e, 0x66,
 	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
 	0x76, 0x31, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74,
@@ -47,13 +47,13 @@ var file_cybertracer_nftmeta_v1_nftmetav1_proto_rawDesc = []byte{
 	0x74, 0x61, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
-var file_cybertracer_nftmeta_v1_nftmetav1_proto_goTypes = []interface{}{
+var file_web3eye_nftmeta_v1_nftmetav1_proto_goTypes = []interface{}{
 	(*emptypb.Empty)(nil),               // 0: google.protobuf.Empty
-	(*cybertracer.VersionResponse)(nil), // 1: cybertracer.VersionResponse
+	(*web3eye.VersionResponse)(nil), // 1: web3eye.VersionResponse
 }
-var file_cybertracer_nftmeta_v1_nftmetav1_proto_depIdxs = []int32{
+var file_web3eye_nftmeta_v1_nftmetav1_proto_depIdxs = []int32{
 	0, // 0: nftmeta.v1.Manager.Version:input_type -> google.protobuf.Empty
-	1, // 1: nftmeta.v1.Manager.Version:output_type -> cybertracer.VersionResponse
+	1, // 1: nftmeta.v1.Manager.Version:output_type -> web3eye.VersionResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -61,26 +61,26 @@ var file_cybertracer_nftmeta_v1_nftmetav1_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_cybertracer_nftmeta_v1_nftmetav1_proto_init() }
-func file_cybertracer_nftmeta_v1_nftmetav1_proto_init() {
-	if File_cybertracer_nftmeta_v1_nftmetav1_proto != nil {
+func init() { file_web3eye_nftmeta_v1_nftmetav1_proto_init() }
+func file_web3eye_nftmeta_v1_nftmetav1_proto_init() {
+	if File_web3eye_nftmeta_v1_nftmetav1_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_cybertracer_nftmeta_v1_nftmetav1_proto_rawDesc,
+			RawDescriptor: file_web3eye_nftmeta_v1_nftmetav1_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_cybertracer_nftmeta_v1_nftmetav1_proto_goTypes,
-		DependencyIndexes: file_cybertracer_nftmeta_v1_nftmetav1_proto_depIdxs,
+		GoTypes:           file_web3eye_nftmeta_v1_nftmetav1_proto_goTypes,
+		DependencyIndexes: file_web3eye_nftmeta_v1_nftmetav1_proto_depIdxs,
 	}.Build()
-	File_cybertracer_nftmeta_v1_nftmetav1_proto = out.File
-	file_cybertracer_nftmeta_v1_nftmetav1_proto_rawDesc = nil
-	file_cybertracer_nftmeta_v1_nftmetav1_proto_goTypes = nil
-	file_cybertracer_nftmeta_v1_nftmetav1_proto_depIdxs = nil
+	File_web3eye_nftmeta_v1_nftmetav1_proto = out.File
+	file_web3eye_nftmeta_v1_nftmetav1_proto_rawDesc = nil
+	file_web3eye_nftmeta_v1_nftmetav1_proto_goTypes = nil
+	file_web3eye_nftmeta_v1_nftmetav1_proto_depIdxs = nil
 }

@@ -2,12 +2,12 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.18.1
-// source: cybertracer/nftmeta/v1/token/token.proto
+// source: web3eye/nftmeta/v1/token/token.proto
 
 package token
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
+	web3eye "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -64,11 +64,11 @@ func (x ConvertState) String() string {
 }
 
 func (ConvertState) Descriptor() protoreflect.EnumDescriptor {
-	return file_cybertracer_nftmeta_v1_token_token_proto_enumTypes[0].Descriptor()
+	return file_web3eye_nftmeta_v1_token_token_proto_enumTypes[0].Descriptor()
 }
 
 func (ConvertState) Type() protoreflect.EnumType {
-	return &file_cybertracer_nftmeta_v1_token_token_proto_enumTypes[0]
+	return &file_web3eye_nftmeta_v1_token_token_proto_enumTypes[0]
 }
 
 func (x ConvertState) Number() protoreflect.EnumNumber {
@@ -77,7 +77,7 @@ func (x ConvertState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConvertState.Descriptor instead.
 func (ConvertState) EnumDescriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{0}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{0}
 }
 
 type TokenReq struct {
@@ -106,7 +106,7 @@ type TokenReq struct {
 func (x *TokenReq) Reset() {
 	*x = TokenReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[0]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -119,7 +119,7 @@ func (x *TokenReq) String() string {
 func (*TokenReq) ProtoMessage() {}
 
 func (x *TokenReq) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[0]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -132,7 +132,7 @@ func (x *TokenReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TokenReq.ProtoReflect.Descriptor instead.
 func (*TokenReq) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{0}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *TokenReq) GetID() string {
@@ -273,7 +273,7 @@ type Token struct {
 func (x *Token) Reset() {
 	*x = Token{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[1]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -286,7 +286,7 @@ func (x *Token) String() string {
 func (*Token) ProtoMessage() {}
 
 func (x *Token) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[1]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -299,7 +299,7 @@ func (x *Token) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Token.ProtoReflect.Descriptor instead.
 func (*Token) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{1}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Token) GetID() string {
@@ -419,30 +419,30 @@ type Conds struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID          *cybertracer.StringVal      `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
-	ChainType   *cybertracer.StringVal      `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
-	ChainID     *cybertracer.Int32Val       `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
-	Contract    *cybertracer.StringVal      `protobuf:"bytes,40,opt,name=Contract,proto3" json:"Contract,omitempty"`
-	TokenType   *cybertracer.StringVal      `protobuf:"bytes,50,opt,name=TokenType,proto3" json:"TokenType,omitempty"`
-	TokenID     *cybertracer.StringVal      `protobuf:"bytes,60,opt,name=TokenID,proto3" json:"TokenID,omitempty"`
-	Owner       *cybertracer.StringVal      `protobuf:"bytes,70,opt,name=Owner,proto3" json:"Owner,omitempty"`
-	URI         *cybertracer.StringVal      `protobuf:"bytes,80,opt,name=URI,proto3" json:"URI,omitempty"`
-	URIType     *cybertracer.StringVal      `protobuf:"bytes,90,opt,name=URIType,proto3" json:"URIType,omitempty"`
-	ImageURL    *cybertracer.StringVal      `protobuf:"bytes,100,opt,name=ImageURL,proto3" json:"ImageURL,omitempty"`
-	VideoURL    *cybertracer.StringVal      `protobuf:"bytes,110,opt,name=VideoURL,proto3" json:"VideoURL,omitempty"`
-	Description *cybertracer.StringVal      `protobuf:"bytes,120,opt,name=Description,proto3" json:"Description,omitempty"`
-	Name        *cybertracer.StringVal      `protobuf:"bytes,130,opt,name=Name,proto3" json:"Name,omitempty"`
-	VectorState *cybertracer.StringVal      `protobuf:"bytes,140,opt,name=VectorState,proto3" json:"VectorState,omitempty"`
-	VectorID    *cybertracer.Int64Val       `protobuf:"bytes,150,opt,name=VectorID,proto3" json:"VectorID,omitempty"`
-	Remark      *cybertracer.StringVal      `protobuf:"bytes,160,opt,name=Remark,proto3" json:"Remark,omitempty"`
-	IDs         *cybertracer.StringSliceVal `protobuf:"bytes,170,opt,name=IDs,proto3" json:"IDs,omitempty"`
-	VectorIDs   *cybertracer.Int64SliceVal  `protobuf:"bytes,180,opt,name=VectorIDs,proto3" json:"VectorIDs,omitempty"`
+	ID          *web3eye.StringVal      `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
+	ChainType   *web3eye.StringVal      `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
+	ChainID     *web3eye.Int32Val       `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
+	Contract    *web3eye.StringVal      `protobuf:"bytes,40,opt,name=Contract,proto3" json:"Contract,omitempty"`
+	TokenType   *web3eye.StringVal      `protobuf:"bytes,50,opt,name=TokenType,proto3" json:"TokenType,omitempty"`
+	TokenID     *web3eye.StringVal      `protobuf:"bytes,60,opt,name=TokenID,proto3" json:"TokenID,omitempty"`
+	Owner       *web3eye.StringVal      `protobuf:"bytes,70,opt,name=Owner,proto3" json:"Owner,omitempty"`
+	URI         *web3eye.StringVal      `protobuf:"bytes,80,opt,name=URI,proto3" json:"URI,omitempty"`
+	URIType     *web3eye.StringVal      `protobuf:"bytes,90,opt,name=URIType,proto3" json:"URIType,omitempty"`
+	ImageURL    *web3eye.StringVal      `protobuf:"bytes,100,opt,name=ImageURL,proto3" json:"ImageURL,omitempty"`
+	VideoURL    *web3eye.StringVal      `protobuf:"bytes,110,opt,name=VideoURL,proto3" json:"VideoURL,omitempty"`
+	Description *web3eye.StringVal      `protobuf:"bytes,120,opt,name=Description,proto3" json:"Description,omitempty"`
+	Name        *web3eye.StringVal      `protobuf:"bytes,130,opt,name=Name,proto3" json:"Name,omitempty"`
+	VectorState *web3eye.StringVal      `protobuf:"bytes,140,opt,name=VectorState,proto3" json:"VectorState,omitempty"`
+	VectorID    *web3eye.Int64Val       `protobuf:"bytes,150,opt,name=VectorID,proto3" json:"VectorID,omitempty"`
+	Remark      *web3eye.StringVal      `protobuf:"bytes,160,opt,name=Remark,proto3" json:"Remark,omitempty"`
+	IDs         *web3eye.StringSliceVal `protobuf:"bytes,170,opt,name=IDs,proto3" json:"IDs,omitempty"`
+	VectorIDs   *web3eye.Int64SliceVal  `protobuf:"bytes,180,opt,name=VectorIDs,proto3" json:"VectorIDs,omitempty"`
 }
 
 func (x *Conds) Reset() {
 	*x = Conds{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[2]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -455,7 +455,7 @@ func (x *Conds) String() string {
 func (*Conds) ProtoMessage() {}
 
 func (x *Conds) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[2]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,129 +468,129 @@ func (x *Conds) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Conds.ProtoReflect.Descriptor instead.
 func (*Conds) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{2}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Conds) GetID() *cybertracer.StringVal {
+func (x *Conds) GetID() *web3eye.StringVal {
 	if x != nil {
 		return x.ID
 	}
 	return nil
 }
 
-func (x *Conds) GetChainType() *cybertracer.StringVal {
+func (x *Conds) GetChainType() *web3eye.StringVal {
 	if x != nil {
 		return x.ChainType
 	}
 	return nil
 }
 
-func (x *Conds) GetChainID() *cybertracer.Int32Val {
+func (x *Conds) GetChainID() *web3eye.Int32Val {
 	if x != nil {
 		return x.ChainID
 	}
 	return nil
 }
 
-func (x *Conds) GetContract() *cybertracer.StringVal {
+func (x *Conds) GetContract() *web3eye.StringVal {
 	if x != nil {
 		return x.Contract
 	}
 	return nil
 }
 
-func (x *Conds) GetTokenType() *cybertracer.StringVal {
+func (x *Conds) GetTokenType() *web3eye.StringVal {
 	if x != nil {
 		return x.TokenType
 	}
 	return nil
 }
 
-func (x *Conds) GetTokenID() *cybertracer.StringVal {
+func (x *Conds) GetTokenID() *web3eye.StringVal {
 	if x != nil {
 		return x.TokenID
 	}
 	return nil
 }
 
-func (x *Conds) GetOwner() *cybertracer.StringVal {
+func (x *Conds) GetOwner() *web3eye.StringVal {
 	if x != nil {
 		return x.Owner
 	}
 	return nil
 }
 
-func (x *Conds) GetURI() *cybertracer.StringVal {
+func (x *Conds) GetURI() *web3eye.StringVal {
 	if x != nil {
 		return x.URI
 	}
 	return nil
 }
 
-func (x *Conds) GetURIType() *cybertracer.StringVal {
+func (x *Conds) GetURIType() *web3eye.StringVal {
 	if x != nil {
 		return x.URIType
 	}
 	return nil
 }
 
-func (x *Conds) GetImageURL() *cybertracer.StringVal {
+func (x *Conds) GetImageURL() *web3eye.StringVal {
 	if x != nil {
 		return x.ImageURL
 	}
 	return nil
 }
 
-func (x *Conds) GetVideoURL() *cybertracer.StringVal {
+func (x *Conds) GetVideoURL() *web3eye.StringVal {
 	if x != nil {
 		return x.VideoURL
 	}
 	return nil
 }
 
-func (x *Conds) GetDescription() *cybertracer.StringVal {
+func (x *Conds) GetDescription() *web3eye.StringVal {
 	if x != nil {
 		return x.Description
 	}
 	return nil
 }
 
-func (x *Conds) GetName() *cybertracer.StringVal {
+func (x *Conds) GetName() *web3eye.StringVal {
 	if x != nil {
 		return x.Name
 	}
 	return nil
 }
 
-func (x *Conds) GetVectorState() *cybertracer.StringVal {
+func (x *Conds) GetVectorState() *web3eye.StringVal {
 	if x != nil {
 		return x.VectorState
 	}
 	return nil
 }
 
-func (x *Conds) GetVectorID() *cybertracer.Int64Val {
+func (x *Conds) GetVectorID() *web3eye.Int64Val {
 	if x != nil {
 		return x.VectorID
 	}
 	return nil
 }
 
-func (x *Conds) GetRemark() *cybertracer.StringVal {
+func (x *Conds) GetRemark() *web3eye.StringVal {
 	if x != nil {
 		return x.Remark
 	}
 	return nil
 }
 
-func (x *Conds) GetIDs() *cybertracer.StringSliceVal {
+func (x *Conds) GetIDs() *web3eye.StringSliceVal {
 	if x != nil {
 		return x.IDs
 	}
 	return nil
 }
 
-func (x *Conds) GetVectorIDs() *cybertracer.Int64SliceVal {
+func (x *Conds) GetVectorIDs() *web3eye.Int64SliceVal {
 	if x != nil {
 		return x.VectorIDs
 	}
@@ -608,7 +608,7 @@ type CreateTokenRequest struct {
 func (x *CreateTokenRequest) Reset() {
 	*x = CreateTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[3]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -621,7 +621,7 @@ func (x *CreateTokenRequest) String() string {
 func (*CreateTokenRequest) ProtoMessage() {}
 
 func (x *CreateTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[3]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -634,7 +634,7 @@ func (x *CreateTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTokenRequest.ProtoReflect.Descriptor instead.
 func (*CreateTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{3}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateTokenRequest) GetInfo() *TokenReq {
@@ -655,7 +655,7 @@ type CreateTokenResponse struct {
 func (x *CreateTokenResponse) Reset() {
 	*x = CreateTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[4]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -668,7 +668,7 @@ func (x *CreateTokenResponse) String() string {
 func (*CreateTokenResponse) ProtoMessage() {}
 
 func (x *CreateTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[4]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +681,7 @@ func (x *CreateTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTokenResponse.ProtoReflect.Descriptor instead.
 func (*CreateTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{4}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateTokenResponse) GetInfo() *Token {
@@ -702,7 +702,7 @@ type CreateTokensRequest struct {
 func (x *CreateTokensRequest) Reset() {
 	*x = CreateTokensRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[5]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -715,7 +715,7 @@ func (x *CreateTokensRequest) String() string {
 func (*CreateTokensRequest) ProtoMessage() {}
 
 func (x *CreateTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[5]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -728,7 +728,7 @@ func (x *CreateTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTokensRequest.ProtoReflect.Descriptor instead.
 func (*CreateTokensRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{5}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateTokensRequest) GetInfos() []*TokenReq {
@@ -749,7 +749,7 @@ type CreateTokensResponse struct {
 func (x *CreateTokensResponse) Reset() {
 	*x = CreateTokensResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[6]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -762,7 +762,7 @@ func (x *CreateTokensResponse) String() string {
 func (*CreateTokensResponse) ProtoMessage() {}
 
 func (x *CreateTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[6]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -775,7 +775,7 @@ func (x *CreateTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTokensResponse.ProtoReflect.Descriptor instead.
 func (*CreateTokensResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{6}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateTokensResponse) GetInfos() []*Token {
@@ -796,7 +796,7 @@ type GetTokenRequest struct {
 func (x *GetTokenRequest) Reset() {
 	*x = GetTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[7]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -809,7 +809,7 @@ func (x *GetTokenRequest) String() string {
 func (*GetTokenRequest) ProtoMessage() {}
 
 func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[7]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -822,7 +822,7 @@ func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenRequest.ProtoReflect.Descriptor instead.
 func (*GetTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{7}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetTokenRequest) GetID() string {
@@ -843,7 +843,7 @@ type GetTokenResponse struct {
 func (x *GetTokenResponse) Reset() {
 	*x = GetTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[8]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -856,7 +856,7 @@ func (x *GetTokenResponse) String() string {
 func (*GetTokenResponse) ProtoMessage() {}
 
 func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[8]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -869,7 +869,7 @@ func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenResponse.ProtoReflect.Descriptor instead.
 func (*GetTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{8}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetTokenResponse) GetInfo() *Token {
@@ -892,7 +892,7 @@ type GetTokensRequest struct {
 func (x *GetTokensRequest) Reset() {
 	*x = GetTokensRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[9]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -905,7 +905,7 @@ func (x *GetTokensRequest) String() string {
 func (*GetTokensRequest) ProtoMessage() {}
 
 func (x *GetTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[9]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +918,7 @@ func (x *GetTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokensRequest.ProtoReflect.Descriptor instead.
 func (*GetTokensRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{9}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetTokensRequest) GetConds() *Conds {
@@ -954,7 +954,7 @@ type GetTokensResponse struct {
 func (x *GetTokensResponse) Reset() {
 	*x = GetTokensResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[10]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -967,7 +967,7 @@ func (x *GetTokensResponse) String() string {
 func (*GetTokensResponse) ProtoMessage() {}
 
 func (x *GetTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[10]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -980,7 +980,7 @@ func (x *GetTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokensResponse.ProtoReflect.Descriptor instead.
 func (*GetTokensResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{10}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetTokensResponse) GetInfos() []*Token {
@@ -1008,7 +1008,7 @@ type GetTokenOnlyRequest struct {
 func (x *GetTokenOnlyRequest) Reset() {
 	*x = GetTokenOnlyRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[11]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1021,7 +1021,7 @@ func (x *GetTokenOnlyRequest) String() string {
 func (*GetTokenOnlyRequest) ProtoMessage() {}
 
 func (x *GetTokenOnlyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[11]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1034,7 +1034,7 @@ func (x *GetTokenOnlyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenOnlyRequest.ProtoReflect.Descriptor instead.
 func (*GetTokenOnlyRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{11}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetTokenOnlyRequest) GetConds() *Conds {
@@ -1055,7 +1055,7 @@ type GetTokenOnlyResponse struct {
 func (x *GetTokenOnlyResponse) Reset() {
 	*x = GetTokenOnlyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[12]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1068,7 +1068,7 @@ func (x *GetTokenOnlyResponse) String() string {
 func (*GetTokenOnlyResponse) ProtoMessage() {}
 
 func (x *GetTokenOnlyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[12]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1081,7 +1081,7 @@ func (x *GetTokenOnlyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenOnlyResponse.ProtoReflect.Descriptor instead.
 func (*GetTokenOnlyResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{12}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetTokenOnlyResponse) GetInfo() *Token {
@@ -1102,7 +1102,7 @@ type UpdateTokenRequest struct {
 func (x *UpdateTokenRequest) Reset() {
 	*x = UpdateTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[13]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1115,7 +1115,7 @@ func (x *UpdateTokenRequest) String() string {
 func (*UpdateTokenRequest) ProtoMessage() {}
 
 func (x *UpdateTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[13]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1128,7 +1128,7 @@ func (x *UpdateTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTokenRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{13}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateTokenRequest) GetInfo() *TokenReq {
@@ -1149,7 +1149,7 @@ type UpdateTokenResponse struct {
 func (x *UpdateTokenResponse) Reset() {
 	*x = UpdateTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[14]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1162,7 +1162,7 @@ func (x *UpdateTokenResponse) String() string {
 func (*UpdateTokenResponse) ProtoMessage() {}
 
 func (x *UpdateTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[14]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1175,7 +1175,7 @@ func (x *UpdateTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTokenResponse.ProtoReflect.Descriptor instead.
 func (*UpdateTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{14}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateTokenResponse) GetInfo() *Token {
@@ -1196,7 +1196,7 @@ type ExistTokenRequest struct {
 func (x *ExistTokenRequest) Reset() {
 	*x = ExistTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[15]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1209,7 +1209,7 @@ func (x *ExistTokenRequest) String() string {
 func (*ExistTokenRequest) ProtoMessage() {}
 
 func (x *ExistTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[15]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1222,7 +1222,7 @@ func (x *ExistTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistTokenRequest.ProtoReflect.Descriptor instead.
 func (*ExistTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{15}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ExistTokenRequest) GetID() string {
@@ -1243,7 +1243,7 @@ type ExistTokenResponse struct {
 func (x *ExistTokenResponse) Reset() {
 	*x = ExistTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[16]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1256,7 +1256,7 @@ func (x *ExistTokenResponse) String() string {
 func (*ExistTokenResponse) ProtoMessage() {}
 
 func (x *ExistTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[16]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1269,7 +1269,7 @@ func (x *ExistTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistTokenResponse.ProtoReflect.Descriptor instead.
 func (*ExistTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{16}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ExistTokenResponse) GetInfo() bool {
@@ -1290,7 +1290,7 @@ type ExistTokenCondsRequest struct {
 func (x *ExistTokenCondsRequest) Reset() {
 	*x = ExistTokenCondsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[17]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1303,7 +1303,7 @@ func (x *ExistTokenCondsRequest) String() string {
 func (*ExistTokenCondsRequest) ProtoMessage() {}
 
 func (x *ExistTokenCondsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[17]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1316,7 +1316,7 @@ func (x *ExistTokenCondsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistTokenCondsRequest.ProtoReflect.Descriptor instead.
 func (*ExistTokenCondsRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{17}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ExistTokenCondsRequest) GetConds() *Conds {
@@ -1337,7 +1337,7 @@ type ExistTokenCondsResponse struct {
 func (x *ExistTokenCondsResponse) Reset() {
 	*x = ExistTokenCondsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[18]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1350,7 +1350,7 @@ func (x *ExistTokenCondsResponse) String() string {
 func (*ExistTokenCondsResponse) ProtoMessage() {}
 
 func (x *ExistTokenCondsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[18]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1363,7 +1363,7 @@ func (x *ExistTokenCondsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistTokenCondsResponse.ProtoReflect.Descriptor instead.
 func (*ExistTokenCondsResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{18}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ExistTokenCondsResponse) GetInfo() bool {
@@ -1384,7 +1384,7 @@ type CountTokensRequest struct {
 func (x *CountTokensRequest) Reset() {
 	*x = CountTokensRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[19]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1397,7 +1397,7 @@ func (x *CountTokensRequest) String() string {
 func (*CountTokensRequest) ProtoMessage() {}
 
 func (x *CountTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[19]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1410,7 +1410,7 @@ func (x *CountTokensRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountTokensRequest.ProtoReflect.Descriptor instead.
 func (*CountTokensRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{19}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CountTokensRequest) GetConds() *Conds {
@@ -1431,7 +1431,7 @@ type CountTokensResponse struct {
 func (x *CountTokensResponse) Reset() {
 	*x = CountTokensResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[20]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1444,7 +1444,7 @@ func (x *CountTokensResponse) String() string {
 func (*CountTokensResponse) ProtoMessage() {}
 
 func (x *CountTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[20]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1457,7 +1457,7 @@ func (x *CountTokensResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountTokensResponse.ProtoReflect.Descriptor instead.
 func (*CountTokensResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{20}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CountTokensResponse) GetInfo() uint32 {
@@ -1478,7 +1478,7 @@ type DeleteTokenRequest struct {
 func (x *DeleteTokenRequest) Reset() {
 	*x = DeleteTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[21]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1491,7 +1491,7 @@ func (x *DeleteTokenRequest) String() string {
 func (*DeleteTokenRequest) ProtoMessage() {}
 
 func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[21]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1504,7 +1504,7 @@ func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTokenRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{21}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteTokenRequest) GetID() string {
@@ -1525,7 +1525,7 @@ type DeleteTokenResponse struct {
 func (x *DeleteTokenResponse) Reset() {
 	*x = DeleteTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[22]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1538,7 +1538,7 @@ func (x *DeleteTokenResponse) String() string {
 func (*DeleteTokenResponse) ProtoMessage() {}
 
 func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[22]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1551,7 +1551,7 @@ func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTokenResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{22}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteTokenResponse) GetInfo() *Token {
@@ -1561,9 +1561,9 @@ func (x *DeleteTokenResponse) GetInfo() *Token {
 	return nil
 }
 
-var File_cybertracer_nftmeta_v1_token_token_proto protoreflect.FileDescriptor
+var File_web3eye_nftmeta_v1_token_token_proto protoreflect.FileDescriptor
 
-var file_cybertracer_nftmeta_v1_token_token_proto_rawDesc = []byte{
+var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x0a, 0x28, 0x63, 0x79, 0x62, 0x65, 0x72, 0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2f, 0x6e, 0x66,
 	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2f, 0x74,
 	0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x10, 0x6e, 0x66, 0x74, 0x6d,
@@ -1856,20 +1856,20 @@ var file_cybertracer_nftmeta_v1_token_token_proto_rawDesc = []byte{
 }
 
 var (
-	file_cybertracer_nftmeta_v1_token_token_proto_rawDescOnce sync.Once
-	file_cybertracer_nftmeta_v1_token_token_proto_rawDescData = file_cybertracer_nftmeta_v1_token_token_proto_rawDesc
+	file_web3eye_nftmeta_v1_token_token_proto_rawDescOnce sync.Once
+	file_web3eye_nftmeta_v1_token_token_proto_rawDescData = file_web3eye_nftmeta_v1_token_token_proto_rawDesc
 )
 
-func file_cybertracer_nftmeta_v1_token_token_proto_rawDescGZIP() []byte {
-	file_cybertracer_nftmeta_v1_token_token_proto_rawDescOnce.Do(func() {
-		file_cybertracer_nftmeta_v1_token_token_proto_rawDescData = protoimpl.X.CompressGZIP(file_cybertracer_nftmeta_v1_token_token_proto_rawDescData)
+func file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP() []byte {
+	file_web3eye_nftmeta_v1_token_token_proto_rawDescOnce.Do(func() {
+		file_web3eye_nftmeta_v1_token_token_proto_rawDescData = protoimpl.X.CompressGZIP(file_web3eye_nftmeta_v1_token_token_proto_rawDescData)
 	})
-	return file_cybertracer_nftmeta_v1_token_token_proto_rawDescData
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescData
 }
 
-var file_cybertracer_nftmeta_v1_token_token_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_cybertracer_nftmeta_v1_token_token_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
-var file_cybertracer_nftmeta_v1_token_token_proto_goTypes = []interface{}{
+var file_web3eye_nftmeta_v1_token_token_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_web3eye_nftmeta_v1_token_token_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_web3eye_nftmeta_v1_token_token_proto_goTypes = []interface{}{
 	(ConvertState)(0),                  // 0: nftmeta.v1.token.ConvertState
 	(*TokenReq)(nil),                   // 1: nftmeta.v1.token.TokenReq
 	(*Token)(nil),                      // 2: nftmeta.v1.token.Token
@@ -1894,33 +1894,33 @@ var file_cybertracer_nftmeta_v1_token_token_proto_goTypes = []interface{}{
 	(*CountTokensResponse)(nil),        // 21: nftmeta.v1.token.CountTokensResponse
 	(*DeleteTokenRequest)(nil),         // 22: nftmeta.v1.token.DeleteTokenRequest
 	(*DeleteTokenResponse)(nil),        // 23: nftmeta.v1.token.DeleteTokenResponse
-	(*cybertracer.StringVal)(nil),      // 24: cybertracer.StringVal
-	(*cybertracer.Int32Val)(nil),       // 25: cybertracer.Int32Val
-	(*cybertracer.Int64Val)(nil),       // 26: cybertracer.Int64Val
-	(*cybertracer.StringSliceVal)(nil), // 27: cybertracer.StringSliceVal
-	(*cybertracer.Int64SliceVal)(nil),  // 28: cybertracer.Int64SliceVal
+	(*web3eye.StringVal)(nil),      // 24: web3eye.StringVal
+	(*web3eye.Int32Val)(nil),       // 25: web3eye.Int32Val
+	(*web3eye.Int64Val)(nil),       // 26: web3eye.Int64Val
+	(*web3eye.StringSliceVal)(nil), // 27: web3eye.StringSliceVal
+	(*web3eye.Int64SliceVal)(nil),  // 28: web3eye.Int64SliceVal
 }
-var file_cybertracer_nftmeta_v1_token_token_proto_depIdxs = []int32{
+var file_web3eye_nftmeta_v1_token_token_proto_depIdxs = []int32{
 	0,  // 0: nftmeta.v1.token.TokenReq.VectorState:type_name -> nftmeta.v1.token.ConvertState
 	0,  // 1: nftmeta.v1.token.Token.VectorState:type_name -> nftmeta.v1.token.ConvertState
-	24, // 2: nftmeta.v1.token.Conds.ID:type_name -> cybertracer.StringVal
-	24, // 3: nftmeta.v1.token.Conds.ChainType:type_name -> cybertracer.StringVal
-	25, // 4: nftmeta.v1.token.Conds.ChainID:type_name -> cybertracer.Int32Val
-	24, // 5: nftmeta.v1.token.Conds.Contract:type_name -> cybertracer.StringVal
-	24, // 6: nftmeta.v1.token.Conds.TokenType:type_name -> cybertracer.StringVal
-	24, // 7: nftmeta.v1.token.Conds.TokenID:type_name -> cybertracer.StringVal
-	24, // 8: nftmeta.v1.token.Conds.Owner:type_name -> cybertracer.StringVal
-	24, // 9: nftmeta.v1.token.Conds.URI:type_name -> cybertracer.StringVal
-	24, // 10: nftmeta.v1.token.Conds.URIType:type_name -> cybertracer.StringVal
-	24, // 11: nftmeta.v1.token.Conds.ImageURL:type_name -> cybertracer.StringVal
-	24, // 12: nftmeta.v1.token.Conds.VideoURL:type_name -> cybertracer.StringVal
-	24, // 13: nftmeta.v1.token.Conds.Description:type_name -> cybertracer.StringVal
-	24, // 14: nftmeta.v1.token.Conds.Name:type_name -> cybertracer.StringVal
-	24, // 15: nftmeta.v1.token.Conds.VectorState:type_name -> cybertracer.StringVal
-	26, // 16: nftmeta.v1.token.Conds.VectorID:type_name -> cybertracer.Int64Val
-	24, // 17: nftmeta.v1.token.Conds.Remark:type_name -> cybertracer.StringVal
-	27, // 18: nftmeta.v1.token.Conds.IDs:type_name -> cybertracer.StringSliceVal
-	28, // 19: nftmeta.v1.token.Conds.VectorIDs:type_name -> cybertracer.Int64SliceVal
+	24, // 2: nftmeta.v1.token.Conds.ID:type_name -> web3eye.StringVal
+	24, // 3: nftmeta.v1.token.Conds.ChainType:type_name -> web3eye.StringVal
+	25, // 4: nftmeta.v1.token.Conds.ChainID:type_name -> web3eye.Int32Val
+	24, // 5: nftmeta.v1.token.Conds.Contract:type_name -> web3eye.StringVal
+	24, // 6: nftmeta.v1.token.Conds.TokenType:type_name -> web3eye.StringVal
+	24, // 7: nftmeta.v1.token.Conds.TokenID:type_name -> web3eye.StringVal
+	24, // 8: nftmeta.v1.token.Conds.Owner:type_name -> web3eye.StringVal
+	24, // 9: nftmeta.v1.token.Conds.URI:type_name -> web3eye.StringVal
+	24, // 10: nftmeta.v1.token.Conds.URIType:type_name -> web3eye.StringVal
+	24, // 11: nftmeta.v1.token.Conds.ImageURL:type_name -> web3eye.StringVal
+	24, // 12: nftmeta.v1.token.Conds.VideoURL:type_name -> web3eye.StringVal
+	24, // 13: nftmeta.v1.token.Conds.Description:type_name -> web3eye.StringVal
+	24, // 14: nftmeta.v1.token.Conds.Name:type_name -> web3eye.StringVal
+	24, // 15: nftmeta.v1.token.Conds.VectorState:type_name -> web3eye.StringVal
+	26, // 16: nftmeta.v1.token.Conds.VectorID:type_name -> web3eye.Int64Val
+	24, // 17: nftmeta.v1.token.Conds.Remark:type_name -> web3eye.StringVal
+	27, // 18: nftmeta.v1.token.Conds.IDs:type_name -> web3eye.StringSliceVal
+	28, // 19: nftmeta.v1.token.Conds.VectorIDs:type_name -> web3eye.Int64SliceVal
 	1,  // 20: nftmeta.v1.token.CreateTokenRequest.Info:type_name -> nftmeta.v1.token.TokenReq
 	2,  // 21: nftmeta.v1.token.CreateTokenResponse.Info:type_name -> nftmeta.v1.token.Token
 	1,  // 22: nftmeta.v1.token.CreateTokensRequest.Infos:type_name -> nftmeta.v1.token.TokenReq
@@ -1962,13 +1962,13 @@ var file_cybertracer_nftmeta_v1_token_token_proto_depIdxs = []int32{
 	0,  // [0:34] is the sub-list for field type_name
 }
 
-func init() { file_cybertracer_nftmeta_v1_token_token_proto_init() }
-func file_cybertracer_nftmeta_v1_token_token_proto_init() {
-	if File_cybertracer_nftmeta_v1_token_token_proto != nil {
+func init() { file_web3eye_nftmeta_v1_token_token_proto_init() }
+func file_web3eye_nftmeta_v1_token_token_proto_init() {
+	if File_web3eye_nftmeta_v1_token_token_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TokenReq); i {
 			case 0:
 				return &v.state
@@ -1980,7 +1980,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Token); i {
 			case 0:
 				return &v.state
@@ -1992,7 +1992,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Conds); i {
 			case 0:
 				return &v.state
@@ -2004,7 +2004,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2016,7 +2016,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2028,7 +2028,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTokensRequest); i {
 			case 0:
 				return &v.state
@@ -2040,7 +2040,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTokensResponse); i {
 			case 0:
 				return &v.state
@@ -2052,7 +2052,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2064,7 +2064,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2076,7 +2076,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokensRequest); i {
 			case 0:
 				return &v.state
@@ -2088,7 +2088,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokensResponse); i {
 			case 0:
 				return &v.state
@@ -2100,7 +2100,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokenOnlyRequest); i {
 			case 0:
 				return &v.state
@@ -2112,7 +2112,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTokenOnlyResponse); i {
 			case 0:
 				return &v.state
@@ -2124,7 +2124,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2136,7 +2136,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2148,7 +2148,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2160,7 +2160,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2172,7 +2172,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistTokenCondsRequest); i {
 			case 0:
 				return &v.state
@@ -2184,7 +2184,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistTokenCondsResponse); i {
 			case 0:
 				return &v.state
@@ -2196,7 +2196,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountTokensRequest); i {
 			case 0:
 				return &v.state
@@ -2208,7 +2208,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountTokensResponse); i {
 			case 0:
 				return &v.state
@@ -2220,7 +2220,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2232,7 +2232,7 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2245,24 +2245,24 @@ func file_cybertracer_nftmeta_v1_token_token_proto_init() {
 			}
 		}
 	}
-	file_cybertracer_nftmeta_v1_token_token_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_web3eye_nftmeta_v1_token_token_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_cybertracer_nftmeta_v1_token_token_proto_rawDesc,
+			RawDescriptor: file_web3eye_nftmeta_v1_token_token_proto_rawDesc,
 			NumEnums:      1,
 			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_cybertracer_nftmeta_v1_token_token_proto_goTypes,
-		DependencyIndexes: file_cybertracer_nftmeta_v1_token_token_proto_depIdxs,
-		EnumInfos:         file_cybertracer_nftmeta_v1_token_token_proto_enumTypes,
-		MessageInfos:      file_cybertracer_nftmeta_v1_token_token_proto_msgTypes,
+		GoTypes:           file_web3eye_nftmeta_v1_token_token_proto_goTypes,
+		DependencyIndexes: file_web3eye_nftmeta_v1_token_token_proto_depIdxs,
+		EnumInfos:         file_web3eye_nftmeta_v1_token_token_proto_enumTypes,
+		MessageInfos:      file_web3eye_nftmeta_v1_token_token_proto_msgTypes,
 	}.Build()
-	File_cybertracer_nftmeta_v1_token_token_proto = out.File
-	file_cybertracer_nftmeta_v1_token_token_proto_rawDesc = nil
-	file_cybertracer_nftmeta_v1_token_token_proto_goTypes = nil
-	file_cybertracer_nftmeta_v1_token_token_proto_depIdxs = nil
+	File_web3eye_nftmeta_v1_token_token_proto = out.File
+	file_web3eye_nftmeta_v1_token_token_proto_rawDesc = nil
+	file_web3eye_nftmeta_v1_token_token_proto_goTypes = nil
+	file_web3eye_nftmeta_v1_token_token_proto_depIdxs = nil
 }

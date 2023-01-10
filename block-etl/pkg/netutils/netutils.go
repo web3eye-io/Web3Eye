@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (

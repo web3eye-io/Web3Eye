@@ -2,13 +2,13 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.18.1
-// source: cybertracer/nftmeta/v1/synctask/synctask.proto
+// source: web3eye/nftmeta/v1/synctask/synctask.proto
 
 package synctask
 
 import (
-	cybertracer "github.com/web3eye-io/cyber-tracer/proto/cybertracer"
-	cttype "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/cttype"
+	web3eye "github.com/web3eye-io/Web3Eye/proto/web3eye"
+	cttype "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -42,7 +42,7 @@ type SyncTaskReq struct {
 func (x *SyncTaskReq) Reset() {
 	*x = SyncTaskReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[0]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -55,7 +55,7 @@ func (x *SyncTaskReq) String() string {
 func (*SyncTaskReq) ProtoMessage() {}
 
 func (x *SyncTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[0]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -68,7 +68,7 @@ func (x *SyncTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncTaskReq.ProtoReflect.Descriptor instead.
 func (*SyncTaskReq) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{0}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SyncTaskReq) GetID() string {
@@ -161,7 +161,7 @@ type SyncTask struct {
 func (x *SyncTask) Reset() {
 	*x = SyncTask{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[1]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -174,7 +174,7 @@ func (x *SyncTask) String() string {
 func (*SyncTask) ProtoMessage() {}
 
 func (x *SyncTask) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[1]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,7 +187,7 @@ func (x *SyncTask) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncTask.ProtoReflect.Descriptor instead.
 func (*SyncTask) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{1}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SyncTask) GetID() string {
@@ -265,23 +265,23 @@ type Conds struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID          *cybertracer.StringVal      `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
-	ChainType   *cybertracer.StringVal      `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
-	ChainID     *cybertracer.Int32Val       `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
-	Start       *cybertracer.Uint64Val      `protobuf:"bytes,40,opt,name=Start,proto3" json:"Start,omitempty"`
-	End         *cybertracer.Uint64Val      `protobuf:"bytes,50,opt,name=End,proto3" json:"End,omitempty"`
-	Current     *cybertracer.Uint64Val      `protobuf:"bytes,60,opt,name=Current,proto3" json:"Current,omitempty"`
-	Topic       *cybertracer.StringVal      `protobuf:"bytes,70,opt,name=Topic,proto3" json:"Topic,omitempty"`
-	Description *cybertracer.StringVal      `protobuf:"bytes,80,opt,name=Description,proto3" json:"Description,omitempty"`
-	SyncState   *cybertracer.StringVal      `protobuf:"bytes,90,opt,name=SyncState,proto3" json:"SyncState,omitempty"`
-	Remark      *cybertracer.StringVal      `protobuf:"bytes,100,opt,name=Remark,proto3" json:"Remark,omitempty"`
-	IDs         *cybertracer.StringSliceVal `protobuf:"bytes,110,opt,name=IDs,proto3" json:"IDs,omitempty"`
+	ID          *web3eye.StringVal      `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
+	ChainType   *web3eye.StringVal      `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
+	ChainID     *web3eye.Int32Val       `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
+	Start       *web3eye.Uint64Val      `protobuf:"bytes,40,opt,name=Start,proto3" json:"Start,omitempty"`
+	End         *web3eye.Uint64Val      `protobuf:"bytes,50,opt,name=End,proto3" json:"End,omitempty"`
+	Current     *web3eye.Uint64Val      `protobuf:"bytes,60,opt,name=Current,proto3" json:"Current,omitempty"`
+	Topic       *web3eye.StringVal      `protobuf:"bytes,70,opt,name=Topic,proto3" json:"Topic,omitempty"`
+	Description *web3eye.StringVal      `protobuf:"bytes,80,opt,name=Description,proto3" json:"Description,omitempty"`
+	SyncState   *web3eye.StringVal      `protobuf:"bytes,90,opt,name=SyncState,proto3" json:"SyncState,omitempty"`
+	Remark      *web3eye.StringVal      `protobuf:"bytes,100,opt,name=Remark,proto3" json:"Remark,omitempty"`
+	IDs         *web3eye.StringSliceVal `protobuf:"bytes,110,opt,name=IDs,proto3" json:"IDs,omitempty"`
 }
 
 func (x *Conds) Reset() {
 	*x = Conds{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[2]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -294,7 +294,7 @@ func (x *Conds) String() string {
 func (*Conds) ProtoMessage() {}
 
 func (x *Conds) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[2]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -307,80 +307,80 @@ func (x *Conds) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Conds.ProtoReflect.Descriptor instead.
 func (*Conds) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{2}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Conds) GetID() *cybertracer.StringVal {
+func (x *Conds) GetID() *web3eye.StringVal {
 	if x != nil {
 		return x.ID
 	}
 	return nil
 }
 
-func (x *Conds) GetChainType() *cybertracer.StringVal {
+func (x *Conds) GetChainType() *web3eye.StringVal {
 	if x != nil {
 		return x.ChainType
 	}
 	return nil
 }
 
-func (x *Conds) GetChainID() *cybertracer.Int32Val {
+func (x *Conds) GetChainID() *web3eye.Int32Val {
 	if x != nil {
 		return x.ChainID
 	}
 	return nil
 }
 
-func (x *Conds) GetStart() *cybertracer.Uint64Val {
+func (x *Conds) GetStart() *web3eye.Uint64Val {
 	if x != nil {
 		return x.Start
 	}
 	return nil
 }
 
-func (x *Conds) GetEnd() *cybertracer.Uint64Val {
+func (x *Conds) GetEnd() *web3eye.Uint64Val {
 	if x != nil {
 		return x.End
 	}
 	return nil
 }
 
-func (x *Conds) GetCurrent() *cybertracer.Uint64Val {
+func (x *Conds) GetCurrent() *web3eye.Uint64Val {
 	if x != nil {
 		return x.Current
 	}
 	return nil
 }
 
-func (x *Conds) GetTopic() *cybertracer.StringVal {
+func (x *Conds) GetTopic() *web3eye.StringVal {
 	if x != nil {
 		return x.Topic
 	}
 	return nil
 }
 
-func (x *Conds) GetDescription() *cybertracer.StringVal {
+func (x *Conds) GetDescription() *web3eye.StringVal {
 	if x != nil {
 		return x.Description
 	}
 	return nil
 }
 
-func (x *Conds) GetSyncState() *cybertracer.StringVal {
+func (x *Conds) GetSyncState() *web3eye.StringVal {
 	if x != nil {
 		return x.SyncState
 	}
 	return nil
 }
 
-func (x *Conds) GetRemark() *cybertracer.StringVal {
+func (x *Conds) GetRemark() *web3eye.StringVal {
 	if x != nil {
 		return x.Remark
 	}
 	return nil
 }
 
-func (x *Conds) GetIDs() *cybertracer.StringSliceVal {
+func (x *Conds) GetIDs() *web3eye.StringSliceVal {
 	if x != nil {
 		return x.IDs
 	}
@@ -398,7 +398,7 @@ type CreateSyncTaskRequest struct {
 func (x *CreateSyncTaskRequest) Reset() {
 	*x = CreateSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[3]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -411,7 +411,7 @@ func (x *CreateSyncTaskRequest) String() string {
 func (*CreateSyncTaskRequest) ProtoMessage() {}
 
 func (x *CreateSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[3]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -424,7 +424,7 @@ func (x *CreateSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*CreateSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{3}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateSyncTaskRequest) GetInfo() *SyncTaskReq {
@@ -445,7 +445,7 @@ type CreateSyncTaskResponse struct {
 func (x *CreateSyncTaskResponse) Reset() {
 	*x = CreateSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[4]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -458,7 +458,7 @@ func (x *CreateSyncTaskResponse) String() string {
 func (*CreateSyncTaskResponse) ProtoMessage() {}
 
 func (x *CreateSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[4]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -471,7 +471,7 @@ func (x *CreateSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*CreateSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{4}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateSyncTaskResponse) GetInfo() *SyncTask {
@@ -492,7 +492,7 @@ type TriggerSyncTaskRequest struct {
 func (x *TriggerSyncTaskRequest) Reset() {
 	*x = TriggerSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[5]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -505,7 +505,7 @@ func (x *TriggerSyncTaskRequest) String() string {
 func (*TriggerSyncTaskRequest) ProtoMessage() {}
 
 func (x *TriggerSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[5]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -518,7 +518,7 @@ func (x *TriggerSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*TriggerSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{5}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *TriggerSyncTaskRequest) GetTopic() string {
@@ -539,7 +539,7 @@ type GetSyncTaskRequest struct {
 func (x *GetSyncTaskRequest) Reset() {
 	*x = GetSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -552,7 +552,7 @@ func (x *GetSyncTaskRequest) String() string {
 func (*GetSyncTaskRequest) ProtoMessage() {}
 
 func (x *GetSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -565,7 +565,7 @@ func (x *GetSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{6}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetSyncTaskRequest) GetID() string {
@@ -586,7 +586,7 @@ type GetSyncTaskResponse struct {
 func (x *GetSyncTaskResponse) Reset() {
 	*x = GetSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -599,7 +599,7 @@ func (x *GetSyncTaskResponse) String() string {
 func (*GetSyncTaskResponse) ProtoMessage() {}
 
 func (x *GetSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -612,7 +612,7 @@ func (x *GetSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{7}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetSyncTaskResponse) GetInfo() *SyncTask {
@@ -635,7 +635,7 @@ type GetSyncTasksRequest struct {
 func (x *GetSyncTasksRequest) Reset() {
 	*x = GetSyncTasksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -648,7 +648,7 @@ func (x *GetSyncTasksRequest) String() string {
 func (*GetSyncTasksRequest) ProtoMessage() {}
 
 func (x *GetSyncTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -661,7 +661,7 @@ func (x *GetSyncTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTasksRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTasksRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{8}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetSyncTasksRequest) GetConds() *Conds {
@@ -697,7 +697,7 @@ type GetSyncTasksResponse struct {
 func (x *GetSyncTasksResponse) Reset() {
 	*x = GetSyncTasksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -710,7 +710,7 @@ func (x *GetSyncTasksResponse) String() string {
 func (*GetSyncTasksResponse) ProtoMessage() {}
 
 func (x *GetSyncTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -723,7 +723,7 @@ func (x *GetSyncTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTasksResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTasksResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{9}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetSyncTasksResponse) GetInfos() []*SyncTask {
@@ -751,7 +751,7 @@ type GetSyncTaskOnlyRequest struct {
 func (x *GetSyncTaskOnlyRequest) Reset() {
 	*x = GetSyncTaskOnlyRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -764,7 +764,7 @@ func (x *GetSyncTaskOnlyRequest) String() string {
 func (*GetSyncTaskOnlyRequest) ProtoMessage() {}
 
 func (x *GetSyncTaskOnlyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -777,7 +777,7 @@ func (x *GetSyncTaskOnlyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskOnlyRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskOnlyRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{10}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetSyncTaskOnlyRequest) GetConds() *Conds {
@@ -798,7 +798,7 @@ type GetSyncTaskOnlyResponse struct {
 func (x *GetSyncTaskOnlyResponse) Reset() {
 	*x = GetSyncTaskOnlyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -811,7 +811,7 @@ func (x *GetSyncTaskOnlyResponse) String() string {
 func (*GetSyncTaskOnlyResponse) ProtoMessage() {}
 
 func (x *GetSyncTaskOnlyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -824,7 +824,7 @@ func (x *GetSyncTaskOnlyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskOnlyResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskOnlyResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{11}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSyncTaskOnlyResponse) GetInfo() *SyncTask {
@@ -845,7 +845,7 @@ type UpdateSyncTaskRequest struct {
 func (x *UpdateSyncTaskRequest) Reset() {
 	*x = UpdateSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -858,7 +858,7 @@ func (x *UpdateSyncTaskRequest) String() string {
 func (*UpdateSyncTaskRequest) ProtoMessage() {}
 
 func (x *UpdateSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -871,7 +871,7 @@ func (x *UpdateSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{12}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateSyncTaskRequest) GetInfo() *SyncTaskReq {
@@ -892,7 +892,7 @@ type UpdateSyncTaskResponse struct {
 func (x *UpdateSyncTaskResponse) Reset() {
 	*x = UpdateSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -905,7 +905,7 @@ func (x *UpdateSyncTaskResponse) String() string {
 func (*UpdateSyncTaskResponse) ProtoMessage() {}
 
 func (x *UpdateSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +918,7 @@ func (x *UpdateSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{13}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateSyncTaskResponse) GetInfo() *SyncTask {
@@ -939,7 +939,7 @@ type ExistSyncTaskRequest struct {
 func (x *ExistSyncTaskRequest) Reset() {
 	*x = ExistSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -952,7 +952,7 @@ func (x *ExistSyncTaskRequest) String() string {
 func (*ExistSyncTaskRequest) ProtoMessage() {}
 
 func (x *ExistSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -965,7 +965,7 @@ func (x *ExistSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{14}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ExistSyncTaskRequest) GetID() string {
@@ -986,7 +986,7 @@ type ExistSyncTaskResponse struct {
 func (x *ExistSyncTaskResponse) Reset() {
 	*x = ExistSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -999,7 +999,7 @@ func (x *ExistSyncTaskResponse) String() string {
 func (*ExistSyncTaskResponse) ProtoMessage() {}
 
 func (x *ExistSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1012,7 +1012,7 @@ func (x *ExistSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{15}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ExistSyncTaskResponse) GetInfo() bool {
@@ -1033,7 +1033,7 @@ type ExistSyncTaskCondsRequest struct {
 func (x *ExistSyncTaskCondsRequest) Reset() {
 	*x = ExistSyncTaskCondsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1046,7 +1046,7 @@ func (x *ExistSyncTaskCondsRequest) String() string {
 func (*ExistSyncTaskCondsRequest) ProtoMessage() {}
 
 func (x *ExistSyncTaskCondsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1059,7 +1059,7 @@ func (x *ExistSyncTaskCondsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskCondsRequest.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskCondsRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{16}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ExistSyncTaskCondsRequest) GetConds() *Conds {
@@ -1080,7 +1080,7 @@ type ExistSyncTaskCondsResponse struct {
 func (x *ExistSyncTaskCondsResponse) Reset() {
 	*x = ExistSyncTaskCondsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1093,7 +1093,7 @@ func (x *ExistSyncTaskCondsResponse) String() string {
 func (*ExistSyncTaskCondsResponse) ProtoMessage() {}
 
 func (x *ExistSyncTaskCondsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1106,7 +1106,7 @@ func (x *ExistSyncTaskCondsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskCondsResponse.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskCondsResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{17}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ExistSyncTaskCondsResponse) GetInfo() bool {
@@ -1127,7 +1127,7 @@ type CountSyncTasksRequest struct {
 func (x *CountSyncTasksRequest) Reset() {
 	*x = CountSyncTasksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1140,7 +1140,7 @@ func (x *CountSyncTasksRequest) String() string {
 func (*CountSyncTasksRequest) ProtoMessage() {}
 
 func (x *CountSyncTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1153,7 @@ func (x *CountSyncTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountSyncTasksRequest.ProtoReflect.Descriptor instead.
 func (*CountSyncTasksRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{18}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CountSyncTasksRequest) GetConds() *Conds {
@@ -1174,7 +1174,7 @@ type CountSyncTasksResponse struct {
 func (x *CountSyncTasksResponse) Reset() {
 	*x = CountSyncTasksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1187,7 +1187,7 @@ func (x *CountSyncTasksResponse) String() string {
 func (*CountSyncTasksResponse) ProtoMessage() {}
 
 func (x *CountSyncTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1200,7 +1200,7 @@ func (x *CountSyncTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountSyncTasksResponse.ProtoReflect.Descriptor instead.
 func (*CountSyncTasksResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{19}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CountSyncTasksResponse) GetInfo() uint32 {
@@ -1221,7 +1221,7 @@ type DeleteSyncTaskRequest struct {
 func (x *DeleteSyncTaskRequest) Reset() {
 	*x = DeleteSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1234,7 +1234,7 @@ func (x *DeleteSyncTaskRequest) String() string {
 func (*DeleteSyncTaskRequest) ProtoMessage() {}
 
 func (x *DeleteSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1247,7 +1247,7 @@ func (x *DeleteSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{20}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DeleteSyncTaskRequest) GetID() string {
@@ -1268,7 +1268,7 @@ type DeleteSyncTaskResponse struct {
 func (x *DeleteSyncTaskResponse) Reset() {
 	*x = DeleteSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1281,7 +1281,7 @@ func (x *DeleteSyncTaskResponse) String() string {
 func (*DeleteSyncTaskResponse) ProtoMessage() {}
 
 func (x *DeleteSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1294,7 +1294,7 @@ func (x *DeleteSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{21}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteSyncTaskResponse) GetInfo() *SyncTask {
@@ -1304,9 +1304,9 @@ func (x *DeleteSyncTaskResponse) GetInfo() *SyncTask {
 	return nil
 }
 
-var File_cybertracer_nftmeta_v1_synctask_synctask_proto protoreflect.FileDescriptor
+var File_web3eye_nftmeta_v1_synctask_synctask_proto protoreflect.FileDescriptor
 
-var file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDesc = []byte{
+var file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc = []byte{
 	0x0a, 0x2e, 0x63, 0x79, 0x62, 0x65, 0x72, 0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2f, 0x6e, 0x66,
 	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73,
 	0x6b, 0x2f, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
@@ -1556,19 +1556,19 @@ var file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDesc = []byte{
 }
 
 var (
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescOnce sync.Once
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescData = file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDesc
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescOnce sync.Once
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescData = file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc
 )
 
-func file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescGZIP() []byte {
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescOnce.Do(func() {
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescData = protoimpl.X.CompressGZIP(file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescData)
+func file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP() []byte {
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescOnce.Do(func() {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescData = protoimpl.X.CompressGZIP(file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescData)
 	})
-	return file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDescData
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescData
 }
 
-var file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
-var file_cybertracer_nftmeta_v1_synctask_synctask_proto_goTypes = []interface{}{
+var file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_web3eye_nftmeta_v1_synctask_synctask_proto_goTypes = []interface{}{
 	(*SyncTaskReq)(nil),                // 0: nftmeta.v1.synctask.SyncTaskReq
 	(*SyncTask)(nil),                   // 1: nftmeta.v1.synctask.SyncTask
 	(*Conds)(nil),                      // 2: nftmeta.v1.synctask.Conds
@@ -1593,27 +1593,27 @@ var file_cybertracer_nftmeta_v1_synctask_synctask_proto_goTypes = []interface{}{
 	(*DeleteSyncTaskResponse)(nil),     // 21: nftmeta.v1.synctask.DeleteSyncTaskResponse
 	(cttype.ChainType)(0),              // 22: cttype.ChainType
 	(cttype.SyncState)(0),              // 23: cttype.SyncState
-	(*cybertracer.StringVal)(nil),      // 24: cybertracer.StringVal
-	(*cybertracer.Int32Val)(nil),       // 25: cybertracer.Int32Val
-	(*cybertracer.Uint64Val)(nil),      // 26: cybertracer.Uint64Val
-	(*cybertracer.StringSliceVal)(nil), // 27: cybertracer.StringSliceVal
+	(*web3eye.StringVal)(nil),      // 24: web3eye.StringVal
+	(*web3eye.Int32Val)(nil),       // 25: web3eye.Int32Val
+	(*web3eye.Uint64Val)(nil),      // 26: web3eye.Uint64Val
+	(*web3eye.StringSliceVal)(nil), // 27: web3eye.StringSliceVal
 }
-var file_cybertracer_nftmeta_v1_synctask_synctask_proto_depIdxs = []int32{
+var file_web3eye_nftmeta_v1_synctask_synctask_proto_depIdxs = []int32{
 	22, // 0: nftmeta.v1.synctask.SyncTaskReq.ChainType:type_name -> cttype.ChainType
 	23, // 1: nftmeta.v1.synctask.SyncTaskReq.SyncState:type_name -> cttype.SyncState
 	22, // 2: nftmeta.v1.synctask.SyncTask.ChainType:type_name -> cttype.ChainType
 	23, // 3: nftmeta.v1.synctask.SyncTask.SyncState:type_name -> cttype.SyncState
-	24, // 4: nftmeta.v1.synctask.Conds.ID:type_name -> cybertracer.StringVal
-	24, // 5: nftmeta.v1.synctask.Conds.ChainType:type_name -> cybertracer.StringVal
-	25, // 6: nftmeta.v1.synctask.Conds.ChainID:type_name -> cybertracer.Int32Val
-	26, // 7: nftmeta.v1.synctask.Conds.Start:type_name -> cybertracer.Uint64Val
-	26, // 8: nftmeta.v1.synctask.Conds.End:type_name -> cybertracer.Uint64Val
-	26, // 9: nftmeta.v1.synctask.Conds.Current:type_name -> cybertracer.Uint64Val
-	24, // 10: nftmeta.v1.synctask.Conds.Topic:type_name -> cybertracer.StringVal
-	24, // 11: nftmeta.v1.synctask.Conds.Description:type_name -> cybertracer.StringVal
-	24, // 12: nftmeta.v1.synctask.Conds.SyncState:type_name -> cybertracer.StringVal
-	24, // 13: nftmeta.v1.synctask.Conds.Remark:type_name -> cybertracer.StringVal
-	27, // 14: nftmeta.v1.synctask.Conds.IDs:type_name -> cybertracer.StringSliceVal
+	24, // 4: nftmeta.v1.synctask.Conds.ID:type_name -> web3eye.StringVal
+	24, // 5: nftmeta.v1.synctask.Conds.ChainType:type_name -> web3eye.StringVal
+	25, // 6: nftmeta.v1.synctask.Conds.ChainID:type_name -> web3eye.Int32Val
+	26, // 7: nftmeta.v1.synctask.Conds.Start:type_name -> web3eye.Uint64Val
+	26, // 8: nftmeta.v1.synctask.Conds.End:type_name -> web3eye.Uint64Val
+	26, // 9: nftmeta.v1.synctask.Conds.Current:type_name -> web3eye.Uint64Val
+	24, // 10: nftmeta.v1.synctask.Conds.Topic:type_name -> web3eye.StringVal
+	24, // 11: nftmeta.v1.synctask.Conds.Description:type_name -> web3eye.StringVal
+	24, // 12: nftmeta.v1.synctask.Conds.SyncState:type_name -> web3eye.StringVal
+	24, // 13: nftmeta.v1.synctask.Conds.Remark:type_name -> web3eye.StringVal
+	27, // 14: nftmeta.v1.synctask.Conds.IDs:type_name -> web3eye.StringSliceVal
 	0,  // 15: nftmeta.v1.synctask.CreateSyncTaskRequest.Info:type_name -> nftmeta.v1.synctask.SyncTaskReq
 	1,  // 16: nftmeta.v1.synctask.CreateSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
 	1,  // 17: nftmeta.v1.synctask.GetSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
@@ -1653,13 +1653,13 @@ var file_cybertracer_nftmeta_v1_synctask_synctask_proto_depIdxs = []int32{
 	0,  // [0:27] is the sub-list for field type_name
 }
 
-func init() { file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() }
-func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
-	if File_cybertracer_nftmeta_v1_synctask_synctask_proto != nil {
+func init() { file_web3eye_nftmeta_v1_synctask_synctask_proto_init() }
+func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
+	if File_web3eye_nftmeta_v1_synctask_synctask_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SyncTaskReq); i {
 			case 0:
 				return &v.state
@@ -1671,7 +1671,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SyncTask); i {
 			case 0:
 				return &v.state
@@ -1683,7 +1683,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Conds); i {
 			case 0:
 				return &v.state
@@ -1695,7 +1695,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1707,7 +1707,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1719,7 +1719,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TriggerSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1731,7 +1731,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1743,7 +1743,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1755,7 +1755,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTasksRequest); i {
 			case 0:
 				return &v.state
@@ -1767,7 +1767,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTasksResponse); i {
 			case 0:
 				return &v.state
@@ -1779,7 +1779,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTaskOnlyRequest); i {
 			case 0:
 				return &v.state
@@ -1791,7 +1791,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetSyncTaskOnlyResponse); i {
 			case 0:
 				return &v.state
@@ -1803,7 +1803,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1815,7 +1815,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1827,7 +1827,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1839,7 +1839,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1851,7 +1851,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistSyncTaskCondsRequest); i {
 			case 0:
 				return &v.state
@@ -1863,7 +1863,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExistSyncTaskCondsResponse); i {
 			case 0:
 				return &v.state
@@ -1875,7 +1875,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountSyncTasksRequest); i {
 			case 0:
 				return &v.state
@@ -1887,7 +1887,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountSyncTasksResponse); i {
 			case 0:
 				return &v.state
@@ -1899,7 +1899,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSyncTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1911,7 +1911,7 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 				return nil
 			}
 		}
-		file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1924,23 +1924,23 @@ func file_cybertracer_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 	}
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDesc,
+			RawDescriptor: file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_cybertracer_nftmeta_v1_synctask_synctask_proto_goTypes,
-		DependencyIndexes: file_cybertracer_nftmeta_v1_synctask_synctask_proto_depIdxs,
-		MessageInfos:      file_cybertracer_nftmeta_v1_synctask_synctask_proto_msgTypes,
+		GoTypes:           file_web3eye_nftmeta_v1_synctask_synctask_proto_goTypes,
+		DependencyIndexes: file_web3eye_nftmeta_v1_synctask_synctask_proto_depIdxs,
+		MessageInfos:      file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes,
 	}.Build()
-	File_cybertracer_nftmeta_v1_synctask_synctask_proto = out.File
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_rawDesc = nil
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_goTypes = nil
-	file_cybertracer_nftmeta_v1_synctask_synctask_proto_depIdxs = nil
+	File_web3eye_nftmeta_v1_synctask_synctask_proto = out.File
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc = nil
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_goTypes = nil
+	file_web3eye_nftmeta_v1_synctask_synctask_proto_depIdxs = nil
 }

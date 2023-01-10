@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/endpoints"
-	"github.com/web3eye-io/cyber-tracer/common/utils"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/endpoints"
+	"github.com/web3eye-io/Web3Eye/common/utils"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (

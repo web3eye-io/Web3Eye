@@ -12,14 +12,14 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/web3eye-io/cyber-tracer/common/ctkafka"
-	"github.com/web3eye-io/cyber-tracer/config"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	"github.com/web3eye-io/Web3Eye/common/ctkafka"
+	"github.com/web3eye-io/Web3Eye/config"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
-	crud "github.com/web3eye-io/cyber-tracer/nft-meta/pkg/crud/v1/token"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
+	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 )
 
 var (

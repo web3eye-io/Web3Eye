@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package web3eye;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye";
+
+enum ERR {
+  OK = 0;
+
+  START = 10000;
+}

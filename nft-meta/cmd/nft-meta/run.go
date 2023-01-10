@@ -14,13 +14,13 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
-	"github.com/web3eye-io/cyber-tracer/config"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/milvusdb"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/servermux"
+	"github.com/web3eye-io/Web3Eye/config"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/servermux"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/api"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db"
+	"github.com/web3eye-io/Web3Eye/nft-meta/api"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"

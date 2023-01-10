@@ -1,7 +1,7 @@
 package token
 
 import (
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/token"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"google.golang.org/grpc"
 )
 

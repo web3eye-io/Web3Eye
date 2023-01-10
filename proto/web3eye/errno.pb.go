@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.18.1
-// source: cybertracer/errno.proto
+// source: web3eye/errno.proto
 
-package cybertracer
+package web3eye
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -50,11 +50,11 @@ func (x ERR) String() string {
 }
 
 func (ERR) Descriptor() protoreflect.EnumDescriptor {
-	return file_cybertracer_errno_proto_enumTypes[0].Descriptor()
+	return file_web3eye_errno_proto_enumTypes[0].Descriptor()
 }
 
 func (ERR) Type() protoreflect.EnumType {
-	return &file_cybertracer_errno_proto_enumTypes[0]
+	return &file_web3eye_errno_proto_enumTypes[0]
 }
 
 func (x ERR) Number() protoreflect.EnumNumber {
@@ -63,12 +63,12 @@ func (x ERR) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ERR.Descriptor instead.
 func (ERR) EnumDescriptor() ([]byte, []int) {
-	return file_cybertracer_errno_proto_rawDescGZIP(), []int{0}
+	return file_web3eye_errno_proto_rawDescGZIP(), []int{0}
 }
 
-var File_cybertracer_errno_proto protoreflect.FileDescriptor
+var File_web3eye_errno_proto protoreflect.FileDescriptor
 
-var file_cybertracer_errno_proto_rawDesc = []byte{
+var file_web3eye_errno_proto_rawDesc = []byte{
 	0x0a, 0x17, 0x63, 0x79, 0x62, 0x65, 0x72, 0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2f, 0x65, 0x72,
 	0x72, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0e, 0x63, 0x79, 0x62, 0x65, 0x72,
 	0x74, 0x72, 0x61, 0x63, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2a, 0x19, 0x0a, 0x03, 0x45, 0x52, 0x52,
@@ -81,22 +81,22 @@ var file_cybertracer_errno_proto_rawDesc = []byte{
 }
 
 var (
-	file_cybertracer_errno_proto_rawDescOnce sync.Once
-	file_cybertracer_errno_proto_rawDescData = file_cybertracer_errno_proto_rawDesc
+	file_web3eye_errno_proto_rawDescOnce sync.Once
+	file_web3eye_errno_proto_rawDescData = file_web3eye_errno_proto_rawDesc
 )
 
-func file_cybertracer_errno_proto_rawDescGZIP() []byte {
-	file_cybertracer_errno_proto_rawDescOnce.Do(func() {
-		file_cybertracer_errno_proto_rawDescData = protoimpl.X.CompressGZIP(file_cybertracer_errno_proto_rawDescData)
+func file_web3eye_errno_proto_rawDescGZIP() []byte {
+	file_web3eye_errno_proto_rawDescOnce.Do(func() {
+		file_web3eye_errno_proto_rawDescData = protoimpl.X.CompressGZIP(file_web3eye_errno_proto_rawDescData)
 	})
-	return file_cybertracer_errno_proto_rawDescData
+	return file_web3eye_errno_proto_rawDescData
 }
 
-var file_cybertracer_errno_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_cybertracer_errno_proto_goTypes = []interface{}{
-	(ERR)(0), // 0: cybertracer.ERR
+var file_web3eye_errno_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_web3eye_errno_proto_goTypes = []interface{}{
+	(ERR)(0), // 0: web3eye.ERR
 }
-var file_cybertracer_errno_proto_depIdxs = []int32{
+var file_web3eye_errno_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -104,27 +104,27 @@ var file_cybertracer_errno_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_cybertracer_errno_proto_init() }
-func file_cybertracer_errno_proto_init() {
-	if File_cybertracer_errno_proto != nil {
+func init() { file_web3eye_errno_proto_init() }
+func file_web3eye_errno_proto_init() {
+	if File_web3eye_errno_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_cybertracer_errno_proto_rawDesc,
+			RawDescriptor: file_web3eye_errno_proto_rawDesc,
 			NumEnums:      1,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_cybertracer_errno_proto_goTypes,
-		DependencyIndexes: file_cybertracer_errno_proto_depIdxs,
-		EnumInfos:         file_cybertracer_errno_proto_enumTypes,
+		GoTypes:           file_web3eye_errno_proto_goTypes,
+		DependencyIndexes: file_web3eye_errno_proto_depIdxs,
+		EnumInfos:         file_web3eye_errno_proto_enumTypes,
 	}.Build()
-	File_cybertracer_errno_proto = out.File
-	file_cybertracer_errno_proto_rawDesc = nil
-	file_cybertracer_errno_proto_goTypes = nil
-	file_cybertracer_errno_proto_depIdxs = nil
+	File_web3eye_errno_proto = out.File
+	file_web3eye_errno_proto_rawDesc = nil
+	file_web3eye_errno_proto_goTypes = nil
+	file_web3eye_errno_proto_depIdxs = nil
 }

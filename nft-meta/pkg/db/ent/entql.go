@@ -3,10 +3,10 @@
 package ent
 
 import (
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/contract"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/synctask"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/token"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/transfer"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

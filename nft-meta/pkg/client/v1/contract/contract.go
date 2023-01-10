@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/web3eye-io/cyber-tracer/config"
-	npool "github.com/web3eye-io/cyber-tracer/proto/cybertracer/nftmeta/v1/contract"
+	"github.com/web3eye-io/Web3Eye/config"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

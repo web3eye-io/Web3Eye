@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"entgo.io/ent/entql"
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent/privacy"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/privacy"
 )
 
 func FilterTimeRule() privacy.QueryMutationRule {

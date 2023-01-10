@@ -9,8 +9,8 @@ import (
 	"time"
 
 	cli "github.com/urfave/cli/v2"
-	"github.com/web3eye-io/cyber-tracer/block-etl/pkg/chains/eth"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
+	"github.com/web3eye-io/Web3Eye/config"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 )

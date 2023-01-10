@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/web3eye-io/cyber-tracer/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 )
 
 // The ContractFunc type is an adapter to allow the use of ordinary

@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/web3eye-io/cyber-tracer/config"
+	"github.com/web3eye-io/Web3Eye/config"
 
 	_ "github.com/NpoolPlatform/go-service-framework/pkg/version"
 )

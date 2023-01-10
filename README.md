@@ -1,12 +1,12 @@
 # cyber tracer
 
-[![Test](https://github.com/web3eye-io/cyber-tracer/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/web3eye-io/cyber-tracer/actions/workflows/main.yml)
+[![Test](https://github.com/web3eye-io/Web3Eye/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/web3eye-io/Web3Eye/actions/workflows/main.yml)
 
 ![web3eye](doc/picture/web3eye.png)
 
 目前在NFT的世界中很多关于区块链的信息索取方法是复杂且难以上手，让用户很难获取信息；再者目前的各种区块链项目数据是割裂的，获取或整理信息就变得更难了。
 
-CyberTracer是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的多链聚合搜索。
+Web3Eye是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的多链聚合搜索。
 
 ## quick start
 
@@ -30,11 +30,11 @@ Linux服务器：16G内存-100G存储-8核CPU  * 3
 
 首先选择一台机器安装nfs-server并配置一个路径提供NFS服务。
 
-在k8s集群的master机器上把web3eye-io/cyber-tracer项目clone到服务器并配置NFS。
+在k8s集群的master机器上把web3eye-io/Web3Eye项目clone到服务器并配置NFS。
 
 ```shell
-git clone https://github.com/web3eye-io/cyber-tracer.git
-cd cyber-tracer/basement
+git clone https://github.com/web3eye-io/Web3Eye.git
+cd Web3Eye/basement
 cat 02-nfs-storage/value.yaml
 ```
 
@@ -105,7 +105,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 选择**流水线**类型
 
 **勾选GitHub项目：**  
-    项目URL：<https://github.com/web3eye-io/cyber-tracer.git/>  
+    项目URL：<https://github.com/web3eye-io/Web3Eye.git/>  
 
 **勾选参数化构建过程：**  
     增加三个字符参数分别为：  
@@ -116,7 +116,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 流水线中选择Pileline script from SCM  
     SCM:Git  
         Repositories:  
-            Repository URL: <https://github.com/web3eye-io/cyber-tracer.git/>  
+            Repository URL: <https://github.com/web3eye-io/Web3Eye.git/>  
             Credentials: 配置一个Git的凭证，可选择SSH Username with private key或Username with password  
         Branches to build:  
             指定分支：*/master  
@@ -271,7 +271,7 @@ MySql中会关联Milvus中的ID字段
 
 ### 主要流程
 
-如何做到搜索NFT资产？已有的搜索方式都是通过合约和TokenID，CyberTracer采用的是相似度搜索。NFT资产的形式多种多样，多是以非结构化数据展示，比如图像、音频、视频等转换成向量支持搜索；目前仅支持以图搜图，后续跟进其他形式的NFT资产。
+如何做到搜索NFT资产？已有的搜索方式都是通过合约和TokenID，Web3Eye采用的是相似度搜索。NFT资产的形式多种多样，多是以非结构化数据展示，比如图像、音频、视频等转换成向量支持搜索；目前仅支持以图搜图，后续跟进其他形式的NFT资产。
 
 有了非结构化数据的搜索，接下来就是聚合NFT数据，从钱包节点上获取transfer日志（NFT交易的日志）分析出Token和Contract信息。与NFT相关的三个数据中，transfer和Contract信息可以较简单的获取到，而Token的解析稍微复杂些。
 
@@ -285,7 +285,7 @@ MySql中会关联Milvus中的ID字段
 
 ![图转向量（示例图片不代表真实的转向量结果，仅作为概念展示）](doc/picture/image-to-vector.jpg)
 
-在CyberTracer中搜索一张图，大致经历四个阶段。
+在Web3Eye中搜索一张图，大致经历四个阶段。
 
 ![以图搜图步骤](doc/picture/pictrue-search.jpg)
 
@@ -378,7 +378,7 @@ config.toml -> environment 转换规则
 ```toml
 path="/uu/ii"
 port=50515
-project-name="cyber-tracer"
+project-name="Web3Eye"
 
 [mysql]
 host="mysql"
@@ -391,7 +391,7 @@ log-dir="/var/log"
 ```shell
 path=/uu/ii
 port=50515
-project_name=cyber-tracer
+project_name=Web3Eye
 
 mysql_host=mysql
 mysql_port=3306
