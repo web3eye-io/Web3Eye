@@ -4,17 +4,29 @@
 
 ![web3eye](doc/picture/web3eye.png)
 
-目前在NFT的世界中很多关于区块链的信息索取方法是复杂且难以上手，让用户很难获取信息；再者目前的各种区块链项目数据是割裂的，获取或整理信息就变得更难了。
+目前在NFT的世界中很多关于区块链的信息索取方法复杂且用户难以上手，让大众很难获取信息；
 
-Web3Eye是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的多链聚合搜索。
+再者目前的各种区块链项目数据是割裂状态 ，获取或整理信息就变得更难了；
 
-## quick start
+Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 
-建议机器规模及配置:
+可以提供NFT资产的多链聚合搜索。
 
-Linux服务器最小配置：16G内存-100G存储-8核CPU  * 3
+## Quick start
 
-仅为试跑规模，正式环境还需要搜集数据才能评估出来
+机器最低配置及规模:
+
+主机硬件最小配置：CPU-8核 内存-16G内存 100G存储， 三台组成k8s集群；
+
+本次测试使用3台主机：IP分配如下
+
+| IP           | 硬件配置                       | 角色              |
+| ------------ | ------------------------------ | ----------------- |
+| 172.23.10.31 | CPU:8核  内存：16G  磁盘：100G | master,nfs-client |
+| 172.23.10.32 | CPU:8核  内存：16G  磁盘：100G | node32,nfs-client |
+| 172.23.10.33 | CPU:8核  内存：16G  磁盘：160G | node33,nfs-server |
+
+以上仅为测试配置，正式环境需要搜集数据后进行评估。
 
 ### 1 安装docker和kubernetes
 
@@ -24,19 +36,17 @@ Linux服务器最小配置：16G内存-100G存储-8核CPU  * 3
 
 在3台机器上安装K8s集群，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz)>)。
 
-安装Helm
+安装完成后把/etc/kubeasz/bin添加到PATH环境变量。
 
-```shell
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-```
+还需要在Master节点安装Helm(安装介绍<https://helm.sh/docs/intro/install/>)。
 
 #### 配置nfs为默认存储类
 
-这里使用的是NFS作为存储类，也可以替换成其他存储方案。
+本示例使用NFS作为存储类，也可以替换成其他存储方案。
 
 在k8s集群中的每一台服务器上安装nfs客户端。
 
-首先选择一台机器安装nfs-server并配置一个路径提供NFS服务。
+首先选择一台主机安装nfs-server并配置一个路径提供NFS服务。
 
 在k8s集群的master机器上把web3eye-io/Web3Eye项目clone到服务器并配置NFS。
 
@@ -48,14 +58,23 @@ cat 02-nfs-storage/value.yaml
 
 主要关注server和path，修改成NFS服务的地址和路径即可
 
+```yaml
 nfs:
   server: 172.23.10.83
   path: /data/k8s_storage
+```
 
 确认好配置后执行install.sh
 
 ```shell
 bash install.sh
+```
+
+脚本运行完毕后须看到以下输出结果：
+
+```shell
+root@k8s-master:~/Web3Eye/basement/02-nfs-storage# kubectl get pods  -o wide  | egrep nfs 
+default-nfs-provisioner-nfs-subdir-external-provisioner-7fx2pwz   1/1     Running     6 (5h21m ago)   19h     172.20.144.99    172.23.10.33   <none>           <none>
 ```
 
 ### 2 安装Jenkins及配置Jenkins环境
@@ -65,6 +84,20 @@ bash install.sh
 需要按照实际情况配置端口映射关系以及文件映射关系，这里需要明确好docker.sock和.kube配置的路径。
 
 这里需要注意.kube中的kube-apiserver要指向的docker能访问的IP不能指向127.0.0.1
+
+示例如下：
+
+```shell
+root@k8s-master:~/.kube# cat config
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURsRENDQW55Z0F3SUJBZ0lVRXFXVjZHQ2JkWVZHMWhsVmRZYkhyMTRpcnNrd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1lURUxNQWtHQTFVRUJoTUNRMDR4RVRBUEJnTlZCQWdUQ0VoaGJtZGFhRzkxTVFzd0NRWURWUVFIRXdKWQpVekVNTUFvR0ExVUVDaE1EYXpoek1ROHdEUVlEVlFRTEV3WlRlWE4wWlcweEV6QVJCZ05WQkFNVENtdDFZbVZ5CmJtVjBaWE13SUJjTk1qTXdNVEV3TVRBek9EQXdXaGdQTWpFeU1qRXlNVGN4TURNNE1EQmFNR0V4Q3pBSkJnTlYKQkFZVEFrTk9NUkV3RHdZRFZRUUlFd2hJWVc1bldtaHZkVEVMTUFrR0ExVUVCeE1DV0ZNeEREQUtCZ05WQkFvVApBMnM0Y3pFUE1BMEdBMVVFQ3hNR1UzbHpkR1Z0TVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTA1MHFDN0hYZzZGQWFKN3Z1ZUJvQlRENEN5aU8KSjJiYitUZ2V3NDN6ekNtRmdSZ1ZUdmxsejJjd0cxWGNCdnBTMzlsdEd3TGRUSEhGNHBuNFhVOTlnKzJGaEhqbgpMZDE5UzZXZFBMRk5PLy9maU0vNGx2enYzN21zUFhhQVNZTHRidjQwV0xuSmYwTDhzeUxSV1VkMkp3Nm1VMTVWCjVEeEU1RG9WYS9Ib3lGSlhnc0xrc0hJQmt0T1QxM0FUZ09nL1V3STdGcGt4aXFhelYzUjBUNU5WcXEzaW1JS20KYlFaYUNVdFdtRHVXTk5uOGJ2Vno0U21vb0N4ejUybDVUdEZXN0E4SzRKK0JXRDhYcFV1dkIvRy9IZVhESFpQKwpIeVJSTDZNemVLYVAwaVNSOVlIbUwyZklZc0hrb0ozcHhJWXFjcStvR2pGUzVaZUZRa01kVS9EU2xRSURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FRWXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVUKaU9yeUUzWXlqdFhFY3JYNDZnS0V2OENYVTZRd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFGaDBlb0N4d2VaTQpzang2b0FXR280Z0JNSEpxbW43YmUybENmc21CMjJBYndsRWVpWjJRWkJ4WWRERHJGTXNHc1Z3RjVxNjZiT3QxCm5xWjBTVS9CY0dISGFnTU9vWmwxRzVyRVJFempoeUJpNWsrajZ2NG5LTWxnSXdoaWw0Qzg5UUhyM0I3QkhYVEMKQTd1dCt1YVYxenVFVitsZGEvYVJGTllOVGZ0d0dSdDFQeWMvL2dVVm50QzlabU9ISHlPU280a1ZiMFNKVk5mZgpNTEdBWGJGdEp5ekc0OUtjVDBQWFVvNjZhTTlCMHZZYWZzTWs1OTR5OGhsRmJiUnJ5elpFTENNZFo4czRtQ2J6CnFJbDFoV01DUXcxL1Y2bVN3WXhOWG8xSy9QcjVVdXBLVUxLUFNPdTZFc0d5aDA2aEJpR0daT3dvQ3JSM2dIYnAKK0Zyc3d1ekpuL1E9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    server: https://172.23.10.31:6443
+  name: cluster1
+```
+
+运行jenkins容器
 
 ```shell
 docker run \
@@ -88,7 +121,7 @@ docker run \
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-访问jenkins web页面(Jenkins_IP:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
+访问jenkins web页面(172.23.10.31:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
 
 #### 配置Jenkins环境
 
@@ -106,18 +139,16 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 #### 新建安装任务
 
-登录Jenkins在Dashboard中新建视图basement，选择列表视图。
+新建安装组件的任务（即job）
 
-在basement中新建安装组件的任务（即job）
+创建item: install_components
 
-**任务名称：**install_components
-
-选择**流水线**类型
+选择Pipeline类型
 
 **勾选GitHub项目：**  
     项目URL：<https://github.com/web3eye-io/Web3Eye.git/>  
 
-**勾选参数化构建过程：**  
+**勾选This project is parameterized：**  
     增加三个字符参数分别为：  
         名称：INSTALL 默认值：true  
         名称：UNINSTALL 默认值：false  
@@ -133,6 +164,8 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
     脚本路径：basement/Jenkinsfile  
 
 选择保存
+
+新建视图basement，选择列表视图(install_components)。
 
 #### 执行安装任务
 
