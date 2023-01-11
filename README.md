@@ -12,7 +12,7 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；提供NFT资产的�
 
 建议机器规模及配置:
 
-Linux服务器：16G内存-100G存储-8核CPU  * 3
+Linux服务器最小配置：16G内存-100G存储-8核CPU  * 3
 
 仅为试跑规模，正式环境还需要搜集数据才能评估出来
 
@@ -100,7 +100,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 **安装Go插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
 
-**配置Go插件**（Dashboard > 系统管理 > 全局工具配置 > 找到Go）,安装一个Go 1.17
+**配置Go插件**（Dashboard > 系统管理 > 全局工具配置 > 找到Go）,设置别名为go, 安装一个Go 1.17
 
 ### 3 安装依赖组件
 
@@ -209,10 +209,9 @@ whoami-58b8d4f6f6-sh2cc                                           1/1     Runnin
 
 #### 部署项目
 
-
 依次参数化构建，建议部署顺序：nft-meta、block-etl、image-converter
 
-构建完成后访问k8s-master-IP:81/api/nft-meta/可访问项目测试页面
+构建完成后访问k8s-master-IP:80/api/nft-meta/可访问项目测试页面
 
 ## 架构
 
@@ -359,22 +358,25 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 <p id="001">
 表头中 b-代表build、r-代表release、d-代表deploy
 </p>
-AIMPROJECT可选值：nft-meta、block-etl、image-converter
 
-| 参数名         | b-dev/b-test/b-prod | r-dev  | r-test | r-prod | d-dev  | d-test | d-prod |
-| -------------- | ------------------- | ------ | ------ | ------ | ------ | ------ | ------ |
-| BRANCH_NAME    | 不限                | 不限   | 不限   | master | 不限   | 不限   | master |
-| BUILD_TARGET   | true                | true   | true   | true   | false  | false  | false  |
-| DEPLOY_TARGET  | false               | false  | false  | false  | true   | true   | true   |
-| RELEASE_TARGET | false               | true   | true   | true   | false  | false  | false  |
-| TAG_PATCH      | false               | false  | true   | true   | false  | false  | false  |
-| TAG_MINOR      | false               | false  | 自选   | 自选   | false  | false  | false  |
-| TAG_MINOR      | false               | false  | 自选   | 自选   | false  | false  | false  |
-| AIMPROJECT     | 项目名              | 项目名 | 项目名 | 项目名 | 项目名 | 项目名 | 项目名 |
-| TAG_FOR        | 不生效              | dev    | test   | prod   | 不生效 | 不生效 | 不生效 |
-| TARGET_ENV     | 不生效              | 不生效 | 不生效 | 不生效 | dev    | test   | prod   |
+| 参数名         | b-dev/b-test/b-prod | r-dev  | r-test     | r-prod     | d-dev  | d-test | d-prod |
+| -------------- | ------------------- | ------ | ---------- | ---------- | ------ | ------ | ------ |
+| BRANCH_NAME    | 分支名              | 分支名 | 分支名     | master     | 分支名 | 分支名 | master |
+| BUILD_TARGET   | true                | true   | true       | true       | false  | false  | false  |
+| DEPLOY_TARGET  | false               | false  | false      | false      | true   | true   | true   |
+| RELEASE_TARGET | false               | true   | true       | true       | false  | false  | false  |
+| TAG_PATCH      | false               | false  | true       | true       | false  | false  | false  |
+| TAG_MINOR      | false               | false  | false/true | false/true | false  | false  | false  |
+| TAG_MAJOR      | false               | false  | false/true | false/true | false  | false  | false  |
+| AIMPROJECT     | 项目名              | 项目名 | 项目名     | 项目名     | 项目名 | 项目名 | 项目名 |
+| TAG_FOR        | none                | dev    | test       | prod       | none   | none   | none   |
+| TARGET_ENV     | none                | none   | none       | none       | dev    | test   | prod   |
 
+参数说明：
 
+AIMPROJECT指定的项目名根据项目选择：nft-meta、block-etl、image-converter
+
+BRANCH_NAME指定的分支名默认为master，除了prod之外其他可按需指定分支名称
 
 ## 配置
 
