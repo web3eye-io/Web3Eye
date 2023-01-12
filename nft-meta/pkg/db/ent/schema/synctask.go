@@ -34,7 +34,7 @@ func (SyncTask) Fields() []ent.Field {
 		field.String("description").
 			Optional(),
 		field.String("sync_state").Optional().Default(npool.SyncState_Default.String()),
-		field.String("remark").Optional(),
+		field.Text("remark").Optional(),
 	}
 }
 

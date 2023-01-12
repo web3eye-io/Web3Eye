@@ -27,7 +27,7 @@ var (
 		{Name: "base_url", Type: field.TypeString, Nullable: true},
 		{Name: "banner_url", Type: field.TypeString, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// ContractsTable holds the schema information for the "contracts" table.
 	ContractsTable = &schema.Table{
@@ -56,7 +56,7 @@ var (
 		{Name: "topic", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "sync_state", Type: field.TypeString, Nullable: true, Default: "Default"},
-		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// SyncTasksTable holds the schema information for the "sync_tasks" table.
 	SyncTasksTable = &schema.Table{
@@ -91,7 +91,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "vector_id", Type: field.TypeInt64, Nullable: true},
 		{Name: "vector_state", Type: field.TypeString, Nullable: true, Default: "Default"},
-		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// TokensTable holds the schema information for the "tokens" table.
 	TokensTable = &schema.Table{
@@ -124,7 +124,7 @@ var (
 		{Name: "tx_hash", Type: field.TypeString},
 		{Name: "block_hash", Type: field.TypeString},
 		{Name: "tx_time", Type: field.TypeUint32, Nullable: true},
-		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// TransfersTable holds the schema information for the "transfers" table.
 	TransfersTable = &schema.Table{

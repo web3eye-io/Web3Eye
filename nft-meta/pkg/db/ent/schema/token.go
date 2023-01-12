@@ -48,7 +48,7 @@ func (Token) Fields() []ent.Field {
 			Optional(),
 		field.String("vector_state").
 			Optional().Default(npool.ConvertState_Default.String()),
-		field.String("remark").
+		field.Text("remark").
 			Optional(),
 	}
 }

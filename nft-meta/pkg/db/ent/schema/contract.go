@@ -45,7 +45,7 @@ func (Contract) Fields() []ent.Field {
 			Optional(),
 		field.String("description").
 			Optional(),
-		field.String("remark").
+		field.Text("remark").
 			Optional(),
 	}
 }
