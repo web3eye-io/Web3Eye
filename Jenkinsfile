@@ -100,20 +100,19 @@ pipeline {
           
           if [ 0 -eq $rc ]; then
             tag=`git describe --tags $revlist`
-
             major=`echo $tag | awk -F '.' '{ print $1 }'`
             minor=`echo $tag | awk -F '.' '{ print $2 }'`
             patch=`echo $tag | awk -F '.' '{ print $3 }'`
-
-            if [ "$TAG_MAJOR" == 'true' ]; then
-              major=$(( $major + 1 ))
-              minor=0
-              patch=-1
-            elif [ "$TAG_MINOR" == 'true' ]; then
-              minor=$(( $minor + 1 ))
-              patch=-1
-            fi    
           fi
+
+          if [ "$TAG_MAJOR" == 'true' ]; then
+            major=$(( $major + 1 ))
+            minor=0
+            patch=-1
+          elif [ "$TAG_MINOR" == 'true' ]; then
+            minor=$(( $minor + 1 ))
+            patch=-1
+          fi    
 
           case $TAG_FOR in
             test)
@@ -151,7 +150,6 @@ pipeline {
     stage('Generate docker image for feature test') {
       when {
         expression { RELEASE_TARGET == 'true' }
-        expression { TAG_PATCH == 'true' }
         expression { TAG_FOR == 'test' }
       }
       steps {
@@ -181,11 +179,8 @@ pipeline {
 
     stage('Generate docker image for testing or production') {
       when {
-        anyOf {
           expression { RELEASE_TARGET == 'true' }
-          expression { TAG_PATCH == 'true' }
           expression { TAG_FOR == 'prod' }
-        }
       }
       steps {
           sh(returnStdout: false, script: '''
