@@ -90,6 +90,11 @@ pipeline {
       steps {
         sh(returnStdout: true, script: '''
           set +e
+          // sync remote tags
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+
+          // get last tag
           revlist=`git rev-list --tags --max-count=1`
           rc=$?
           set -e
