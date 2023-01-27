@@ -36,7 +36,6 @@ pipeline {
         sh (returnStdout: false, script: '''
           make verify-build
         '''.stripIndent())
-        sh 'DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
 

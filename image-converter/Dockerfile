@@ -1,11 +1,7 @@
-FROM python:3.9
+FROM coastlinesss/image-converter:0.0.1
 
 COPY ./ /code
 WORKDIR /code
-RUN /usr/local/bin/python3 -m pip install --upgrade pip
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-RUN apt install git-lfs libgl1 python3-brlapi -y
-RUN git lfs install
 RUN pip install  -r /code/requirements.txt
 
 # Load the operator ahead of time
