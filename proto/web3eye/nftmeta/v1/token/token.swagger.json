@@ -1,0 +1,385 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/token/token.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "tokenConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainID": {
+          "$ref": "#/definitions/web3eyeInt32Val"
+        },
+        "Contract": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Owner": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "URI": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "URIType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ImageURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "VideoURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Description": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Name": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "VectorState": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "VectorID": {
+          "$ref": "#/definitions/web3eyeInt64Val"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        },
+        "VectorIDs": {
+          "$ref": "#/definitions/web3eyeInt64SliceVal"
+        }
+      }
+    },
+    "tokenConvertState": {
+      "type": "string",
+      "enum": [
+        "Default",
+        "Waiting",
+        "Processing",
+        "Pause",
+        "Success",
+        "Failed"
+      ],
+      "default": "Default",
+      "title": "for show the state that resource_addr is converted to vector"
+    },
+    "tokenCountTokensResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "tokenCreateTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
+    "tokenCreateTokensResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tokenToken"
+          }
+        }
+      }
+    },
+    "tokenDeleteTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
+    "tokenExistTokenCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "tokenExistTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "tokenGetTokenOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
+    "tokenGetTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
+    "tokenGetTokensResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tokenToken"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "tokenToken": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "URI": {
+          "type": "string"
+        },
+        "URIType": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "VideoURL": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "VectorState": {
+          "$ref": "#/definitions/tokenConvertState"
+        },
+        "VectorID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "tokenTokenReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "URI": {
+          "type": "string"
+        },
+        "URIType": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "VideoURL": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "VectorState": {
+          "$ref": "#/definitions/tokenConvertState"
+        },
+        "VectorID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "tokenUpdateTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
+    "web3eyeInt32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "web3eyeInt64SliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "web3eyeInt64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

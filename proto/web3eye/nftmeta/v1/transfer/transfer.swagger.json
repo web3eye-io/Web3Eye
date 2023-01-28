@@ -1,0 +1,352 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/transfer/transfer.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "transferConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainID": {
+          "$ref": "#/definitions/web3eyeInt32Val"
+        },
+        "Contract": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "From": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "To": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Amount": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "BlockNumber": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "TxHash": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BlockHash": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TxTime": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "transferCountTransfersResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "transferCreateTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "transferCreateTransfersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/transferTransfer"
+          }
+        }
+      }
+    },
+    "transferDeleteTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "transferExistTransferCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "transferExistTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "transferGetTransferOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "transferGetTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "transferGetTransfersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/transferTransfer"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "transferTransfer": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "From": {
+          "type": "string"
+        },
+        "To": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "BlockHash": {
+          "type": "string"
+        },
+        "TxTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "transferTransferReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "From": {
+          "type": "string"
+        },
+        "To": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "BlockHash": {
+          "type": "string"
+        },
+        "TxTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "transferUpdateTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "web3eyeInt32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}

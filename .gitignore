@@ -2,6 +2,7 @@ output/
 /bin
 tmp
 *.json
+!*.swagger.json
 .apollo-base-config
 *.log
 ./deploy.sh

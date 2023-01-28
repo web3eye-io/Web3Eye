@@ -8,7 +8,7 @@ spec:
     app: swagger-ui
   ports:
     - protocol: TCP
-      port: 31890
+      port: 8080
       targetPort: 31890
 
 ---
@@ -33,7 +33,7 @@ spec:
         - name: swagger-ui
           image: swaggerapi/swagger-ui
           ports:
-            - containerPort: 31890
+            - containerPort: 8080
           env:
             - name: BASE_URL
               value: /
