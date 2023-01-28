@@ -1,0 +1,46 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: swagger-ui
+  namespace: kube-system
+spec:
+  selector:
+    app: swagger-ui
+  ports:
+    - protocol: TCP
+      port: 31890
+      targetPort: 31890
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swagger-ui
+  namespace: kube-system
+  labels:
+    app: swagger-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swagger-ui
+  template:
+    metadata:
+      labels:
+        app: swagger-ui
+    spec:
+      containers:
+        - name: swagger-ui
+          image: swaggerapi/swagger-ui
+          ports:
+            - containerPort: 31890
+          env:
+            - name: BASE_URL
+              value: /
+          volumeMounts:
+            - name: json
+              mountPath: /usr/share/nginx/html/data
+      volumes:
+        - name: json
+          persistentVolumeClaim:
+            claimName: swagger-ui-pvc
