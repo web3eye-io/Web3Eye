@@ -52,28 +52,18 @@ pipeline {
     //   }
     // }
 
-    // TODO: support UT
-    // stage('Unit Tests') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh (returnStdout: false, script: '''
-    //       devboxpod=`kubectl get pods -A | grep development-box | head -n1 | awk '{print $2}'`
-    //       servicename="nft-meta"
-
-    //       kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename after-test || true
-    //       kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename || true
-    //       kubectl cp ./ kube-system/$devboxpod:/tmp/$servicename
-
-    //       kubectl exec --namespace kube-system $devboxpod -- make -C /tmp/$servicename deps before-test test after-test
-    //       kubectl exec --namespace kube-system $devboxpod -- rm -rf /tmp/$servicename
-
-    //       swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-    //       kubectl cp message/npool/*.swagger.json kube-system/$swaggeruipod:/usr/share/nginx/html || true
-    //     '''.stripIndent())
-    //   }
-    // }
+    TODO: support UT
+    stage('Unit Tests') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
+          kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
+        '''.stripIndent())
+      }
+    }
     stage('Tag') {
       when {
         anyOf{

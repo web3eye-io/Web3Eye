@@ -148,6 +148,16 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			continue
 		}
 
+		err := ctredis.Set(identifier, false, redisExpireDefaultTime)
+		if err != nil {
+			logger.Sugar().Error(err)
+			err = ctredis.Del(identifier)
+			if err != nil {
+				logger.Sugar().Error(err)
+			}
+			continue
+		}
+
 		tokenType := string(transfer.TokenType)
 		remark := ""
 		conds := &tokenProto.Conds{
@@ -170,23 +180,12 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		}
 
 		if exist, err := tokenNMCli.ExistTokenConds(ctx, conds); exist && err == nil {
-			err = ctredis.Set(identifier, true, redisExpireDefaultTime)
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
 			continue
-		}
-
-		err := ctredis.Set(identifier, false, redisExpireDefaultTime)
-		if err != nil {
+		} else if err != nil {
 			logger.Sugar().Error(err)
-			err = ctredis.Del(identifier)
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-			continue
 		}
 
+		// TODO: use channel
 		err = e.contractToDB(ctx, transfer)
 		if err != nil {
 			logger.Sugar().Error(err)
@@ -241,6 +240,16 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 		return nil
 	}
 
+	err := ctredis.Set(identifier, false, redisExpireDefaultTime)
+	if err != nil {
+		logger.Sugar().Error(err)
+		err = ctredis.Del(identifier)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		return nil
+	}
+
 	conds := &contractProto.Conds{
 		ChainType: &ctMessage.StringVal{
 			Value: string(transfer.ChainType),
@@ -257,20 +266,9 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	}
 
 	if exist, err := contractNMCli.ExistContractConds(ctx, conds); exist && err == nil {
-		err = ctredis.Set(identifier, true, redisExpireDefaultTime)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
 		return nil
-	}
-	err := ctredis.Set(identifier, false, redisExpireDefaultTime)
-	if err != nil {
+	} else if err != nil {
 		logger.Sugar().Error(err)
-		err = ctredis.Del(identifier)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
-		return nil
 	}
 
 	remark := ""
