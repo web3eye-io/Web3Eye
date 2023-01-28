@@ -3,22 +3,68 @@ syntax = "proto3";
 package nftmeta.v1.synctask;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask";
+import "google/api/annotations.proto";
 import "web3eye/web3eye.proto";
 import "web3eye/nftmeta/v1/cttype/cttype.proto";
 
 service Manager {
-  rpc CreateSyncTask(CreateSyncTaskRequest) returns (CreateSyncTaskResponse) {}
+  rpc CreateSyncTask(CreateSyncTaskRequest) returns (CreateSyncTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/create/synctask"
+      body : "*"
+    };
+  }
   rpc TriggerSyncTask(TriggerSyncTaskRequest) returns (GetSyncTaskResponse) {}
-  rpc UpdateSyncTask(UpdateSyncTaskRequest) returns (UpdateSyncTaskResponse) {}
-  rpc GetSyncTask(GetSyncTaskRequest) returns (GetSyncTaskResponse) {}
+  rpc UpdateSyncTask(UpdateSyncTaskRequest) returns (UpdateSyncTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/update/synctask"
+      body : "*"
+    };
+  }
+  rpc GetSyncTask(GetSyncTaskRequest) returns (GetSyncTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/get/synctask"
+      body : "*"
+    };
+  }
   rpc GetSyncTaskOnly(GetSyncTaskOnlyRequest)
-      returns (GetSyncTaskOnlyResponse) {}
-  rpc GetSyncTasks(GetSyncTasksRequest) returns (GetSyncTasksResponse) {}
-  rpc ExistSyncTask(ExistSyncTaskRequest) returns (ExistSyncTaskResponse) {}
+      returns (GetSyncTaskOnlyResponse) {
+    option (google.api.http) = {
+      post : "/v1/get/synctask/only"
+      body : "*"
+    };
+  }
+  rpc GetSyncTasks(GetSyncTasksRequest) returns (GetSyncTasksResponse) {
+    option (google.api.http) = {
+      post : "/v1/get/synctasks"
+      body : "*"
+    };
+  }
+  rpc ExistSyncTask(ExistSyncTaskRequest) returns (ExistSyncTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/exist/synctask"
+      body : "*"
+    };
+  }
   rpc ExistSyncTaskConds(ExistSyncTaskCondsRequest)
-      returns (ExistSyncTaskCondsResponse) {}
-  rpc CountSyncTasks(CountSyncTasksRequest) returns (CountSyncTasksResponse) {}
-  rpc DeleteSyncTask(DeleteSyncTaskRequest) returns (DeleteSyncTaskResponse) {}
+      returns (ExistSyncTaskCondsResponse) {
+    option (google.api.http) = {
+      post : "/v1/exist/synctask/conds"
+      body : "*"
+    };
+  }
+  rpc CountSyncTasks(CountSyncTasksRequest) returns (CountSyncTasksResponse) {
+    option (google.api.http) = {
+      post : "/v1/Count/synctasks"
+      body : "*"
+    };
+  }
+  rpc DeleteSyncTask(DeleteSyncTaskRequest) returns (DeleteSyncTaskResponse) {
+    option (google.api.http) = {
+      post : "/v1/delete/synctask"
+      body : "*"
+    };
+  }
 }
 
 message SyncTaskReq {

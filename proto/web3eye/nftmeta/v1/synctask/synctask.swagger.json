@@ -15,7 +15,296 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/Count/synctasks": {
+      "post": {
+        "operationId": "Manager_CountSyncTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskCountSyncTasksResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskCountSyncTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/create/synctask": {
+      "post": {
+        "operationId": "Manager_CreateSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskCreateSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskCreateSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/delete/synctask": {
+      "post": {
+        "operationId": "Manager_DeleteSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskDeleteSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskDeleteSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/exist/synctask": {
+      "post": {
+        "operationId": "Manager_ExistSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskExistSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskExistSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/exist/synctask/conds": {
+      "post": {
+        "operationId": "Manager_ExistSyncTaskConds",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskExistSyncTaskCondsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskExistSyncTaskCondsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/synctask": {
+      "post": {
+        "operationId": "Manager_GetSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/synctask/only": {
+      "post": {
+        "operationId": "Manager_GetSyncTaskOnly",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTaskOnlyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTaskOnlyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/synctasks": {
+      "post": {
+        "operationId": "Manager_GetSyncTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTasksResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskGetSyncTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/update/synctask": {
+      "post": {
+        "operationId": "Manager_UpdateSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/synctaskUpdateSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/synctaskUpdateSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
   "definitions": {
     "cttypeChainType": {
       "type": "string",
@@ -102,12 +391,28 @@
         }
       }
     },
+    "synctaskCountSyncTasksRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/synctaskConds"
+        }
+      }
+    },
     "synctaskCountSyncTasksResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "synctaskCreateSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTaskReq"
         }
       }
     },
@@ -119,11 +424,27 @@
         }
       }
     },
+    "synctaskDeleteSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
     "synctaskDeleteSyncTaskResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "synctaskExistSyncTaskCondsRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/synctaskConds"
         }
       }
     },
@@ -135,11 +456,27 @@
         }
       }
     },
+    "synctaskExistSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
     "synctaskExistSyncTaskResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "type": "boolean"
+        }
+      }
+    },
+    "synctaskGetSyncTaskOnlyRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/synctaskConds"
         }
       }
     },
@@ -151,11 +488,35 @@
         }
       }
     },
+    "synctaskGetSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
     "synctaskGetSyncTaskResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "synctaskGetSyncTasksRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/synctaskConds"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -249,6 +610,14 @@
         },
         "Remark": {
           "type": "string"
+        }
+      }
+    },
+    "synctaskUpdateSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTaskReq"
         }
       }
     },
