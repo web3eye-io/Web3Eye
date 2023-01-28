@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: swagger-ui
-  namespace: kube-system
+  namespace: default
 spec:
   selector:
     app: swagger-ui
@@ -16,7 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: swagger-ui
-  namespace: kube-system
+  namespace: default
   labels:
     app: swagger-ui
 spec:
