@@ -49,3 +49,39 @@ func Unlock(lockKey, lockID string) error {
 	err = cli.Del(ctx, lockKey).Err()
 	return ErrFilter(err)
 }
+
+func TryPubLock(key string, expire time.Duration) error {
+	cli := GetClient()
+
+	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	defer cancel()
+
+	resp := cli.SetNX(ctx, key, true, expire)
+	locked, err := resp.Result()
+	err = ErrFilter(err)
+	if err != nil {
+		return xerrors.Errorf("fail lock: %v", err)
+	}
+
+	if !locked {
+		return xerrors.Errorf("fail lock")
+	}
+
+	return nil
+}
+
+func UnPubLock(lockKey string) error {
+	cli := GetClient()
+
+	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	defer cancel()
+
+	_, err := cli.Get(ctx, lockKey).Result()
+	err = ErrFilter(err)
+	if err != nil {
+		return err
+	}
+
+	err = cli.Del(ctx, lockKey).Err()
+	return ErrFilter(err)
+}

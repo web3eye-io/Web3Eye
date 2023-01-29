@@ -125,6 +125,10 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 		}
 	}
 
+	if len(tt) == 0 {
+		return nil
+	}
+
 	for i := 0; i < Retries; i++ {
 		_, err := transferNMCli.CreateTransfers(ctx, tt)
 		if err != nil && containErr(err.Error()) {
@@ -144,17 +148,7 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) {
 	for _, transfer := range transfers {
 		identifier := tokenIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract, transfer.TokenID)
-		if _, err := ctredis.Get(identifier); err == nil {
-			continue
-		}
-
-		err := ctredis.Set(identifier, false, redisExpireDefaultTime)
-		if err != nil {
-			logger.Sugar().Error(err)
-			err = ctredis.Del(identifier)
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
+		if err := ctredis.TryPubLock(identifier, redisExpireDefaultTime); err != nil {
 			continue
 		}
 
@@ -186,7 +180,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		}
 
 		// TODO: use channel
-		err = e.contractToDB(ctx, transfer)
+		err := e.contractToDB(ctx, transfer)
 		if err != nil {
 			logger.Sugar().Error(err)
 		}
@@ -236,17 +230,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 
 func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) error {
 	identifier := contractIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract)
-	if _, err := ctredis.Get(identifier); err == nil {
-		return nil
-	}
-
-	err := ctredis.Set(identifier, false, redisExpireDefaultTime)
-	if err != nil {
-		logger.Sugar().Error(err)
-		err = ctredis.Del(identifier)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
+	if err := ctredis.TryPubLock(identifier, redisExpireDefaultTime); err == nil {
 		return nil
 	}
 
