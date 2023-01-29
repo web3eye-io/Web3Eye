@@ -25,12 +25,12 @@ fi
 
 set +e
 version=$(git describe --tags --abbrev=0)
-echo $version "version"
+
 if [ ! $? -eq 0 ]; then
     version=latest
 fi
 set -e
-echo $version "version"
+
 service_name=$(
     cd $ROOT_FOLDER
     basename $(pwd)

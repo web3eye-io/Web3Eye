@@ -34,7 +34,7 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 
 安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低。
 
-在3台机器上安装K8s集群，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。
+在3台机器上安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。
 
 安装完成后把/etc/kubeasz/bin添加到PATH环境变量。
 

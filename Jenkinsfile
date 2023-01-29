@@ -136,7 +136,7 @@ pipeline {
         expression { TAG_FOR == 'dev' }
       }
       steps {
-        sh 'DEVELOPMENT=development DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+        sh 'DEVELOPMENT=dev DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
       }
     }

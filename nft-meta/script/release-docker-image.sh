@@ -34,7 +34,7 @@ if [[ "x" != "x$1" ]]; then
 fi
 
 ## For development environment, pass the second variable
-if [[ "xdevelopment" == "x$1" ]]; then
+if [[ "xdev" == "x$1" ]]; then
   version=latest
 fi
 
