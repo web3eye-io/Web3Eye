@@ -197,7 +197,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		if len(tokenURI) > maxTokenURILen {
 			tokenURI = ""
 		}
-		logger.Sugar().Errorf("xxxx")
+
 		for i := 0; i < Retries; i++ {
 			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.TokenReq{
 				ChainType:   (*string)(&transfer.ChainType),
@@ -215,12 +215,12 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 				Remark:      &remark,
 			})
 			if err != nil && containErr(err.Error()) {
-				logger.Sugar().Errorf("xxxx will retry for creating token record failed, %v", err)
+				logger.Sugar().Errorf("will retry for creating token record failed, %v", err)
 				continue
 			}
 
 			if err != nil {
-				logger.Sugar().Errorf("xxxx create token record failed, %v", err)
+				logger.Sugar().Errorf("create token record failed, %v", err)
 			}
 			break
 		}
@@ -229,7 +229,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 
 func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) error {
 	identifier := contractIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract)
-	if err := ctredis.TryPubLock(identifier, redisExpireDefaultTime); err == nil {
+	if err := ctredis.TryPubLock(identifier, redisExpireDefaultTime); err != nil {
 		return nil
 	}
 

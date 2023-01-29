@@ -22,7 +22,7 @@ if [ ! $? -eq 0 ]; then
   version=latest
 fi
 set -e
-echo $version "version"
+
 service_name=$(
   cd $ROOT_FOLDER
   basename $(pwd)
