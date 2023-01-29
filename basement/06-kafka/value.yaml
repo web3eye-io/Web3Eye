@@ -7,3 +7,6 @@ resources:
 replicaCount: 3
 zookeeper:
   replicaCount: 3
+
+# 100m
+logRetentionBytes: "104857600"

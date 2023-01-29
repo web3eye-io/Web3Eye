@@ -3,7 +3,7 @@
 import json
 import os
 import uuid
-from confluent_kafka import Consumer, Producer, OFFSET_BEGINNING
+from confluent_kafka import Consumer, Producer
 from pkg.model.resnet50 import Resnet50
 from pkg.utils import imggetter
 from pkg.utils import imgcheck
@@ -42,7 +42,9 @@ class VectorInfoEncoder(json.JSONEncoder):
 def QueueDealImageURL2Vector():
     # Parse the command line.
     cConfig = {'bootstrap.servers': 'kafka-headless:9092',
-               'group.id': 'python_default', 'auto.offset.reset': 'earliest'}
+               'group.id': 'python_default',
+               'auto.offset.reset': 'earliest',
+               'client.id': uuid.uuid4()}
     pConfig = {'bootstrap.servers': 'kafka-headless:9092'}
 
     # Create Consumer instance
