@@ -144,7 +144,6 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 	return nil
 }
 
-//nolint:gocyclo
 func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransfer) {
 	for _, transfer := range transfers {
 		identifier := tokenIdentifier(transfer.ChainType, transfer.ChainID, transfer.Contract, transfer.TokenID)
