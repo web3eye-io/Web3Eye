@@ -80,6 +80,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 }
 
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.GetSyncTaskResponse, error) {
+	// query synctask
 	conds := npool.Conds{
 		Topic: &web3eye.StringVal{
 			Value: in.Topic,
@@ -92,6 +93,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	// lock
 	lockKey := "TriggerSyncTask_Lock"
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
@@ -106,24 +108,28 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		}
 	}()
 
+	// check state
 	if info.SyncState != cttype.SyncState_Start.String() {
 		return &npool.GetSyncTaskResponse{
 			Info: converter.Ent2Grpc(info),
 		}, nil
 	}
 
-	syncEnd := info.End
-	if info.End == 0 {
-		syncEnd = eth.GetCurrentConfirmedHeight(ctx)
+	// check sync state
+	if info.End != 0 && info.Current >= info.End {
+		info.SyncState = cttype.SyncState_Finsh.String()
+		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
+		if err != nil {
+			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+			return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+		}
+		return &npool.GetSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
 	}
 
-	if info.Current >= syncEnd {
-		info.SyncState = cttype.SyncState_Finsh.String()
-	}
-	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	syncEnd := info.End
+	safeEnd := eth.GetCurrentConfirmedHeight(ctx)
+	if syncEnd == 0 || syncEnd > safeEnd {
+		syncEnd = safeEnd
 	}
 
 	lastNum := info.Current
