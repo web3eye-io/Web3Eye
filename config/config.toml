@@ -4,13 +4,13 @@ version="0.0.1"
 ip="nft-meta"
 http-port=30100
 grpc-port=30101
-log-file="/var/log/nftmeta.log"
+log-file="/var/log/nftm-eta.log"
 
 [block-etl]
 ip="block-etl"
 http-port=30110
 grpc-port=30111
-log-file="/var/log/blocketl.log"
+log-file="/var/log/block-etl.log"
 
 [image-converter]
 address="http://image-converter:8080"

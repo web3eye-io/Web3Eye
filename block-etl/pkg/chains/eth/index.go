@@ -34,7 +34,7 @@ const (
 	MaxRetriesThenStopConsume = 10
 	CheckTopicInterval        = time.Second * 10
 	// confirmedBlockNum      = 5
-	redisExpireDefaultTime = time.Second * 5
+	redisExpireDefaultTime = time.Second * 10
 	// redisExpireDefaultTime = time.Minute * 5
 	maxTokenURILen = 256
 )
@@ -285,12 +285,12 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 			Remark:    &remark,
 		})
 		if err != nil && containErr(err.Error()) {
-			logger.Sugar().Errorf("will retry for creating token record failed, %v", err)
+			logger.Sugar().Errorf("will retry for creating contract record failed, %v", err)
 			continue
 		}
 
 		if err != nil {
-			return fmt.Errorf("create token record failed, %v", err)
+			return fmt.Errorf("create contract record failed, %v", err)
 		}
 		break
 	}
