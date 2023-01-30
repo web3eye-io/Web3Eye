@@ -4,7 +4,7 @@ version="0.0.1"
 ip="nft-meta"
 http-port=30100
 grpc-port=30101
-log-file="/var/log/nftm-eta.log"
+log-file="/var/log/nft-meta.log"
 
 [block-etl]
 ip="block-etl"

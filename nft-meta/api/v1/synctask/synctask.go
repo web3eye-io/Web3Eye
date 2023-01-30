@@ -37,7 +37,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "info is nil")
 	}
 
-	if _info.Start == nil || _info.End == nil || *_info.Start >= *_info.End {
+	if _info.Start == nil || _info.End == nil || (*_info.Start >= *_info.End && *_info.End != 0) {
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, "start >= end or set invalid")
 	}
 

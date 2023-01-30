@@ -22,7 +22,7 @@ func init() {
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"r"},
-	Usage:   "Run NFT Meta daemon",
+	Usage:   "Run Block ETL daemon",
 	After: func(c *cli.Context) error {
 		return logger.Sync()
 	},
