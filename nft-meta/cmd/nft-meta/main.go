@@ -17,10 +17,6 @@ const (
 	usageText   = "NFT Meta Service"
 )
 
-var (
-	logDir string
-)
-
 func main() {
 	commands := cli.Commands{runCmd}
 

@@ -38,22 +38,7 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		err := logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogFile)
-		if err != nil {
-			panic(err)
-		}
-		return nil
-	},
-	Flags: []cli.Flag{
-		&cli.StringFlag{
-			Name:        "log dir",
-			Aliases:     []string{"l"},
-			Usage:       "log fir",
-			EnvVars:     []string{"ENV_LOG_DIR"},
-			Required:    false,
-			Value:       "./",
-			Destination: &logDir,
-		},
+		return logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogFile)
 	},
 	Action: func(c *cli.Context) error {
 		err := db.Init()

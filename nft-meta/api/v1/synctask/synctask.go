@@ -72,6 +72,8 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("CreateSyncTask success ,chaintype:%v chainid:%v start:%v end:%v", info.ChainType, info.ChainID, info.Start, info.End)
+
 	return &npool.CreateSyncTaskResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
@@ -174,6 +176,8 @@ func (s *Server) UpdateSyncTask(ctx context.Context, in *npool.UpdateSyncTaskReq
 		logger.Sugar().Errorw("UpdateSyncTask", "ID", in.GetInfo().GetID(), "error", err)
 		return &npool.UpdateSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
+
+	logger.Sugar().Infow("UpdateSyncTask", "ID", in.GetInfo().GetID())
 
 	return &npool.UpdateSyncTaskResponse{
 		Info: converter.Ent2Grpc(info),
@@ -292,6 +296,8 @@ func (s *Server) DeleteSyncTask(ctx context.Context, in *npool.DeleteSyncTaskReq
 		logger.Sugar().Errorw("DeleteSyncTask", "ID", in.GetID(), "error", err)
 		return &npool.DeleteSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
+
+	logger.Sugar().Infow("DeleteSyncTask", "ID", in.GetID())
 
 	return &npool.DeleteSyncTaskResponse{
 		Info: converter.Ent2Grpc(info),
