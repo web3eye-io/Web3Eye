@@ -3,3 +3,4 @@ resources:
   - 02-ingress.yaml
   - 03-traefik.yaml
   - 04-whoami.yaml
+  - 05-middlewares.yaml
