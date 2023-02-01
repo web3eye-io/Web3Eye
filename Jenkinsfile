@@ -214,7 +214,10 @@ pipeline {
     stage('Release docker image for test or prod') {
       when {
         expression { RELEASE_TARGET == 'true' }
-        expression { TAG_FOR == 'dev' }
+        anyOf{
+          expression { TAG_FOR == 'test' }
+          expression { TAG_FOR == 'prod' }
+        }
       }
       steps {
         sh 'TAG=TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
