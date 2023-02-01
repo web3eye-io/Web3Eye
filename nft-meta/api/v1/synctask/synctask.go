@@ -79,6 +79,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 	}, nil
 }
 
+//nolint:gocyclo
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.GetSyncTaskResponse, error) {
 	// query synctask
 	conds := npool.Conds{

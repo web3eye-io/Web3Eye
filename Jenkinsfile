@@ -31,6 +31,7 @@ pipeline {
     stage('Compile') {
       when {
         expression { BUILD_TARGET == 'true' }
+        expression { TAG_FOR == 'none' }
       }
       steps {
         sh (returnStdout: false, script: '''
@@ -38,6 +39,7 @@ pipeline {
         '''.stripIndent())
       }
     }
+
 
     // TODO: support switch k8s cluster
     // stage('Switch to current cluster') {
@@ -130,84 +132,96 @@ pipeline {
       }
     }
     
-    stage('Generate docker image for development') {
+    stage('Generate docker image for dev') {
       when {
         expression { RELEASE_TARGET == 'true' }
         expression { TAG_FOR == 'dev' }
       }
       steps {
+        sh 'make verify-build'
         sh 'DEVELOPMENT=dev DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
+    
+    stage('Release docker image for dev') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { TAG_FOR == 'dev' }
+      }
+      steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
       }
     }
 
-    stage('Generate docker image for feature test') {
+    stage('Pick tag version for test') {
       when {
-        expression { RELEASE_TARGET == 'true' }
+        anyOf{
+          expression { RELEASE_TARGET == 'true' }
+          expression { DEPLOY_TARGET == 'true' }
+        }
         expression { TAG_FOR == 'test' }
       }
       steps {
         sh(returnStdout: false, script: '''
-          revlist=`git rev-list --tags --max-count=1`
-          tag=`git describe --tags $revlist`
-
           set +e
-          docker images  | grep $tag
-          rc=$?
-          set -e
-          if [ ! 0 -eq $rc ]; then
-            DEVELOPMENT=test DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
-          fi
+          // sync remote tags
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+          TAG_VERSION=`git tag --sort=-v:refname |grep '[13579]$'`
+        '''.stripIndent())
+      }
+    }
 
+    stage('Pick tag version for prod') {
+      when {
+        anyOf{
+          expression { RELEASE_TARGET == 'true' }
+          expression { DEPLOY_TARGET == 'true' }
+        }
+        expression { TAG_FOR == 'prod' }
+      }
+      steps {
+        sh(returnStdout: false, script: '''
           set +e
-          docker images  | grep $tag
-          rc=$?
-          set -e
-          if [ 0 -eq $rc ]; then
-            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
-          fi
+          // sync remote tags
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+          TAG_VERSION=`git tag --sort=-v:refname |grep '[02468]$'`
         '''.stripIndent())
         sh ''
       }
     }
 
-    stage('Generate docker image for testing or production') {
+    stage('Generate docker image for test or prod') {
       when {
-          expression { RELEASE_TARGET == 'true' }
+        expression { RELEASE_TARGET == 'true' }
+        anyOf{
+          expression { TAG_FOR == 'test' }
           expression { TAG_FOR == 'prod' }
+        }
       }
       steps {
-          sh(returnStdout: false, script: '''
-          revlist=`git rev-list --tags --max-count=1`
-          tag=`git describe --tags $revlist`
-
-          major=`echo $tag | awk -F '.' '{ print $1 }'`
-          minor=`echo $tag | awk -F '.' '{ print $2 }'`
-          patch=`echo $tag | awk -F '.' '{ print $3 }'`
-
-          patch=$(( $patch - $patch % 2 ))
-          tag=$major.$minor.$patch
-
+        sh(returnStdout: false, script: '''
           set +e
-          docker images | grep $tag
-          rc=$?
-          set -e
-          if [ ! 0 -eq $rc ]; then
-            DEVELOPMENT=prod DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
-          fi
-
-          set +e
-          docker images | grep $tag
-          rc=$?
-          set -e
-          if [ 0 -eq $rc ]; then
-            TAG=$tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
-          fi
+          git reset --hard
+          git checkout $TAG_VERSION
         '''.stripIndent())
+        sh 'make verify-build'
+        sh 'DEVELOPMENT=dev DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
+    
+    stage('Release docker image for test or prod') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { TAG_FOR == 'dev' }
+      }
+      steps {
+        sh 'TAG=TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
       }
     }
 
-    stage('Deploy for development') {
+    stage('Deploy for dev') {
       when {
         expression { DEPLOY_TARGET == 'true' }
         expression { TARGET_ENV == "dev" }
@@ -217,42 +231,17 @@ pipeline {
       }
     }
 
-    stage('Deploy for testing') {
+    stage('Deploy for test or prod') {
       when {
         expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV == "test" }
+        anyOf{
+          expression { TARGET_ENV == "test" }
+          expression { TARGET_ENV == "prod" }
+        }
       }
       steps {
         sh(returnStdout: true, script: '''
-          revlist=`git rev-list --tags --max-count=1`
-          tag=`git describe --tags $revlist`
-
-          git reset --hard
-          git checkout $tag
-          TAG=$tag make deploy-to-k8s-cluster
-        '''.stripIndent())
-      }
-    }
-
-    stage('Deploy for production') {
-      when {
-        expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV == "prod" }
-      }
-      steps {
-        sh(returnStdout: true, script: '''
-          revlist=`git rev-list --tags --max-count=1`
-          tag=`git describe --tags $revlist`
-
-          major=`echo $tag | awk -F '.' '{ print $1 }'`
-          minor=`echo $tag | awk -F '.' '{ print $2 }'`
-          patch=`echo $tag | awk -F '.' '{ print $3 }'`
-          patch=$(( $patch - $patch % 2 ))
-          tag=$major.$minor.$patch
-
-          git reset --hard
-          git checkout $tag
-          TAG=$tag make deploy-to-k8s-cluster
+          TAG=$TAG_VERSION make deploy-to-k8s-cluster
         '''.stripIndent())
       }
     }

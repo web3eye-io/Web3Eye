@@ -392,18 +392,18 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 表头中 b-代表build、r-代表release、d-代表deploy
 </p>
 
-| 参数名         | b-dev/b-test/b-prod | r-dev  | r-test     | r-prod     | d-dev  | d-test | d-prod |
-| -------------- | ------------------- | ------ | ---------- | ---------- | ------ | ------ | ------ |
-| BRANCH_NAME    | 分支名              | 分支名 | 分支名     | master     | 分支名 | 分支名 | master |
-| BUILD_TARGET   | true                | true   | true       | true       | false  | false  | false  |
-| DEPLOY_TARGET  | false               | false  | false      | false      | true   | true   | true   |
-| RELEASE_TARGET | false               | true   | true       | true       | false  | false  | false  |
-| TAG_PATCH      | false               | false  | true       | true       | false  | false  | false  |
-| TAG_MINOR      | false               | false  | false/true | false/true | false  | false  | false  |
-| TAG_MAJOR      | false               | false  | false/true | false/true | false  | false  | false  |
-| AIMPROJECT     | 项目名              | 项目名 | 项目名     | 项目名     | 项目名 | 项目名 | 项目名 |
-| TAG_FOR        | none                | dev    | test       | prod       | none   | none   | none   |
-| TARGET_ENV     | none                | none   | none       | none       | dev    | test   | prod   |
+| 参数名         | build  | tag        | r-dev  | r-test/prod | d-dev  | d-test/prod |
+| -------------- | ------ | ---------- | ------ | ----------- | ------ | ----------- |
+| BRANCH_NAME    | 分支名 | 分支名     | 分支名 | none        | none   | none        |
+| BUILD_TARGET   | true   | false      | false  | false       | false  | false       |
+| DEPLOY_TARGET  | false  | false      | false  | false       | true   | true        |
+| RELEASE_TARGET | false  | false      | true   | true        | false  | false       |
+| TAG_PATCH      | false  | true/false | false  | false       | false  | false       |
+| TAG_MINOR      | false  | true/false | false  | false       | false  | false       |
+| TAG_MAJOR      | false  | true/false | false  | false       | false  | false       |
+| AIMPROJECT     | 项目名 | none       | 项目名 | 项目名      | 项目名 | 项目名      |
+| TAG_FOR        | none   | test/prod  | dev    | test/prod   | none   | none        |
+| TARGET_ENV     | none   | none       | none   | none        | dev    | test/prod   |
 
 参数说明：
 
