@@ -62,6 +62,7 @@
           if (files) {
             const uploadedFile = files[0];
             const formData = new FormData();
+            formData.append("topN", 6);
             formData.append("upload", uploadedFile);
             // 使用node模拟上传接口
             axios

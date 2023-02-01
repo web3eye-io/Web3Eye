@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"strconv"
 
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
@@ -44,6 +45,7 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
+//nolint:funlen
 func Search(w http.ResponseWriter, r *http.Request) {
 	respBody := make(map[string]interface{})
 	defer func() {
@@ -58,13 +60,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	ctx := context.Background()
-
 	// judge weather filesize exceed max-size
 	err := r.ParseMultipartForm(MaxUploadFileSize)
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("filesize is much than %v, %v", MaxUploadFileSize, err)
 		w.WriteHeader(http.StatusBadRequest)
-
 		return
 	}
 
@@ -78,8 +78,14 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	milvusmgr := milvusdb.NewNFTConllectionMGR()
 	_vector := imageconvert.ToArrayVector(vector)
-	// TODO: It should be given by request
-	defaultTopN := 10
+
+	defaultTopN, err := strconv.Atoi(r.FormValue("topN"))
+	if err != nil {
+		respBody["msg"] = fmt.Sprintf("set parameter fil, %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	_scores, err := milvusmgr.Search(
 		context.Background(),
 		[][milvusdb.VectorDim]float32{_vector},
