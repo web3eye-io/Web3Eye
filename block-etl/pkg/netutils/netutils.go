@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -146,12 +145,12 @@ func GetHTTPHeaders(ctx context.Context, url string) (contentType string, conten
 
 // GetIPFSHeaders returns the headers for the given IPFS hash
 func GetIPFSHeaders(ctx context.Context, path string) (contentType string, contentLength int64, err error) {
-	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.GetConfig().IPFS.HTTPGateway), path)
+	url := fmt.Sprintf("%s/ipfs/%s", config.GetConfig().IPFS.HTTPGateway, path)
 	return getContentHeaders(ctx, url)
 }
 
 func GetIPFSData(ctx context.Context, path string) ([]byte, error) {
-	url := fmt.Sprintf("%s/ipfs/%s", os.Getenv(config.GetConfig().IPFS.HTTPGateway), path)
+	url := fmt.Sprintf("%s/ipfs/%s", config.GetConfig().IPFS.HTTPGateway, path)
 	req, err := http.NewRequestWithContext(ctx, "GET", url, http.NoBody)
 	if err != nil {
 		return nil, err
