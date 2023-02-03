@@ -78,7 +78,6 @@
 </template>
 
 <script setup lang='ts'>
-import { read } from 'fs';
 import { useNFTMetaStore } from 'src/localstore/nft';
 import { UploadResponse } from 'src/localstore/nft/types';
 import { ref } from 'vue'
@@ -97,7 +96,7 @@ const onUploaded = (info: {
     /**
      * Uploaded files
      */
-    files: readonly any[];
+    files: readonly File[];
     /**
      * XMLHttpRequest that has been used to upload this batch of files
      */
