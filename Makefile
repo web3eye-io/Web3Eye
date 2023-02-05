@@ -7,7 +7,7 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl image-converter
+PROJECTS=  nft-meta block-etl image-converter webui
 GO_PROJECTS=  nft-meta block-etl
 
 ##@ init project
@@ -34,11 +34,6 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
 verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
-
-verify-build: ## Build project
-	@for x in $(PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/build.sh $${x};\
-	done
 
 verify-go-mod: ## Runs the go module linter
 	${REPO_ROOT}/hack/verify-go-mod.sh
@@ -73,11 +68,16 @@ ifndef TAG
 TAG= latest
 endif
 	
-.PHONY: build-docker release-docker deploy-to-k8s-cluster
+.PHONY: build build-docker release-docker deploy-to-k8s-cluster
+
+build: ## Build project
+	@for x in $(PROJECTS); do \
+		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
+	done
 
 build-docker:
 	@for x in $(PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/build-docker-image.sh $(DEVELOPMENT) $(DOCKER_REGISTRY);\
+		${REPO_ROOT}/$${x}/script/build-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
 release-docker:
 	@for x in $(PROJECTS); do \

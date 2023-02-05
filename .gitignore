@@ -7,5 +7,5 @@ tmp
 *.log
 ./deploy.sh
 ./main.go
-ui/node_modules
-!ui/*.json
+webui/node_modules
+!webui/*.json

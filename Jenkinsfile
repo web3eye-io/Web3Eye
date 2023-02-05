@@ -35,7 +35,7 @@ pipeline {
       }
       steps {
         sh (returnStdout: false, script: '''
-          make verify-build
+          TAG=latest make build
         '''.stripIndent())
       }
     }
@@ -66,6 +66,7 @@ pipeline {
         '''.stripIndent())
       }
     }
+
     stage('Tag') {
       when {
         anyOf{
@@ -138,8 +139,8 @@ pipeline {
         expression { TAG_FOR == 'dev' }
       }
       steps {
-        sh 'make verify-build'
-        sh 'DEVELOPMENT=dev DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+        sh 'TAG=latest make build'
+        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
     
@@ -206,8 +207,8 @@ pipeline {
           git reset --hard
           git checkout $TAG_VERSION
         '''.stripIndent())
-        sh 'make verify-build'
-        sh 'DEVELOPMENT=dev DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+        sh 'TAG=$TAG_VERSION make build'
+        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
     
@@ -220,7 +221,7 @@ pipeline {
         }
       }
       steps {
-        sh 'TAG=TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
+        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
       }
     }
 
@@ -230,7 +231,7 @@ pipeline {
         expression { TARGET_ENV == "dev" }
       }
       steps {
-        sh 'TAG=latest  make deploy-to-k8s-cluster'
+        sh 'TAG=latest make deploy-to-k8s-cluster'
       }
     }
 

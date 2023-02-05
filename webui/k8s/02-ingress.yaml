@@ -1,22 +1,14 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-nft-meta-prefix
-spec:
-  stripPrefix:
-    prefixes:
-      - /api/nft-meta
-
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nft-meta-ingress
+  name: webui-ingress
+  namespace: default
   annotations:
-    kubernetes.io/ingress.class: "traefik-internet"
+    # k8s.kuboard.cn/displayName: webui
+    # k8s.kuboard.cn/workload: webui
+    kubernetes.io/ingress.class: 'traefik-internet'
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
-      default-strip-nft-meta-prefix@kubernetescrd,
       kube-system-http-redirect-https@kubernetescrd,
       kube-system-http-redirect-https-testing@kubernetescrd,
       kube-system-common-headers@kubernetescrd
@@ -24,17 +16,27 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "*.hk-testing.web3eye.io"
+        - '*.hk-testing.web3eye.io'
         - hk-testing.web3eye.io
       secretName: hk-testing-web3eye-io-tls
   rules:
     - host:
       http:
         paths:
-          - path: /api/nft-meta
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: nft-meta
+                name: webui
                 port:
-                  number: 30100
+                  number: 80
+    # - host: www.hk-testing.web3eye.io
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: webui
+    #             port:
+    #               number: 80
