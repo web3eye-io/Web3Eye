@@ -110,7 +110,7 @@ if ${SILENT} ; then
 fi
 
 ret=0
-run-checks "${REPO_ROOT}/hack/verify-*.sh" bash
+run-checks "${REPO_ROOT}/hack/*-verify-*.sh" bash
 
 if [[ ${ret} -eq 1 ]]; then
   print-failed-tests

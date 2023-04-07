@@ -35,19 +35,6 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
 
-verify-go-mod: ## Runs the go module linter
-	${REPO_ROOT}/hack/verify-go-mod.sh
-
-verify-golangci-lint: ## Runs all golang linters
-	${REPO_ROOT}/hack/verify-golangci-lint.sh
-
-verify-shellcheck: ## Runs shellcheck
-	${REPO_ROOT}/hack/verify-shellcheck.sh
-
-verify-spelling: ## Verifies spelling.
-	${REPO_ROOT}/hack/verify-spelling.sh
-
-
 gen-ent:
 	go get entgo.io/ent/cmd/ent@v0.11.2
 	go run entgo.io/ent/cmd/ent generate --feature entql,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
