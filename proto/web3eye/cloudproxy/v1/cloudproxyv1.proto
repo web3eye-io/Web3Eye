@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package cloudproxy.v1;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/cloudproxy/v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc Version(google.protobuf.Empty) returns (web3eye.VersionResponse) {
+    option (google.api.http) = {
+      post : "/v1/version"
+      body : "*"
+    };
+  }
+
+  rpc SearchChannel(stream SearchRequest) returns (stream SearchResponse){}
+}
+
+
+message SearchRequest{
+  string MsgID = 100;
+  string Msg = 110;
+}
+
+message SearchResponse{
+  string MsgID = 100;
+  string Msg = 110;
+}
