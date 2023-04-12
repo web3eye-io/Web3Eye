@@ -19,7 +19,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/servermux"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	api "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
+	api_v1 "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -69,7 +69,7 @@ func runGRPCServer(grpcPort int) {
 	}
 
 	server := grpc.NewServer()
-	api.Register(server)
+	api_v1.Register(server)
 	reflection.Register(server)
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -82,7 +82,7 @@ func runHTTPServer(httpPort, grpcPort int) {
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := api.RegisterGateway(mux, grpcEndpoint, opts)
+	err := api_v1.RegisterGateway(mux, grpcEndpoint, opts)
 	if err != nil {
 		log.Fatalf("Fail to register gRPC gateway service endpoint: %v", err)
 	}
