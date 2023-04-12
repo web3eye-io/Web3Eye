@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
-COPY nft-meta /usr/local/bin/nft-meta
-COPY NFTMeta.viper.yaml /etc/NFTMeta/NFTMeta.viper.yaml
+COPY cloud-proxy /usr/local/bin/cloud-proxy
+COPY CloudProxy.viper.yaml /etc/CloudProxy/CloudProxy.viper.yaml
 ENV ENV_DATA_DIR=/data \
     ENV_LOG_DIR=/var/log \
     ENV_LOG_LEVEL=debug \
@@ -13,4 +13,4 @@ RUN apt-get  update \
 
 WORKDIR /usr/local/bin/
 
-CMD ./nft-meta run
+CMD ./cloud-proxy run

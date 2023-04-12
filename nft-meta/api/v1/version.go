@@ -1,13 +1,10 @@
-//go:build !codeanalysis
-// +build !codeanalysis
-
-package api
+package v1
 
 import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/version"
+	"github.com/web3eye-io/Web3Eye/common/version"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 
 	"google.golang.org/grpc/codes"

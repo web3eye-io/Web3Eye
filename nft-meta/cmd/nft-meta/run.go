@@ -19,7 +19,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/servermux"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api"
+	api "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

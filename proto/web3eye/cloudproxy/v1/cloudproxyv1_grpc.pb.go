@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*web3eye.VersionResponse, error)
-	SearchChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_SearchChannelClient, error)
+	ProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_ProxyChannelClient, error)
 }
 
 type managerClient struct {
@@ -45,31 +45,31 @@ func (c *managerClient) Version(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
-func (c *managerClient) SearchChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_SearchChannelClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Manager_ServiceDesc.Streams[0], "/cloudproxy.v1.Manager/SearchChannel", opts...)
+func (c *managerClient) ProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_ProxyChannelClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Manager_ServiceDesc.Streams[0], "/cloudproxy.v1.Manager/ProxyChannel", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &managerSearchChannelClient{stream}
+	x := &managerProxyChannelClient{stream}
 	return x, nil
 }
 
-type Manager_SearchChannelClient interface {
-	Send(*SearchRequest) error
-	Recv() (*SearchResponse, error)
+type Manager_ProxyChannelClient interface {
+	Send(*ProxyChannelRequest) error
+	Recv() (*ProxyChannelResponse, error)
 	grpc.ClientStream
 }
 
-type managerSearchChannelClient struct {
+type managerProxyChannelClient struct {
 	grpc.ClientStream
 }
 
-func (x *managerSearchChannelClient) Send(m *SearchRequest) error {
+func (x *managerProxyChannelClient) Send(m *ProxyChannelRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *managerSearchChannelClient) Recv() (*SearchResponse, error) {
-	m := new(SearchResponse)
+func (x *managerProxyChannelClient) Recv() (*ProxyChannelResponse, error) {
+	m := new(ProxyChannelResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (x *managerSearchChannelClient) Recv() (*SearchResponse, error) {
 // for forward compatibility
 type ManagerServer interface {
 	Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error)
-	SearchChannel(Manager_SearchChannelServer) error
+	ProxyChannel(Manager_ProxyChannelServer) error
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -92,8 +92,8 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
-func (UnimplementedManagerServer) SearchChannel(Manager_SearchChannelServer) error {
-	return status.Errorf(codes.Unimplemented, "method SearchChannel not implemented")
+func (UnimplementedManagerServer) ProxyChannel(Manager_ProxyChannelServer) error {
+	return status.Errorf(codes.Unimplemented, "method ProxyChannel not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -126,26 +126,26 @@ func _Manager_Version_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_SearchChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(ManagerServer).SearchChannel(&managerSearchChannelServer{stream})
+func _Manager_ProxyChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ManagerServer).ProxyChannel(&managerProxyChannelServer{stream})
 }
 
-type Manager_SearchChannelServer interface {
-	Send(*SearchResponse) error
-	Recv() (*SearchRequest, error)
+type Manager_ProxyChannelServer interface {
+	Send(*ProxyChannelResponse) error
+	Recv() (*ProxyChannelRequest, error)
 	grpc.ServerStream
 }
 
-type managerSearchChannelServer struct {
+type managerProxyChannelServer struct {
 	grpc.ServerStream
 }
 
-func (x *managerSearchChannelServer) Send(m *SearchResponse) error {
+func (x *managerProxyChannelServer) Send(m *ProxyChannelResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *managerSearchChannelServer) Recv() (*SearchRequest, error) {
-	m := new(SearchRequest)
+func (x *managerProxyChannelServer) Recv() (*ProxyChannelRequest, error) {
+	m := new(ProxyChannelRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -166,8 +166,8 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "SearchChannel",
-			Handler:       _Manager_SearchChannel_Handler,
+			StreamName:    "ProxyChannel",
+			Handler:       _Manager_ProxyChannel_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

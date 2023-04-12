@@ -78,14 +78,15 @@
         }
       }
     },
-    "v1SearchResponse": {
+    "v1ProxyChannelResponse": {
       "type": "object",
       "properties": {
         "MsgID": {
           "type": "string"
         },
         "Msg": {
-          "type": "string"
+          "type": "string",
+          "format": "byte"
         }
       }
     },

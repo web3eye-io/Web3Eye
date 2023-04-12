@@ -1,0 +1,4 @@
+resources:
+  - 01-cloud-proxy.viper.yaml
+  - 02-cloud-proxy.yaml
+  - 03-ingress.yaml

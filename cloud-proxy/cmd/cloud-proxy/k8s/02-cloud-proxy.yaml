@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nft-meta
+  name: cloud-proxy
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: nft-meta
+      app: cloud-proxy
   template:
     metadata:
       labels:
-        app: nft-meta
+        app: cloud-proxy
     spec:
       containers:
-        - name: nft-meta
-          # image: web3eye/nft-meta:latest
-          image: coastlinesss/nft-meta:latest
+        - name: cloud-proxy
+          # image: web3eye/cloud-proxy:latest
+          image: coastlinesss/cloud-proxy:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
-              mountPath: /etc/NFTMeta
+              mountPath: /etc/CloudProxy
           env:
             - name: ENV_CLUSTER_NAMESPACE
               valueFrom:
@@ -40,22 +40,22 @@ spec:
       volumes:
         - name: service-config
           configMap:
-            name: nft-meta-config
+            name: cloud-proxy-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nft-meta
+  name: cloud-proxy
 spec:
   ports:
     - name: http
-      port: 30100
-      targetPort: 30100
+      port: 30120
+      targetPort: 30120
     - name: grpc
-      port: 30101
-      targetPort: 30101
+      port: 30121
+      targetPort: 30121
     - name: healthz
-      port: 30102
-      targetPort: 30102
+      port: 30122
+      targetPort: 30122
   selector:
-    app: nft-meta
+    app: cloud-proxy

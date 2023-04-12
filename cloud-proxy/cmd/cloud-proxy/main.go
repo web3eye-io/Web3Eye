@@ -9,12 +9,12 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/version"
 	banner "github.com/common-nighthawk/go-figure"
 	cli "github.com/urfave/cli/v2"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/servicename"
+	"github.com/web3eye-io/Web3Eye/cloud-proxy/pkg/servicename"
 )
 
 const (
-	serviceName = "NFTMeta"
-	usageText   = "NFT Meta Service"
+	serviceName = "CloudProxy"
+	usageText   = "Cloud Proxy Service"
 )
 
 func main() {

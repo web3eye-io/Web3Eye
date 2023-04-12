@@ -3,7 +3,6 @@ package contract
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -45,41 +44,55 @@ type ReqItem struct {
 	G []grpc.CallOption
 }
 
-func (p *Po) Invoke(ctx context.Context, method string, args interface{}, reply interface{}, opts ...grpc.CallOption) error {
+type rawCodec struct{}
 
-	_args, ok := args.(proto.Message)
+func (cb rawCodec) Marshal(v interface{}) ([]byte, error) {
+	return v.([]byte), nil
+}
 
-	fmt.Println(_args.ProtoReflect())
-
+func (cb rawCodec) Unmarshal(data []byte, v interface{}) error {
+	ba, ok := v.(*[]byte)
 	if !ok {
-		fmt.Println("stop 1")
-		return nil
+		panic("ss")
 	}
+	*ba = append(*ba, data...)
 
-	_reply, ok := reply.(proto.Message)
-	if !ok {
-		fmt.Println("stop 2")
-		return nil
-	}
+	return nil
+}
 
-	req := ReqItem{M: method, A: _args, R: _reply, G: opts}
+func (cb rawCodec) Name() string { return "dtm_raw" }
 
-	reqBytes, err := json.Marshal(req)
-	fmt.Println(err)
-	fmt.Println(string(reqBytes))
-
-	_req := &ReqItem{}
-	err = json.Unmarshal(reqBytes, _req)
-	fmt.Println(err)
-
-	conn, err := GetGrpcConn()
-	fmt.Println(err)
+func (p *Po) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...grpc.CallOption) error {
+	reqRaw, err := proto.Marshal(args.(proto.Message))
 	if err != nil {
-		return err
+		fmt.Println("1", err)
+		panic("1sss")
 	}
 
-	err = conn.Invoke(ctx, method, _args, reply, opts...)
-	fmt.Println(err)
+	conn, err := grpc.Dial("nft-meta:30101",
+		grpc.WithTransportCredentials(
+			insecure.NewCredentials()),
+		grpc.WithDefaultCallOptions(
+			grpc.ForceCodec(rawCodec{}),
+		),
+	)
+	if err != nil {
+		fmt.Println("2", err)
+		panic("2sss")
+	}
+
+	out := &[]byte{}
+	err = conn.Invoke(ctx, method, reqRaw, out, opts...)
+	if err != nil {
+		fmt.Println("3", err)
+		panic("3sss")
+	}
+
+	err = proto.Unmarshal(*out, reply.(proto.Message))
+	if err != nil {
+		fmt.Println("3", err)
+		panic("3sss")
+	}
 	return nil
 }
 

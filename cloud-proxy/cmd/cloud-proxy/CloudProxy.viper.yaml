@@ -1,6 +1,6 @@
 ---
 config:
-  hostname: "nft-meta.npool.top"
+  hostname: "cloud-proxy.npool.top"
   http_port: 50490
   grpc_port: 50491
   prometheus_port: 50492

@@ -15,17 +15,16 @@ service Manager {
       body : "*"
     };
   }
-
-  rpc SearchChannel(stream SearchRequest) returns (stream SearchResponse){}
+  rpc ProxyChannel(stream ProxyChannelRequest) returns (stream ProxyChannelResponse){}
 }
 
 
-message SearchRequest{
+message ProxyChannelRequest{
   string MsgID = 100;
-  string Msg = 110;
+  bytes Msg = 110;
 }
 
-message SearchResponse{
+message ProxyChannelResponse{
   string MsgID = 100;
-  string Msg = 110;
+  bytes Msg = 110;
 }

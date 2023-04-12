@@ -17,6 +17,7 @@ type Config struct {
 	Version        string         `toml:"version" env:"version"`
 	NFTMeta        NFTMeta        `toml:"nft-meta" env:"nft_meta"`
 	BlockETL       BlockETL       `toml:"block-etl" env:"block_etl"`
+	CloudProxy     CloudProxy     `toml:"cloud-proxy" env:"cloud_proxy"`
 	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
 	ETH            ETH            `toml:"eth" env:"eth"`
 	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
@@ -34,6 +35,13 @@ type NFTMeta struct {
 }
 
 type BlockETL struct {
+	IP       string `toml:"ip" env:"ip"`
+	HTTPPort int    `toml:"http-port" env:"http_port"`
+	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile  string `toml:"log-file" env:"log_file"`
+}
+
+type CloudProxy struct {
 	IP       string `toml:"ip" env:"ip"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
