@@ -90,6 +90,18 @@
         }
       }
     },
+    "v1ProxyResponse": {
+      "type": "object",
+      "properties": {
+        "MsgID": {
+          "type": "string"
+        },
+        "Msg": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "web3eyeVersionResponse": {
       "type": "object",
       "properties": {

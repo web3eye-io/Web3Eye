@@ -2,6 +2,7 @@
 package v1
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -25,4 +26,9 @@ func (s *Server) ProxyChannel(stream npool.Manager_ProxyChannelServer) error {
 			return err
 		}
 	}
+}
+
+func (s *Server) Proxy(ctx context.Context, in *npool.ProxyRequest) (*npool.ProxyResponse, error) {
+	fmt.Println(in.MsgID)
+	return &npool.ProxyResponse{MsgID: in.MsgID, Msg: in.Msg}, nil
 }

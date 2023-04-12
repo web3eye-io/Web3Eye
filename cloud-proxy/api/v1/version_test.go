@@ -20,7 +20,7 @@ func TestVersion(t *testing.T) {
 
 	cli := resty.New()
 	resp, err := cli.R().
-		Post(fmt.Sprintf("http://localhost:%v/v1/version", config.GetConfig().NFTMeta.HTTPPort))
+		Post(fmt.Sprintf("http://localhost:%v/v1/version", config.GetConfig().CloudProxy.HTTPPort))
 	if assert.Nil(t, err) {
 		fmt.Println(resp)
 		assert.Equal(t, 200, resp.StatusCode())

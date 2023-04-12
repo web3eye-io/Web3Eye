@@ -16,6 +16,7 @@ service Manager {
     };
   }
   rpc ProxyChannel(stream ProxyChannelRequest) returns (stream ProxyChannelResponse){}
+  rpc Proxy( ProxyRequest) returns ( ProxyResponse){}
 }
 
 
@@ -25,6 +26,16 @@ message ProxyChannelRequest{
 }
 
 message ProxyChannelResponse{
+  string MsgID = 100;
+  bytes Msg = 110;
+}
+
+message ProxyRequest{
+  string MsgID = 100;
+  bytes Msg = 110;
+}
+
+message ProxyResponse{
   string MsgID = 100;
   bytes Msg = 110;
 }

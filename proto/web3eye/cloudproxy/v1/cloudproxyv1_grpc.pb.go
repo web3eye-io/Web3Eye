@@ -26,6 +26,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ManagerClient interface {
 	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*web3eye.VersionResponse, error)
 	ProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_ProxyChannelClient, error)
+	Proxy(ctx context.Context, in *ProxyRequest, opts ...grpc.CallOption) (*ProxyResponse, error)
 }
 
 type managerClient struct {
@@ -76,12 +77,22 @@ func (x *managerProxyChannelClient) Recv() (*ProxyChannelResponse, error) {
 	return m, nil
 }
 
+func (c *managerClient) Proxy(ctx context.Context, in *ProxyRequest, opts ...grpc.CallOption) (*ProxyResponse, error) {
+	out := new(ProxyResponse)
+	err := c.cc.Invoke(ctx, "/cloudproxy.v1.Manager/Proxy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ManagerServer is the server API for Manager service.
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
 	Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error)
 	ProxyChannel(Manager_ProxyChannelServer) error
+	Proxy(context.Context, *ProxyRequest) (*ProxyResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -94,6 +105,9 @@ func (UnimplementedManagerServer) Version(context.Context, *emptypb.Empty) (*web
 }
 func (UnimplementedManagerServer) ProxyChannel(Manager_ProxyChannelServer) error {
 	return status.Errorf(codes.Unimplemented, "method ProxyChannel not implemented")
+}
+func (UnimplementedManagerServer) Proxy(context.Context, *ProxyRequest) (*ProxyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Proxy not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -152,6 +166,24 @@ func (x *managerProxyChannelServer) Recv() (*ProxyChannelRequest, error) {
 	return m, nil
 }
 
+func _Manager_Proxy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProxyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).Proxy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloudproxy.v1.Manager/Proxy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).Proxy(ctx, req.(*ProxyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -162,6 +194,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Version",
 			Handler:    _Manager_Version_Handler,
+		},
+		{
+			MethodName: "Proxy",
+			Handler:    _Manager_Proxy_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
