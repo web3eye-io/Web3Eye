@@ -28,38 +28,33 @@ func (p *streamUnit) streamUnitSend(wg *sync.WaitGroup) {
 
 	go func() {
 		for {
-			select {
-			case info := <-p.fromProxy:
-				err := p.steamServer.Send(info)
-				if utils.CheckCode(err) {
-					p.close()
-					return
-				}
+			info := <-p.fromProxy
+			err := p.steamServer.Send(info)
+			if utils.CheckCode(err) {
+				p.close()
+				return
+			}
 
-				if err != nil {
-					logger.Sugar().Errorf(
-						"grpc proxy %v send msg, MsgID: %v, err: %v",
-						p.id,
-						info.GetMsgID(),
-						err,
-					)
-					continue
-				}
-
-				logger.Sugar().Infof(
-					"grpc proxy %v send msg success, MsgID: %v",
+			if err != nil {
+				logger.Sugar().Errorf(
+					"grpc proxy %v send msg, MsgID: %v, err: %v",
 					p.id,
 					info.GetMsgID(),
+					err,
 				)
 				continue
 			}
+
+			logger.Sugar().Infof(
+				"grpc proxy %v send msg success, MsgID: %v",
+				p.id,
+				info.GetMsgID(),
+			)
 		}
 	}()
 
-	select {
-	case <-p.sendConnClose:
-		logger.Sugar().Warnf("%v: grpc proxy stream send exit", p.id)
-	}
+	<-p.sendConnClose
+	logger.Sugar().Warnf("%v: grpc proxy stream send exit", p.id)
 }
 
 func (p *streamUnit) steamUnitRecv(wg *sync.WaitGroup) {
@@ -85,10 +80,8 @@ func (p *streamUnit) steamUnitRecv(wg *sync.WaitGroup) {
 		}
 	}()
 
-	select {
-	case <-p.recvConnClose:
-		defer logger.Sugar().Warnf("%v: grpc proxy stream recv exit", p.id)
-	}
+	<-p.recvConnClose
+	logger.Sugar().Warnf("%v: grpc proxy stream recv exit", p.id)
 }
 
 func (p *streamUnit) close() {
@@ -100,11 +93,11 @@ func (p *streamUnit) close() {
 		}
 	}
 
-	p.streamMGR.lock.Lock()
 	if _, ok := p.streamMGR.proxyTaskMap[p.id]; ok {
+		p.streamMGR.lock.Lock()
 		delete(p.streamMGR.proxyTaskMap, p.id)
+		p.streamMGR.lock.Unlock()
 	}
-	p.streamMGR.lock.Unlock()
 
 	// close send and recv
 	p.sendConnClose <- struct{}{}
@@ -190,7 +183,7 @@ func (p *streamMGR) InvokeMSG(ctx context.Context, req *npool.FromGrpcProxy) (*n
 		if len(p.streamArr) == 0 {
 			return nil, errors.New("have no stream connnected")
 		}
-		p.balancer = p.balancer % len(p.streamArr)
+		p.balancer %= len(p.streamArr)
 
 		if id := p.streamArr[p.balancer]; len(id) > 0 {
 			streamUnit = p.streamMap[id]
@@ -207,7 +200,7 @@ func (p *streamMGR) InvokeMSG(ctx context.Context, req *npool.FromGrpcProxy) (*n
 		return nil, errors.New("have no stream connected")
 	}
 
-	if len(req.MsgID) == 0 {
+	if req.MsgID == "" {
 		req.MsgID = uuid.NewString()
 	}
 

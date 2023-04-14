@@ -52,7 +52,11 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 	return proto.Unmarshal(proxyResp.Info.RawData, reply.(proto.Message))
 }
 
-func (p *CloudProxyCC) NewStream(ctx context.Context, desc *grpc.StreamDesc, method string, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+func (p *CloudProxyCC) NewStream(
+	ctx context.Context,
+	desc *grpc.StreamDesc,
+	method string,
+	opts ...grpc.CallOption) (grpc.ClientStream, error) {
 	// not impl
 	return nil, errors.New("CloudProxyCC.NewStream not implementation")
 }
