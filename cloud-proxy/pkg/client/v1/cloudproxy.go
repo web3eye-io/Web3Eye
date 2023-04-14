@@ -20,7 +20,9 @@ var timeout = 10 * time.Second
 
 type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
 
-type CloudProxyCC struct{}
+type CloudProxyCC struct {
+	Target string
+}
 
 func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...grpc.CallOption) error {
 	reqRaw, err := proto.Marshal(args.(proto.Message))
@@ -29,7 +31,7 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 	}
 
 	msgID := uuid.NewString()
-	proxyResp, err := Proxy(ctx, &npool.ProxyRequest{MsgID: msgID, Msg: reqRaw})
+	proxyResp, err := GrpcProxy(ctx, &npool.GrpcProxyRequest{MsgID: msgID, Method: method, ReqRaw: reqRaw})
 	if err != nil {
 		return err
 	}
@@ -37,11 +39,8 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 	if proxyResp.MsgID != msgID {
 		return fmt.Errorf("msg_id wrong, expect %v but get %v", msgID, proxyResp.MsgID)
 	}
-	fmt.Println(proxyResp.MsgID)
-	fmt.Println(msgID)
-	fmt.Println(proxyResp.Msg)
 
-	return proto.Unmarshal(proxyResp.Msg, reply.(proto.Message))
+	return proto.Unmarshal(proxyResp.RespRaw, reply.(proto.Message))
 }
 
 func (p *CloudProxyCC) NewStream(ctx context.Context, desc *grpc.StreamDesc, method string, opts ...grpc.CallOption) (grpc.ClientStream, error) {
@@ -69,24 +68,33 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func ProxyChannel(ctx context.Context) (npool.Manager_ProxyChannelClient, error) {
-	var resp npool.Manager_ProxyChannelClient = nil
-	var err error = nil
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.ProxyChannel(ctx)
-		return resp, err
-	})
-
+func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%v:%v",
+			"127.0.0.1",
+			// config.GetConfig().CloudProxy.IP,
+			config.GetConfig().CloudProxy.GrpcPort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	cli := npool.NewManagerClient(conn)
+
+	return handler(ctx, cli)
 }
 
-func Proxy(ctx context.Context, in *npool.ProxyRequest) (*npool.ProxyResponse, error) {
+func GrpcProxyChannel(ctx context.Context) (resp npool.Manager_GrpcProxyChannelClient, err error) {
+	_, err = withNoConnClose(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GrpcProxyChannel(_ctx)
+		return resp, err
+	})
+	return
+}
+
+func GrpcProxy(ctx context.Context, in *npool.GrpcProxyRequest) (*npool.GrpcProxyResponse, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.Proxy(_ctx, in)
+		resp, err := cli.GrpcProxy(_ctx, in)
 		if err != nil {
 			return nil, err
 		}
@@ -95,5 +103,5 @@ func Proxy(ctx context.Context, in *npool.ProxyRequest) (*npool.ProxyResponse, e
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.ProxyResponse), nil
+	return info.(*npool.GrpcProxyResponse), nil
 }

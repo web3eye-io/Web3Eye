@@ -25,8 +25,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*web3eye.VersionResponse, error)
-	ProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_ProxyChannelClient, error)
-	Proxy(ctx context.Context, in *ProxyRequest, opts ...grpc.CallOption) (*ProxyResponse, error)
+	GrpcProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_GrpcProxyChannelClient, error)
+	GrpcProxy(ctx context.Context, in *GrpcProxyRequest, opts ...grpc.CallOption) (*GrpcProxyResponse, error)
 }
 
 type managerClient struct {
@@ -46,40 +46,40 @@ func (c *managerClient) Version(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
-func (c *managerClient) ProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_ProxyChannelClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Manager_ServiceDesc.Streams[0], "/cloudproxy.v1.Manager/ProxyChannel", opts...)
+func (c *managerClient) GrpcProxyChannel(ctx context.Context, opts ...grpc.CallOption) (Manager_GrpcProxyChannelClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Manager_ServiceDesc.Streams[0], "/cloudproxy.v1.Manager/GrpcProxyChannel", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &managerProxyChannelClient{stream}
+	x := &managerGrpcProxyChannelClient{stream}
 	return x, nil
 }
 
-type Manager_ProxyChannelClient interface {
-	Send(*ProxyChannelRequest) error
-	Recv() (*ProxyChannelResponse, error)
+type Manager_GrpcProxyChannelClient interface {
+	Send(*ToGrpcProxy) error
+	Recv() (*FromGrpcProxy, error)
 	grpc.ClientStream
 }
 
-type managerProxyChannelClient struct {
+type managerGrpcProxyChannelClient struct {
 	grpc.ClientStream
 }
 
-func (x *managerProxyChannelClient) Send(m *ProxyChannelRequest) error {
+func (x *managerGrpcProxyChannelClient) Send(m *ToGrpcProxy) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *managerProxyChannelClient) Recv() (*ProxyChannelResponse, error) {
-	m := new(ProxyChannelResponse)
+func (x *managerGrpcProxyChannelClient) Recv() (*FromGrpcProxy, error) {
+	m := new(FromGrpcProxy)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *managerClient) Proxy(ctx context.Context, in *ProxyRequest, opts ...grpc.CallOption) (*ProxyResponse, error) {
-	out := new(ProxyResponse)
-	err := c.cc.Invoke(ctx, "/cloudproxy.v1.Manager/Proxy", in, out, opts...)
+func (c *managerClient) GrpcProxy(ctx context.Context, in *GrpcProxyRequest, opts ...grpc.CallOption) (*GrpcProxyResponse, error) {
+	out := new(GrpcProxyResponse)
+	err := c.cc.Invoke(ctx, "/cloudproxy.v1.Manager/GrpcProxy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +91,8 @@ func (c *managerClient) Proxy(ctx context.Context, in *ProxyRequest, opts ...grp
 // for forward compatibility
 type ManagerServer interface {
 	Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error)
-	ProxyChannel(Manager_ProxyChannelServer) error
-	Proxy(context.Context, *ProxyRequest) (*ProxyResponse, error)
+	GrpcProxyChannel(Manager_GrpcProxyChannelServer) error
+	GrpcProxy(context.Context, *GrpcProxyRequest) (*GrpcProxyResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -103,11 +103,11 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) Version(context.Context, *emptypb.Empty) (*web3eye.VersionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
-func (UnimplementedManagerServer) ProxyChannel(Manager_ProxyChannelServer) error {
-	return status.Errorf(codes.Unimplemented, "method ProxyChannel not implemented")
+func (UnimplementedManagerServer) GrpcProxyChannel(Manager_GrpcProxyChannelServer) error {
+	return status.Errorf(codes.Unimplemented, "method GrpcProxyChannel not implemented")
 }
-func (UnimplementedManagerServer) Proxy(context.Context, *ProxyRequest) (*ProxyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Proxy not implemented")
+func (UnimplementedManagerServer) GrpcProxy(context.Context, *GrpcProxyRequest) (*GrpcProxyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrpcProxy not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -140,46 +140,46 @@ func _Manager_Version_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_ProxyChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(ManagerServer).ProxyChannel(&managerProxyChannelServer{stream})
+func _Manager_GrpcProxyChannel_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ManagerServer).GrpcProxyChannel(&managerGrpcProxyChannelServer{stream})
 }
 
-type Manager_ProxyChannelServer interface {
-	Send(*ProxyChannelResponse) error
-	Recv() (*ProxyChannelRequest, error)
+type Manager_GrpcProxyChannelServer interface {
+	Send(*FromGrpcProxy) error
+	Recv() (*ToGrpcProxy, error)
 	grpc.ServerStream
 }
 
-type managerProxyChannelServer struct {
+type managerGrpcProxyChannelServer struct {
 	grpc.ServerStream
 }
 
-func (x *managerProxyChannelServer) Send(m *ProxyChannelResponse) error {
+func (x *managerGrpcProxyChannelServer) Send(m *FromGrpcProxy) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *managerProxyChannelServer) Recv() (*ProxyChannelRequest, error) {
-	m := new(ProxyChannelRequest)
+func (x *managerGrpcProxyChannelServer) Recv() (*ToGrpcProxy, error) {
+	m := new(ToGrpcProxy)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func _Manager_Proxy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProxyRequest)
+func _Manager_GrpcProxy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrpcProxyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagerServer).Proxy(ctx, in)
+		return srv.(ManagerServer).GrpcProxy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cloudproxy.v1.Manager/Proxy",
+		FullMethod: "/cloudproxy.v1.Manager/GrpcProxy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).Proxy(ctx, req.(*ProxyRequest))
+		return srv.(ManagerServer).GrpcProxy(ctx, req.(*GrpcProxyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -196,14 +196,14 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_Version_Handler,
 		},
 		{
-			MethodName: "Proxy",
-			Handler:    _Manager_Proxy_Handler,
+			MethodName: "GrpcProxy",
+			Handler:    _Manager_GrpcProxy_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "ProxyChannel",
-			Handler:       _Manager_ProxyChannel_Handler,
+			StreamName:    "GrpcProxyChannel",
+			Handler:       _Manager_GrpcProxyChannel_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

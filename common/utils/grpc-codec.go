@@ -2,7 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"reflect"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type RawCodec struct{}
@@ -21,3 +25,13 @@ func (cb RawCodec) Unmarshal(data []byte, v interface{}) error {
 }
 
 func (cb RawCodec) Name() string { return "dtm_raw" }
+
+func CheckCode(err error) bool {
+	if err == io.EOF ||
+		status.Code(err) == codes.Unavailable ||
+		status.Code(err) == codes.Canceled ||
+		status.Code(err) == codes.Unimplemented {
+		return true
+	}
+	return false
+}

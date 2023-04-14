@@ -78,25 +78,31 @@
         }
       }
     },
-    "v1ProxyChannelResponse": {
+    "v1FromGrpcProxy": {
       "type": "object",
       "properties": {
         "MsgID": {
           "type": "string"
         },
-        "Msg": {
+        "Method": {
+          "type": "string"
+        },
+        "ReqRaw": {
           "type": "string",
           "format": "byte"
         }
       }
     },
-    "v1ProxyResponse": {
+    "v1GrpcProxyResponse": {
       "type": "object",
       "properties": {
         "MsgID": {
           "type": "string"
         },
-        "Msg": {
+        "Method": {
+          "type": "string"
+        },
+        "RespRaw": {
           "type": "string",
           "format": "byte"
         }

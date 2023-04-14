@@ -15,27 +15,31 @@ service Manager {
       body : "*"
     };
   }
-  rpc ProxyChannel(stream ProxyChannelRequest) returns (stream ProxyChannelResponse){}
-  rpc Proxy( ProxyRequest) returns ( ProxyResponse){}
+  rpc GrpcProxyChannel(stream ToGrpcProxy) returns (stream FromGrpcProxy){}
+  rpc GrpcProxy( GrpcProxyRequest) returns ( GrpcProxyResponse){}
 }
 
 
-message ProxyChannelRequest{
+message ToGrpcProxy{
   string MsgID = 100;
-  bytes Msg = 110;
+  string Method = 110;
+  bytes RespRaw = 120;
 }
 
-message ProxyChannelResponse{
+message FromGrpcProxy{
   string MsgID = 100;
-  bytes Msg = 110;
+  string Method = 110;
+  bytes ReqRaw = 120;
 }
 
-message ProxyRequest{
+message GrpcProxyRequest{
   string MsgID = 100;
-  bytes Msg = 110;
+  string Method = 110;
+  bytes ReqRaw = 120;
 }
 
-message ProxyResponse{
+message GrpcProxyResponse{
   string MsgID = 100;
-  bytes Msg = 110;
+  string Method = 110;
+  bytes RespRaw = 120;
 }
