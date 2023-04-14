@@ -8,7 +8,7 @@
 
 相比直接使用client调用server，中间加了cloud-proxy和gateway，效率会降低但是带来的是AWS和IDC中服务之间的无缝衔接。
 
-![grpc-stream-proxy](https://github.com/web3eye-io/Web3Eye/tree/master/doc/picture/grpc-stream-proxy.png)
+![架构](../picture/grpc-stream-proxy.png)
 
 在client调用server时和原来的方式基本一致，只需要在调用server接口之前指定使用Proxy提供的连接方法即可。
 
@@ -34,3 +34,4 @@ grpc的底层其实是HTTP/2协议，所以发送请求就是将方法和数据�
 - 重写Client用到的Invoke，当Client调用接口时可以获取Server地址、方法名、编码好的请求体，将以上信息转发到proxy，proxy处理好后再返回，解码好后返回结果。
 - proxy到gateway之间的流管理，建立grpc-stream池，当AWS中有请求过来时选择其中一条stream发送请求。
 - gateway使用自定义的codec，保证发送请求和接收请求都不做解析，将解析交给client调用的接口。这一步是做grpc代理的关键，grpc库自己就支持自定义的codec让编解码和发送请求分离。
+  
