@@ -8,7 +8,7 @@
 
 相比直接使用client调用server，中间加了cloud-proxy和gateway，效率会降低但是带来的是AWS和IDC中服务之间的无缝衔接。
 
-![架构](doc/picture/grpc-stream-proxy.png)
+![grpc-stream-proxy](https://github.com/web3eye-io/Web3Eye/tree/master/doc/picture/grpc-stream-proxy.png)
 
 在client调用server时和原来的方式基本一致，只需要在调用server接口之前指定使用Proxy提供的连接方法即可。
 
