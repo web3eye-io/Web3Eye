@@ -84,10 +84,21 @@
         "MsgID": {
           "type": "string"
         },
+        "Info": {
+          "$ref": "#/definitions/v1GrpcInfo"
+        }
+      }
+    },
+    "v1GrpcInfo": {
+      "type": "object",
+      "properties": {
+        "TargetServer": {
+          "type": "string"
+        },
         "Method": {
           "type": "string"
         },
-        "ReqRaw": {
+        "RawData": {
           "type": "string",
           "format": "byte"
         }
@@ -99,12 +110,8 @@
         "MsgID": {
           "type": "string"
         },
-        "Method": {
-          "type": "string"
-        },
-        "RespRaw": {
-          "type": "string",
-          "format": "byte"
+        "Info": {
+          "$ref": "#/definitions/v1GrpcInfo"
         }
       }
     },

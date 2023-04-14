@@ -21,7 +21,7 @@ var timeout = 10 * time.Second
 type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
 
 type CloudProxyCC struct {
-	Target string
+	TargetServer string
 }
 
 func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply interface{}, opts ...grpc.CallOption) error {
@@ -31,7 +31,16 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 	}
 
 	msgID := uuid.NewString()
-	proxyResp, err := GrpcProxy(ctx, &npool.GrpcProxyRequest{MsgID: msgID, Method: method, ReqRaw: reqRaw})
+	proxyResp, err := GrpcProxy(ctx,
+		&npool.GrpcProxyRequest{
+			MsgID: msgID,
+			Info: &npool.GrpcInfo{
+				TargetServer: p.TargetServer,
+				Method:       method,
+				RawData:      reqRaw,
+			},
+		})
+
 	if err != nil {
 		return err
 	}
@@ -40,7 +49,7 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 		return fmt.Errorf("msg_id wrong, expect %v but get %v", msgID, proxyResp.MsgID)
 	}
 
-	return proto.Unmarshal(proxyResp.RespRaw, reply.(proto.Message))
+	return proto.Unmarshal(proxyResp.Info.RawData, reply.(proto.Message))
 }
 
 func (p *CloudProxyCC) NewStream(ctx context.Context, desc *grpc.StreamDesc, method string, opts ...grpc.CallOption) (grpc.ClientStream, error) {

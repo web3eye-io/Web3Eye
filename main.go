@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/common/utils"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/cloudproxy/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	v1 "github.com/web3eye-io/Web3Eye/cloud-proxy/pkg/client/v1"
 )
@@ -15,8 +18,7 @@ import (
 // "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 
 func main() {
-	// contract.SetClientConnInterface(&contract.Po{})
-	// fmt.Println(contract.GetContracts(context.TODO(), nil, 0, 10))
+
 	go func() {
 		cli, err := v1.GrpcProxyChannel(context.TODO())
 		if err != nil {
@@ -27,23 +29,27 @@ func main() {
 			req, err := cli.Recv()
 			fmt.Println(req, err)
 
-			// cc, err := grpc.Dial(
-			// 	"nft-meta:30101",
-			// 	grpc.WithTransportCredentials(
-			// 		insecure.NewCredentials(),
-			// 	),
-			// 	grpc.WithDefaultCallOptions(
-			// 		grpc.ForceCodec(utils.RawCodec{}),
-			// 	),
-			// )
-			// cc.Invoke(context.Background())
+			cc, err := grpc.Dial(
+				req.Info.TargetServer,
+				grpc.WithTransportCredentials(
+					insecure.NewCredentials(),
+				),
+				grpc.WithDefaultCallOptions(
+					grpc.ForceCodec(utils.RawCodec{}),
+				),
+			)
+			reply := &[]byte{}
+			cc.Invoke(context.Background(), req.Info.Method, req.Info.RawData, reply)
 
-			cli.Send(&npool.ToGrpcProxy{MsgID: req.MsgID, Method: "ssss", RespRaw: []byte(uuid.NewString())})
+			cli.Send(&npool.ToGrpcProxy{MsgID: req.MsgID, Info: &npool.GrpcInfo{
+				TargetServer: req.Info.TargetServer,
+				Method:       req.Info.Method,
+				RawData:      *reply,
+			}})
 		}
 	}()
 	time.Sleep(time.Second)
-
-	fmt.Println(v1.GrpcProxy(context.Background(), &npool.GrpcProxyRequest{MsgID: "123"}))
-	fmt.Println(v1.GrpcProxy(context.Background(), &npool.GrpcProxyRequest{MsgID: "345"}))
+	contract.UseCloudProxyCC()
+	fmt.Println(contract.GetContracts(context.TODO(), nil, 0, 10))
 	time.Sleep(time.Second * 10000)
 }
