@@ -1,0 +1,7 @@
+---
+config:
+  hostname: "gateway.npool.top"
+  http_port: 30130
+  grpc_port: 30131
+  prometheus_port: 30132
+  logdir: "./"

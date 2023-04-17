@@ -66,8 +66,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	defer cancel()
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			"127.0.0.1",
-			// config.GetConfig().CloudProxy.IP,
+			config.GetConfig().CloudProxy.IP,
 			config.GetConfig().CloudProxy.GrpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -84,8 +83,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			"127.0.0.1",
-			// config.GetConfig().CloudProxy.IP,
+			config.GetConfig().CloudProxy.IP,
 			config.GetConfig().CloudProxy.GrpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

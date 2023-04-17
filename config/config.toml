@@ -18,6 +18,12 @@ http-port=30120
 grpc-port=30121
 log-file="/var/log/cloud-proxy.log"
 
+[gateway]
+ip="gateway"
+http-port=30130
+grpc-port=30131
+log-file="/var/log/gateway.log"
+
 [image-converter]
 address="http://image-converter:8080"
 task-input-topic="image-converter-input"

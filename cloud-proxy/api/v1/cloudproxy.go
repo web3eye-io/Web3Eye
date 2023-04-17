@@ -19,5 +19,5 @@ func (s *Server) GrpcProxy(ctx context.Context, in *npool.GrpcProxyRequest) (*np
 	if err != nil {
 		return nil, err
 	}
-	return &npool.GrpcProxyResponse{MsgID: resp.MsgID, Info: resp.Info}, nil
+	return &npool.GrpcProxyResponse{MsgID: resp.MsgID, Info: resp.Info, ErrMsg: resp.ErrMsg}, nil
 }

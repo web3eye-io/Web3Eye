@@ -13,25 +13,22 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 )
 
-type streamUnit struct {
-	steamServer   npool.Manager_GrpcProxyChannelServer
-	id            string
-	recvConnClose chan struct{}
-	sendConnClose chan struct{}
-	toProxy       chan *npool.ToGrpcProxy
-	fromProxy     chan *npool.FromGrpcProxy
-	streamMGR     *streamMGR
+type streamServer struct {
+	server    npool.Manager_GrpcProxyChannelServer
+	id        string
+	cg        *utils.CloseGroup
+	toProxy   chan *npool.ToGrpcProxy
+	fromProxy chan *npool.FromGrpcProxy
+	streamMGR *streamMGR
 }
 
-func (p *streamUnit) streamUnitSend(wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (p *streamServer) streamServerSend() {
 	go func() {
 		for {
 			info := <-p.fromProxy
-			err := p.steamServer.Send(info)
-			if utils.CheckCode(err) {
-				p.close()
+			err := p.server.Send(info)
+			if utils.CheckStreamErrCode(err) {
+				p.cg.Close()
 				return
 			}
 
@@ -53,18 +50,17 @@ func (p *streamUnit) streamUnitSend(wg *sync.WaitGroup) {
 		}
 	}()
 
-	<-p.sendConnClose
+	// blocking
+	p.cg.Start()
 	logger.Sugar().Warnf("%v: grpc proxy stream send exit", p.id)
 }
 
-func (p *streamUnit) steamUnitRecv(wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (p *streamServer) steamUnitRecv() {
 	go func() {
 		for {
-			psResponse, err := p.steamServer.Recv()
-			if utils.CheckCode(err) {
-				p.close()
+			psResponse, err := p.server.Recv()
+			if utils.CheckStreamErrCode(err) {
+				p.cg.Close()
 				return
 			}
 
@@ -80,33 +76,14 @@ func (p *streamUnit) steamUnitRecv(wg *sync.WaitGroup) {
 		}
 	}()
 
-	<-p.recvConnClose
+	// blocking
+	p.cg.Start()
 	logger.Sugar().Warnf("%v: grpc proxy stream recv exit", p.id)
-}
-
-func (p *streamUnit) close() {
-	// delete streamUnit from streamMGR
-	for i, v := range p.streamMGR.streamArr {
-		if v == p.id {
-			p.streamMGR.streamArr = append(p.streamMGR.streamArr[:i], p.streamMGR.streamArr[i+1:]...)
-			break
-		}
-	}
-
-	if _, ok := p.streamMGR.proxyTaskMap[p.id]; ok {
-		p.streamMGR.lock.Lock()
-		delete(p.streamMGR.proxyTaskMap, p.id)
-		p.streamMGR.lock.Unlock()
-	}
-
-	// close send and recv
-	p.sendConnClose <- struct{}{}
-	p.recvConnClose <- struct{}{}
 }
 
 type streamMGR struct {
 	streamArr    []string
-	streamMap    map[string]*streamUnit
+	streamMap    map[string]*streamServer
 	proxyTaskMap map[string]chan *npool.ToGrpcProxy
 	balancer     int
 	lock         sync.Mutex
@@ -118,7 +95,7 @@ func GetSteamMGR() *streamMGR {
 	if _streamMGR == nil {
 		_streamMGR = &streamMGR{
 			streamArr:    []string{},
-			streamMap:    make(map[string]*streamUnit),
+			streamMap:    make(map[string]*streamServer),
 			proxyTaskMap: make(map[string]chan *npool.ToGrpcProxy),
 			lock:         sync.Mutex{},
 		}
@@ -128,20 +105,17 @@ func GetSteamMGR() *streamMGR {
 
 func (p *streamMGR) AddProxySteam(stream npool.Manager_GrpcProxyChannelServer) {
 	id := uuid.NewString()
-	lp := &streamUnit{
-		steamServer:   stream,
-		id:            id,
-		recvConnClose: make(chan struct{}),
-		sendConnClose: make(chan struct{}),
-		toProxy:       make(chan *npool.ToGrpcProxy),
-		fromProxy:     make(chan *npool.FromGrpcProxy),
-		streamMGR:     p,
+	lp := &streamServer{
+		server:    stream,
+		id:        id,
+		cg:        &utils.CloseGroup{},
+		toProxy:   make(chan *npool.ToGrpcProxy),
+		fromProxy: make(chan *npool.FromGrpcProxy),
+		streamMGR: p,
 	}
 
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-	go lp.streamUnitSend(wg)
-	go lp.steamUnitRecv(wg)
+	go lp.streamServerSend()
+	go lp.steamUnitRecv()
 
 	// add to list
 	p.lock.Lock()
@@ -149,7 +123,7 @@ func (p *streamMGR) AddProxySteam(stream npool.Manager_GrpcProxyChannelServer) {
 	p.streamArr = append(p.streamArr, id)
 	p.lock.Unlock()
 
-	wg.Wait()
+	lp.cg.Wait()
 	logger.Sugar().Infof("some grpc proxy stream (%v) client down, close it", lp.id)
 }
 
@@ -178,7 +152,7 @@ func (p *streamMGR) recvProxyResp(psResponse *npool.ToGrpcProxy) {
 }
 
 func (p *streamMGR) InvokeMSG(ctx context.Context, req *npool.FromGrpcProxy) (*npool.ToGrpcProxy, error) {
-	var streamUnit *streamUnit
+	var streamServer *streamServer
 	for {
 		if len(p.streamArr) == 0 {
 			return nil, errors.New("have no stream connnected")
@@ -186,17 +160,17 @@ func (p *streamMGR) InvokeMSG(ctx context.Context, req *npool.FromGrpcProxy) (*n
 		p.balancer %= len(p.streamArr)
 
 		if id := p.streamArr[p.balancer]; len(id) > 0 {
-			streamUnit = p.streamMap[id]
+			streamServer = p.streamMap[id]
 		}
 
 		p.balancer++
 
-		if streamUnit != nil {
+		if streamServer != nil {
 			break
 		}
 	}
 
-	if streamUnit == nil {
+	if streamServer == nil {
 		return nil, errors.New("have no stream connected")
 	}
 
@@ -212,7 +186,7 @@ func (p *streamMGR) InvokeMSG(ctx context.Context, req *npool.FromGrpcProxy) (*n
 
 	// send req to stream send
 	go func() {
-		streamUnit.fromProxy <- req
+		streamServer.fromProxy <- req
 	}()
 
 	// wait response

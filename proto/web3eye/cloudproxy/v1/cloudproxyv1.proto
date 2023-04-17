@@ -20,27 +20,29 @@ service Manager {
 }
 
 message GrpcInfo{
-  string TargetServer=110;
-  string Method = 120;
-  bytes RawData = 130;
+  string TargetServer=100;
+  string Method = 110;
+  bytes RawData = 120;
 }
 
 message ToGrpcProxy{
   string MsgID = 100;
-  GrpcInfo Info=120;
+  GrpcInfo Info = 110;
+  string ErrMsg = 120;
 }
 
 message FromGrpcProxy{
   string MsgID = 100;
-  GrpcInfo Info=120;
+  GrpcInfo Info = 110;
 }
 
 message GrpcProxyRequest{
   string MsgID = 100;
-  GrpcInfo Info=120;
+  GrpcInfo Info = 110;
 }
 
 message GrpcProxyResponse{
   string MsgID = 100;
-  GrpcInfo Info=120;
+  GrpcInfo Info = 110;
+  string ErrMsg = 120;
 }

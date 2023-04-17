@@ -112,6 +112,9 @@
         },
         "Info": {
           "$ref": "#/definitions/v1GrpcInfo"
+        },
+        "ErrMsg": {
+          "type": "string"
         }
       }
     },

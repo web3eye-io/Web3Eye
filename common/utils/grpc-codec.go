@@ -26,7 +26,8 @@ func (cb RawCodec) Unmarshal(data []byte, v interface{}) error {
 
 func (cb RawCodec) Name() string { return "dtm_raw" }
 
-func CheckCode(err error) bool {
+// check the connection of grpc stream err
+func CheckStreamErrCode(err error) bool {
 	if err == io.EOF ||
 		status.Code(err) == codes.Unavailable ||
 		status.Code(err) == codes.Canceled ||
