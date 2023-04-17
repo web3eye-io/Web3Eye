@@ -49,6 +49,10 @@ func (p *CloudProxyCC) Invoke(ctx context.Context, method string, args, reply in
 		return fmt.Errorf("msg_id wrong, expect %v but get %v", msgID, proxyResp.MsgID)
 	}
 
+	if proxyResp.ErrMsg != "" {
+		return errors.New(proxyResp.ErrMsg)
+	}
+
 	return proto.Unmarshal(proxyResp.Info.RawData, reply.(proto.Message))
 }
 
