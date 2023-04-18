@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package ranker.v1.token;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {}
+  rpc GetTokenOnly(GetTokenOnlyRequest) returns (GetTokenOnlyResponse) {}
+  rpc GetTokens(GetTokensRequest) returns (GetTokensResponse) {}
+  rpc CountTokens(CountTokensRequest) returns (CountTokensResponse) {}
+}
+
+// for show the state that resource_addr is converted to vector
+enum ConvertState {
+  Default = 0;
+  Waiting = 10;
+  Processing = 20;
+  Pause = 30;
+  Success = 40;
+  Failed = 50;
+}
+
+message TokenReq {
+  optional string ID = 10;
+  optional string ChainType = 20;
+  optional int32 ChainID = 30;
+  optional string Contract = 40;
+  optional string TokenType = 50;
+  optional string TokenID = 60;
+  optional string Owner = 70;
+  optional string URI = 80;
+  optional string URIType = 90;
+  optional string ImageURL = 100;
+  optional string VideoURL = 110;
+  optional string Name = 120;
+  optional string Description = 130;
+  optional ConvertState VectorState = 140;
+  optional int64 VectorID = 150;
+  optional string Remark = 160;
+}
+
+message Token {
+  string ID = 10;
+  string ChainType = 20;
+  int32 ChainID = 30;
+  string Contract = 40;
+  string TokenType = 50;
+  string TokenID = 60;
+  string Owner = 70;
+  string URI = 80;
+  string URIType = 90;
+  string ImageURL = 100;
+  string VideoURL = 110;
+  string Description = 120;
+  string Name = 130;
+  ConvertState VectorState = 140;
+  int64 VectorID = 150;
+  string Remark = 160;
+}
+
+message Conds {
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal Contract = 40;
+  web3eye.StringVal TokenType = 50;
+  web3eye.StringVal TokenID = 60;
+  web3eye.StringVal Owner = 70;
+  web3eye.StringVal URI = 80;
+  web3eye.StringVal URIType = 90;
+  web3eye.StringVal ImageURL = 100;
+  web3eye.StringVal VideoURL = 110;
+  web3eye.StringVal Description = 120;
+  web3eye.StringVal Name = 130;
+  web3eye.StringVal VectorState = 140;
+  web3eye.Int64Val VectorID = 150;
+  web3eye.StringVal Remark = 160;
+  web3eye.StringSliceVal IDs = 170;
+  web3eye.Int64SliceVal VectorIDs = 180;
+}
+
+
+message GetTokenRequest { string ID = 10; }
+
+message GetTokenResponse { Token Info = 10; }
+
+message GetTokensRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetTokensResponse {
+  repeated Token Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetTokenOnlyRequest { Conds Conds = 10; }
+
+message GetTokenOnlyResponse { Token Info = 10; }
+
+message CountTokensRequest { Conds Conds = 10; }
+
+message CountTokensResponse { uint32 Info = 10; }

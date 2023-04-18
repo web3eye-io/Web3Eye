@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package ranker.v1.transfer;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc GetTransfer(GetTransferRequest) returns (GetTransferResponse) {}
+  rpc GetTransferOnly(GetTransferOnlyRequest)
+      returns (GetTransferOnlyResponse) {}
+  rpc GetTransfers(GetTransfersRequest) returns (GetTransfersResponse) {}
+  rpc CountTransfers(CountTransfersRequest) returns (CountTransfersResponse) {}
+}
+
+message TransferReq {
+  optional string ID = 10;
+  optional string ChainType = 20;
+  optional int32 ChainID = 30;
+  optional string Contract = 40;
+  optional string TokenType = 50;
+  optional string TokenID = 60;
+  optional string From = 70;
+  optional string To = 80;
+  optional uint64 Amount = 90;
+  optional uint64 BlockNumber = 100;
+  optional string TxHash = 110;
+  optional string BlockHash = 120;
+  optional uint32 TxTime = 130;
+  optional string Remark = 140;
+}
+
+message Transfer {
+  string ID = 10;
+  string ChainType = 20;
+  int32 ChainID = 30;
+  string Contract = 40;
+  string TokenType = 50;
+  string TokenID = 60;
+  string From = 70;
+  string To = 80;
+  uint64 Amount = 90;
+  uint64 BlockNumber = 100;
+  string TxHash = 110;
+  string BlockHash = 120;
+  uint32 TxTime = 130;
+  string Remark = 140;
+}
+
+message Conds {
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal Contract = 40;
+  web3eye.StringVal TokenType = 50;
+  web3eye.StringVal TokenID = 60;
+  web3eye.StringVal From = 70;
+  web3eye.StringVal To = 80;
+  web3eye.Uint64Val Amount = 90;
+  web3eye.Uint64Val BlockNumber = 100;
+  web3eye.StringVal TxHash = 110;
+  web3eye.StringVal BlockHash = 120;
+  web3eye.Uint32Val TxTime = 130;
+  web3eye.StringVal Remark = 140;
+  web3eye.StringSliceVal IDs = 150;
+}
+
+message GetTransferRequest { string ID = 10; }
+
+message GetTransferResponse { Transfer Info = 10; }
+
+message GetTransfersRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetTransfersResponse {
+  repeated Transfer Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetTransferOnlyRequest { Conds Conds = 10; }
+
+message GetTransferOnlyResponse { Transfer Info = 10; }
+
+message CountTransfersRequest { Conds Conds = 10; }
+
+message CountTransfersResponse { uint32 Info = 10; }

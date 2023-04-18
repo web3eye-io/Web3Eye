@@ -19,6 +19,7 @@ type Config struct {
 	BlockETL       BlockETL       `toml:"block-etl" env:"block_etl"`
 	CloudProxy     CloudProxy     `toml:"cloud-proxy" env:"cloud_proxy"`
 	Gateway        Gateway        `toml:"gateway" env:"gateway"`
+	Ranker         Ranker         `toml:"ranker" env:"ranker"`
 	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
 	ETH            ETH            `toml:"eth" env:"eth"`
 	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
@@ -56,6 +57,12 @@ type Gateway struct {
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
+type Ranker struct {
+	IP       string `toml:"ip" env:"ip"`
+	HTTPPort int    `toml:"http-port" env:"http_port"`
+	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile  string `toml:"log-file" env:"log_file"`
+}
 type IamgeConverter struct {
 	Address         string `toml:"address" env:"address"`
 	TaskInputTopic  string `toml:"task-input-topic" env:"task_input_topic"`

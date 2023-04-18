@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ranker.v1;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc Version(google.protobuf.Empty) returns (web3eye.VersionResponse) {
+    option (google.api.http) = {
+      post : "/v1/version"
+      body : "*"
+    };
+  }
+}

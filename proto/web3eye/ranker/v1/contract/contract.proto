@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package nftmeta.v1.contract;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc GetContract(GetContractRequest) returns (GetContractResponse) {}
+  rpc GetContractOnly(GetContractOnlyRequest)
+      returns (GetContractOnlyResponse) {}
+  rpc GetContracts(GetContractsRequest) returns (GetContractsResponse) {}
+  rpc CountContracts(CountContractsRequest) returns (CountContractsResponse) {}
+}
+
+message ContractReq {
+  optional string ID = 10;
+  optional string ChainType = 20;
+  optional int32 ChainID = 30;
+  optional string Address = 40;
+  optional string Name = 50;
+  optional string Symbol = 60;
+  optional string Creator = 70;
+  optional uint64 BlockNum = 80;
+  optional string TxHash = 90;
+  optional uint32 TxTime = 100;
+  optional string ProfileURL = 110;
+  optional string BaseURL = 120;
+  optional string BannerURL = 130;
+  optional string Description = 140;
+  optional string Remark = 150;
+}
+
+message Contract {
+  string ID = 10;
+  string ChainType = 20;
+  int32 ChainID = 30;
+  string Address = 40;
+  string Name = 50;
+  string Symbol = 60;
+  string Creator = 70;
+  uint64 BlockNum = 80;
+  string TxHash = 90;
+  uint32 TxTime = 100;
+  string ProfileURL = 110;
+  string BaseURL = 120;
+  string BannerURL = 130;
+  string Description = 140;
+  string Remark = 150;
+}
+
+message Conds {
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal Address = 40;
+  web3eye.StringVal Name = 50;
+  web3eye.StringVal Symbol = 60;
+  web3eye.StringVal Creator = 70;
+  web3eye.Uint64Val BlockNum = 80;
+  web3eye.StringVal TxHash = 90;
+  web3eye.Uint32Val TxTime = 100;
+  web3eye.StringVal ProfileURL = 110;
+  web3eye.StringVal BaseURL = 120;
+  web3eye.StringVal BannerURL = 130;
+  web3eye.StringVal Description = 140;
+  web3eye.StringVal Remark = 150;
+  web3eye.StringSliceVal IDs = 160;
+}
+
+message GetContractRequest { string ID = 10; }
+
+message GetContractResponse { Contract Info = 10; }
+
+message GetContractsRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetContractsResponse {
+  repeated Contract Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetContractOnlyRequest { Conds Conds = 10; }
+
+message GetContractOnlyResponse { Contract Info = 10; }
+
+message CountContractsRequest { Conds Conds = 10; }
+
+message CountContractsResponse { uint32 Info = 10; }

@@ -13,7 +13,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
-	"github.com/web3eye-io/Web3Eye/cloud-proxy/pkg/servermux"
+	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"

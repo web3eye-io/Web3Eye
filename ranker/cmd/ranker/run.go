@@ -16,11 +16,11 @@ import (
 	cli "github.com/urfave/cli/v2"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	api_v1 "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
+	api_v1 "github.com/web3eye-io/Web3Eye/ranker/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
