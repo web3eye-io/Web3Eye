@@ -19,48 +19,73 @@ const (
 )
 
 type StreamClient struct {
-	client  npool.Manager_GrpcProxyChannelClient
-	toProxy chan *npool.ToGrpcProxy
-	cg      *utils.CloseGroup
-	id      string
+	client    npool.Manager_GrpcProxyChannelClient
+	toProxy   chan *npool.ToGrpcProxy
+	closeChan chan struct{}
+	id        string
 }
 
-func (sc *StreamClient) Start(ctx context.Context) {
+func (sc *StreamClient) Start(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	if sc.id == "" {
 		sc.id = uuid.NewString()
 	}
-	for {
-		sc.toProxy = make(chan *npool.ToGrpcProxy)
-		sc.cg = &utils.CloseGroup{}
 
-		client, err := v1.GrpcProxyChannel(context.Background())
-		if err == nil {
-			sc.client = client
-			go sc.recv()
-			go sc.send()
-			logger.Sugar().Infof("client %v successfully connected to proxy", sc.id)
-			sc.cg.Wait()
+	sc.closeChan = make(chan struct{})
+	go func() {
+		for {
+			sc.toProxy = make(chan *npool.ToGrpcProxy)
+
+			ctx, cancel := context.WithCancel(ctx)
+
+			client, err := v1.GrpcProxyChannel(context.Background())
+
+			if err == nil {
+				sc.client = client
+				go sc.recv(ctx, cancel)
+				go sc.send(ctx, cancel)
+				logger.Sugar().Infof("client %v successfully connected to proxy", sc.id)
+				<-ctx.Done()
+			}
+			logger.Sugar().Errorf("client %v failed to connect to proxy, will retry", sc.id)
+			time.Sleep(retryInterval)
 		}
-		logger.Sugar().Errorf("client %v failed to connect to proxy, will retry", sc.id)
-		time.Sleep(retryInterval)
+	}()
+
+	select {
+	case <-sc.closeChan:
+		if sc.client != nil {
+			sc.client.CloseSend()
+		}
+	case <-ctx.Done():
+		if sc.client != nil {
+			sc.client.CloseSend()
+		}
+		time.Sleep(time.Second * 5)
 	}
+
 }
 
 func (sc *StreamClient) Close() {
-	sc.cg.Close()
+	if sc.closeChan != nil {
+		sc.closeChan <- struct{}{}
+	}
 }
 
-func (sc *StreamClient) recv() {
+func (sc *StreamClient) recv(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	go func() {
 		for {
 			req, err := sc.client.Recv()
 			if utils.CheckStreamErrCode(err) {
-				sc.cg.Close()
+				cancel()
 				return
 			}
 			if err != nil {
 				continue
 			}
+			logger.Sugar().Infof("client %v stream revc msg %v", sc.id, req.MsgID)
+
 			go func(req *npool.FromGrpcProxy) {
 				var respInfo *npool.GrpcInfo = nil
 				var errMsg string = ""
@@ -90,25 +115,27 @@ func (sc *StreamClient) recv() {
 		}
 	}()
 
-	sc.cg.Start()
+	<-ctx.Done()
 	logger.Sugar().Infof("client %v stream revc exit", sc.id)
 }
 
-func (sc *StreamClient) send() {
+func (sc *StreamClient) send(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	go func() {
 		for {
 			toProxy := <-sc.toProxy
 			err := sc.client.Send(toProxy)
 			if utils.CheckStreamErrCode(err) {
-				sc.cg.Close()
+				cancel()
 				return
 			}
 			if err != nil {
 				continue
 			}
+			logger.Sugar().Infof("client %v stream send msg %v", sc.id, toProxy.MsgID)
 		}
 	}()
 
-	sc.cg.Start()
+	<-ctx.Done()
 	logger.Sugar().Infof("client %v stream send exit", sc.id)
 }

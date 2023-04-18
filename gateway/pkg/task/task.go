@@ -10,10 +10,11 @@ const (
 	StreamNum = 2
 )
 
-func Run(ctx context.Context) {
+func Run(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	for i := 0; i < StreamNum; i++ {
 		sc := &streammgr.StreamClient{}
-		go sc.Start(context.Background())
+		go sc.Start(ctx, cancel)
 	}
 	<-ctx.Done()
 }

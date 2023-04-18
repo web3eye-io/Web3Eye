@@ -16,19 +16,20 @@ import (
 type streamServer struct {
 	server    npool.Manager_GrpcProxyChannelServer
 	id        string
-	cg        *utils.CloseGroup
+	closeChan chan struct{}
 	toProxy   chan *npool.ToGrpcProxy
 	fromProxy chan *npool.FromGrpcProxy
 	streamMGR *streamMGR
 }
 
-func (p *streamServer) streamServerSend() {
+func (p *streamServer) streamServerSend(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	go func() {
 		for {
 			info := <-p.fromProxy
 			err := p.server.Send(info)
 			if utils.CheckStreamErrCode(err) {
-				p.cg.Close()
+				cancel()
 				return
 			}
 
@@ -51,16 +52,17 @@ func (p *streamServer) streamServerSend() {
 	}()
 
 	// blocking
-	p.cg.Start()
+	<-ctx.Done()
 	logger.Sugar().Warnf("%v: grpc proxy stream send exit", p.id)
 }
 
-func (p *streamServer) steamUnitRecv() {
+func (p *streamServer) steamUnitRecv(ctx context.Context, cancel context.CancelFunc) {
+	defer cancel()
 	go func() {
 		for {
 			psResponse, err := p.server.Recv()
 			if utils.CheckStreamErrCode(err) {
-				p.cg.Close()
+				cancel()
 				return
 			}
 
@@ -77,7 +79,7 @@ func (p *streamServer) steamUnitRecv() {
 	}()
 
 	// blocking
-	p.cg.Start()
+	<-ctx.Done()
 	logger.Sugar().Warnf("%v: grpc proxy stream recv exit", p.id)
 }
 
@@ -104,18 +106,20 @@ func GetSteamMGR() *streamMGR {
 }
 
 func (p *streamMGR) AddProxySteam(stream npool.Manager_GrpcProxyChannelServer) {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	id := uuid.NewString()
 	lp := &streamServer{
 		server:    stream,
 		id:        id,
-		cg:        &utils.CloseGroup{},
+		closeChan: make(chan struct{}),
 		toProxy:   make(chan *npool.ToGrpcProxy),
 		fromProxy: make(chan *npool.FromGrpcProxy),
 		streamMGR: p,
 	}
 
-	go lp.streamServerSend()
-	go lp.steamUnitRecv()
+	go lp.streamServerSend(ctx, cancel)
+	go lp.steamUnitRecv(ctx, cancel)
 
 	// add to list
 	p.lock.Lock()
@@ -123,7 +127,18 @@ func (p *streamMGR) AddProxySteam(stream npool.Manager_GrpcProxyChannelServer) {
 	p.streamArr = append(p.streamArr, id)
 	p.lock.Unlock()
 
-	lp.cg.Wait()
+	logger.Sugar().Infof(" grpc proxy stream (%v) client connect successfully", lp.id)
+	<-ctx.Done()
+
+	// add to list
+	p.lock.Lock()
+	for i := 0; i < len(p.streamArr); i++ {
+		if p.streamArr[i] == id {
+			p.streamArr = append(p.streamArr[:i], p.streamArr[i+1:]...)
+		}
+	}
+	p.lock.Unlock()
+
 	logger.Sugar().Infof("some grpc proxy stream (%v) client down, close it", lp.id)
 }
 
