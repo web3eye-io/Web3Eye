@@ -28,8 +28,8 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	if cc == nil {
 		conn, err := grpc.Dial(
 			fmt.Sprintf("%v:%v",
-				config.GetConfig().NFTMeta.IP,
-				config.GetConfig().NFTMeta.GrpcPort),
+				config.GetConfig().Ranker.IP,
+				config.GetConfig().Ranker.GrpcPort),
 			grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return nil, err

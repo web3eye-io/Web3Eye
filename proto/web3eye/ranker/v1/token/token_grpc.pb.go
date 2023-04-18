@@ -8,6 +8,7 @@ package token
 
 import (
 	context "context"
+	token "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,10 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	GetToken(ctx context.Context, in *GetTokenRequest, opts ...grpc.CallOption) (*GetTokenResponse, error)
-	GetTokenOnly(ctx context.Context, in *GetTokenOnlyRequest, opts ...grpc.CallOption) (*GetTokenOnlyResponse, error)
-	GetTokens(ctx context.Context, in *GetTokensRequest, opts ...grpc.CallOption) (*GetTokensResponse, error)
-	CountTokens(ctx context.Context, in *CountTokensRequest, opts ...grpc.CallOption) (*CountTokensResponse, error)
+	GetToken(ctx context.Context, in *token.GetTokenRequest, opts ...grpc.CallOption) (*token.GetTokenResponse, error)
+	GetTokenOnly(ctx context.Context, in *token.GetTokenOnlyRequest, opts ...grpc.CallOption) (*token.GetTokenOnlyResponse, error)
+	GetTokens(ctx context.Context, in *token.GetTokensRequest, opts ...grpc.CallOption) (*token.GetTokensResponse, error)
+	CountTokens(ctx context.Context, in *token.CountTokensRequest, opts ...grpc.CallOption) (*token.CountTokensResponse, error)
+	Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchTokenResponse, error)
 }
 
 type managerClient struct {
@@ -36,8 +38,8 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) GetToken(ctx context.Context, in *GetTokenRequest, opts ...grpc.CallOption) (*GetTokenResponse, error) {
-	out := new(GetTokenResponse)
+func (c *managerClient) GetToken(ctx context.Context, in *token.GetTokenRequest, opts ...grpc.CallOption) (*token.GetTokenResponse, error) {
+	out := new(token.GetTokenResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/GetToken", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +47,8 @@ func (c *managerClient) GetToken(ctx context.Context, in *GetTokenRequest, opts 
 	return out, nil
 }
 
-func (c *managerClient) GetTokenOnly(ctx context.Context, in *GetTokenOnlyRequest, opts ...grpc.CallOption) (*GetTokenOnlyResponse, error) {
-	out := new(GetTokenOnlyResponse)
+func (c *managerClient) GetTokenOnly(ctx context.Context, in *token.GetTokenOnlyRequest, opts ...grpc.CallOption) (*token.GetTokenOnlyResponse, error) {
+	out := new(token.GetTokenOnlyResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/GetTokenOnly", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,8 +56,8 @@ func (c *managerClient) GetTokenOnly(ctx context.Context, in *GetTokenOnlyReques
 	return out, nil
 }
 
-func (c *managerClient) GetTokens(ctx context.Context, in *GetTokensRequest, opts ...grpc.CallOption) (*GetTokensResponse, error) {
-	out := new(GetTokensResponse)
+func (c *managerClient) GetTokens(ctx context.Context, in *token.GetTokensRequest, opts ...grpc.CallOption) (*token.GetTokensResponse, error) {
+	out := new(token.GetTokensResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/GetTokens", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,9 +65,18 @@ func (c *managerClient) GetTokens(ctx context.Context, in *GetTokensRequest, opt
 	return out, nil
 }
 
-func (c *managerClient) CountTokens(ctx context.Context, in *CountTokensRequest, opts ...grpc.CallOption) (*CountTokensResponse, error) {
-	out := new(CountTokensResponse)
+func (c *managerClient) CountTokens(ctx context.Context, in *token.CountTokensRequest, opts ...grpc.CallOption) (*token.CountTokensResponse, error) {
+	out := new(token.CountTokensResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/CountTokens", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchTokenResponse, error) {
+	out := new(SearchTokenResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/Search", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +87,11 @@ func (c *managerClient) CountTokens(ctx context.Context, in *CountTokensRequest,
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error)
-	GetTokenOnly(context.Context, *GetTokenOnlyRequest) (*GetTokenOnlyResponse, error)
-	GetTokens(context.Context, *GetTokensRequest) (*GetTokensResponse, error)
-	CountTokens(context.Context, *CountTokensRequest) (*CountTokensResponse, error)
+	GetToken(context.Context, *token.GetTokenRequest) (*token.GetTokenResponse, error)
+	GetTokenOnly(context.Context, *token.GetTokenOnlyRequest) (*token.GetTokenOnlyResponse, error)
+	GetTokens(context.Context, *token.GetTokensRequest) (*token.GetTokensResponse, error)
+	CountTokens(context.Context, *token.CountTokensRequest) (*token.CountTokensResponse, error)
+	Search(context.Context, *SearchTokenRequest) (*SearchTokenResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -87,17 +99,20 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error) {
+func (UnimplementedManagerServer) GetToken(context.Context, *token.GetTokenRequest) (*token.GetTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
 }
-func (UnimplementedManagerServer) GetTokenOnly(context.Context, *GetTokenOnlyRequest) (*GetTokenOnlyResponse, error) {
+func (UnimplementedManagerServer) GetTokenOnly(context.Context, *token.GetTokenOnlyRequest) (*token.GetTokenOnlyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTokenOnly not implemented")
 }
-func (UnimplementedManagerServer) GetTokens(context.Context, *GetTokensRequest) (*GetTokensResponse, error) {
+func (UnimplementedManagerServer) GetTokens(context.Context, *token.GetTokensRequest) (*token.GetTokensResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTokens not implemented")
 }
-func (UnimplementedManagerServer) CountTokens(context.Context, *CountTokensRequest) (*CountTokensResponse, error) {
+func (UnimplementedManagerServer) CountTokens(context.Context, *token.CountTokensRequest) (*token.CountTokensResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountTokens not implemented")
+}
+func (UnimplementedManagerServer) Search(context.Context, *SearchTokenRequest) (*SearchTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -113,7 +128,7 @@ func RegisterManagerServer(s grpc.ServiceRegistrar, srv ManagerServer) {
 }
 
 func _Manager_GetToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTokenRequest)
+	in := new(token.GetTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -125,13 +140,13 @@ func _Manager_GetToken_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/ranker.v1.token.Manager/GetToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetToken(ctx, req.(*GetTokenRequest))
+		return srv.(ManagerServer).GetToken(ctx, req.(*token.GetTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetTokenOnly_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTokenOnlyRequest)
+	in := new(token.GetTokenOnlyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -143,13 +158,13 @@ func _Manager_GetTokenOnly_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/ranker.v1.token.Manager/GetTokenOnly",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTokenOnly(ctx, req.(*GetTokenOnlyRequest))
+		return srv.(ManagerServer).GetTokenOnly(ctx, req.(*token.GetTokenOnlyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTokensRequest)
+	in := new(token.GetTokensRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -161,13 +176,13 @@ func _Manager_GetTokens_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/ranker.v1.token.Manager/GetTokens",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTokens(ctx, req.(*GetTokensRequest))
+		return srv.(ManagerServer).GetTokens(ctx, req.(*token.GetTokensRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_CountTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountTokensRequest)
+	in := new(token.CountTokensRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -179,7 +194,25 @@ func _Manager_CountTokens_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/ranker.v1.token.Manager/CountTokens",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTokens(ctx, req.(*CountTokensRequest))
+		return srv.(ManagerServer).CountTokens(ctx, req.(*token.CountTokensRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).Search(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ranker.v1.token.Manager/Search",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).Search(ctx, req.(*SearchTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -206,6 +239,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CountTokens",
 			Handler:    _Manager_CountTokens_Handler,
+		},
+		{
+			MethodName: "Search",
+			Handler:    _Manager_Search_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

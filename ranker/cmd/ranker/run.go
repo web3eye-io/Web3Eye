@@ -38,7 +38,7 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		return logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogFile)
+		return logger.Init(logger.DebugLevel, config.GetConfig().Ranker.LogFile)
 	},
 	Action: func(c *cli.Context) error {
 		err := db.Init()
@@ -50,8 +50,8 @@ var runCmd = &cli.Command{
 		if err != nil {
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
-		go runHTTPServer(config.GetConfig().NFTMeta.HTTPPort, config.GetConfig().NFTMeta.GrpcPort)
-		go runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
+		go runHTTPServer(config.GetConfig().Ranker.HTTPPort, config.GetConfig().Ranker.GrpcPort)
+		go runGRPCServer(config.GetConfig().Ranker.GrpcPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 

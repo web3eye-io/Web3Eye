@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	serviceName = "NFTMeta"
-	usageText   = "NFT Meta Service"
+	serviceName = "Ranker"
+	usageText   = "Ranker Service"
 )
 
 func main() {

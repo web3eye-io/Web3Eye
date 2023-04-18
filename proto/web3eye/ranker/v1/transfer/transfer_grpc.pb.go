@@ -8,6 +8,7 @@ package transfer
 
 import (
 	context "context"
+	transfer "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	GetTransfer(ctx context.Context, in *GetTransferRequest, opts ...grpc.CallOption) (*GetTransferResponse, error)
-	GetTransferOnly(ctx context.Context, in *GetTransferOnlyRequest, opts ...grpc.CallOption) (*GetTransferOnlyResponse, error)
-	GetTransfers(ctx context.Context, in *GetTransfersRequest, opts ...grpc.CallOption) (*GetTransfersResponse, error)
-	CountTransfers(ctx context.Context, in *CountTransfersRequest, opts ...grpc.CallOption) (*CountTransfersResponse, error)
+	GetTransfer(ctx context.Context, in *transfer.GetTransferRequest, opts ...grpc.CallOption) (*transfer.GetTransferResponse, error)
+	GetTransferOnly(ctx context.Context, in *transfer.GetTransferOnlyRequest, opts ...grpc.CallOption) (*transfer.GetTransferOnlyResponse, error)
+	GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error)
+	CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error)
 }
 
 type managerClient struct {
@@ -36,8 +37,8 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) GetTransfer(ctx context.Context, in *GetTransferRequest, opts ...grpc.CallOption) (*GetTransferResponse, error) {
-	out := new(GetTransferResponse)
+func (c *managerClient) GetTransfer(ctx context.Context, in *transfer.GetTransferRequest, opts ...grpc.CallOption) (*transfer.GetTransferResponse, error) {
+	out := new(transfer.GetTransferResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.transfer.Manager/GetTransfer", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +46,8 @@ func (c *managerClient) GetTransfer(ctx context.Context, in *GetTransferRequest,
 	return out, nil
 }
 
-func (c *managerClient) GetTransferOnly(ctx context.Context, in *GetTransferOnlyRequest, opts ...grpc.CallOption) (*GetTransferOnlyResponse, error) {
-	out := new(GetTransferOnlyResponse)
+func (c *managerClient) GetTransferOnly(ctx context.Context, in *transfer.GetTransferOnlyRequest, opts ...grpc.CallOption) (*transfer.GetTransferOnlyResponse, error) {
+	out := new(transfer.GetTransferOnlyResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.transfer.Manager/GetTransferOnly", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,8 +55,8 @@ func (c *managerClient) GetTransferOnly(ctx context.Context, in *GetTransferOnly
 	return out, nil
 }
 
-func (c *managerClient) GetTransfers(ctx context.Context, in *GetTransfersRequest, opts ...grpc.CallOption) (*GetTransfersResponse, error) {
-	out := new(GetTransfersResponse)
+func (c *managerClient) GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error) {
+	out := new(transfer.GetTransfersResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.transfer.Manager/GetTransfers", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +64,8 @@ func (c *managerClient) GetTransfers(ctx context.Context, in *GetTransfersReques
 	return out, nil
 }
 
-func (c *managerClient) CountTransfers(ctx context.Context, in *CountTransfersRequest, opts ...grpc.CallOption) (*CountTransfersResponse, error) {
-	out := new(CountTransfersResponse)
+func (c *managerClient) CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error) {
+	out := new(transfer.CountTransfersResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.transfer.Manager/CountTransfers", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -76,10 +77,10 @@ func (c *managerClient) CountTransfers(ctx context.Context, in *CountTransfersRe
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	GetTransfer(context.Context, *GetTransferRequest) (*GetTransferResponse, error)
-	GetTransferOnly(context.Context, *GetTransferOnlyRequest) (*GetTransferOnlyResponse, error)
-	GetTransfers(context.Context, *GetTransfersRequest) (*GetTransfersResponse, error)
-	CountTransfers(context.Context, *CountTransfersRequest) (*CountTransfersResponse, error)
+	GetTransfer(context.Context, *transfer.GetTransferRequest) (*transfer.GetTransferResponse, error)
+	GetTransferOnly(context.Context, *transfer.GetTransferOnlyRequest) (*transfer.GetTransferOnlyResponse, error)
+	GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error)
+	CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer.CountTransfersResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -87,16 +88,16 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) GetTransfer(context.Context, *GetTransferRequest) (*GetTransferResponse, error) {
+func (UnimplementedManagerServer) GetTransfer(context.Context, *transfer.GetTransferRequest) (*transfer.GetTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransfer not implemented")
 }
-func (UnimplementedManagerServer) GetTransferOnly(context.Context, *GetTransferOnlyRequest) (*GetTransferOnlyResponse, error) {
+func (UnimplementedManagerServer) GetTransferOnly(context.Context, *transfer.GetTransferOnlyRequest) (*transfer.GetTransferOnlyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransferOnly not implemented")
 }
-func (UnimplementedManagerServer) GetTransfers(context.Context, *GetTransfersRequest) (*GetTransfersResponse, error) {
+func (UnimplementedManagerServer) GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransfers not implemented")
 }
-func (UnimplementedManagerServer) CountTransfers(context.Context, *CountTransfersRequest) (*CountTransfersResponse, error) {
+func (UnimplementedManagerServer) CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer.CountTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountTransfers not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
@@ -113,7 +114,7 @@ func RegisterManagerServer(s grpc.ServiceRegistrar, srv ManagerServer) {
 }
 
 func _Manager_GetTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransferRequest)
+	in := new(transfer.GetTransferRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -125,13 +126,13 @@ func _Manager_GetTransfer_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/ranker.v1.transfer.Manager/GetTransfer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTransfer(ctx, req.(*GetTransferRequest))
+		return srv.(ManagerServer).GetTransfer(ctx, req.(*transfer.GetTransferRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetTransferOnly_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransferOnlyRequest)
+	in := new(transfer.GetTransferOnlyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -143,13 +144,13 @@ func _Manager_GetTransferOnly_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/ranker.v1.transfer.Manager/GetTransferOnly",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTransferOnly(ctx, req.(*GetTransferOnlyRequest))
+		return srv.(ManagerServer).GetTransferOnly(ctx, req.(*transfer.GetTransferOnlyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTransfersRequest)
+	in := new(transfer.GetTransfersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -161,13 +162,13 @@ func _Manager_GetTransfers_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/ranker.v1.transfer.Manager/GetTransfers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTransfers(ctx, req.(*GetTransfersRequest))
+		return srv.(ManagerServer).GetTransfers(ctx, req.(*transfer.GetTransfersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountTransfersRequest)
+	in := new(transfer.CountTransfersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -179,7 +180,7 @@ func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/ranker.v1.transfer.Manager/CountTransfers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTransfers(ctx, req.(*CountTransfersRequest))
+		return srv.(ManagerServer).CountTransfers(ctx, req.(*transfer.CountTransfersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

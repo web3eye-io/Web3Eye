@@ -3,11 +3,10 @@ package v1
 import (
 	"context"
 
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/contract"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/token"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/transfer"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1"
+	"github.com/web3eye-io/Web3Eye/ranker/api/v1/contract"
+	"github.com/web3eye-io/Web3Eye/ranker/api/v1/token"
+	"github.com/web3eye-io/Web3Eye/ranker/api/v1/transfer"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -22,7 +21,6 @@ func Register(server grpc.ServiceRegistrar) {
 	token.Register(server)
 	transfer.Register(server)
 	contract.Register(server)
-	synctask.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

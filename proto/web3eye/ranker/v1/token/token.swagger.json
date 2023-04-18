@@ -156,6 +156,33 @@
         }
       }
     },
+    "tokenSearchToken": {
+      "type": "object",
+      "properties": {
+        "Token": {
+          "$ref": "#/definitions/tokenToken"
+        },
+        "Distance": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "tokenSearchTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tokenSearchToken"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "tokenToken": {
       "type": "object",
       "properties": {

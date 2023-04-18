@@ -8,6 +8,7 @@ package contract
 
 import (
 	context "context"
+	contract "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	GetContract(ctx context.Context, in *GetContractRequest, opts ...grpc.CallOption) (*GetContractResponse, error)
-	GetContractOnly(ctx context.Context, in *GetContractOnlyRequest, opts ...grpc.CallOption) (*GetContractOnlyResponse, error)
-	GetContracts(ctx context.Context, in *GetContractsRequest, opts ...grpc.CallOption) (*GetContractsResponse, error)
-	CountContracts(ctx context.Context, in *CountContractsRequest, opts ...grpc.CallOption) (*CountContractsResponse, error)
+	GetContract(ctx context.Context, in *contract.GetContractRequest, opts ...grpc.CallOption) (*contract.GetContractResponse, error)
+	GetContractOnly(ctx context.Context, in *contract.GetContractOnlyRequest, opts ...grpc.CallOption) (*contract.GetContractOnlyResponse, error)
+	GetContracts(ctx context.Context, in *contract.GetContractsRequest, opts ...grpc.CallOption) (*contract.GetContractsResponse, error)
+	CountContracts(ctx context.Context, in *contract.CountContractsRequest, opts ...grpc.CallOption) (*contract.CountContractsResponse, error)
 }
 
 type managerClient struct {
@@ -36,36 +37,36 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) GetContract(ctx context.Context, in *GetContractRequest, opts ...grpc.CallOption) (*GetContractResponse, error) {
-	out := new(GetContractResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/GetContract", in, out, opts...)
+func (c *managerClient) GetContract(ctx context.Context, in *contract.GetContractRequest, opts ...grpc.CallOption) (*contract.GetContractResponse, error) {
+	out := new(contract.GetContractResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.contract.Manager/GetContract", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) GetContractOnly(ctx context.Context, in *GetContractOnlyRequest, opts ...grpc.CallOption) (*GetContractOnlyResponse, error) {
-	out := new(GetContractOnlyResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/GetContractOnly", in, out, opts...)
+func (c *managerClient) GetContractOnly(ctx context.Context, in *contract.GetContractOnlyRequest, opts ...grpc.CallOption) (*contract.GetContractOnlyResponse, error) {
+	out := new(contract.GetContractOnlyResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.contract.Manager/GetContractOnly", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) GetContracts(ctx context.Context, in *GetContractsRequest, opts ...grpc.CallOption) (*GetContractsResponse, error) {
-	out := new(GetContractsResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/GetContracts", in, out, opts...)
+func (c *managerClient) GetContracts(ctx context.Context, in *contract.GetContractsRequest, opts ...grpc.CallOption) (*contract.GetContractsResponse, error) {
+	out := new(contract.GetContractsResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.contract.Manager/GetContracts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) CountContracts(ctx context.Context, in *CountContractsRequest, opts ...grpc.CallOption) (*CountContractsResponse, error) {
-	out := new(CountContractsResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/CountContracts", in, out, opts...)
+func (c *managerClient) CountContracts(ctx context.Context, in *contract.CountContractsRequest, opts ...grpc.CallOption) (*contract.CountContractsResponse, error) {
+	out := new(contract.CountContractsResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.contract.Manager/CountContracts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +77,10 @@ func (c *managerClient) CountContracts(ctx context.Context, in *CountContractsRe
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	GetContract(context.Context, *GetContractRequest) (*GetContractResponse, error)
-	GetContractOnly(context.Context, *GetContractOnlyRequest) (*GetContractOnlyResponse, error)
-	GetContracts(context.Context, *GetContractsRequest) (*GetContractsResponse, error)
-	CountContracts(context.Context, *CountContractsRequest) (*CountContractsResponse, error)
+	GetContract(context.Context, *contract.GetContractRequest) (*contract.GetContractResponse, error)
+	GetContractOnly(context.Context, *contract.GetContractOnlyRequest) (*contract.GetContractOnlyResponse, error)
+	GetContracts(context.Context, *contract.GetContractsRequest) (*contract.GetContractsResponse, error)
+	CountContracts(context.Context, *contract.CountContractsRequest) (*contract.CountContractsResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -87,16 +88,16 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) GetContract(context.Context, *GetContractRequest) (*GetContractResponse, error) {
+func (UnimplementedManagerServer) GetContract(context.Context, *contract.GetContractRequest) (*contract.GetContractResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContract not implemented")
 }
-func (UnimplementedManagerServer) GetContractOnly(context.Context, *GetContractOnlyRequest) (*GetContractOnlyResponse, error) {
+func (UnimplementedManagerServer) GetContractOnly(context.Context, *contract.GetContractOnlyRequest) (*contract.GetContractOnlyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContractOnly not implemented")
 }
-func (UnimplementedManagerServer) GetContracts(context.Context, *GetContractsRequest) (*GetContractsResponse, error) {
+func (UnimplementedManagerServer) GetContracts(context.Context, *contract.GetContractsRequest) (*contract.GetContractsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContracts not implemented")
 }
-func (UnimplementedManagerServer) CountContracts(context.Context, *CountContractsRequest) (*CountContractsResponse, error) {
+func (UnimplementedManagerServer) CountContracts(context.Context, *contract.CountContractsRequest) (*contract.CountContractsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountContracts not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
@@ -113,7 +114,7 @@ func RegisterManagerServer(s grpc.ServiceRegistrar, srv ManagerServer) {
 }
 
 func _Manager_GetContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContractRequest)
+	in := new(contract.GetContractRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -122,16 +123,16 @@ func _Manager_GetContract_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.contract.Manager/GetContract",
+		FullMethod: "/ranker.v1.contract.Manager/GetContract",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetContract(ctx, req.(*GetContractRequest))
+		return srv.(ManagerServer).GetContract(ctx, req.(*contract.GetContractRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetContractOnly_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContractOnlyRequest)
+	in := new(contract.GetContractOnlyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -140,16 +141,16 @@ func _Manager_GetContractOnly_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.contract.Manager/GetContractOnly",
+		FullMethod: "/ranker.v1.contract.Manager/GetContractOnly",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetContractOnly(ctx, req.(*GetContractOnlyRequest))
+		return srv.(ManagerServer).GetContractOnly(ctx, req.(*contract.GetContractOnlyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_GetContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetContractsRequest)
+	in := new(contract.GetContractsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -158,16 +159,16 @@ func _Manager_GetContracts_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.contract.Manager/GetContracts",
+		FullMethod: "/ranker.v1.contract.Manager/GetContracts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetContracts(ctx, req.(*GetContractsRequest))
+		return srv.(ManagerServer).GetContracts(ctx, req.(*contract.GetContractsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_CountContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountContractsRequest)
+	in := new(contract.CountContractsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -176,10 +177,10 @@ func _Manager_CountContracts_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.contract.Manager/CountContracts",
+		FullMethod: "/ranker.v1.contract.Manager/CountContracts",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountContracts(ctx, req.(*CountContractsRequest))
+		return srv.(ManagerServer).CountContracts(ctx, req.(*contract.CountContractsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -188,7 +189,7 @@ func _Manager_CountContracts_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Manager_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "nftmeta.v1.contract.Manager",
+	ServiceName: "ranker.v1.contract.Manager",
 	HandlerType: (*ManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
