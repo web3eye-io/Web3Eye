@@ -17,26 +17,25 @@ const (
 	retryInterval = time.Second * 3
 )
 
-type StreamClient struct {
+type streamClient struct {
 	client    npool.Manager_GrpcProxyChannelClient
 	toProxy   chan *npool.ToGrpcProxy
 	closeChan chan struct{}
 	id        string
 }
 
-func (sc *StreamClient) Start(ctx context.Context, cancel context.CancelFunc) {
-	defer cancel()
-	if sc.id == "" {
-		sc.id = uuid.NewString()
+func NewStreamClient() *streamClient {
+	return &streamClient{
+		closeChan: make(chan struct{}),
+		id:        uuid.NewString(),
+		toProxy:   make(chan *npool.ToGrpcProxy),
 	}
+}
 
-	sc.closeChan = make(chan struct{})
+func (sc *streamClient) Start(ctx context.Context) {
 	go func() {
 		for {
-			sc.toProxy = make(chan *npool.ToGrpcProxy)
-
 			ctx, cancel := context.WithCancel(ctx)
-
 			client, err := v1.GrpcProxyChannel(context.Background())
 
 			if err == nil {
@@ -46,30 +45,26 @@ func (sc *StreamClient) Start(ctx context.Context, cancel context.CancelFunc) {
 				logger.Sugar().Infof("client %v successfully connected to proxy", sc.id)
 				<-ctx.Done()
 			}
-			logger.Sugar().Errorf("client %v failed to connect to proxy, will retry", sc.id)
+
 			time.Sleep(retryInterval)
+			logger.Sugar().Errorf("client %v failed to connect to proxy, will retry", sc.id)
 		}
 	}()
 
-	select {
-	case <-sc.closeChan:
-		if sc.client != nil {
-			_ = sc.client.CloseSend()
-		}
-	case <-ctx.Done():
-		if sc.client != nil {
-			_ = sc.client.CloseSend()
-		}
+	<-sc.closeChan
+	if sc.client != nil {
+		_ = sc.client.CloseSend()
 	}
+	<-ctx.Done()
 }
 
-func (sc *StreamClient) Close() {
+func (sc *streamClient) Close() {
 	if sc.closeChan != nil {
 		sc.closeChan <- struct{}{}
 	}
 }
 
-func (sc *StreamClient) recv(ctx context.Context, cancel context.CancelFunc) {
+func (sc *streamClient) recv(ctx context.Context, cancel context.CancelFunc) {
 	defer cancel()
 	go func() {
 		for {
@@ -116,7 +111,7 @@ func (sc *StreamClient) recv(ctx context.Context, cancel context.CancelFunc) {
 	logger.Sugar().Infof("client %v stream revc exit", sc.id)
 }
 
-func (sc *StreamClient) send(ctx context.Context, cancel context.CancelFunc) {
+func (sc *streamClient) send(ctx context.Context, cancel context.CancelFunc) {
 	defer cancel()
 	go func() {
 		for {

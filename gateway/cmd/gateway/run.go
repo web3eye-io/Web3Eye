@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -30,16 +29,12 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().Gateway.LogFile)
 	},
 	Action: func(c *cli.Context) error {
-		ctx, cancel := context.WithCancel(c.Context)
-		go task.Run(ctx, cancel)
+		go task.Run(c.Context)
 
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 		<-sigchan
-		cancel()
-		<-ctx.Done()
-
 		os.Exit(1)
 		return nil
 	},
