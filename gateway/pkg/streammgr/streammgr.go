@@ -14,7 +14,6 @@ import (
 )
 
 const (
-	reqTimeout    = time.Second * 3
 	retryInterval = time.Second * 3
 )
 
@@ -55,15 +54,13 @@ func (sc *StreamClient) Start(ctx context.Context, cancel context.CancelFunc) {
 	select {
 	case <-sc.closeChan:
 		if sc.client != nil {
-			sc.client.CloseSend()
+			_ = sc.client.CloseSend()
 		}
 	case <-ctx.Done():
 		if sc.client != nil {
-			sc.client.CloseSend()
+			_ = sc.client.CloseSend()
 		}
-		time.Sleep(time.Second * 5)
 	}
-
 }
 
 func (sc *StreamClient) Close() {
@@ -88,7 +85,7 @@ func (sc *StreamClient) recv(ctx context.Context, cancel context.CancelFunc) {
 
 			go func(req *npool.FromGrpcProxy) {
 				var respInfo *npool.GrpcInfo = nil
-				var errMsg string = ""
+				var errMsg string
 
 				cc, err := grpc.Dial(
 					req.Info.TargetServer,
