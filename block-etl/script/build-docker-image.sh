@@ -36,6 +36,10 @@ service_name=$(
     basename $(pwd)
 )
 
+if [[ "x" != "x$1" ]]; then
+  version=$1
+fi
+
 ## For development environment, pass the second variable
 if [[ "xdev" == "x$1" ]]; then
     version=latest
