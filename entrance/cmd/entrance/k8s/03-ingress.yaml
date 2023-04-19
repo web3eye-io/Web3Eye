@@ -37,4 +37,4 @@ spec:
               service:
                 name: entrance
                 port:
-                  number: 30100
+                  number: 30150

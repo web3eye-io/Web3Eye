@@ -1,3 +1,3 @@
 package servicename
 
-const ServiceName = "NFTMeta"
+const ServiceName = "Entrance"
