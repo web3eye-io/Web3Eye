@@ -1,4 +1,4 @@
 resources:
-  - 01-nft-meta.viper.yaml
-  - 02-nft-meta.yaml
+  - 01-ranker.viper.yaml
+  - 02-ranker.yaml
   - 03-ingress.yaml
