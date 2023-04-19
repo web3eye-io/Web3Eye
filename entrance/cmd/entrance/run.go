@@ -33,7 +33,7 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().Entrance.LogFile)
 	},
 	Action: func(c *cli.Context) error {
-		go runHTTPServer(config.GetConfig().Entrance.HTTPPort, config.GetConfig().Entrance.GrpcPort)
+		go runHTTPServer(config.GetConfig().Entrance.HTTPPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
@@ -43,7 +43,7 @@ var runCmd = &cli.Command{
 	},
 }
 
-func runHTTPServer(httpPort, grpcPort int) {
+func runHTTPServer(httpPort int) {
 	httpEndpoint := fmt.Sprintf(":%v", httpPort)
 
 	mux := runtime.NewServeMux()

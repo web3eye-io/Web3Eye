@@ -13,7 +13,7 @@ import (
 
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
-	res "github.com/web3eye-io/Web3Eye/entrance/resource"
+	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
 
 	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
@@ -21,6 +21,7 @@ import (
 
 // 8mb
 const MaxUploadFileSize = 1 << 10 << 10 << 3
+const SearchTopN = 10
 
 type Img2VectorResp struct {
 	Vector  []float32 `json:"vector"`
@@ -37,7 +38,7 @@ func init() {
 	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
 
-	pages, err := fs.Sub(res.ResPages, "pages")
+	pages, err := fs.Sub(resource.ResPages, "pages")
 	if err != nil {
 		log.Fatalf("failed to load pages: %v", err)
 	}
@@ -75,7 +76,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token.UseCloudProxyCC()
-	resp, err := token.Search(context.Background(), vector, 10)
+	resp, err := token.Search(context.Background(), vector, SearchTopN)
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
 		w.WriteHeader(http.StatusBadRequest)
