@@ -18,7 +18,9 @@ func (s *Server) GetTransfer(ctx context.Context, in *nftmetanpool.GetTransferRe
 	return s.Server.GetTransfer(ctx, in)
 }
 
-func (s *Server) GetTransferOnly(ctx context.Context, in *nftmetanpool.GetTransferOnlyRequest) (*nftmetanpool.GetTransferOnlyResponse, error) {
+func (s *Server) GetTransferOnly(
+	ctx context.Context,
+	in *nftmetanpool.GetTransferOnlyRequest) (*nftmetanpool.GetTransferOnlyResponse, error) {
 	return s.Server.GetTransferOnly(ctx, in)
 }
 

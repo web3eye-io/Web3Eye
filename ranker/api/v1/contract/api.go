@@ -18,7 +18,9 @@ func (s *Server) GetContract(ctx context.Context, in *nftmetanpool.GetContractRe
 	return s.Server.GetContract(ctx, in)
 }
 
-func (s *Server) GetContractOnly(ctx context.Context, in *nftmetanpool.GetContractOnlyRequest) (*nftmetanpool.GetContractOnlyResponse, error) {
+func (s *Server) GetContractOnly(
+	ctx context.Context,
+	in *nftmetanpool.GetContractOnlyRequest) (*nftmetanpool.GetContractOnlyResponse, error) {
 	return s.Server.GetContractOnly(ctx, in)
 }
 

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	cloudproxy "github.com/web3eye-io/Web3Eye/cloud-proxy/pkg/client/v1"
 	"github.com/web3eye-io/Web3Eye/config"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 
@@ -15,38 +14,27 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
+var timeout = 10 * time.Second
 
-var (
-	cc      grpc.ClientConnInterface = nil
-	timeout                          = 6 * time.Second
-)
+type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
 
 func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	if cc == nil {
-		conn, err := grpc.Dial(
-			fmt.Sprintf("%v:%v",
-				config.GetConfig().NFTMeta.IP,
-				config.GetConfig().NFTMeta.GrpcPort),
-			grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			return nil, err
-		}
-		defer conn.Close()
-		cc = conn
-	}
-	cli := npool.NewManagerClient(cc)
-	return handler(_ctx, cli)
-}
-
-func UseCloudProxyCC() {
-	cc = &cloudproxy.CloudProxyCC{
-		TargetServer: fmt.Sprintf("%v:%v",
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%v:%v",
 			config.GetConfig().NFTMeta.IP,
-			config.GetConfig().NFTMeta.GrpcPort,
-		)}
+			config.GetConfig().NFTMeta.GrpcPort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+
+	defer conn.Close()
+
+	cli := npool.NewManagerClient(conn)
+
+	return handler(_ctx, cli)
 }
 
 func CreateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract, error) {

@@ -6,87 +6,58 @@ import (
 	"fmt"
 	"time"
 
+	cloudproxy "github.com/web3eye-io/Web3Eye/cloud-proxy/pkg/client/v1"
+
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/config"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var timeout = 10 * time.Second
+type handler func(context.Context, rankerproto.ManagerClient) (cruder.Any, error)
 
-type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
+var (
+	cc      grpc.ClientConnInterface = nil
+	timeout                          = 6 * time.Second
+)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func WithCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	conn, err := grpc.Dial(
-		fmt.Sprintf("%v:%v",
-			config.GetConfig().NFTMeta.IP,
-			config.GetConfig().NFTMeta.GrpcPort),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, err
+
+	if cc == nil {
+		conn, err := grpc.Dial(
+			fmt.Sprintf("%v:%v",
+				config.GetConfig().Ranker.IP,
+				config.GetConfig().Ranker.GrpcPort),
+			grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			return nil, err
+		}
+		cc = conn
+
+		defer func() {
+			conn.Close()
+			cc = nil
+		}()
 	}
-
-	defer conn.Close()
-
-	cli := npool.NewManagerClient(conn)
-
+	cli := rankerproto.NewManagerClient(cc)
 	return handler(_ctx, cli)
 }
 
-func CreateToken(ctx context.Context, in *npool.TokenReq) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateToken(ctx, &npool.CreateTokenRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+func UseCloudProxyCC() {
+	cc = &cloudproxy.CloudProxyCC{
+		TargetServer: fmt.Sprintf("%v:%v",
+			config.GetConfig().Ranker.IP,
+			config.GetConfig().Ranker.GrpcPort,
+		)}
 }
 
-func CreateTokens(ctx context.Context, in []*npool.TokenReq) ([]*npool.Token, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateTokens(ctx, &npool.CreateTokensRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Token), nil
-}
-
-func UpdateToken(ctx context.Context, in *npool.TokenReq) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateToken(ctx, &npool.UpdateTokenRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
-}
-
-func GetToken(ctx context.Context, id string) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetToken(ctx, &npool.GetTokenRequest{
+func GetToken(ctx context.Context, id string) (*nftmetaproto.Token, error) {
+	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.GetToken(ctx, &nftmetaproto.GetTokenRequest{
 			ID: id,
 		})
 		if err != nil {
@@ -97,12 +68,12 @@ func GetToken(ctx context.Context, id string) (*npool.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Token), nil
+	return info.(*nftmetaproto.Token), nil
 }
 
-func GetTokenOnly(ctx context.Context, conds *npool.Conds) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokenOnly(ctx, &npool.GetTokenOnlyRequest{
+func GetTokenOnly(ctx context.Context, conds *nftmetaproto.Conds) (*nftmetaproto.Token, error) {
+	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.GetTokenOnly(ctx, &nftmetaproto.GetTokenOnlyRequest{
 			Conds: conds,
 		})
 		if err != nil {
@@ -113,13 +84,13 @@ func GetTokenOnly(ctx context.Context, conds *npool.Conds) (*npool.Token, error)
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Token), nil
+	return info.(*nftmetaproto.Token), nil
 }
 
-func GetTokens(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Token, uint32, error) {
+func GetTokens(ctx context.Context, conds *nftmetaproto.Conds, offset, limit int32) ([]*nftmetaproto.Token, uint32, error) {
 	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokens(ctx, &npool.GetTokensRequest{
+	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.GetTokens(ctx, &nftmetaproto.GetTokensRequest{
 			Conds:  conds,
 			Limit:  limit,
 			Offset: offset,
@@ -133,44 +104,29 @@ func GetTokens(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 	if err != nil {
 		return nil, 0, err
 	}
-	return infos.([]*npool.Token), total, nil
+	return infos.([]*nftmetaproto.Token), total, nil
 }
 
-func ExistToken(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistToken(ctx, &npool.ExistTokenRequest{
-			ID: id,
+func Search(ctx context.Context, vector []float32, limit int32) (*rankerproto.SearchTokenResponse, error) {
+	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.Search(ctx, &rankerproto.SearchTokenRequest{
+			Vector: vector,
+			Limit:  limit,
 		})
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp, nil
 	})
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	return info.(bool), nil
+	return infos.(*rankerproto.SearchTokenResponse), nil
 }
 
-func ExistTokenConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistTokenConds(ctx, &npool.ExistTokenCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
-}
-
-func CountTokens(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountTokens(ctx, &npool.CountTokensRequest{
+func CountTokens(ctx context.Context, conds *nftmetaproto.Conds) (uint32, error) {
+	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.CountTokens(ctx, &nftmetaproto.CountTokensRequest{
 			Conds: conds,
 		})
 		if err != nil {
@@ -182,20 +138,4 @@ func CountTokens(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		return 0, err
 	}
 	return infos.(uint32), nil
-}
-
-func DeleteToken(ctx context.Context, id string) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteToken(ctx, &npool.DeleteTokenRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
 }
