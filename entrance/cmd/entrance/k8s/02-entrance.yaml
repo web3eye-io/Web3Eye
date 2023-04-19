@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: entrance
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: entrance
+  template:
+    metadata:
+      labels:
+        app: entrance
+    spec:
+      containers:
+        - name: entrance
+          # image: web3eye/entrance:latest
+          image: coastlinesss/entrance:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/Entrance
+          env:
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: mysql_password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: redis_password
+              valueFrom:
+                secretKeyRef:
+                  name: redis-cluster
+                  key: redis-password
+      volumes:
+        - name: service-config
+          configMap:
+            name: entrance-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: entrance
+spec:
+  ports:
+    - name: http
+      port: 30100
+      targetPort: 30100
+    - name: grpc
+      port: 30101
+      targetPort: 30101
+    - name: healthz
+      port: 30102
+      targetPort: 30102
+  selector:
+    app: entrance

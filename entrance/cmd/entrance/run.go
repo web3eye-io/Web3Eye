@@ -6,12 +6,15 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 
@@ -19,6 +22,7 @@ import (
 	api_v1 "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -29,12 +33,12 @@ func init() {
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"r"},
-	Usage:   "Run NFT Meta daemon",
+	Usage:   "Run Entrance daemon",
 	After: func(c *cli.Context) error {
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		return logger.Init(logger.DebugLevel, config.GetConfig().NFTMeta.LogFile)
+		return logger.Init(logger.DebugLevel, config.GetConfig().Entrance.LogFile)
 	},
 	Action: func(c *cli.Context) error {
 		err := db.Init()
@@ -46,7 +50,8 @@ var runCmd = &cli.Command{
 		if err != nil {
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
-		go runGRPCServer(config.GetConfig().NFTMeta.GrpcPort)
+		go runHTTPServer(config.GetConfig().Entrance.HTTPPort, config.GetConfig().Entrance.GrpcPort)
+		go runGRPCServer(config.GetConfig().Entrance.GrpcPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
@@ -68,5 +73,23 @@ func runGRPCServer(grpcPort int) {
 	reflection.Register(server)
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func runHTTPServer(httpPort, grpcPort int) {
+	httpEndpoint := fmt.Sprintf(":%v", httpPort)
+	grpcEndpoint := fmt.Sprintf(":%v", grpcPort)
+
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	err := api_v1.RegisterGateway(mux, grpcEndpoint, opts)
+	if err != nil {
+		log.Fatalf("Fail to register gRPC gateway service endpoint: %v", err)
+	}
+
+	servermux.AppServerMux().Handle("/v1/", mux)
+	err = http.ListenAndServe(httpEndpoint, servermux.AppServerMux())
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
 }

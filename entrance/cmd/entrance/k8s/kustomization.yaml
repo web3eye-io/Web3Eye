@@ -1,0 +1,4 @@
+resources:
+  - 01-entrance.viper.yaml
+  - 02-entrance.yaml
+  - 03-ingress.yaml

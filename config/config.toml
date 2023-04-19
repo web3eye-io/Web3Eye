@@ -30,6 +30,12 @@ http-port=30140
 grpc-port=30141
 log-file="/var/log/ranker.log"
 
+[entrance]
+ip="entrance"
+http-port=30150
+grpc-port=30151
+log-file="/var/log/entrance.log"
+
 [image-converter]
 address="http://image-converter:8080"
 task-input-topic="image-converter-input"
