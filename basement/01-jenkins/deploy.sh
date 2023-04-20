@@ -29,6 +29,7 @@ if [ "$user" == "root" ]; then
         -v /var/run/docker.sock:/var/run/docker.sock  \
         -v /root/.kube:/root/.kube  \
         ${registry}${OrginazeName}/$service_name:$version
+    sleep 5
     docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 else
     sudo docker run \
@@ -44,5 +45,6 @@ else
         -v /var/run/docker.sock:/var/run/docker.sock  \
         -v /root/.kube:/root/.kube  \
         ${registry}${OrginazeName}/$service_name:$version
+    sleep 5
     sudo docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 fi
