@@ -10,7 +10,9 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
@@ -46,6 +48,8 @@ func init() {
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
+	startT := time.Now()
+
 	respBody := make(map[string]interface{})
 	defer func() {
 		_respBody, err := json.Marshal(respBody)
@@ -67,6 +71,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	inT := time.Now()
+	logger.Sugar().Infof("check params %v ms", inT.UnixMilli()-startT.UnixMilli())
+
 	// convert to vector
 	vector, err := ImgReqConvertVector(r)
 	if err != nil {
@@ -75,6 +82,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	inT = time.Now()
+	logger.Sugar().Infof("finish convert to vector %v ms", inT.UnixMilli()-startT.UnixMilli())
+
 	token.UseCloudProxyCC()
 	resp, err := token.Search(context.Background(), vector, SearchTopN)
 	if err != nil {
@@ -82,6 +92,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	inT = time.Now()
+	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
 	respBody["msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
 	respBody["data"] = resp.Infos
