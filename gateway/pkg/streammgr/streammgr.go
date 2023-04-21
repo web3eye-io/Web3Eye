@@ -47,7 +47,7 @@ func (sc *streamClient) Start(ctx context.Context) {
 			}
 
 			time.Sleep(retryInterval)
-			logger.Sugar().Errorf("client %v failed to connect to proxy, will retry", sc.id)
+			logger.Sugar().Errorf("client %v failed to connect to cloud proxy, will retry", sc.id)
 		}
 	}()
 
