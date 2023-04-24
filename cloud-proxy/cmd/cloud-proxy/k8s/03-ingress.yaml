@@ -31,10 +31,10 @@ spec:
     - host:
       http:
         paths:
-          - path: /api/cloud-proxy
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: cloud-proxy
                 port:
-                  number: 30120
+                  number: 30121

@@ -36,11 +36,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cloud-proxy
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
 spec:
   ports:
-    - name: http
-      port: 30120
-      targetPort: 30120
     - name: grpc
       port: 30121
       targetPort: 30121

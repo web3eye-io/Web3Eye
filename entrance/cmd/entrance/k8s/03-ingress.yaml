@@ -28,7 +28,7 @@ spec:
         - hk-testing.web3eye.io
       secretName: hk-testing-web3eye-io-tls
   rules:
-    - host:
+    - host: hk-testing.web3eye.io
       http:
         paths:
           - path: /api/entrance
