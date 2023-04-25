@@ -26,6 +26,7 @@ docker exec -it jenkins /bin/bash
 
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
+<!-- 部署完jenkins需要做的步骤 -->
 /root/.kube 当中的配置 IP 要指向kube-apiserver的地址不能指向127.0.0.1
 安装Go插件
 安装Kubectl插件
@@ -34,3 +35,6 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 登录Docker（docker login）
 git config --global user.email "670884108@qq.com"
 git config --global user.name "Greapefurit"
+
+<!-- 还需处理的问题 -->
+jenkins中还没有nodejs的环境，安装了node记得一起安装yarn命令

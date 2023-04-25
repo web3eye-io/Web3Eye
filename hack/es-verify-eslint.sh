@@ -13,7 +13,7 @@ es_projects=(webui)
 for proj in ${es_projects[@]}
 do
 
-cd $proj
+cd ${ROOT}/$proj
 if [[ ! -f .eslintrc.js ]]; then
     echo 'ERROR: missing .eslintrc.js in project root' >&2
     exit 1
