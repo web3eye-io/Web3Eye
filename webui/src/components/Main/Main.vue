@@ -118,7 +118,7 @@ const onUploaded = (info: {
 const factoryFn = () => {
   return new Promise((resolve) => {
     resolve({
-      url: '/api/nft-meta/search/file',
+      url: '/api/entrance/search/file',
       method: 'POST'
     })
   })

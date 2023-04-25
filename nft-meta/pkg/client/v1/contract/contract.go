@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/config"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -38,7 +39,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 
 func CreateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateContract(ctx, &npool.CreateContractRequest{
+		resp, err := cli.CreateContract(_ctx, &npool.CreateContractRequest{
 			Info: in,
 		})
 		if err != nil {
@@ -54,7 +55,7 @@ func CreateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract
 
 func CreateContracts(ctx context.Context, in []*npool.ContractReq) ([]*npool.Contract, error) {
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateContracts(ctx, &npool.CreateContractsRequest{
+		resp, err := cli.CreateContracts(_ctx, &npool.CreateContractsRequest{
 			Infos: in,
 		})
 		if err != nil {
@@ -70,7 +71,7 @@ func CreateContracts(ctx context.Context, in []*npool.ContractReq) ([]*npool.Con
 
 func UpdateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateContract(ctx, &npool.UpdateContractRequest{
+		resp, err := cli.UpdateContract(_ctx, &npool.UpdateContractRequest{
 			Info: in,
 		})
 		if err != nil {
@@ -86,7 +87,7 @@ func UpdateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract
 
 func GetContract(ctx context.Context, id string) (*npool.Contract, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContract(ctx, &npool.GetContractRequest{
+		resp, err := cli.GetContract(_ctx, &npool.GetContractRequest{
 			ID: id,
 		})
 		if err != nil {
@@ -102,7 +103,7 @@ func GetContract(ctx context.Context, id string) (*npool.Contract, error) {
 
 func GetContractOnly(ctx context.Context, conds *npool.Conds) (*npool.Contract, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContractOnly(ctx, &npool.GetContractOnlyRequest{
+		resp, err := cli.GetContractOnly(_ctx, &npool.GetContractOnlyRequest{
 			Conds: conds,
 		})
 		if err != nil {
@@ -119,7 +120,7 @@ func GetContractOnly(ctx context.Context, conds *npool.Conds) (*npool.Contract, 
 func GetContracts(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Contract, uint32, error) {
 	var total uint32
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContracts(ctx, &npool.GetContractsRequest{
+		resp, err := cli.GetContracts(_ctx, &npool.GetContractsRequest{
 			Conds:  conds,
 			Limit:  limit,
 			Offset: offset,
@@ -138,7 +139,7 @@ func GetContracts(ctx context.Context, conds *npool.Conds, offset, limit int32) 
 
 func ExistContract(ctx context.Context, id string) (bool, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistContract(ctx, &npool.ExistContractRequest{
+		resp, err := cli.ExistContract(_ctx, &npool.ExistContractRequest{
 			ID: id,
 		})
 		if err != nil {
@@ -154,7 +155,7 @@ func ExistContract(ctx context.Context, id string) (bool, error) {
 
 func ExistContractConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistContractConds(ctx, &npool.ExistContractCondsRequest{
+		resp, err := cli.ExistContractConds(_ctx, &npool.ExistContractCondsRequest{
 			Conds: conds,
 		})
 		if err != nil {
@@ -170,7 +171,7 @@ func ExistContractConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 
 func CountContracts(ctx context.Context, conds *npool.Conds) (uint32, error) {
 	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountContracts(ctx, &npool.CountContractsRequest{
+		resp, err := cli.CountContracts(_ctx, &npool.CountContractsRequest{
 			Conds: conds,
 		})
 		if err != nil {
@@ -186,7 +187,7 @@ func CountContracts(ctx context.Context, conds *npool.Conds) (uint32, error) {
 
 func DeleteContract(ctx context.Context, id string) (*npool.Contract, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteContract(ctx, &npool.DeleteContractRequest{
+		resp, err := cli.DeleteContract(_ctx, &npool.DeleteContractRequest{
 			ID: id,
 		})
 		if err != nil {

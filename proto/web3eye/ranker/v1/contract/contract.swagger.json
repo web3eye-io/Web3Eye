@@ -1,0 +1,255 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/ranker/v1/contract/contract.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "contractConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainID": {
+          "$ref": "#/definitions/web3eyeInt32Val"
+        },
+        "Address": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Name": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Symbol": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Creator": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BlockNum": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "TxHash": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TxTime": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "ProfileURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BaseURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BannerURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Description": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "contractContract": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Symbol": {
+          "type": "string"
+        },
+        "Creator": {
+          "type": "string"
+        },
+        "BlockNum": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "TxTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ProfileURL": {
+          "type": "string"
+        },
+        "BaseURL": {
+          "type": "string"
+        },
+        "BannerURL": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "contractCountContractsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "contractGetContractOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/contractContract"
+        }
+      }
+    },
+    "contractGetContractResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/contractContract"
+        }
+      }
+    },
+    "contractGetContractsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contractContract"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "web3eyeInt32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}

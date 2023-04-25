@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package ranker.v1.token;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token";
+import "web3eye/nftmeta/v1/token/token.proto";
+
+service Manager {
+  rpc GetToken(nftmeta.v1.token.GetTokenRequest) returns (nftmeta.v1.token.GetTokenResponse) {}
+  rpc GetTokenOnly(nftmeta.v1.token.GetTokenOnlyRequest) returns (nftmeta.v1.token.GetTokenOnlyResponse) {}
+  rpc GetTokens(nftmeta.v1.token.GetTokensRequest) returns (nftmeta.v1.token.GetTokensResponse) {}
+  rpc CountTokens(nftmeta.v1.token.CountTokensRequest) returns (nftmeta.v1.token.CountTokensResponse) {}
+  rpc Search(SearchTokenRequest) returns (SearchTokenResponse) {}
+}
+
+message SearchToken{
+  nftmeta.v1.token.Token Token = 10;
+  float Distance = 20;
+}
+
+message SearchTokenRequest {
+  repeated float Vector = 10;
+  int32 Limit = 20;
+}
+
+message SearchTokenResponse {
+  repeated SearchToken Infos = 10;
+  int32 Total = 20;
+}

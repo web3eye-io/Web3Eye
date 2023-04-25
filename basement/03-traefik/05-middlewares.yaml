@@ -1,76 +1,76 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: headers-appid-to-body
-  namespace: kube-system
-spec:
-  headersToBody:
-    headerNames:
-      - X-App-ID
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-appid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-App-ID
 
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: headers-userid-to-body
-  namespace: kube-system
-spec:
-  headersToBody:
-    headerNames:
-      - X-User-ID
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-userid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-User-ID
 
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: headers-langid-to-body
-  namespace: kube-system
-spec:
-  headersToBody:
-    headerNames:
-      - X-Lang-ID
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-langid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-Lang-ID
 
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: headers-app-login-token-to-body
-  namespace: kube-system
-spec:
-  headersToBody:
-    headerNames:
-      - X-App-Login-Token
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-app-login-token-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-App-Login-Token
 
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: app-rbac-auth
-  namespace: kube-system
-spec:
-  rbacAuth:
-    headerNames:
-      - X-App-ID
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: app-rbac-auth
+#   namespace: kube-system
+# spec:
+#   rbacAuth:
+#     headerNames:
+#       - X-App-ID
 
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: app-user-role-rbac-auth
-  namespace: kube-system
-spec:
-  rbacAuth:
-    headerNames:
-      - X-App-ID
-      - X-User-ID
-      - X-App-Login-Token
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: app-user-role-rbac-auth
+#   namespace: kube-system
+# spec:
+#   rbacAuth:
+#     headerNames:
+#       - X-App-ID
+#       - X-User-ID
+#       - X-App-Login-Token
 
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: common-headers
-  namespace: kube-system
+  # namespace: kube-system
 spec:
   headers:
     accessControlAllowCredentials: true
@@ -150,7 +150,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: http-redirect-https-testing
-  namespace: kube-system
+  # namespace: kube-system
 spec:
   redirectRegex:
     regex: ^http://([-a-zA-Z0-9|.]*):20401/(.*)
@@ -161,7 +161,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: http-redirect-https
-  namespace: kube-system
+  # namespace: kube-system
 spec:
   redirectRegex:
     regex: ^http://([-a-zA-Z0-9|.]*)/(.*)

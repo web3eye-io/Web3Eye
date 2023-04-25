@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-proxy
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloud-proxy
+  template:
+    metadata:
+      labels:
+        app: cloud-proxy
+    spec:
+      containers:
+        - name: cloud-proxy
+          # image: web3eye/cloud-proxy:latest
+          image: coastlinesss/cloud-proxy:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/CloudProxy
+          env:
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      volumes:
+        - name: service-config
+          configMap:
+            name: cloud-proxy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-proxy
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
+spec:
+  ports:
+    - name: grpc
+      port: 30121
+      targetPort: 30121
+    - name: healthz
+      port: 30122
+      targetPort: 30122
+  selector:
+    app: cloud-proxy

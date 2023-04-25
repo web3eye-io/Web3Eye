@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package cloudproxy.v1;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/cloudproxy/v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "web3eye/web3eye.proto";
+
+service Manager {
+  rpc Version(google.protobuf.Empty) returns (web3eye.VersionResponse) {
+    option (google.api.http) = {
+      post : "/v1/version"
+      body : "*"
+    };
+  }
+  rpc GrpcProxyChannel(stream ToGrpcProxy) returns (stream FromGrpcProxy){}
+  rpc GrpcProxy( GrpcProxyRequest) returns ( GrpcProxyResponse){}
+}
+
+message GrpcInfo{
+  string TargetServer=100;
+  string Method = 110;
+  bytes RawData = 120;
+}
+
+message ToGrpcProxy{
+  string MsgID = 100;
+  GrpcInfo Info = 110;
+  string ErrMsg = 120;
+}
+
+message FromGrpcProxy{
+  string MsgID = 100;
+  GrpcInfo Info = 110;
+}
+
+message GrpcProxyRequest{
+  string MsgID = 100;
+  GrpcInfo Info = 110;
+}
+
+message GrpcProxyResponse{
+  string MsgID = 100;
+  GrpcInfo Info = 110;
+  string ErrMsg = 120;
+}

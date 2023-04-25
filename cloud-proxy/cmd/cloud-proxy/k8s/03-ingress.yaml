@@ -1,0 +1,40 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-cloud-proxy-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api/cloud-proxy
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloud-proxy-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik-internet"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares:
+      default-strip-cloud-proxy-prefix@kubernetescrd,
+      default-http-redirect-https@kubernetescrd,
+      default-http-redirect-https-testing@kubernetescrd,
+      default-common-headers@kubernetescrd
+
+spec:
+  tls:
+    - hosts:
+        - "*.hk-testing.web3eye.io"
+        - hk-testing.web3eye.io
+      secretName: hk-testing-web3eye-io-tls
+  rules:
+    - host:
+      http:
+        paths:
+          - path: /api/cloud-proxy
+            pathType: Prefix
+            backend:
+              service:
+                name: cloud-proxy
+                port:
+                  number: 30121

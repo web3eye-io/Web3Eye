@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranker
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ranker
+  template:
+    metadata:
+      labels:
+        app: ranker
+    spec:
+      containers:
+        - name: ranker
+          # image: web3eye/ranker:latest
+          image: coastlinesss/ranker:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/Ranker
+          env:
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: mysql_password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: redis_password
+              valueFrom:
+                secretKeyRef:
+                  name: redis-cluster
+                  key: redis-password
+      volumes:
+        - name: service-config
+          configMap:
+            name: ranker-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ranker
+spec:
+  ports:
+    - name: http
+      port: 30140
+      targetPort: 30140
+    - name: grpc
+      port: 30141
+      targetPort: 30141
+    - name: healthz
+      port: 30142
+      targetPort: 30142
+  selector:
+    app: ranker

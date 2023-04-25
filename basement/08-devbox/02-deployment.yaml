@@ -30,16 +30,16 @@ spec:
               value: "/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin"
             - name: GOPROXY
               value: "https://goproxy.cn,direct"
-            - name: mysql_password
-              valueFrom:
-                secretKeyRef:
-                  name: mysql
-                  key: mysql-root-password
-            - name: redis_password
-              valueFrom:
-                secretKeyRef:
-                  name: redis-cluster
-                  key: redis-password
+            # - name: mysql_password
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: mysql
+            #       key: mysql-root-password
+            # - name: redis_password
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: redis-cluster
+            #       key: redis-password
           command: ["sleep", "100000000000000"]
           volumeMounts:
             - name: devdir

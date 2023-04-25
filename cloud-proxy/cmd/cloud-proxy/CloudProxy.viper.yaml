@@ -1,0 +1,7 @@
+---
+config:
+  hostname: "cloud-proxy.npool.top"
+  http_port: 30120
+  grpc_port: 30121
+  prometheus_port: 30122
+  logdir: "./"

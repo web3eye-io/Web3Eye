@@ -1,0 +1,4 @@
+resources:
+  - 01-gateway.viper.yaml
+  - 02-gateway.yaml
+  - 03-ingress.yaml

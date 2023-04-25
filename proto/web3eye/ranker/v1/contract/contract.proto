@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ranker.v1.contract;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract";
+import "web3eye/nftmeta/v1/contract/contract.proto";
+
+service Manager {
+  rpc GetContract(nftmeta.v1.contract.GetContractRequest) returns (nftmeta.v1.contract.GetContractResponse) {}
+  rpc GetContractOnly(nftmeta.v1.contract.GetContractOnlyRequest)
+      returns (nftmeta.v1.contract.GetContractOnlyResponse) {}
+  rpc GetContracts(nftmeta.v1.contract.GetContractsRequest) returns (nftmeta.v1.contract.GetContractsResponse) {}
+  rpc CountContracts(nftmeta.v1.contract.CountContractsRequest) returns (nftmeta.v1.contract.CountContractsResponse) {}
+}

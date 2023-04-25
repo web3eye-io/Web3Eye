@@ -121,13 +121,11 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 **配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
 
-**配置Git名称** 接受第一次连接（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 为git
+**配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
 
 **安装Go插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
 
 **配置Go插件**（Dashboard > 系统管理 > 全局工具配置 > 找到Go）,设置别名为go, 安装一个Go 1.17
-
-
 
 ### 新建安装任务
 
