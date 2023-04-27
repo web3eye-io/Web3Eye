@@ -18,6 +18,11 @@ if [[ ! -f .eslintrc.js ]]; then
     echo 'ERROR: missing .eslintrc.js in project root' >&2
     exit 1
 fi
+
+if ! command -v n; then
+    rpm install n
+fi
+
 n v16.14.0
 npm install @typescript-eslint/eslint-plugin@latest --save-dev
 yarn lint
