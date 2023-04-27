@@ -36,9 +36,14 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 git config --global user.email "670884108@qq.com"
 git config --global user.name "Greapefurit"
 
+设置代理（不知道能不能用到部署步骤，部署步骤需要连接k8s,可能会连接不到本地地址）
+Dashboard > 系统管理 > Configure system 设置环境变量 设置环境变量即可
+
 <!-- 还需处理的问题 -->
 1.npm需要安装的命令，考虑用jenkins插件安装，在设置nodejs插件时安装
 jenkins中还没有nodejs的环境，安装了node记得一起安装yarn命令
 安装n
 安装yarn
 安装eslint
+
+2.需要安装docker
