@@ -20,8 +20,11 @@ RUN yum install unzip -y
 RUN yum install gcc-c++ -y
 RUN yum install make -y
 RUN yum install nodejs -y
+RUN yum install npm -y
 RUN yum install ansible -y
 RUN yum install git -y
+
+RUN yum install wget -y
 
 RUN yum remove docker \
             docker-client \

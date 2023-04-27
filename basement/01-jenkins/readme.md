@@ -30,6 +30,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 1.docker
 2.kubectl
 3.helm
+4.nodejs npm
 
 <!-- 部署完jenkins需要做的步骤 -->
 1.确认kube-apiserver的地址
