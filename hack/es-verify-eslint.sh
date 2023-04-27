@@ -20,7 +20,7 @@ if [[ ! -f .eslintrc.js ]]; then
 fi
 
 if ! command -v n; then
-    rpm install n
+    npm install n -y
 fi
 
 n v16.14.0
