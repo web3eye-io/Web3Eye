@@ -24,7 +24,7 @@
 
 安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低。
 
-在3台机器上安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。
+在3台机器上安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。另外集群中主机名不能重复，否则k8s网络可能会出现问题。
 
 安装完成后把/etc/kubeasz/bin添加到PATH环境变量。
 
@@ -34,7 +34,7 @@
 
 本示例使用NFS作为存储类，也可以替换成其他存储方案。
 
-在k8s集群中的每一台服务器上安装nfs客户端。
+在k8s集群中的一台服务器上安装nfs客户端（可以选择k8s的master节点，主要是为了找一台方便的节点完成主要的安装操作）。
 
 首先选择一台主机安装nfs-server并配置一个路径提供NFS服务。
 
