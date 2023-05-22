@@ -38,7 +38,7 @@ type SearchToken struct {
 }
 
 func init() {
-	mux := servermux.AppSemarverMux()
+	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
 
 	pages, err := fs.Sub(resource.ResPages, "pages")
