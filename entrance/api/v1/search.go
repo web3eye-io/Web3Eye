@@ -48,6 +48,10 @@ func init() {
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
+	logger.Sugar().log("utils.PrettyStruct(r)")
+	logger.Sugar().log(utils.PrettyStruct(r))
+	logger.Sugar().log("utils.PrettyStruct(r)")
+
 	startT := time.Now()
 
 	respBody := make(map[string]interface{})
