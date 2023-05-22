@@ -14,6 +14,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
@@ -37,7 +38,7 @@ type SearchToken struct {
 }
 
 func init() {
-	mux := servermux.AppServerMux()
+	mux := servermux.AppSemarverMux()
 	mux.HandleFunc("/search/file", Search)
 
 	pages, err := fs.Sub(resource.ResPages, "pages")
@@ -48,9 +49,9 @@ func init() {
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
-	logger.Sugar().log("utils.PrettyStruct(r)")
-	logger.Sugar().log(utils.PrettyStruct(r))
-	logger.Sugar().log("utils.PrettyStruct(r)")
+	logger.Sugar().Info("utils.PrettyStruct(r)")
+	logger.Sugar().Info(utils.PrettyStruct(r))
+	logger.Sugar().Info("utils.PrettyStruct(r)")
 
 	startT := time.Now()
 
