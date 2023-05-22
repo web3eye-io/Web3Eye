@@ -14,7 +14,6 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
@@ -48,12 +47,14 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
+// nolint
 func Search(w http.ResponseWriter, r *http.Request) {
-	logger.Sugar().Info("utils.PrettyStruct(r)")
-	logger.Sugar().Info(utils.PrettyStruct(r))
-	logger.Sugar().Info("utils.PrettyStruct(r)")
-
 	startT := time.Now()
+
+	logger.Sugar().Info(r.Header)
+	body := make([]byte, r.ContentLength)
+	r.Body.Read(body)
+	logger.Sugar().Info(string(body))
 
 	respBody := make(map[string]interface{})
 	defer func() {
