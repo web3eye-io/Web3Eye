@@ -19,6 +19,9 @@ export const useWeb3jsStore = defineStore('local-web3js', {
     },
     setWeb3 () {
       return (web3: Web3) => this.Web3 = web3
+    },
+    logined () {
+      // TODO
     }
   },
   actions: {

@@ -30,10 +30,13 @@
           <q-menu auto-close>
             <q-list>
               <q-item clickable>
-                <q-item-section  @click='onMetaMaskClick'>个人资料</q-item-section>
+                <q-item-section  @click='onMetaMaskClick'>Profile</q-item-section>
               </q-item>
               <q-item clickable>
-                <q-item-section @click='onTxClick'>转账</q-item-section>
+                <q-item-section @click='onTxClick'>Transfer</q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section @click='onLogout'>Logout</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -54,7 +57,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useLocalSettingStore, useWeb3jsStore } from 'src/localstore'
 
 import logobottom from '../assets/logo/logo-bottom.png'
@@ -72,9 +75,20 @@ const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
 let web3 = new Web3(window.ethereum)
 
+console.log('Address: ', account.Address)
+
+watch(() => account , () => {
+  if (!account.Address) {
+    console.log('onMetaMaskClick...')
+    onMetaMaskClick()
+  }
+})
+
 const onMetaMaskClick = () => {
-  web3.eth.requestAccounts((_error, accounts) => {
-    account.Address = accounts[0]
+  web3.eth.requestAccounts((_, accounts) => {
+    if (accounts?.length > 0) {
+      account.Address = accounts[0]
+    }
   })
   .then((result) => {
     console.log('result: ', result)
@@ -82,11 +96,12 @@ const onMetaMaskClick = () => {
     void getBalance()
   })
   .catch((error) => {
-    alert('please install metamask!')
+    if (!window.ethereum) {
+      window.location.href = 'https://metamask.io/download/'
+    }
     console.log('error: ', error)
   })
 }
-
 
 const getBalance = async() => {
   const balance = await web3.eth.getBalance(account.Address)
@@ -102,10 +117,21 @@ const getChainID = async() => {
   console.log('web3: ', web3js.getAccount())
 }
 
+const onLogout = () => {
+  // TODO
+}
+
 const router = useRouter()
 const onTxClick = () => {
   void router.push({path: '/transaction'})
 }
+
+onMounted(() => {
+  if (!account.Address) {
+    console.log('onMounted')
+    onMetaMaskClick()
+  }
+})
 </script>
 
 <style scoped lang='sass'>
