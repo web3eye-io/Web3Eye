@@ -56,6 +56,7 @@ const onClick =  () => {
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onGetGasPrice = async() => {
   const price = await web3.value.eth.getGasPrice()
   console.log('gasPrice: ', price)
