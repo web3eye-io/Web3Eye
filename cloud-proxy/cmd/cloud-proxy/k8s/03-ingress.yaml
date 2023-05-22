@@ -15,23 +15,23 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.middlewares:
-      default-strip-cloud-proxy-prefix@kubernetescrd,
-      default-http-redirect-https@kubernetescrd,
-      default-http-redirect-https-testing@kubernetescrd,
-      default-common-headers@kubernetescrd
+    # traefik.ingress.kubernetes.io/router.middlewares:
+    #   default-strip-cloud-proxy-prefix@kubernetescrd,
+    #   default-http-redirect-https@kubernetescrd,
+    #   default-http-redirect-https-testing@kubernetescrd,
+    #   default-common-headers@kubernetescrd
 
 spec:
   tls:
     - hosts:
-        - "*.hk-testing.web3eye.io"
-        - hk-testing.web3eye.io
-      secretName: hk-testing-web3eye-io-tls
+        - "*.testnet.web3eye.io"
+        - testnet.web3eye.io
+      secretName: testnet-web3eye-io-tls
   rules:
-    - host:
+    - host: cloud-proxy.testnet.web3eye.io
       http:
         paths:
-          - path: /api/cloud-proxy
+          - path: /
             pathType: Prefix
             backend:
               service:

@@ -24,9 +24,9 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "*.hk-testing.web3eye.io"
-        - hk-testing.web3eye.io
-      secretName: hk-testing-web3eye-io-tls
+        - "*.testnet.web3eye.io"
+        - testnet.web3eye.io
+      secretName: testnet-web3eye-io-tls
   rules:
     - host:
       http:

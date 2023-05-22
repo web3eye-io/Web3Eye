@@ -16,11 +16,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - '*.hk-testing.web3eye.io'
-        - hk-testing.web3eye.io
-      secretName: hk-testing-web3eye-io-tls
+        - '*.testnet.web3eye.io'
+        - testnet.web3eye.io
+      secretName: testnet-web3eye-io-tls
   rules:
-    - host:
+    - host: testnet.web3eye.io
       http:
         paths:
           - path: /
@@ -30,7 +30,7 @@ spec:
                 name: webui
                 port:
                   number: 80
-    # - host: www.hk-testing.web3eye.io
+    # - host: www.testnet.web3eye.io
     #   http:
     #     paths:
     #       - path: /
