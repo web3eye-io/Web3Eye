@@ -1,6 +1,6 @@
 {
   "name": "io",
-  "version": "0.0.1",
+  "version": "0.1.5",
   "description": "Here we make web3 be easier.",
   "productName": "Web3Eye",
   "author": "Zhao KK <kikakkz@hotmail.com>",
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.10.0",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
