@@ -6,133 +6,111 @@
       <q-space />
     </div>
     <q-input
-      v-model="search"
+      v-if='isText'
+      class='icontainer'
       rounded
       outlined
-      style='width: 650px;'
-      placeholder='Coming soon'
+      v-model="search"
+      @keyup.enter='handleEnter'
+      placeholder="input text here"
     >
       <template v-slot:append>
-        <q-icon name='camera_enhance' @click='photographer = true' />
+        <InputOption v-model:option='curOption' />
       </template>
     </q-input>
-    <div class='row looking'>
-      <q-space />
-      <q-btn label='Just looking' rounded flat>
-        <q-tooltip>
-          Coming soon
-        </q-tooltip>
-      </q-btn>
-      <q-space />
-
-    </div>
+    <q-file
+      v-if='!isText'
+      :clearable='uploading'
+      class='icontainer'
+      v-model="file"
+      rounded
+      outlined
+      :loading='uploading'
+      name='upload'
+      @update:model-value='onUpdate'
+      placeholder="drag a image here"
+      @clear='handleClear'
+      @rejected='handleReject'
+    >
+      <template v-slot:append>
+        <InputOption v-model:option='curOption' />
+      </template>
+    </q-file>
     <div class='occupier' />
   </div>
-  <q-dialog v-model='photographer'>
-      <q-card style="width: 700px; max-width: 80vw; height: 300px; max-height: 300px;">
-        <q-uploader
-          label="Custom header"
-          single
-          color='white'
-          text-color='black'
-          class='upload-box'
-          field-name='upload'
-          :form-fields='[{name: "topN", value: "10"}]'
-          auto-upload
-          @failed='onFailed'
-          @uploaded='onUploaded'
-          :factory='factoryFn'
-        >
-      <template v-slot:header="scope">
-        <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
-          <q-btn v-if="scope.queuedFiles.length > 0" icon="clear_all" @click="scope.removeQueuedFiles" round dense flat >
-            <q-tooltip>Clear All</q-tooltip>
-          </q-btn>
-          <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat >
-            <q-tooltip>Remove Uploaded Files</q-tooltip>
-          </q-btn>
-          <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
-          <!-- <div class="col">
-            <div class="q-uploader__title">Upload your files</div>
-            <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel }}</div>
-          </div> -->
-          <div>
-            <span>Drag an image here or</span>
-            <q-btn flat color="primary" @click="scope.pickFiles">
-              upload a file
-              <q-uploader-add-trigger />
-            </q-btn>
-          </div>
-          <!-- <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat >
-            <q-tooltip>Upload Files</q-tooltip>
-          </q-btn> -->
-
-          <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat >
-            <q-tooltip>Abort Upload</q-tooltip>
-          </q-btn>
-        </div>
-      </template>
-    </q-uploader>
-      </q-card>
-    </q-dialog>
 </template>
 
 <script setup lang='ts'>
 import { useNFTMetaStore } from 'src/localstore/nft';
-import { UploadResponse } from 'src/localstore/nft/types';
-import { ref } from 'vue'
+import { NFTMeta } from 'src/localstore/nft/types';
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router';
-
+import InputOption from 'src/components/Main/InputOption.vue'
 import logo from '../../assets/logo/logo.png'
+import { api } from 'src/boot/axios';
+
+const curOption = ref('File')
+const isText = computed(() => curOption.value === 'Text')
 
 const search = ref('')
-const photographer = ref(false)
+const file = ref({} as File)
 
 const router = useRouter()
 
 const nft = useNFTMetaStore()
 
-const onUploaded = (info: {
-    /**
-     * Uploaded files
-     */
-    files: readonly File[];
-    /**
-     * XMLHttpRequest that has been used to upload this batch of files
-     */
-    xhr: XMLHttpRequest;
-  }) => {
+const uploading = ref(false)
+// Contract search
+const handleEnter = () => {
+  console.log('enter......')
+}
+
+// image search
+const onUpdate  = () => {
+  uploading.value = true
   const reader = new FileReader()
-  reader.readAsDataURL(info.files[0] as Blob)
-  reader.onload = function() { 
-    // console.log('result: ', this.result) // binary
-    nft.NTFMetas.Current = window.URL.createObjectURL(info.files[0] as Blob)
-	}
-  const response = JSON.parse(info.xhr.response as string) as UploadResponse
-  nft.setNftMeta(response.data)
-  void router.push({
-    path: '/result'
-  })
-}
-
-const factoryFn = () => {
-  return new Promise((resolve) => {
-    resolve({
-      url: '/api/entrance/search/file',
-      method: 'POST'
+  reader.readAsBinaryString(file.value)
+  reader.onload = function () {
+    api.post('/api/nft-meta/search/file', {
+      'topN': 10,
+      'file': reader.result
+    }, {
+      headers: {'Content-Type': 'multipart/form-data'}}
+    )
+    .then((response) => {
+      console.log('response: ', response.data)
+      nft.setNftMeta(response.data as Array<NFTMeta>)
+      void router.push({
+        path: '/result'
+      })
     })
-  })
+    .catch((error)=> {
+      console.log('error: ', error)
+    })
+    .finally(() => {
+      uploading.value = false
+    })
+  }
 }
 
-const onFailed = () => {
-  console.log('onFailed...')
+const handleReject = () => {
+  console.log('handleReject')
+  uploading.value = false
 }
+
+const handleClear = () => {
+  console.log('clear')
+  file.value = {} as File
+}
+
 </script>
 
 <style scoped lang='sass'>
 .logo
   margin: 10px 0 20px 0
 
+.icontainer
+  width: 650px
 .looking
   margin: 10px 0 10px 0
   color: $grey-8
