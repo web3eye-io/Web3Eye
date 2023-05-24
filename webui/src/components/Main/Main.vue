@@ -1,5 +1,5 @@
 <template>
-  <div view='lHh Lpr lFf'>
+  <div view='lHh Lpr lFf search-container'>
     <div class='row logo'>
       <q-space />
       <q-img :src='logo' style='width: 400px' fit='contain' />
@@ -7,7 +7,7 @@
     </div>
     <q-input
       v-if='isText'
-      class='icontainer'
+      class='icontainer input-padding'
       rounded
       outlined
       v-model="search"
@@ -15,92 +15,97 @@
       placeholder="input text here"
     >
       <template v-slot:append>
-        <InputOption v-model:option='curOption' />
+        <InputOption v-model:option='curOption' :disable='uploading' />
       </template>
     </q-input>
-    <q-file
+    <q-uploader
       v-if='!isText'
-      :clearable='uploading'
-      class='icontainer'
-      v-model="file"
-      rounded
-      outlined
-      :loading='uploading'
-      name='upload'
-      @update:model-value='onUpdate'
-      placeholder="drag a image here"
-      @clear='handleClear'
-      @rejected='handleReject'
+      class='upload-box'
+      url="/api/entrance/search/file"
+      color='white'
+      :square='false'
+      field-name='upload'
+      :form-fields='[{name: "topN", value: "10"}]'
+      auto-upload
+      flat
+      :disable='uploading'
+      @failed='onFailed'
+      @uploaded='onUploaded'
+      @added='onAdded'
+      @uploading='uploading = true'
     >
-      <template v-slot:append>
-        <InputOption v-model:option='curOption' />
+      <template v-slot:header>
+          <q-input
+            class='icontainer'
+            rounded
+            outlined
+            v-model="fileName"
+            :loading="uploading"
+            placeholder="drag a image here"
+          >
+          <q-uploader-add-trigger /><!-- trigger file picker -->
+          <template v-slot:append>
+            <InputOption v-model:option='curOption' :disable='uploading' />
+          </template>
+        </q-input>
       </template>
-    </q-file>
-    <div class='occupier' />
+      <template v-slot:list>
+      </template>
+    </q-uploader>
   </div>
+    <div class='occupier' />
 </template>
 
 <script setup lang='ts'>
 import { useNFTMetaStore } from 'src/localstore/nft';
-import { NFTMeta } from 'src/localstore/nft/types';
+import { UploadResponse } from 'src/localstore/nft/types';
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router';
 import InputOption from 'src/components/Main/InputOption.vue'
 import logo from '../../assets/logo/logo.png'
-import { api } from 'src/boot/axios';
+import { useRouter } from 'vue-router'
 
 const curOption = ref('File')
 const isText = computed(() => curOption.value === 'Text')
 
 const search = ref('')
-const file = ref({} as File)
-
-const router = useRouter()
-
-const nft = useNFTMetaStore()
-
-const uploading = ref(false)
-// Contract search
 const handleEnter = () => {
   console.log('enter......')
 }
 
-// image search
-const onUpdate  = () => {
-  uploading.value = true
-  const reader = new FileReader()
-  reader.readAsBinaryString(file.value)
-  reader.onload = function () {
-    api.post('/api/nft-meta/search/file', {
-      'topN': 10,
-      'file': reader.result
-    }, {
-      headers: {'Content-Type': 'multipart/form-data'}}
-    )
-    .then((response) => {
-      console.log('response: ', response.data)
-      nft.setNftMeta(response.data as Array<NFTMeta>)
-      void router.push({
-        path: '/result'
-      })
-    })
-    .catch((error)=> {
-      console.log('error: ', error)
-    })
-    .finally(() => {
-      uploading.value = false
-    })
-  }
+const fileName = ref('')
+const uploading = ref(false)
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const onAdded = (files: readonly any[]) => {
+  const _file = files[0] as File
+  fileName.value = _file.name
 }
 
-const handleReject = () => {
-  console.log('handleReject')
+
+const router = useRouter()
+
+const nft = useNFTMetaStore()
+const onUploaded = (info: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    files: readonly any[];
+    xhr: XMLHttpRequest;
+  }) => {
+  const reader = new FileReader()
+  reader.readAsDataURL(info.files[0] as Blob)
+  reader.onload = function() {
+    nft.NTFMetas.Current = window.URL.createObjectURL(info.files[0] as Blob)
+	}
+  const response = JSON.parse(info.xhr.response as string) as UploadResponse
+  nft.setNftMeta(response.data)
+  void router.push({
+    path: '/result'
+  })
   uploading.value = false
 }
 
-const handleClear = () => {
-  console.log('clear')
-  file.value = {} as File
+const onFailed = () => {
+  uploading.value = false
+  console.log('onFailed...')
 }
 
 </script>
@@ -118,8 +123,14 @@ const handleClear = () => {
 .occupier
   height: 240px
 
+.input-padding
+  padding-bottom: 5px
+
 .upload-box
-  width: 100%
-  height: 300px
-  max-height: 300px
+  width: 650px
+  flex-direction: row
+.search-container
+  ::v-deep > div.q-uploader
+    width: auto
+    max-height: 160px
 </style>
