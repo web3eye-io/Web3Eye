@@ -1,6 +1,6 @@
 output/
 /bin
-__pycache__
+*__pycache__*
 tmp
 *.json
 !*.swagger.json
