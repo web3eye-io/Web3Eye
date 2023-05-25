@@ -1,20 +1,19 @@
 package main
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"time"
+import (
+	"context"
+	"fmt"
 
-// 	"github.com/web3eye-io/Web3Eye/config"
-// 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
-// )
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+)
 
-// func main() {
-// 	config.GetConfig().Ranker.IP = "172.20.235.201"
-// 	// token.UseCloudProxyCC()
-// 	start := time.Now()
-// 	// fmt.Println(token.Search(context.Background(), []float32{1}, 10))
-// 	fmt.Println(token.GetTokens(context.Background(), nil, 0, 5))
-// 	fmt.Println(token.CountTokens(context.Background(), nil))
-// 	fmt.Println(time.Now().UnixMilli() - start.UnixMilli())
-// }
+func main() {
+	cli, err := milvusdb.Client(context.Background())
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(cli.HasCollection(context.Background(), milvusdb.NFTSchema.CollectionName))
+	fmt.Println(cli.DropCollection(context.Background(), milvusdb.NFTSchema.CollectionName))
+	fmt.Println(cli.HasCollection(context.Background(), milvusdb.NFTSchema.CollectionName))
+}

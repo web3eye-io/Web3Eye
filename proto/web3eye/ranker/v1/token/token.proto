@@ -14,8 +14,24 @@ service Manager {
 }
 
 message SearchToken{
-  nftmeta.v1.token.Token Token = 10;
-  float Distance = 20;
+  // nftmeta.v1.token.Token Token = 10;
+  string ID = 10;
+  string ChainType = 20;
+  int32 ChainID = 30;
+  string Contract = 40;
+  string TokenType = 50;
+  string TokenID = 60;
+  string Owner = 70;
+  string URI = 80;
+  string URIType = 90;
+  string ImageURL = 100;
+  string VideoURL = 110;
+  string Description = 120;
+  string Name = 130;
+  nftmeta.v1.token.ConvertState VectorState = 140;
+  int64 VectorID = 150;
+  string Remark = 160;
+  float Distance = 500;
 }
 
 message SearchTokenRequest {

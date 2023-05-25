@@ -159,8 +159,56 @@
     "tokenSearchToken": {
       "type": "object",
       "properties": {
-        "Token": {
-          "$ref": "#/definitions/tokenToken"
+        "ID": {
+          "type": "string",
+          "title": "nftmeta.v1.token.Token Token = 10;"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "URI": {
+          "type": "string"
+        },
+        "URIType": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "VideoURL": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "VectorState": {
+          "$ref": "#/definitions/tokenConvertState"
+        },
+        "VectorID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
         },
         "Distance": {
           "type": "number",

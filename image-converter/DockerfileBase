@@ -6,5 +6,7 @@ WORKDIR /code
 RUN /usr/local/bin/python3 -m pip install --upgrade pip
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 RUN apt install git-lfs libgl1 python3-brlapi -y
+# deps for pip install svglib
+RUN apt install sox ffmpeg libcairo2 libcairo2-dev
 RUN git lfs install
 RUN pip install  -r /code/requirements.txt
