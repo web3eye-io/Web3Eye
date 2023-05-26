@@ -1,11 +1,11 @@
-FROM python:3.9
+FROM python:3.8
 
 RUN mkdir /code
 COPY ./requirements.txt /code
 WORKDIR /code
 RUN /usr/local/bin/python3 -m pip install --upgrade pip
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-RUN apt install git-lfs libgl1 python3-brlapi -y
+RUN apt install git-lfs libgl1 python3-brlapi  -y
 # deps for pip install svglib
 RUN apt install sox ffmpeg libcairo2 libcairo2-dev -y
 RUN git lfs install

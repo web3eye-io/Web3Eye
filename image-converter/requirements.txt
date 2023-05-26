@@ -1,5 +1,5 @@
 pymilvus==2.0.0
-towhee==0.6.0
+towhee==0.8.0
 bottle==0.12.23
 urllib3
 scipy
@@ -14,3 +14,4 @@ opencv-python-headless
 scikit-image
 confluent-kafka
 svglib
+pyopenssl
