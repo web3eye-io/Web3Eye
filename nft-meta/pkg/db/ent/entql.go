@@ -32,7 +32,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldUpdatedAt:   {Type: field.TypeUint32, Column: contract.FieldUpdatedAt},
 			contract.FieldDeletedAt:   {Type: field.TypeUint32, Column: contract.FieldDeletedAt},
 			contract.FieldChainType:   {Type: field.TypeString, Column: contract.FieldChainType},
-			contract.FieldChainID:     {Type: field.TypeInt32, Column: contract.FieldChainID},
+			contract.FieldChainID:     {Type: field.TypeString, Column: contract.FieldChainID},
 			contract.FieldAddress:     {Type: field.TypeString, Column: contract.FieldAddress},
 			contract.FieldName:        {Type: field.TypeString, Column: contract.FieldName},
 			contract.FieldSymbol:      {Type: field.TypeString, Column: contract.FieldSymbol},
@@ -62,7 +62,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldUpdatedAt:   {Type: field.TypeUint32, Column: synctask.FieldUpdatedAt},
 			synctask.FieldDeletedAt:   {Type: field.TypeUint32, Column: synctask.FieldDeletedAt},
 			synctask.FieldChainType:   {Type: field.TypeString, Column: synctask.FieldChainType},
-			synctask.FieldChainID:     {Type: field.TypeInt32, Column: synctask.FieldChainID},
+			synctask.FieldChainID:     {Type: field.TypeString, Column: synctask.FieldChainID},
 			synctask.FieldStart:       {Type: field.TypeUint64, Column: synctask.FieldStart},
 			synctask.FieldEnd:         {Type: field.TypeUint64, Column: synctask.FieldEnd},
 			synctask.FieldCurrent:     {Type: field.TypeUint64, Column: synctask.FieldCurrent},
@@ -87,7 +87,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldUpdatedAt:   {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
 			token.FieldDeletedAt:   {Type: field.TypeUint32, Column: token.FieldDeletedAt},
 			token.FieldChainType:   {Type: field.TypeString, Column: token.FieldChainType},
-			token.FieldChainID:     {Type: field.TypeInt32, Column: token.FieldChainID},
+			token.FieldChainID:     {Type: field.TypeString, Column: token.FieldChainID},
 			token.FieldContract:    {Type: field.TypeString, Column: token.FieldContract},
 			token.FieldTokenType:   {Type: field.TypeString, Column: token.FieldTokenType},
 			token.FieldTokenID:     {Type: field.TypeString, Column: token.FieldTokenID},
@@ -118,7 +118,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldUpdatedAt:   {Type: field.TypeUint32, Column: transfer.FieldUpdatedAt},
 			transfer.FieldDeletedAt:   {Type: field.TypeUint32, Column: transfer.FieldDeletedAt},
 			transfer.FieldChainType:   {Type: field.TypeString, Column: transfer.FieldChainType},
-			transfer.FieldChainID:     {Type: field.TypeInt32, Column: transfer.FieldChainID},
+			transfer.FieldChainID:     {Type: field.TypeString, Column: transfer.FieldChainID},
 			transfer.FieldContract:    {Type: field.TypeString, Column: transfer.FieldContract},
 			transfer.FieldTokenType:   {Type: field.TypeString, Column: transfer.FieldTokenType},
 			transfer.FieldTokenID:     {Type: field.TypeString, Column: transfer.FieldTokenID},
@@ -201,8 +201,8 @@ func (f *ContractFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(contract.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *ContractFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *ContractFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(contract.FieldChainID))
 }
 
@@ -326,8 +326,8 @@ func (f *SyncTaskFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(synctask.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *SyncTaskFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *SyncTaskFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(synctask.FieldChainID))
 }
 
@@ -426,8 +426,8 @@ func (f *TokenFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(token.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *TokenFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *TokenFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(token.FieldChainID))
 }
 
@@ -556,8 +556,8 @@ func (f *TransferFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *TransferFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *TransferFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldChainID))
 }
 

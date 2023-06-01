@@ -36,7 +36,7 @@ verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs ver
 	${REPO_ROOT}/hack/verify.sh
 
 gen-ent:
-	go get entgo.io/ent/cmd/ent@v0.11.2
+	go install entgo.io/ent/cmd/ent@v0.11.2
 	go run entgo.io/ent/cmd/ent generate --feature entql,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
 
 ifdef AIMPROJECT

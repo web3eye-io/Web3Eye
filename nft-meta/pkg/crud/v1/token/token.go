@@ -36,7 +36,7 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 		c.SetID(uuid.New())
 	}
 	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType())
+		c.SetChainType(in.GetChainType().String())
 	}
 	if in.ChainID != nil {
 		c.SetChainID(in.GetChainID())
@@ -45,7 +45,7 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 		c.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType())
+		c.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		c.SetTokenID(in.GetTokenID())
@@ -116,7 +116,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		u := cli.Token.UpdateOneID(uuid.MustParse(in.GetID()))
 		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType())
+			u.SetChainType(in.GetChainType().String())
 		}
 		if in.ChainID != nil {
 			u.SetChainID(in.GetChainID())
@@ -125,7 +125,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 			u.SetContract(in.GetContract())
 		}
 		if in.TokenType != nil {
-			u.SetTokenType(in.GetTokenType())
+			u.SetTokenType(in.GetTokenType().String())
 		}
 		if in.TokenID != nil {
 			u.SetTokenID(in.GetTokenID())

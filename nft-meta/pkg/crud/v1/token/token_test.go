@@ -14,6 +14,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func prepareData() {
 		ID:        uuid.New(),
 		VectorID:  RandInt64(),
 		ChainType: "eth",
-		ChainID:   RandInt32(),
+		ChainID:   string(RandInt32()),
 		Contract:  "test",
 		TokenType: "1155",
 		TokenID:   strconv.Itoa(RandInt()),
@@ -53,14 +54,15 @@ func prepareData() {
 	}
 
 	id = entToken.ID.String()
-
+	chainType := basetype.ChainType(basetype.ChainType_value[entToken.ChainType])
+	tokenType := basetype.TokenType(basetype.TokenType_value[entToken.TokenType])
 	tokenInfo = npool.TokenReq{
 		ID:        &id,
 		VectorID:  &entToken.VectorID,
-		ChainType: &entToken.ChainType,
+		ChainType: &chainType,
 		ChainID:   &entToken.ChainID,
 		Contract:  &entToken.Contract,
-		TokenType: &entToken.TokenType,
+		TokenType: &tokenType,
 		TokenID:   &entToken.TokenID,
 		URI:       &entToken.URI,
 		URIType:   &entToken.URIType,
@@ -106,7 +108,7 @@ func createBulk(t *testing.T) {
 			ID:        uuid.New(),
 			VectorID:  RandInt64(),
 			ChainType: "eth",
-			ChainID:   RandInt32(),
+			ChainID:   string(RandInt32()),
 			Contract:  "test",
 			TokenType: "1155",
 			TokenID:   strconv.Itoa(RandInt()),
@@ -120,7 +122,7 @@ func createBulk(t *testing.T) {
 			ID:        uuid.New(),
 			VectorID:  RandInt64(),
 			ChainType: "eth",
-			ChainID:   RandInt32(),
+			ChainID:   string(RandInt32()),
 			Contract:  "test",
 			TokenType: "1155",
 			TokenID:   strconv.Itoa(RandInt()),
@@ -135,14 +137,15 @@ func createBulk(t *testing.T) {
 	tokens := []*npool.TokenReq{}
 	for key := range entToken {
 		id := entToken[key].ID.String()
-
+		chainType := basetype.ChainType(basetype.ChainType_value[entToken[key].ChainType])
+		tokenType := basetype.TokenType(basetype.TokenType_value[entToken[key].TokenType])
 		tokens = append(tokens, &npool.TokenReq{
 			ID:        &id,
 			VectorID:  &entToken[key].VectorID,
-			ChainType: &entToken[key].ChainType,
+			ChainType: &chainType,
 			ChainID:   &entToken[key].ChainID,
 			Contract:  &entToken[key].Contract,
-			TokenType: &entToken[key].TokenType,
+			TokenType: &tokenType,
 			TokenID:   &entToken[key].TokenID,
 			URI:       &entToken[key].URI,
 			URIType:   &entToken[key].URIType,

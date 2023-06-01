@@ -19,6 +19,7 @@ import (
 	tokenNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	transferNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/transfer"
 	ctMessage "github.com/web3eye-io/Web3Eye/proto/web3eye"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	contractProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
@@ -107,7 +108,7 @@ func (e *EthIndexer) indexTransferToDB(ctx context.Context) {
 func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfer) error {
 	tt := make([]*transferProto.TransferReq, len(transfers))
 	for i := range transfers {
-		chainType := string(transfers[i].ChainType)
+		chainType := transfers[i].ChainType
 		tokenType := string(transfers[i].TokenType)
 		tt[i] = &transferProto.TransferReq{
 			ChainType:   &chainType,
@@ -151,14 +152,13 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			continue
 		}
 
-		tokenType := string(transfer.TokenType)
 		remark := ""
 		conds := &tokenProto.Conds{
 			ChainType: &ctMessage.StringVal{
 				Value: string(transfer.ChainType),
 				Op:    "eq",
 			},
-			ChainID: &ctMessage.Int32Val{
+			ChainID: &ctMessage.StringVal{
 				Value: transfer.ChainID,
 				Op:    "eq",
 			},
@@ -200,10 +200,10 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 
 		for i := 0; i < Retries; i++ {
 			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.TokenReq{
-				ChainType:   (*string)(&transfer.ChainType),
+				ChainType:   &transfer.ChainType,
 				ChainID:     &transfer.ChainID,
 				Contract:    &transfer.Contract,
-				TokenType:   &tokenType,
+				TokenType:   &transfer.TokenType,
 				TokenID:     &transfer.TokenID,
 				URI:         &tokenURI,
 				URIType:     (*string)(&tokenURIInfo.URIType),
@@ -238,7 +238,7 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 			Value: string(transfer.ChainType),
 			Op:    "eq",
 		},
-		ChainID: &ctMessage.Int32Val{
+		ChainID: &ctMessage.StringVal{
 			Value: transfer.ChainID,
 			Op:    "eq",
 		},
@@ -273,7 +273,7 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	txTime := uint32(creator.TxTime)
 	for i := 0; i < Retries; i++ {
 		_, err = contractNMCli.CreateContract(ctx, &contractProto.ContractReq{
-			ChainType: (*string)(&transfer.ChainType),
+			ChainType: &transfer.ChainType,
 			ChainID:   &transfer.ChainID,
 			Address:   &transfer.Contract,
 			Name:      &contractMeta.Name,
@@ -303,11 +303,11 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 
 	conds := &synctask.Conds{
 		ChainType: &ctMessage.StringVal{
-			Value: cttype.ChainType_Ethereum.String(),
+			Value: basetype.ChainType_Ethereum.String(),
 			Op:    "eq",
 		},
-		ChainID: &ctMessage.Int32Val{
-			Value: 1,
+		ChainID: &ctMessage.StringVal{
+			Value: "1",
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{
@@ -409,10 +409,10 @@ func containErr(errStr string) bool {
 	return false
 }
 
-func tokenIdentifier(chain cteth.ChainType, chainID int32, contract, tokenID string) string {
+func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
 	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
 }
 
-func contractIdentifier(chain cteth.ChainType, chainID int32, contract string) string {
+func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
 	return fmt.Sprintf("%v+%v+%v", chain, chainID, contract)
 }

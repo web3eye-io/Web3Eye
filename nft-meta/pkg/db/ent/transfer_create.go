@@ -72,8 +72,8 @@ func (tc *TransferCreate) SetChainType(s string) *TransferCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tc *TransferCreate) SetChainID(i int32) *TransferCreate {
-	tc.mutation.SetChainID(i)
+func (tc *TransferCreate) SetChainID(s string) *TransferCreate {
+	tc.mutation.SetChainID(s)
 	return tc
 }
 
@@ -398,7 +398,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldChainID,
 		})
@@ -613,7 +613,7 @@ func (u *TransferUpsert) UpdateChainType() *TransferUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsert) SetChainID(v int32) *TransferUpsert {
+func (u *TransferUpsert) SetChainID(v string) *TransferUpsert {
 	u.Set(transfer.FieldChainID, v)
 	return u
 }
@@ -621,12 +621,6 @@ func (u *TransferUpsert) SetChainID(v int32) *TransferUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *TransferUpsert) UpdateChainID() *TransferUpsert {
 	u.SetExcluded(transfer.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsert) AddChainID(v int32) *TransferUpsert {
-	u.Add(transfer.FieldChainID, v)
 	return u
 }
 
@@ -920,16 +914,9 @@ func (u *TransferUpsertOne) UpdateChainType() *TransferUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsertOne) SetChainID(v int32) *TransferUpsertOne {
+func (u *TransferUpsertOne) SetChainID(v string) *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsertOne) AddChainID(v int32) *TransferUpsertOne {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1423,16 +1410,9 @@ func (u *TransferUpsertBulk) UpdateChainType() *TransferUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsertBulk) SetChainID(v int32) *TransferUpsertBulk {
+func (u *TransferUpsertBulk) SetChainID(v string) *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsertBulk) AddChainID(v int32) *TransferUpsertBulk {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddChainID(v)
 	})
 }
 

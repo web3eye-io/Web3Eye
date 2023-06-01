@@ -46,8 +46,7 @@ type ContractMutation struct {
 	deleted_at    *uint32
 	adddeleted_at *int32
 	chain_type    *string
-	chain_id      *int32
-	addchain_id   *int32
+	chain_id      *string
 	address       *string
 	name          *string
 	symbol        *string
@@ -377,13 +376,12 @@ func (m *ContractMutation) ResetChainType() {
 }
 
 // SetChainID sets the "chain_id" field.
-func (m *ContractMutation) SetChainID(i int32) {
-	m.chain_id = &i
-	m.addchain_id = nil
+func (m *ContractMutation) SetChainID(s string) {
+	m.chain_id = &s
 }
 
 // ChainID returns the value of the "chain_id" field in the mutation.
-func (m *ContractMutation) ChainID() (r int32, exists bool) {
+func (m *ContractMutation) ChainID() (r string, exists bool) {
 	v := m.chain_id
 	if v == nil {
 		return
@@ -394,7 +392,7 @@ func (m *ContractMutation) ChainID() (r int32, exists bool) {
 // OldChainID returns the old "chain_id" field's value of the Contract entity.
 // If the Contract object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ContractMutation) OldChainID(ctx context.Context) (v int32, err error) {
+func (m *ContractMutation) OldChainID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
 	}
@@ -408,28 +406,9 @@ func (m *ContractMutation) OldChainID(ctx context.Context) (v int32, err error) 
 	return oldValue.ChainID, nil
 }
 
-// AddChainID adds i to the "chain_id" field.
-func (m *ContractMutation) AddChainID(i int32) {
-	if m.addchain_id != nil {
-		*m.addchain_id += i
-	} else {
-		m.addchain_id = &i
-	}
-}
-
-// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
-func (m *ContractMutation) AddedChainID() (r int32, exists bool) {
-	v := m.addchain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetChainID resets all changes to the "chain_id" field.
 func (m *ContractMutation) ResetChainID() {
 	m.chain_id = nil
-	m.addchain_id = nil
 }
 
 // SetAddress sets the "address" field.
@@ -1217,7 +1196,7 @@ func (m *ContractMutation) SetField(name string, value ent.Value) error {
 		m.SetChainType(v)
 		return nil
 	case contract.FieldChainID:
-		v, ok := value.(int32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1324,9 +1303,6 @@ func (m *ContractMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, contract.FieldDeletedAt)
 	}
-	if m.addchain_id != nil {
-		fields = append(fields, contract.FieldChainID)
-	}
 	if m.addblock_num != nil {
 		fields = append(fields, contract.FieldBlockNum)
 	}
@@ -1347,8 +1323,6 @@ func (m *ContractMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case contract.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case contract.FieldChainID:
-		return m.AddedChainID()
 	case contract.FieldBlockNum:
 		return m.AddedBlockNum()
 	case contract.FieldTxTime:
@@ -1382,13 +1356,6 @@ func (m *ContractMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case contract.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChainID(v)
 		return nil
 	case contract.FieldBlockNum:
 		v, ok := value.(int64)
@@ -1604,8 +1571,7 @@ type SyncTaskMutation struct {
 	deleted_at    *uint32
 	adddeleted_at *int32
 	chain_type    *string
-	chain_id      *int32
-	addchain_id   *int32
+	chain_id      *string
 	start         *uint64
 	addstart      *int64
 	end           *uint64
@@ -1944,13 +1910,12 @@ func (m *SyncTaskMutation) ResetChainType() {
 }
 
 // SetChainID sets the "chain_id" field.
-func (m *SyncTaskMutation) SetChainID(i int32) {
-	m.chain_id = &i
-	m.addchain_id = nil
+func (m *SyncTaskMutation) SetChainID(s string) {
+	m.chain_id = &s
 }
 
 // ChainID returns the value of the "chain_id" field in the mutation.
-func (m *SyncTaskMutation) ChainID() (r int32, exists bool) {
+func (m *SyncTaskMutation) ChainID() (r string, exists bool) {
 	v := m.chain_id
 	if v == nil {
 		return
@@ -1961,7 +1926,7 @@ func (m *SyncTaskMutation) ChainID() (r int32, exists bool) {
 // OldChainID returns the old "chain_id" field's value of the SyncTask entity.
 // If the SyncTask object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SyncTaskMutation) OldChainID(ctx context.Context) (v int32, err error) {
+func (m *SyncTaskMutation) OldChainID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
 	}
@@ -1975,28 +1940,9 @@ func (m *SyncTaskMutation) OldChainID(ctx context.Context) (v int32, err error) 
 	return oldValue.ChainID, nil
 }
 
-// AddChainID adds i to the "chain_id" field.
-func (m *SyncTaskMutation) AddChainID(i int32) {
-	if m.addchain_id != nil {
-		*m.addchain_id += i
-	} else {
-		m.addchain_id = &i
-	}
-}
-
-// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
-func (m *SyncTaskMutation) AddedChainID() (r int32, exists bool) {
-	v := m.addchain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetChainID resets all changes to the "chain_id" field.
 func (m *SyncTaskMutation) ResetChainID() {
 	m.chain_id = nil
-	m.addchain_id = nil
 }
 
 // SetStart sets the "start" field.
@@ -2509,7 +2455,7 @@ func (m *SyncTaskMutation) SetField(name string, value ent.Value) error {
 		m.SetChainType(v)
 		return nil
 	case synctask.FieldChainID:
-		v, ok := value.(int32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2581,9 +2527,6 @@ func (m *SyncTaskMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, synctask.FieldDeletedAt)
 	}
-	if m.addchain_id != nil {
-		fields = append(fields, synctask.FieldChainID)
-	}
 	if m.addstart != nil {
 		fields = append(fields, synctask.FieldStart)
 	}
@@ -2607,8 +2550,6 @@ func (m *SyncTaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case synctask.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case synctask.FieldChainID:
-		return m.AddedChainID()
 	case synctask.FieldStart:
 		return m.AddedStart()
 	case synctask.FieldEnd:
@@ -2644,13 +2585,6 @@ func (m *SyncTaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case synctask.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChainID(v)
 		return nil
 	case synctask.FieldStart:
 		v, ok := value.(int64)
@@ -2828,8 +2762,7 @@ type TokenMutation struct {
 	deleted_at    *uint32
 	adddeleted_at *int32
 	chain_type    *string
-	chain_id      *int32
-	addchain_id   *int32
+	chain_id      *string
 	contract      *string
 	token_type    *string
 	token_id      *string
@@ -3159,13 +3092,12 @@ func (m *TokenMutation) ResetChainType() {
 }
 
 // SetChainID sets the "chain_id" field.
-func (m *TokenMutation) SetChainID(i int32) {
-	m.chain_id = &i
-	m.addchain_id = nil
+func (m *TokenMutation) SetChainID(s string) {
+	m.chain_id = &s
 }
 
 // ChainID returns the value of the "chain_id" field in the mutation.
-func (m *TokenMutation) ChainID() (r int32, exists bool) {
+func (m *TokenMutation) ChainID() (r string, exists bool) {
 	v := m.chain_id
 	if v == nil {
 		return
@@ -3176,7 +3108,7 @@ func (m *TokenMutation) ChainID() (r int32, exists bool) {
 // OldChainID returns the old "chain_id" field's value of the Token entity.
 // If the Token object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TokenMutation) OldChainID(ctx context.Context) (v int32, err error) {
+func (m *TokenMutation) OldChainID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
 	}
@@ -3190,28 +3122,9 @@ func (m *TokenMutation) OldChainID(ctx context.Context) (v int32, err error) {
 	return oldValue.ChainID, nil
 }
 
-// AddChainID adds i to the "chain_id" field.
-func (m *TokenMutation) AddChainID(i int32) {
-	if m.addchain_id != nil {
-		*m.addchain_id += i
-	} else {
-		m.addchain_id = &i
-	}
-}
-
-// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
-func (m *TokenMutation) AddedChainID() (r int32, exists bool) {
-	v := m.addchain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetChainID resets all changes to the "chain_id" field.
 func (m *TokenMutation) ResetChainID() {
 	m.chain_id = nil
-	m.addchain_id = nil
 }
 
 // SetContract sets the "contract" field.
@@ -4034,7 +3947,7 @@ func (m *TokenMutation) SetField(name string, value ent.Value) error {
 		m.SetChainType(v)
 		return nil
 	case token.FieldChainID:
-		v, ok := value.(int32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4148,9 +4061,6 @@ func (m *TokenMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, token.FieldDeletedAt)
 	}
-	if m.addchain_id != nil {
-		fields = append(fields, token.FieldChainID)
-	}
 	if m.addvector_id != nil {
 		fields = append(fields, token.FieldVectorID)
 	}
@@ -4168,8 +4078,6 @@ func (m *TokenMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case token.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case token.FieldChainID:
-		return m.AddedChainID()
 	case token.FieldVectorID:
 		return m.AddedVectorID()
 	}
@@ -4201,13 +4109,6 @@ func (m *TokenMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case token.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChainID(v)
 		return nil
 	case token.FieldVectorID:
 		v, ok := value.(int64)
@@ -4425,8 +4326,7 @@ type TransferMutation struct {
 	deleted_at      *uint32
 	adddeleted_at   *int32
 	chain_type      *string
-	chain_id        *int32
-	addchain_id     *int32
+	chain_id        *string
 	contract        *string
 	token_type      *string
 	token_id        *string
@@ -4756,13 +4656,12 @@ func (m *TransferMutation) ResetChainType() {
 }
 
 // SetChainID sets the "chain_id" field.
-func (m *TransferMutation) SetChainID(i int32) {
-	m.chain_id = &i
-	m.addchain_id = nil
+func (m *TransferMutation) SetChainID(s string) {
+	m.chain_id = &s
 }
 
 // ChainID returns the value of the "chain_id" field in the mutation.
-func (m *TransferMutation) ChainID() (r int32, exists bool) {
+func (m *TransferMutation) ChainID() (r string, exists bool) {
 	v := m.chain_id
 	if v == nil {
 		return
@@ -4773,7 +4672,7 @@ func (m *TransferMutation) ChainID() (r int32, exists bool) {
 // OldChainID returns the old "chain_id" field's value of the Transfer entity.
 // If the Transfer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransferMutation) OldChainID(ctx context.Context) (v int32, err error) {
+func (m *TransferMutation) OldChainID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
 	}
@@ -4787,28 +4686,9 @@ func (m *TransferMutation) OldChainID(ctx context.Context) (v int32, err error) 
 	return oldValue.ChainID, nil
 }
 
-// AddChainID adds i to the "chain_id" field.
-func (m *TransferMutation) AddChainID(i int32) {
-	if m.addchain_id != nil {
-		*m.addchain_id += i
-	} else {
-		m.addchain_id = &i
-	}
-}
-
-// AddedChainID returns the value that was added to the "chain_id" field in this mutation.
-func (m *TransferMutation) AddedChainID() (r int32, exists bool) {
-	v := m.addchain_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetChainID resets all changes to the "chain_id" field.
 func (m *TransferMutation) ResetChainID() {
 	m.chain_id = nil
-	m.addchain_id = nil
 }
 
 // SetContract sets the "contract" field.
@@ -5481,7 +5361,7 @@ func (m *TransferMutation) SetField(name string, value ent.Value) error {
 		m.SetChainType(v)
 		return nil
 	case transfer.FieldChainID:
-		v, ok := value.(int32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5581,9 +5461,6 @@ func (m *TransferMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, transfer.FieldDeletedAt)
 	}
-	if m.addchain_id != nil {
-		fields = append(fields, transfer.FieldChainID)
-	}
 	if m.addamount != nil {
 		fields = append(fields, transfer.FieldAmount)
 	}
@@ -5607,8 +5484,6 @@ func (m *TransferMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case transfer.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case transfer.FieldChainID:
-		return m.AddedChainID()
 	case transfer.FieldAmount:
 		return m.AddedAmount()
 	case transfer.FieldBlockNumber:
@@ -5644,13 +5519,6 @@ func (m *TransferMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case transfer.FieldChainID:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChainID(v)
 		return nil
 	case transfer.FieldAmount:
 		v, ok := value.(int64)

@@ -72,8 +72,8 @@ func (tc *TokenCreate) SetChainType(s string) *TokenCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tc *TokenCreate) SetChainID(i int32) *TokenCreate {
-	tc.mutation.SetChainID(i)
+func (tc *TokenCreate) SetChainID(s string) *TokenCreate {
+	tc.mutation.SetChainID(s)
 	return tc
 }
 
@@ -460,7 +460,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})
@@ -691,7 +691,7 @@ func (u *TokenUpsert) UpdateChainType() *TokenUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsert) SetChainID(v int32) *TokenUpsert {
+func (u *TokenUpsert) SetChainID(v string) *TokenUpsert {
 	u.Set(token.FieldChainID, v)
 	return u
 }
@@ -699,12 +699,6 @@ func (u *TokenUpsert) SetChainID(v int32) *TokenUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *TokenUpsert) UpdateChainID() *TokenUpsert {
 	u.SetExcluded(token.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsert) AddChainID(v int32) *TokenUpsert {
-	u.Add(token.FieldChainID, v)
 	return u
 }
 
@@ -1058,16 +1052,9 @@ func (u *TokenUpsertOne) UpdateChainType() *TokenUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsertOne) SetChainID(v int32) *TokenUpsertOne {
+func (u *TokenUpsertOne) SetChainID(v string) *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsertOne) AddChainID(v int32) *TokenUpsertOne {
-	return u.Update(func(s *TokenUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1631,16 +1618,9 @@ func (u *TokenUpsertBulk) UpdateChainType() *TokenUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsertBulk) SetChainID(v int32) *TokenUpsertBulk {
+func (u *TokenUpsertBulk) SetChainID(v string) *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsertBulk) AddChainID(v int32) *TokenUpsertBulk {
-	return u.Update(func(s *TokenUpsert) {
-		s.AddChainID(v)
 	})
 }
 

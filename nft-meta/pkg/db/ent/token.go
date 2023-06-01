@@ -25,7 +25,7 @@ type Token struct {
 	// ChainType holds the value of the "chain_type" field.
 	ChainType string `json:"chain_type,omitempty"`
 	// ChainID holds the value of the "chain_id" field.
-	ChainID int32 `json:"chain_id,omitempty"`
+	ChainID string `json:"chain_id,omitempty"`
 	// Contract holds the value of the "contract" field.
 	Contract string `json:"contract,omitempty"`
 	// TokenType holds the value of the "token_type" field.
@@ -59,9 +59,9 @@ func (*Token) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldChainID, token.FieldVectorID:
+		case token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID:
 			values[i] = new(sql.NullInt64)
-		case token.FieldChainType, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark:
+		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark:
 			values[i] = new(sql.NullString)
 		case token.FieldID:
 			values[i] = new(uuid.UUID)
@@ -111,10 +111,10 @@ func (t *Token) assignValues(columns []string, values []interface{}) error {
 				t.ChainType = value.String
 			}
 		case token.FieldChainID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field chain_id", values[i])
 			} else if value.Valid {
-				t.ChainID = int32(value.Int64)
+				t.ChainID = value.String
 			}
 		case token.FieldContract:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -235,7 +235,7 @@ func (t *Token) String() string {
 	builder.WriteString(t.ChainType)
 	builder.WriteString(", ")
 	builder.WriteString("chain_id=")
-	builder.WriteString(fmt.Sprintf("%v", t.ChainID))
+	builder.WriteString(t.ChainID)
 	builder.WriteString(", ")
 	builder.WriteString("contract=")
 	builder.WriteString(t.Contract)

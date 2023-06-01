@@ -80,8 +80,8 @@ func (stc *SyncTaskCreate) SetNillableChainType(s *string) *SyncTaskCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (stc *SyncTaskCreate) SetChainID(i int32) *SyncTaskCreate {
-	stc.mutation.SetChainID(i)
+func (stc *SyncTaskCreate) SetChainID(s string) *SyncTaskCreate {
+	stc.mutation.SetChainID(s)
 	return stc
 }
 
@@ -380,7 +380,7 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := stc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: synctask.FieldChainID,
 		})
@@ -569,7 +569,7 @@ func (u *SyncTaskUpsert) ClearChainType() *SyncTaskUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsert) SetChainID(v int32) *SyncTaskUpsert {
+func (u *SyncTaskUpsert) SetChainID(v string) *SyncTaskUpsert {
 	u.Set(synctask.FieldChainID, v)
 	return u
 }
@@ -577,12 +577,6 @@ func (u *SyncTaskUpsert) SetChainID(v int32) *SyncTaskUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *SyncTaskUpsert) UpdateChainID() *SyncTaskUpsert {
 	u.SetExcluded(synctask.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsert) AddChainID(v int32) *SyncTaskUpsert {
-	u.Add(synctask.FieldChainID, v)
 	return u
 }
 
@@ -841,16 +835,9 @@ func (u *SyncTaskUpsertOne) ClearChainType() *SyncTaskUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsertOne) SetChainID(v int32) *SyncTaskUpsertOne {
+func (u *SyncTaskUpsertOne) SetChainID(v string) *SyncTaskUpsertOne {
 	return u.Update(func(s *SyncTaskUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsertOne) AddChainID(v int32) *SyncTaskUpsertOne {
-	return u.Update(func(s *SyncTaskUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1302,16 +1289,9 @@ func (u *SyncTaskUpsertBulk) ClearChainType() *SyncTaskUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsertBulk) SetChainID(v int32) *SyncTaskUpsertBulk {
+func (u *SyncTaskUpsertBulk) SetChainID(v string) *SyncTaskUpsertBulk {
 	return u.Update(func(s *SyncTaskUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsertBulk) AddChainID(v int32) *SyncTaskUpsertBulk {
-	return u.Update(func(s *SyncTaskUpsert) {
-		s.AddChainID(v)
 	})
 }
 

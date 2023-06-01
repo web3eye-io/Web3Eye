@@ -25,7 +25,7 @@ type Transfer struct {
 	// ChainType holds the value of the "chain_type" field.
 	ChainType string `json:"chain_type,omitempty"`
 	// ChainID holds the value of the "chain_id" field.
-	ChainID int32 `json:"chain_id,omitempty"`
+	ChainID string `json:"chain_id,omitempty"`
 	// Contract holds the value of the "contract" field.
 	Contract string `json:"contract,omitempty"`
 	// TokenType holds the value of the "token_type" field.
@@ -55,9 +55,9 @@ func (*Transfer) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldChainID, transfer.FieldAmount, transfer.FieldBlockNumber, transfer.FieldTxTime:
+		case transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldAmount, transfer.FieldBlockNumber, transfer.FieldTxTime:
 			values[i] = new(sql.NullInt64)
-		case transfer.FieldChainType, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
+		case transfer.FieldChainType, transfer.FieldChainID, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
 			values[i] = new(sql.NullString)
 		case transfer.FieldID:
 			values[i] = new(uuid.UUID)
@@ -107,10 +107,10 @@ func (t *Transfer) assignValues(columns []string, values []interface{}) error {
 				t.ChainType = value.String
 			}
 		case transfer.FieldChainID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field chain_id", values[i])
 			} else if value.Valid {
-				t.ChainID = int32(value.Int64)
+				t.ChainID = value.String
 			}
 		case transfer.FieldContract:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -219,7 +219,7 @@ func (t *Transfer) String() string {
 	builder.WriteString(t.ChainType)
 	builder.WriteString(", ")
 	builder.WriteString("chain_id=")
-	builder.WriteString(fmt.Sprintf("%v", t.ChainID))
+	builder.WriteString(t.ChainID)
 	builder.WriteString(", ")
 	builder.WriteString("contract=")
 	builder.WriteString(t.Contract)

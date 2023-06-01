@@ -17,7 +17,7 @@ message SearchToken{
   // nftmeta.v1.token.Token Token = 10;
   string ID = 10;
   string ChainType = 20;
-  int32 ChainID = 30;
+  string ChainID = 30;
   string Contract = 40;
   string TokenType = 50;
   string TokenID = 60;

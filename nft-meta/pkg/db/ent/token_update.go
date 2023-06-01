@@ -90,15 +90,8 @@ func (tu *TokenUpdate) SetChainType(s string) *TokenUpdate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tu *TokenUpdate) SetChainID(i int32) *TokenUpdate {
-	tu.mutation.ResetChainID()
-	tu.mutation.SetChainID(i)
-	return tu
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tu *TokenUpdate) AddChainID(i int32) *TokenUpdate {
-	tu.mutation.AddChainID(i)
+func (tu *TokenUpdate) SetChainID(s string) *TokenUpdate {
+	tu.mutation.SetChainID(s)
 	return tu
 }
 
@@ -476,14 +469,7 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: token.FieldChainID,
-		})
-	}
-	if value, ok := tu.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})
@@ -729,15 +715,8 @@ func (tuo *TokenUpdateOne) SetChainType(s string) *TokenUpdateOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tuo *TokenUpdateOne) SetChainID(i int32) *TokenUpdateOne {
-	tuo.mutation.ResetChainID()
-	tuo.mutation.SetChainID(i)
-	return tuo
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tuo *TokenUpdateOne) AddChainID(i int32) *TokenUpdateOne {
-	tuo.mutation.AddChainID(i)
+func (tuo *TokenUpdateOne) SetChainID(s string) *TokenUpdateOne {
+	tuo.mutation.SetChainID(s)
 	return tuo
 }
 
@@ -1145,14 +1124,7 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 	}
 	if value, ok := tuo.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: token.FieldChainID,
-		})
-	}
-	if value, ok := tuo.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})

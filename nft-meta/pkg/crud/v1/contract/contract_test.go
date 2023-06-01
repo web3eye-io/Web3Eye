@@ -14,6 +14,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 
 	"github.com/google/uuid"
@@ -40,7 +41,7 @@ func prepareData() {
 	entContract = ent.Contract{
 		ID:        uuid.New(),
 		ChainType: "eth",
-		ChainID:   RandInt32(),
+		ChainID:   string(RandInt32()),
 		Address:   "test",
 		Name:      "ssss",
 		Symbol:    "slsl",
@@ -49,10 +50,10 @@ func prepareData() {
 	}
 
 	id = entContract.ID.String()
-
+	chainType := basetype.ChainType(basetype.ChainType_value[entContract.ChainType])
 	contractInfo = npool.ContractReq{
 		ID:        &id,
-		ChainType: &entContract.ChainType,
+		ChainType: &chainType,
 		ChainID:   &entContract.ChainID,
 		Address:   &entContract.Address,
 		Name:      &entContract.Name,
@@ -93,7 +94,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:        uuid.New(),
 			ChainType: "eth",
-			ChainID:   RandInt32(),
+			ChainID:   string(RandInt32()),
 			Address:   "",
 			Name:      "",
 			Symbol:    "",
@@ -103,7 +104,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:        uuid.New(),
 			ChainType: "eth",
-			ChainID:   RandInt32(),
+			ChainID:   string(RandInt32()),
 			Address:   "tensor",
 			Name:      "tensor",
 			Symbol:    "tensor",
@@ -115,10 +116,11 @@ func createBulk(t *testing.T) {
 	contracts := []*npool.ContractReq{}
 	for key := range entContract {
 		id := entContract[key].ID.String()
+		chainType := basetype.ChainType(basetype.ChainType_value[entContract[key].ChainType])
 
 		contracts = append(contracts, &npool.ContractReq{
 			ID:        &id,
-			ChainType: &entContract[key].ChainType,
+			ChainType: &chainType,
 			ChainID:   &entContract[key].ChainID,
 			Address:   &entContract[key].Address,
 			Name:      &entContract[key].Name,

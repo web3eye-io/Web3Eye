@@ -15,6 +15,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	cttype "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 
@@ -42,8 +43,8 @@ func prepareData() {
 	topicBase = strconv.Itoa(int(time.Now().Unix()))
 	entSyncTask = ent.SyncTask{
 		ID:          uuid.New(),
-		ChainType:   cttype.ChainType_Unknown.String(),
-		ChainID:     RandInt32(),
+		ChainType:   basetype.ChainType_ChainUnkonwn.String(),
+		ChainID:     string(RandInt32()),
 		Start:       665,
 		End:         665,
 		Current:     665,
@@ -53,7 +54,7 @@ func prepareData() {
 	}
 
 	id = entSyncTask.ID.String()
-	chainT := cttype.ChainType(cttype.ChainType_value[entSyncTask.ChainType])
+	chainT := basetype.ChainType(basetype.ChainType_value[entSyncTask.ChainType])
 	syncState := cttype.SyncState_Default
 
 	synctaskInfo = npool.SyncTaskReq{
@@ -102,7 +103,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:          uuid.New(),
 			ChainType:   "eth",
-			ChainID:     RandInt32(),
+			ChainID:     string(RandInt32()),
 			Start:       6655,
 			End:         6655,
 			Current:     6655,
@@ -112,7 +113,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:          uuid.New(),
 			ChainType:   "eth",
-			ChainID:     RandInt32(),
+			ChainID:     string(RandInt32()),
 			Start:       6656,
 			End:         6656,
 			Current:     6656,
@@ -124,7 +125,7 @@ func createBulk(t *testing.T) {
 	synctasks := []*npool.SyncTaskReq{}
 	for key := range entSyncTask {
 		id := entSyncTask[key].ID.String()
-		chainT := cttype.ChainType(cttype.ChainType_value[entSyncTask[key].ChainType])
+		chainT := basetype.ChainType(basetype.ChainType_value[entSyncTask[key].ChainType])
 		syncS := cttype.SyncState(cttype.SyncState_value[entSyncTask[key].SyncState])
 
 		synctasks = append(synctasks, &npool.SyncTaskReq{

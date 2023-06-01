@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package chain;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1";
+
+enum ChainType{
+    ChainUnkonwn = 0;
+    Ethereum = 10;
+}
+
+enum TokenType{
+    TokenUnkonwn = 0;
+    ERC721 = 10;
+    ERC1155 = 20;
+    NoURI = 30;
+}

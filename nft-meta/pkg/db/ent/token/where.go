@@ -108,7 +108,7 @@ func ChainType(v string) predicate.Token {
 }
 
 // ChainID applies equality check predicate on the "chain_id" field. It's identical to ChainIDEQ.
-func ChainID(v int32) predicate.Token {
+func ChainID(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldChainID), v))
 	})
@@ -497,21 +497,21 @@ func ChainTypeContainsFold(v string) predicate.Token {
 }
 
 // ChainIDEQ applies the EQ predicate on the "chain_id" field.
-func ChainIDEQ(v int32) predicate.Token {
+func ChainIDEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldChainID), v))
 	})
 }
 
 // ChainIDNEQ applies the NEQ predicate on the "chain_id" field.
-func ChainIDNEQ(v int32) predicate.Token {
+func ChainIDNEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldChainID), v))
 	})
 }
 
 // ChainIDIn applies the In predicate on the "chain_id" field.
-func ChainIDIn(vs ...int32) predicate.Token {
+func ChainIDIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -522,7 +522,7 @@ func ChainIDIn(vs ...int32) predicate.Token {
 }
 
 // ChainIDNotIn applies the NotIn predicate on the "chain_id" field.
-func ChainIDNotIn(vs ...int32) predicate.Token {
+func ChainIDNotIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -533,30 +533,65 @@ func ChainIDNotIn(vs ...int32) predicate.Token {
 }
 
 // ChainIDGT applies the GT predicate on the "chain_id" field.
-func ChainIDGT(v int32) predicate.Token {
+func ChainIDGT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldChainID), v))
 	})
 }
 
 // ChainIDGTE applies the GTE predicate on the "chain_id" field.
-func ChainIDGTE(v int32) predicate.Token {
+func ChainIDGTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldChainID), v))
 	})
 }
 
 // ChainIDLT applies the LT predicate on the "chain_id" field.
-func ChainIDLT(v int32) predicate.Token {
+func ChainIDLT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldChainID), v))
 	})
 }
 
 // ChainIDLTE applies the LTE predicate on the "chain_id" field.
-func ChainIDLTE(v int32) predicate.Token {
+func ChainIDLTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldChainID), v))
+	})
+}
+
+// ChainIDContains applies the Contains predicate on the "chain_id" field.
+func ChainIDContains(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldChainID), v))
+	})
+}
+
+// ChainIDHasPrefix applies the HasPrefix predicate on the "chain_id" field.
+func ChainIDHasPrefix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldChainID), v))
+	})
+}
+
+// ChainIDHasSuffix applies the HasSuffix predicate on the "chain_id" field.
+func ChainIDHasSuffix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldChainID), v))
+	})
+}
+
+// ChainIDEqualFold applies the EqualFold predicate on the "chain_id" field.
+func ChainIDEqualFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldChainID), v))
+	})
+}
+
+// ChainIDContainsFold applies the ContainsFold predicate on the "chain_id" field.
+func ChainIDContainsFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldChainID), v))
 	})
 }
 

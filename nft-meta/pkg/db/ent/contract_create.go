@@ -72,8 +72,8 @@ func (cc *ContractCreate) SetChainType(s string) *ContractCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (cc *ContractCreate) SetChainID(i int32) *ContractCreate {
-	cc.mutation.SetChainID(i)
+func (cc *ContractCreate) SetChainID(s string) *ContractCreate {
+	cc.mutation.SetChainID(s)
 	return cc
 }
 
@@ -442,7 +442,7 @@ func (cc *ContractCreate) createSpec() (*Contract, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := cc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: contract.FieldChainID,
 		})
@@ -665,7 +665,7 @@ func (u *ContractUpsert) UpdateChainType() *ContractUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *ContractUpsert) SetChainID(v int32) *ContractUpsert {
+func (u *ContractUpsert) SetChainID(v string) *ContractUpsert {
 	u.Set(contract.FieldChainID, v)
 	return u
 }
@@ -673,12 +673,6 @@ func (u *ContractUpsert) SetChainID(v int32) *ContractUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *ContractUpsert) UpdateChainID() *ContractUpsert {
 	u.SetExcluded(contract.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *ContractUpsert) AddChainID(v int32) *ContractUpsert {
-	u.Add(contract.FieldChainID, v)
 	return u
 }
 
@@ -1020,16 +1014,9 @@ func (u *ContractUpsertOne) UpdateChainType() *ContractUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *ContractUpsertOne) SetChainID(v int32) *ContractUpsertOne {
+func (u *ContractUpsertOne) SetChainID(v string) *ContractUpsertOne {
 	return u.Update(func(s *ContractUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *ContractUpsertOne) AddChainID(v int32) *ContractUpsertOne {
-	return u.Update(func(s *ContractUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1579,16 +1566,9 @@ func (u *ContractUpsertBulk) UpdateChainType() *ContractUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *ContractUpsertBulk) SetChainID(v int32) *ContractUpsertBulk {
+func (u *ContractUpsertBulk) SetChainID(v string) *ContractUpsertBulk {
 	return u.Update(func(s *ContractUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *ContractUpsertBulk) AddChainID(v int32) *ContractUpsertBulk {
-	return u.Update(func(s *ContractUpsert) {
-		s.AddChainID(v)
 	})
 }
 

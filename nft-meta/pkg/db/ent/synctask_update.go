@@ -104,15 +104,8 @@ func (stu *SyncTaskUpdate) ClearChainType() *SyncTaskUpdate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (stu *SyncTaskUpdate) SetChainID(i int32) *SyncTaskUpdate {
-	stu.mutation.ResetChainID()
-	stu.mutation.SetChainID(i)
-	return stu
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (stu *SyncTaskUpdate) AddChainID(i int32) *SyncTaskUpdate {
-	stu.mutation.AddChainID(i)
+func (stu *SyncTaskUpdate) SetChainID(s string) *SyncTaskUpdate {
+	stu.mutation.SetChainID(s)
 	return stu
 }
 
@@ -376,14 +369,7 @@ func (stu *SyncTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := stu.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: synctask.FieldChainID,
-		})
-	}
-	if value, ok := stu.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: synctask.FieldChainID,
 		})
@@ -573,15 +559,8 @@ func (stuo *SyncTaskUpdateOne) ClearChainType() *SyncTaskUpdateOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (stuo *SyncTaskUpdateOne) SetChainID(i int32) *SyncTaskUpdateOne {
-	stuo.mutation.ResetChainID()
-	stuo.mutation.SetChainID(i)
-	return stuo
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (stuo *SyncTaskUpdateOne) AddChainID(i int32) *SyncTaskUpdateOne {
-	stuo.mutation.AddChainID(i)
+func (stuo *SyncTaskUpdateOne) SetChainID(s string) *SyncTaskUpdateOne {
+	stuo.mutation.SetChainID(s)
 	return stuo
 }
 
@@ -875,14 +854,7 @@ func (stuo *SyncTaskUpdateOne) sqlSave(ctx context.Context) (_node *SyncTask, er
 	}
 	if value, ok := stuo.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: synctask.FieldChainID,
-		})
-	}
-	if value, ok := stuo.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: synctask.FieldChainID,
 		})

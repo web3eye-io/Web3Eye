@@ -17,6 +17,24 @@
   ],
   "paths": {},
   "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "ERC721",
+        "ERC1155",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -54,7 +72,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainID": {
-          "$ref": "#/definitions/web3eyeInt32Val"
+          "$ref": "#/definitions/web3eyeStringVal"
         },
         "Contract": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -167,8 +185,7 @@
           "type": "string"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Contract": {
           "type": "string"
@@ -238,17 +255,16 @@
           "type": "string"
         },
         "ChainType": {
-          "type": "string"
+          "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Contract": {
           "type": "string"
         },
         "TokenType": {
-          "type": "string"
+          "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
           "type": "string"
@@ -283,18 +299,6 @@
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "web3eyeInt32Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },

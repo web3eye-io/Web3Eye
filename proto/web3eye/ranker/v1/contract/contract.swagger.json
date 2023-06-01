@@ -17,6 +17,14 @@
   ],
   "paths": {},
   "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
     "contractConds": {
       "type": "object",
       "properties": {
@@ -27,7 +35,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainID": {
-          "$ref": "#/definitions/web3eyeInt32Val"
+          "$ref": "#/definitions/web3eyeStringVal"
         },
         "Address": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -77,11 +85,10 @@
           "type": "string"
         },
         "ChainType": {
-          "type": "string"
+          "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Address": {
           "type": "string"
@@ -187,18 +194,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "web3eyeInt32Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },

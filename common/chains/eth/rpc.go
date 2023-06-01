@@ -16,24 +16,14 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
 
-type TokenType string
+const safeBlockNum = 6
 
-const (
-	TokenTypeERC721  TokenType = "ERC-721"
-	TokenTypeERC1155 TokenType = "ERC-1155"
-	TokenTypeNoURI   TokenType = "NoURI"
-	safeBlockNum               = 6
+var (
+	lock = &sync.Mutex{}
 )
-
-type ChainType string
-
-const (
-	ChainTypeEthereumMain ChainType = "Ethereum"
-)
-
-var lock = &sync.Mutex{}
 
 func FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
 	client := Client()
@@ -67,7 +57,7 @@ func CurrentBlockHeight(ctx context.Context) (uint64, error) {
 	return num, err
 }
 
-func TokenURI(ctx context.Context, tokenType TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
+func TokenURI(ctx context.Context, tokenType basetype.TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
 	client := Client()
 	var uri string
 	var err error
@@ -81,7 +71,7 @@ func TokenURI(ctx context.Context, tokenType TokenType, contractAddr, tokenID st
 
 func tokenURI(
 	ethClient *ethclient.Client,
-	tokenType TokenType, contractAddr,
+	tokenType basetype.TokenType, contractAddr,
 	tokenID string,
 	blockNum uint64) (string, error) {
 	if !common.IsHexAddress(contractAddr) {
@@ -96,13 +86,13 @@ func tokenURI(
 	}
 
 	switch tokenType {
-	case TokenTypeERC721:
+	case basetype.TokenType_ERC721:
 		erc721, err := contracts.NewIERC721MetadataCaller(contract, ethClient)
 		if err != nil {
 			return "", err
 		}
 		return erc721.TokenURI(&bind.CallOpts{BlockNumber: big.NewInt(int64(blockNum))}, token)
-	case TokenTypeERC1155:
+	case basetype.TokenType_ERC1155:
 		erc1155, err := contracts.NewIERC1155MetadataURICaller(contract, ethClient)
 		if err != nil {
 			return "", err
