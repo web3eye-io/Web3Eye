@@ -1,7 +1,8 @@
 # mysql
 
-read password
+read accesskey and secretkey
 
 ```shell
-kubectl get secret --namespace "default" mysql -o jsonpath="{.data.mysql-root-password}" | base64 -d
+kubectl get secret --namespace "default" web3eye-minio -o jsonpath="{.data.accesskey}" | base64 -d && echo ""
+kubectl get secret --namespace "default" web3eye-minio -o jsonpath="{.data.secretkey}" | base64 -d && echo ""
 ```
