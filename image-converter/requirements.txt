@@ -2,6 +2,7 @@ pymilvus==2.0.0
 towhee==0.8.0
 bottle==0.12.23
 boto3==1.15.3
+rtoml==0.9.0
 urllib3
 scipy
 pandas
