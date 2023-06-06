@@ -55,7 +55,7 @@ endif
 ifndef TAG
 TAG= latest
 endif
-	
+
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
 build: ## Build project
@@ -75,7 +75,7 @@ deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
 	done
-	 
+
 
 ##@ Tests
 
