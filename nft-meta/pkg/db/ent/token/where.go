@@ -212,10 +212,10 @@ func IpfsImageURL(v string) predicate.Token {
 	})
 }
 
-// FileCid applies equality check predicate on the "file_cid" field. It's identical to FileCidEQ.
-func FileCid(v string) predicate.Token {
+// ImageCid applies equality check predicate on the "image_cid" field. It's identical to ImageCidEQ.
+func ImageCid(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFileCid), v))
+		s.Where(sql.EQ(s.C(FieldImageCid), v))
 	})
 }
 
@@ -2114,116 +2114,116 @@ func IpfsImageURLContainsFold(v string) predicate.Token {
 	})
 }
 
-// FileCidEQ applies the EQ predicate on the "file_cid" field.
-func FileCidEQ(v string) predicate.Token {
+// ImageCidEQ applies the EQ predicate on the "image_cid" field.
+func ImageCidEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFileCid), v))
+		s.Where(sql.EQ(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidNEQ applies the NEQ predicate on the "file_cid" field.
-func FileCidNEQ(v string) predicate.Token {
+// ImageCidNEQ applies the NEQ predicate on the "image_cid" field.
+func ImageCidNEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFileCid), v))
+		s.Where(sql.NEQ(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidIn applies the In predicate on the "file_cid" field.
-func FileCidIn(vs ...string) predicate.Token {
+// ImageCidIn applies the In predicate on the "image_cid" field.
+func ImageCidIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldFileCid), v...))
+		s.Where(sql.In(s.C(FieldImageCid), v...))
 	})
 }
 
-// FileCidNotIn applies the NotIn predicate on the "file_cid" field.
-func FileCidNotIn(vs ...string) predicate.Token {
+// ImageCidNotIn applies the NotIn predicate on the "image_cid" field.
+func ImageCidNotIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldFileCid), v...))
+		s.Where(sql.NotIn(s.C(FieldImageCid), v...))
 	})
 }
 
-// FileCidGT applies the GT predicate on the "file_cid" field.
-func FileCidGT(v string) predicate.Token {
+// ImageCidGT applies the GT predicate on the "image_cid" field.
+func ImageCidGT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFileCid), v))
+		s.Where(sql.GT(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidGTE applies the GTE predicate on the "file_cid" field.
-func FileCidGTE(v string) predicate.Token {
+// ImageCidGTE applies the GTE predicate on the "image_cid" field.
+func ImageCidGTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFileCid), v))
+		s.Where(sql.GTE(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidLT applies the LT predicate on the "file_cid" field.
-func FileCidLT(v string) predicate.Token {
+// ImageCidLT applies the LT predicate on the "image_cid" field.
+func ImageCidLT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFileCid), v))
+		s.Where(sql.LT(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidLTE applies the LTE predicate on the "file_cid" field.
-func FileCidLTE(v string) predicate.Token {
+// ImageCidLTE applies the LTE predicate on the "image_cid" field.
+func ImageCidLTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFileCid), v))
+		s.Where(sql.LTE(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidContains applies the Contains predicate on the "file_cid" field.
-func FileCidContains(v string) predicate.Token {
+// ImageCidContains applies the Contains predicate on the "image_cid" field.
+func ImageCidContains(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldFileCid), v))
+		s.Where(sql.Contains(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidHasPrefix applies the HasPrefix predicate on the "file_cid" field.
-func FileCidHasPrefix(v string) predicate.Token {
+// ImageCidHasPrefix applies the HasPrefix predicate on the "image_cid" field.
+func ImageCidHasPrefix(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldFileCid), v))
+		s.Where(sql.HasPrefix(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidHasSuffix applies the HasSuffix predicate on the "file_cid" field.
-func FileCidHasSuffix(v string) predicate.Token {
+// ImageCidHasSuffix applies the HasSuffix predicate on the "image_cid" field.
+func ImageCidHasSuffix(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldFileCid), v))
+		s.Where(sql.HasSuffix(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidIsNil applies the IsNil predicate on the "file_cid" field.
-func FileCidIsNil() predicate.Token {
+// ImageCidIsNil applies the IsNil predicate on the "image_cid" field.
+func ImageCidIsNil() predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldFileCid)))
+		s.Where(sql.IsNull(s.C(FieldImageCid)))
 	})
 }
 
-// FileCidNotNil applies the NotNil predicate on the "file_cid" field.
-func FileCidNotNil() predicate.Token {
+// ImageCidNotNil applies the NotNil predicate on the "image_cid" field.
+func ImageCidNotNil() predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldFileCid)))
+		s.Where(sql.NotNull(s.C(FieldImageCid)))
 	})
 }
 
-// FileCidEqualFold applies the EqualFold predicate on the "file_cid" field.
-func FileCidEqualFold(v string) predicate.Token {
+// ImageCidEqualFold applies the EqualFold predicate on the "image_cid" field.
+func ImageCidEqualFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldFileCid), v))
+		s.Where(sql.EqualFold(s.C(FieldImageCid), v))
 	})
 }
 
-// FileCidContainsFold applies the ContainsFold predicate on the "file_cid" field.
-func FileCidContainsFold(v string) predicate.Token {
+// ImageCidContainsFold applies the ContainsFold predicate on the "image_cid" field.
+func ImageCidContainsFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldFileCid), v))
+		s.Where(sql.ContainsFold(s.C(FieldImageCid), v))
 	})
 }
 

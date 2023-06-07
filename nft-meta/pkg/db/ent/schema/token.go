@@ -52,7 +52,7 @@ func (Token) Fields() []ent.Field {
 			Optional(),
 		field.Text("ipfs_image_url").
 			Optional(),
-		field.Text("file_cid").
+		field.Text("image_cid").
 			Optional(),
 	}
 }

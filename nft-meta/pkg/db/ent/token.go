@@ -54,8 +54,8 @@ type Token struct {
 	Remark string `json:"remark,omitempty"`
 	// IpfsImageURL holds the value of the "ipfs_image_url" field.
 	IpfsImageURL string `json:"ipfs_image_url,omitempty"`
-	// FileCid holds the value of the "file_cid" field.
-	FileCid string `json:"file_cid,omitempty"`
+	// ImageCid holds the value of the "image_cid" field.
+	ImageCid string `json:"image_cid,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -65,7 +65,7 @@ func (*Token) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID:
 			values[i] = new(sql.NullInt64)
-		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL, token.FieldFileCid:
+		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL, token.FieldImageCid:
 			values[i] = new(sql.NullString)
 		case token.FieldID:
 			values[i] = new(uuid.UUID)
@@ -204,11 +204,11 @@ func (t *Token) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.IpfsImageURL = value.String
 			}
-		case token.FieldFileCid:
+		case token.FieldImageCid:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field file_cid", values[i])
+				return fmt.Errorf("unexpected type %T for field image_cid", values[i])
 			} else if value.Valid {
-				t.FileCid = value.String
+				t.ImageCid = value.String
 			}
 		}
 	}
@@ -295,8 +295,8 @@ func (t *Token) String() string {
 	builder.WriteString("ipfs_image_url=")
 	builder.WriteString(t.IpfsImageURL)
 	builder.WriteString(", ")
-	builder.WriteString("file_cid=")
-	builder.WriteString(t.FileCid)
+	builder.WriteString("image_cid=")
+	builder.WriteString(t.ImageCid)
 	builder.WriteByte(')')
 	return builder.String()
 }

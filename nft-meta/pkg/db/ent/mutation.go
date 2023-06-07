@@ -2778,7 +2778,7 @@ type TokenMutation struct {
 	vector_state   *string
 	remark         *string
 	ipfs_image_url *string
-	file_cid       *string
+	image_cid      *string
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*Token, error)
@@ -3797,53 +3797,53 @@ func (m *TokenMutation) ResetIpfsImageURL() {
 	delete(m.clearedFields, token.FieldIpfsImageURL)
 }
 
-// SetFileCid sets the "file_cid" field.
-func (m *TokenMutation) SetFileCid(s string) {
-	m.file_cid = &s
+// SetImageCid sets the "image_cid" field.
+func (m *TokenMutation) SetImageCid(s string) {
+	m.image_cid = &s
 }
 
-// FileCid returns the value of the "file_cid" field in the mutation.
-func (m *TokenMutation) FileCid() (r string, exists bool) {
-	v := m.file_cid
+// ImageCid returns the value of the "image_cid" field in the mutation.
+func (m *TokenMutation) ImageCid() (r string, exists bool) {
+	v := m.image_cid
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFileCid returns the old "file_cid" field's value of the Token entity.
+// OldImageCid returns the old "image_cid" field's value of the Token entity.
 // If the Token object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TokenMutation) OldFileCid(ctx context.Context) (v string, err error) {
+func (m *TokenMutation) OldImageCid(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldFileCid is only allowed on UpdateOne operations")
+		return v, errors.New("OldImageCid is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldFileCid requires an ID field in the mutation")
+		return v, errors.New("OldImageCid requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFileCid: %w", err)
+		return v, fmt.Errorf("querying old value for OldImageCid: %w", err)
 	}
-	return oldValue.FileCid, nil
+	return oldValue.ImageCid, nil
 }
 
-// ClearFileCid clears the value of the "file_cid" field.
-func (m *TokenMutation) ClearFileCid() {
-	m.file_cid = nil
-	m.clearedFields[token.FieldFileCid] = struct{}{}
+// ClearImageCid clears the value of the "image_cid" field.
+func (m *TokenMutation) ClearImageCid() {
+	m.image_cid = nil
+	m.clearedFields[token.FieldImageCid] = struct{}{}
 }
 
-// FileCidCleared returns if the "file_cid" field was cleared in this mutation.
-func (m *TokenMutation) FileCidCleared() bool {
-	_, ok := m.clearedFields[token.FieldFileCid]
+// ImageCidCleared returns if the "image_cid" field was cleared in this mutation.
+func (m *TokenMutation) ImageCidCleared() bool {
+	_, ok := m.clearedFields[token.FieldImageCid]
 	return ok
 }
 
-// ResetFileCid resets all changes to the "file_cid" field.
-func (m *TokenMutation) ResetFileCid() {
-	m.file_cid = nil
-	delete(m.clearedFields, token.FieldFileCid)
+// ResetImageCid resets all changes to the "image_cid" field.
+func (m *TokenMutation) ResetImageCid() {
+	m.image_cid = nil
+	delete(m.clearedFields, token.FieldImageCid)
 }
 
 // Where appends a list predicates to the TokenMutation builder.
@@ -3923,8 +3923,8 @@ func (m *TokenMutation) Fields() []string {
 	if m.ipfs_image_url != nil {
 		fields = append(fields, token.FieldIpfsImageURL)
 	}
-	if m.file_cid != nil {
-		fields = append(fields, token.FieldFileCid)
+	if m.image_cid != nil {
+		fields = append(fields, token.FieldImageCid)
 	}
 	return fields
 }
@@ -3972,8 +3972,8 @@ func (m *TokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Remark()
 	case token.FieldIpfsImageURL:
 		return m.IpfsImageURL()
-	case token.FieldFileCid:
-		return m.FileCid()
+	case token.FieldImageCid:
+		return m.ImageCid()
 	}
 	return nil, false
 }
@@ -4021,8 +4021,8 @@ func (m *TokenMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldRemark(ctx)
 	case token.FieldIpfsImageURL:
 		return m.OldIpfsImageURL(ctx)
-	case token.FieldFileCid:
-		return m.OldFileCid(ctx)
+	case token.FieldImageCid:
+		return m.OldImageCid(ctx)
 	}
 	return nil, fmt.Errorf("unknown Token field %s", name)
 }
@@ -4165,12 +4165,12 @@ func (m *TokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIpfsImageURL(v)
 		return nil
-	case token.FieldFileCid:
+	case token.FieldImageCid:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetFileCid(v)
+		m.SetImageCid(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Token field %s", name)
@@ -4286,8 +4286,8 @@ func (m *TokenMutation) ClearedFields() []string {
 	if m.FieldCleared(token.FieldIpfsImageURL) {
 		fields = append(fields, token.FieldIpfsImageURL)
 	}
-	if m.FieldCleared(token.FieldFileCid) {
-		fields = append(fields, token.FieldFileCid)
+	if m.FieldCleared(token.FieldImageCid) {
+		fields = append(fields, token.FieldImageCid)
 	}
 	return fields
 }
@@ -4336,8 +4336,8 @@ func (m *TokenMutation) ClearField(name string) error {
 	case token.FieldIpfsImageURL:
 		m.ClearIpfsImageURL()
 		return nil
-	case token.FieldFileCid:
-		m.ClearFileCid()
+	case token.FieldImageCid:
+		m.ClearImageCid()
 		return nil
 	}
 	return fmt.Errorf("unknown Token nullable field %s", name)
@@ -4404,8 +4404,8 @@ func (m *TokenMutation) ResetField(name string) error {
 	case token.FieldIpfsImageURL:
 		m.ResetIpfsImageURL()
 		return nil
-	case token.FieldFileCid:
-		m.ResetFileCid()
+	case token.FieldImageCid:
+		m.ResetImageCid()
 		return nil
 	}
 	return fmt.Errorf("unknown Token field %s", name)

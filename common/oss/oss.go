@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -124,7 +124,7 @@ func GetObject(ctx context.Context, key string) ([]byte, error) {
 
 	defer s3out.Body.Close()
 
-	out, err := ioutil.ReadAll(s3out.Body)
+	out, err := io.ReadAll(s3out.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func GetObject(ctx context.Context, key string) ([]byte, error) {
 	return out, nil
 }
 
-func UploadFile(ctx context.Context, filePath string, key string) error {
+func UploadFile(ctx context.Context, filePath, key string) error {
 	s, err := os.Stat(filePath)
 	if err != nil {
 		return err
@@ -155,7 +155,7 @@ func UploadFile(ctx context.Context, filePath string, key string) error {
 	return err
 }
 
-func DownloadFile(ctx context.Context, filePath string, key string) error {
+func DownloadFile(ctx context.Context, filePath, key string) error {
 	downloadFile, err := os.Create(filePath)
 	if err != nil {
 		return err

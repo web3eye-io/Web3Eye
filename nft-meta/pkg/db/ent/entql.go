@@ -102,7 +102,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldVectorState:  {Type: field.TypeString, Column: token.FieldVectorState},
 			token.FieldRemark:       {Type: field.TypeString, Column: token.FieldRemark},
 			token.FieldIpfsImageURL: {Type: field.TypeString, Column: token.FieldIpfsImageURL},
-			token.FieldFileCid:      {Type: field.TypeString, Column: token.FieldFileCid},
+			token.FieldImageCid:     {Type: field.TypeString, Column: token.FieldImageCid},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -503,9 +503,9 @@ func (f *TokenFilter) WhereIpfsImageURL(p entql.StringP) {
 	f.Where(p.Field(token.FieldIpfsImageURL))
 }
 
-// WhereFileCid applies the entql string predicate on the file_cid field.
-func (f *TokenFilter) WhereFileCid(p entql.StringP) {
-	f.Where(p.Field(token.FieldFileCid))
+// WhereImageCid applies the entql string predicate on the image_cid field.
+func (f *TokenFilter) WhereImageCid(p entql.StringP) {
+	f.Where(p.Field(token.FieldImageCid))
 }
 
 // addPredicate implements the predicateAdder interface.

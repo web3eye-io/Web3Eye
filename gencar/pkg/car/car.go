@@ -98,8 +98,7 @@ func writeFiles(ctx context.Context, bs *blockstore.ReadWrite, paths ...string) 
 			if err != nil {
 				return err
 			}
-			bs.Put(ctx, blk)
-			return nil
+			return bs.Put(ctx, blk)
 		}, nil
 	}
 

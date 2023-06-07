@@ -249,16 +249,16 @@ func (tc *TokenCreate) SetNillableIpfsImageURL(s *string) *TokenCreate {
 	return tc
 }
 
-// SetFileCid sets the "file_cid" field.
-func (tc *TokenCreate) SetFileCid(s string) *TokenCreate {
-	tc.mutation.SetFileCid(s)
+// SetImageCid sets the "image_cid" field.
+func (tc *TokenCreate) SetImageCid(s string) *TokenCreate {
+	tc.mutation.SetImageCid(s)
 	return tc
 }
 
-// SetNillableFileCid sets the "file_cid" field if the given value is not nil.
-func (tc *TokenCreate) SetNillableFileCid(s *string) *TokenCreate {
+// SetNillableImageCid sets the "image_cid" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableImageCid(s *string) *TokenCreate {
 	if s != nil {
-		tc.SetFileCid(*s)
+		tc.SetImageCid(*s)
 	}
 	return tc
 }
@@ -606,13 +606,13 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 		})
 		_node.IpfsImageURL = value
 	}
-	if value, ok := tc.mutation.FileCid(); ok {
+	if value, ok := tc.mutation.ImageCid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: token.FieldFileCid,
+			Column: token.FieldImageCid,
 		})
-		_node.FileCid = value
+		_node.ImageCid = value
 	}
 	return _node, _spec
 }
@@ -984,21 +984,21 @@ func (u *TokenUpsert) ClearIpfsImageURL() *TokenUpsert {
 	return u
 }
 
-// SetFileCid sets the "file_cid" field.
-func (u *TokenUpsert) SetFileCid(v string) *TokenUpsert {
-	u.Set(token.FieldFileCid, v)
+// SetImageCid sets the "image_cid" field.
+func (u *TokenUpsert) SetImageCid(v string) *TokenUpsert {
+	u.Set(token.FieldImageCid, v)
 	return u
 }
 
-// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
-func (u *TokenUpsert) UpdateFileCid() *TokenUpsert {
-	u.SetExcluded(token.FieldFileCid)
+// UpdateImageCid sets the "image_cid" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateImageCid() *TokenUpsert {
+	u.SetExcluded(token.FieldImageCid)
 	return u
 }
 
-// ClearFileCid clears the value of the "file_cid" field.
-func (u *TokenUpsert) ClearFileCid() *TokenUpsert {
-	u.SetNull(token.FieldFileCid)
+// ClearImageCid clears the value of the "image_cid" field.
+func (u *TokenUpsert) ClearImageCid() *TokenUpsert {
+	u.SetNull(token.FieldImageCid)
 	return u
 }
 
@@ -1421,24 +1421,24 @@ func (u *TokenUpsertOne) ClearIpfsImageURL() *TokenUpsertOne {
 	})
 }
 
-// SetFileCid sets the "file_cid" field.
-func (u *TokenUpsertOne) SetFileCid(v string) *TokenUpsertOne {
+// SetImageCid sets the "image_cid" field.
+func (u *TokenUpsertOne) SetImageCid(v string) *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
-		s.SetFileCid(v)
+		s.SetImageCid(v)
 	})
 }
 
-// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
-func (u *TokenUpsertOne) UpdateFileCid() *TokenUpsertOne {
+// UpdateImageCid sets the "image_cid" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateImageCid() *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
-		s.UpdateFileCid()
+		s.UpdateImageCid()
 	})
 }
 
-// ClearFileCid clears the value of the "file_cid" field.
-func (u *TokenUpsertOne) ClearFileCid() *TokenUpsertOne {
+// ClearImageCid clears the value of the "image_cid" field.
+func (u *TokenUpsertOne) ClearImageCid() *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
-		s.ClearFileCid()
+		s.ClearImageCid()
 	})
 }
 
@@ -2025,24 +2025,24 @@ func (u *TokenUpsertBulk) ClearIpfsImageURL() *TokenUpsertBulk {
 	})
 }
 
-// SetFileCid sets the "file_cid" field.
-func (u *TokenUpsertBulk) SetFileCid(v string) *TokenUpsertBulk {
+// SetImageCid sets the "image_cid" field.
+func (u *TokenUpsertBulk) SetImageCid(v string) *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
-		s.SetFileCid(v)
+		s.SetImageCid(v)
 	})
 }
 
-// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
-func (u *TokenUpsertBulk) UpdateFileCid() *TokenUpsertBulk {
+// UpdateImageCid sets the "image_cid" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateImageCid() *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
-		s.UpdateFileCid()
+		s.UpdateImageCid()
 	})
 }
 
-// ClearFileCid clears the value of the "file_cid" field.
-func (u *TokenUpsertBulk) ClearFileCid() *TokenUpsertBulk {
+// ClearImageCid clears the value of the "image_cid" field.
+func (u *TokenUpsertBulk) ClearImageCid() *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
-		s.ClearFileCid()
+		s.ClearImageCid()
 	})
 }
 
