@@ -83,24 +83,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Token",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			token.FieldCreatedAt:   {Type: field.TypeUint32, Column: token.FieldCreatedAt},
-			token.FieldUpdatedAt:   {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
-			token.FieldDeletedAt:   {Type: field.TypeUint32, Column: token.FieldDeletedAt},
-			token.FieldChainType:   {Type: field.TypeString, Column: token.FieldChainType},
-			token.FieldChainID:     {Type: field.TypeString, Column: token.FieldChainID},
-			token.FieldContract:    {Type: field.TypeString, Column: token.FieldContract},
-			token.FieldTokenType:   {Type: field.TypeString, Column: token.FieldTokenType},
-			token.FieldTokenID:     {Type: field.TypeString, Column: token.FieldTokenID},
-			token.FieldOwner:       {Type: field.TypeString, Column: token.FieldOwner},
-			token.FieldURI:         {Type: field.TypeString, Column: token.FieldURI},
-			token.FieldURIType:     {Type: field.TypeString, Column: token.FieldURIType},
-			token.FieldImageURL:    {Type: field.TypeString, Column: token.FieldImageURL},
-			token.FieldVideoURL:    {Type: field.TypeString, Column: token.FieldVideoURL},
-			token.FieldDescription: {Type: field.TypeString, Column: token.FieldDescription},
-			token.FieldName:        {Type: field.TypeString, Column: token.FieldName},
-			token.FieldVectorID:    {Type: field.TypeInt64, Column: token.FieldVectorID},
-			token.FieldVectorState: {Type: field.TypeString, Column: token.FieldVectorState},
-			token.FieldRemark:      {Type: field.TypeString, Column: token.FieldRemark},
+			token.FieldCreatedAt:    {Type: field.TypeUint32, Column: token.FieldCreatedAt},
+			token.FieldUpdatedAt:    {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
+			token.FieldDeletedAt:    {Type: field.TypeUint32, Column: token.FieldDeletedAt},
+			token.FieldChainType:    {Type: field.TypeString, Column: token.FieldChainType},
+			token.FieldChainID:      {Type: field.TypeString, Column: token.FieldChainID},
+			token.FieldContract:     {Type: field.TypeString, Column: token.FieldContract},
+			token.FieldTokenType:    {Type: field.TypeString, Column: token.FieldTokenType},
+			token.FieldTokenID:      {Type: field.TypeString, Column: token.FieldTokenID},
+			token.FieldOwner:        {Type: field.TypeString, Column: token.FieldOwner},
+			token.FieldURI:          {Type: field.TypeString, Column: token.FieldURI},
+			token.FieldURIType:      {Type: field.TypeString, Column: token.FieldURIType},
+			token.FieldImageURL:     {Type: field.TypeString, Column: token.FieldImageURL},
+			token.FieldVideoURL:     {Type: field.TypeString, Column: token.FieldVideoURL},
+			token.FieldDescription:  {Type: field.TypeString, Column: token.FieldDescription},
+			token.FieldName:         {Type: field.TypeString, Column: token.FieldName},
+			token.FieldVectorID:     {Type: field.TypeInt64, Column: token.FieldVectorID},
+			token.FieldVectorState:  {Type: field.TypeString, Column: token.FieldVectorState},
+			token.FieldRemark:       {Type: field.TypeString, Column: token.FieldRemark},
+			token.FieldIpfsImageURL: {Type: field.TypeString, Column: token.FieldIpfsImageURL},
+			token.FieldFileCid:      {Type: field.TypeString, Column: token.FieldFileCid},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -494,6 +496,16 @@ func (f *TokenFilter) WhereVectorState(p entql.StringP) {
 // WhereRemark applies the entql string predicate on the remark field.
 func (f *TokenFilter) WhereRemark(p entql.StringP) {
 	f.Where(p.Field(token.FieldRemark))
+}
+
+// WhereIpfsImageURL applies the entql string predicate on the ipfs_image_url field.
+func (f *TokenFilter) WhereIpfsImageURL(p entql.StringP) {
+	f.Where(p.Field(token.FieldIpfsImageURL))
+}
+
+// WhereFileCid applies the entql string predicate on the file_cid field.
+func (f *TokenFilter) WhereFileCid(p entql.StringP) {
+	f.Where(p.Field(token.FieldFileCid))
 }
 
 // addPredicate implements the predicateAdder interface.

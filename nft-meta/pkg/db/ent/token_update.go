@@ -320,6 +320,46 @@ func (tu *TokenUpdate) ClearRemark() *TokenUpdate {
 	return tu
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tu *TokenUpdate) SetIpfsImageURL(s string) *TokenUpdate {
+	tu.mutation.SetIpfsImageURL(s)
+	return tu
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableIpfsImageURL(s *string) *TokenUpdate {
+	if s != nil {
+		tu.SetIpfsImageURL(*s)
+	}
+	return tu
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (tu *TokenUpdate) ClearIpfsImageURL() *TokenUpdate {
+	tu.mutation.ClearIpfsImageURL()
+	return tu
+}
+
+// SetFileCid sets the "file_cid" field.
+func (tu *TokenUpdate) SetFileCid(s string) *TokenUpdate {
+	tu.mutation.SetFileCid(s)
+	return tu
+}
+
+// SetNillableFileCid sets the "file_cid" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableFileCid(s *string) *TokenUpdate {
+	if s != nil {
+		tu.SetFileCid(*s)
+	}
+	return tu
+}
+
+// ClearFileCid clears the value of the "file_cid" field.
+func (tu *TokenUpdate) ClearFileCid() *TokenUpdate {
+	tu.mutation.ClearFileCid()
+	return tu
+}
+
 // Mutation returns the TokenMutation object of the builder.
 func (tu *TokenUpdate) Mutation() *TokenMutation {
 	return tu.mutation
@@ -632,6 +672,32 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: token.FieldRemark,
 		})
 	}
+	if value, ok := tu.mutation.IpfsImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if tu.mutation.IpfsImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if value, ok := tu.mutation.FileCid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldFileCid,
+		})
+	}
+	if tu.mutation.FileCidCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldFileCid,
+		})
+	}
 	_spec.Modifiers = tu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -942,6 +1008,46 @@ func (tuo *TokenUpdateOne) SetNillableRemark(s *string) *TokenUpdateOne {
 // ClearRemark clears the value of the "remark" field.
 func (tuo *TokenUpdateOne) ClearRemark() *TokenUpdateOne {
 	tuo.mutation.ClearRemark()
+	return tuo
+}
+
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tuo *TokenUpdateOne) SetIpfsImageURL(s string) *TokenUpdateOne {
+	tuo.mutation.SetIpfsImageURL(s)
+	return tuo
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableIpfsImageURL(s *string) *TokenUpdateOne {
+	if s != nil {
+		tuo.SetIpfsImageURL(*s)
+	}
+	return tuo
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (tuo *TokenUpdateOne) ClearIpfsImageURL() *TokenUpdateOne {
+	tuo.mutation.ClearIpfsImageURL()
+	return tuo
+}
+
+// SetFileCid sets the "file_cid" field.
+func (tuo *TokenUpdateOne) SetFileCid(s string) *TokenUpdateOne {
+	tuo.mutation.SetFileCid(s)
+	return tuo
+}
+
+// SetNillableFileCid sets the "file_cid" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableFileCid(s *string) *TokenUpdateOne {
+	if s != nil {
+		tuo.SetFileCid(*s)
+	}
+	return tuo
+}
+
+// ClearFileCid clears the value of the "file_cid" field.
+func (tuo *TokenUpdateOne) ClearFileCid() *TokenUpdateOne {
+	tuo.mutation.ClearFileCid()
 	return tuo
 }
 
@@ -1285,6 +1391,32 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: token.FieldRemark,
+		})
+	}
+	if value, ok := tuo.mutation.IpfsImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if tuo.mutation.IpfsImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if value, ok := tuo.mutation.FileCid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldFileCid,
+		})
+	}
+	if tuo.mutation.FileCidCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldFileCid,
 		})
 	}
 	_spec.Modifiers = tuo.modifiers

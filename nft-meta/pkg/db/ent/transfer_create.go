@@ -511,7 +511,6 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tc *TransferCreate) OnConflict(opts ...sql.ConflictOption) *TransferUpsertOne {
 	tc.conflict = opts
 	return &TransferUpsertOne{
@@ -525,7 +524,6 @@ func (tc *TransferCreate) OnConflict(opts ...sql.ConflictOption) *TransferUpsert
 //	client.Transfer.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tc *TransferCreate) OnConflictColumns(columns ...string) *TransferUpsertOne {
 	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
 	return &TransferUpsertOne{
@@ -797,7 +795,6 @@ func (u *TransferUpsert) ClearRemark() *TransferUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TransferUpsertOne) UpdateNewValues() *TransferUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -811,10 +808,9 @@ func (u *TransferUpsertOne) UpdateNewValues() *TransferUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Transfer.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Transfer.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *TransferUpsertOne) Ignore() *TransferUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1251,7 +1247,6 @@ func (tcb *TransferCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tcb *TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransferUpsertBulk {
 	tcb.conflict = opts
 	return &TransferUpsertBulk{
@@ -1265,7 +1260,6 @@ func (tcb *TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransferU
 //	client.Transfer.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tcb *TransferCreateBulk) OnConflictColumns(columns ...string) *TransferUpsertBulk {
 	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
 	return &TransferUpsertBulk{
@@ -1290,7 +1284,6 @@ type TransferUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TransferUpsertBulk) UpdateNewValues() *TransferUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1310,7 +1303,6 @@ func (u *TransferUpsertBulk) UpdateNewValues() *TransferUpsertBulk {
 //	client.Transfer.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *TransferUpsertBulk) Ignore() *TransferUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u

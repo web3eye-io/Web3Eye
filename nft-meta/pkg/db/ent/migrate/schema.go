@@ -92,6 +92,8 @@ var (
 		{Name: "vector_id", Type: field.TypeInt64, Nullable: true},
 		{Name: "vector_state", Type: field.TypeString, Nullable: true, Default: "Default"},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "ipfs_image_url", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "file_cid", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// TokensTable holds the schema information for the "tokens" table.
 	TokensTable = &schema.Table{

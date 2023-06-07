@@ -52,6 +52,10 @@ type Token struct {
 	VectorState string `json:"vector_state,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
+	// IpfsImageURL holds the value of the "ipfs_image_url" field.
+	IpfsImageURL string `json:"ipfs_image_url,omitempty"`
+	// FileCid holds the value of the "file_cid" field.
+	FileCid string `json:"file_cid,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -61,7 +65,7 @@ func (*Token) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID:
 			values[i] = new(sql.NullInt64)
-		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark:
+		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL, token.FieldFileCid:
 			values[i] = new(sql.NullString)
 		case token.FieldID:
 			values[i] = new(uuid.UUID)
@@ -194,6 +198,18 @@ func (t *Token) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.Remark = value.String
 			}
+		case token.FieldIpfsImageURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ipfs_image_url", values[i])
+			} else if value.Valid {
+				t.IpfsImageURL = value.String
+			}
+		case token.FieldFileCid:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field file_cid", values[i])
+			} else if value.Valid {
+				t.FileCid = value.String
+			}
 		}
 	}
 	return nil
@@ -275,6 +291,12 @@ func (t *Token) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(t.Remark)
+	builder.WriteString(", ")
+	builder.WriteString("ipfs_image_url=")
+	builder.WriteString(t.IpfsImageURL)
+	builder.WriteString(", ")
+	builder.WriteString("file_cid=")
+	builder.WriteString(t.FileCid)
 	builder.WriteByte(')')
 	return builder.String()
 }

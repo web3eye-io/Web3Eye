@@ -31,6 +31,8 @@ message SearchToken{
   nftmeta.v1.token.ConvertState VectorState = 140;
   int64 VectorID = 150;
   string Remark = 160;
+  string IPFSImageURL = 170;
+  string ImageCID = 180;
   float Distance = 500;
 }
 

@@ -235,6 +235,34 @@ func (tc *TokenCreate) SetNillableRemark(s *string) *TokenCreate {
 	return tc
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tc *TokenCreate) SetIpfsImageURL(s string) *TokenCreate {
+	tc.mutation.SetIpfsImageURL(s)
+	return tc
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableIpfsImageURL(s *string) *TokenCreate {
+	if s != nil {
+		tc.SetIpfsImageURL(*s)
+	}
+	return tc
+}
+
+// SetFileCid sets the "file_cid" field.
+func (tc *TokenCreate) SetFileCid(s string) *TokenCreate {
+	tc.mutation.SetFileCid(s)
+	return tc
+}
+
+// SetNillableFileCid sets the "file_cid" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableFileCid(s *string) *TokenCreate {
+	if s != nil {
+		tc.SetFileCid(*s)
+	}
+	return tc
+}
+
 // SetID sets the "id" field.
 func (tc *TokenCreate) SetID(u uuid.UUID) *TokenCreate {
 	tc.mutation.SetID(u)
@@ -570,6 +598,22 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 		})
 		_node.Remark = value
 	}
+	if value, ok := tc.mutation.IpfsImageURL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+		_node.IpfsImageURL = value
+	}
+	if value, ok := tc.mutation.FileCid(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldFileCid,
+		})
+		_node.FileCid = value
+	}
 	return _node, _spec
 }
 
@@ -589,7 +633,6 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tc *TokenCreate) OnConflict(opts ...sql.ConflictOption) *TokenUpsertOne {
 	tc.conflict = opts
 	return &TokenUpsertOne{
@@ -603,7 +646,6 @@ func (tc *TokenCreate) OnConflict(opts ...sql.ConflictOption) *TokenUpsertOne {
 //	client.Token.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tc *TokenCreate) OnConflictColumns(columns ...string) *TokenUpsertOne {
 	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
 	return &TokenUpsertOne{
@@ -924,6 +966,42 @@ func (u *TokenUpsert) ClearRemark() *TokenUpsert {
 	return u
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsert) SetIpfsImageURL(v string) *TokenUpsert {
+	u.Set(token.FieldIpfsImageURL, v)
+	return u
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateIpfsImageURL() *TokenUpsert {
+	u.SetExcluded(token.FieldIpfsImageURL)
+	return u
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsert) ClearIpfsImageURL() *TokenUpsert {
+	u.SetNull(token.FieldIpfsImageURL)
+	return u
+}
+
+// SetFileCid sets the "file_cid" field.
+func (u *TokenUpsert) SetFileCid(v string) *TokenUpsert {
+	u.Set(token.FieldFileCid, v)
+	return u
+}
+
+// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateFileCid() *TokenUpsert {
+	u.SetExcluded(token.FieldFileCid)
+	return u
+}
+
+// ClearFileCid clears the value of the "file_cid" field.
+func (u *TokenUpsert) ClearFileCid() *TokenUpsert {
+	u.SetNull(token.FieldFileCid)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -935,7 +1013,6 @@ func (u *TokenUpsert) ClearRemark() *TokenUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TokenUpsertOne) UpdateNewValues() *TokenUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -949,10 +1026,9 @@ func (u *TokenUpsertOne) UpdateNewValues() *TokenUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Token.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Token.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *TokenUpsertOne) Ignore() *TokenUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1324,6 +1400,48 @@ func (u *TokenUpsertOne) ClearRemark() *TokenUpsertOne {
 	})
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsertOne) SetIpfsImageURL(v string) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetIpfsImageURL(v)
+	})
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateIpfsImageURL() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateIpfsImageURL()
+	})
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsertOne) ClearIpfsImageURL() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearIpfsImageURL()
+	})
+}
+
+// SetFileCid sets the "file_cid" field.
+func (u *TokenUpsertOne) SetFileCid(v string) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetFileCid(v)
+	})
+}
+
+// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateFileCid() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateFileCid()
+	})
+}
+
+// ClearFileCid clears the value of the "file_cid" field.
+func (u *TokenUpsertOne) ClearFileCid() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearFileCid()
+	})
+}
+
 // Exec executes the query.
 func (u *TokenUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1459,7 +1577,6 @@ func (tcb *TokenCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tcb *TokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *TokenUpsertBulk {
 	tcb.conflict = opts
 	return &TokenUpsertBulk{
@@ -1473,7 +1590,6 @@ func (tcb *TokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *TokenUpsertB
 //	client.Token.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tcb *TokenCreateBulk) OnConflictColumns(columns ...string) *TokenUpsertBulk {
 	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
 	return &TokenUpsertBulk{
@@ -1498,7 +1614,6 @@ type TokenUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TokenUpsertBulk) UpdateNewValues() *TokenUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1518,7 +1633,6 @@ func (u *TokenUpsertBulk) UpdateNewValues() *TokenUpsertBulk {
 //	client.Token.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *TokenUpsertBulk) Ignore() *TokenUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1887,6 +2001,48 @@ func (u *TokenUpsertBulk) UpdateRemark() *TokenUpsertBulk {
 func (u *TokenUpsertBulk) ClearRemark() *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.ClearRemark()
+	})
+}
+
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsertBulk) SetIpfsImageURL(v string) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetIpfsImageURL(v)
+	})
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateIpfsImageURL() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateIpfsImageURL()
+	})
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsertBulk) ClearIpfsImageURL() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearIpfsImageURL()
+	})
+}
+
+// SetFileCid sets the "file_cid" field.
+func (u *TokenUpsertBulk) SetFileCid(v string) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetFileCid(v)
+	})
+}
+
+// UpdateFileCid sets the "file_cid" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateFileCid() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateFileCid()
+	})
+}
+
+// ClearFileCid clears the value of the "file_cid" field.
+func (u *TokenUpsertBulk) ClearFileCid() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearFileCid()
 	})
 }
 

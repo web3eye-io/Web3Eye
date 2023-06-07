@@ -27,23 +27,25 @@ type SearchToken struct {
 	unknownFields protoimpl.UnknownFields
 
 	// nftmeta.v1.token.Token Token = 10;
-	ID          string             `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
-	ChainType   string             `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
-	ChainID     string             `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
-	Contract    string             `protobuf:"bytes,40,opt,name=Contract,proto3" json:"Contract,omitempty"`
-	TokenType   string             `protobuf:"bytes,50,opt,name=TokenType,proto3" json:"TokenType,omitempty"`
-	TokenID     string             `protobuf:"bytes,60,opt,name=TokenID,proto3" json:"TokenID,omitempty"`
-	Owner       string             `protobuf:"bytes,70,opt,name=Owner,proto3" json:"Owner,omitempty"`
-	URI         string             `protobuf:"bytes,80,opt,name=URI,proto3" json:"URI,omitempty"`
-	URIType     string             `protobuf:"bytes,90,opt,name=URIType,proto3" json:"URIType,omitempty"`
-	ImageURL    string             `protobuf:"bytes,100,opt,name=ImageURL,proto3" json:"ImageURL,omitempty"`
-	VideoURL    string             `protobuf:"bytes,110,opt,name=VideoURL,proto3" json:"VideoURL,omitempty"`
-	Description string             `protobuf:"bytes,120,opt,name=Description,proto3" json:"Description,omitempty"`
-	Name        string             `protobuf:"bytes,130,opt,name=Name,proto3" json:"Name,omitempty"`
-	VectorState token.ConvertState `protobuf:"varint,140,opt,name=VectorState,proto3,enum=nftmeta.v1.token.ConvertState" json:"VectorState,omitempty"`
-	VectorID    int64              `protobuf:"varint,150,opt,name=VectorID,proto3" json:"VectorID,omitempty"`
-	Remark      string             `protobuf:"bytes,160,opt,name=Remark,proto3" json:"Remark,omitempty"`
-	Distance    float32            `protobuf:"fixed32,500,opt,name=Distance,proto3" json:"Distance,omitempty"`
+	ID           string             `protobuf:"bytes,10,opt,name=ID,proto3" json:"ID,omitempty"`
+	ChainType    string             `protobuf:"bytes,20,opt,name=ChainType,proto3" json:"ChainType,omitempty"`
+	ChainID      string             `protobuf:"bytes,30,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
+	Contract     string             `protobuf:"bytes,40,opt,name=Contract,proto3" json:"Contract,omitempty"`
+	TokenType    string             `protobuf:"bytes,50,opt,name=TokenType,proto3" json:"TokenType,omitempty"`
+	TokenID      string             `protobuf:"bytes,60,opt,name=TokenID,proto3" json:"TokenID,omitempty"`
+	Owner        string             `protobuf:"bytes,70,opt,name=Owner,proto3" json:"Owner,omitempty"`
+	URI          string             `protobuf:"bytes,80,opt,name=URI,proto3" json:"URI,omitempty"`
+	URIType      string             `protobuf:"bytes,90,opt,name=URIType,proto3" json:"URIType,omitempty"`
+	ImageURL     string             `protobuf:"bytes,100,opt,name=ImageURL,proto3" json:"ImageURL,omitempty"`
+	VideoURL     string             `protobuf:"bytes,110,opt,name=VideoURL,proto3" json:"VideoURL,omitempty"`
+	Description  string             `protobuf:"bytes,120,opt,name=Description,proto3" json:"Description,omitempty"`
+	Name         string             `protobuf:"bytes,130,opt,name=Name,proto3" json:"Name,omitempty"`
+	VectorState  token.ConvertState `protobuf:"varint,140,opt,name=VectorState,proto3,enum=nftmeta.v1.token.ConvertState" json:"VectorState,omitempty"`
+	VectorID     int64              `protobuf:"varint,150,opt,name=VectorID,proto3" json:"VectorID,omitempty"`
+	Remark       string             `protobuf:"bytes,160,opt,name=Remark,proto3" json:"Remark,omitempty"`
+	IPFSImageURL string             `protobuf:"bytes,170,opt,name=IPFSImageURL,proto3" json:"IPFSImageURL,omitempty"`
+	ImageCID      string             `protobuf:"bytes,180,opt,name=ImageCID,proto3" json:"ImageCID,omitempty"`
+	Distance     float32            `protobuf:"fixed32,500,opt,name=Distance,proto3" json:"Distance,omitempty"`
 }
 
 func (x *SearchToken) Reset() {
@@ -190,6 +192,20 @@ func (x *SearchToken) GetRemark() string {
 	return ""
 }
 
+func (x *SearchToken) GetIPFSImageURL() string {
+	if x != nil {
+		return x.IPFSImageURL
+	}
+	return ""
+}
+
+func (x *SearchToken) GetImageCID() string {
+	if x != nil {
+		return x.ImageCID
+	}
+	return ""
+}
+
 func (x *SearchToken) GetDistance() float32 {
 	if x != nil {
 		return x.Distance
@@ -315,7 +331,7 @@ var file_web3eye_ranker_v1_token_token_proto_rawDesc = []byte{
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0f, 0x72, 0x61, 0x6e, 0x6b, 0x65, 0x72, 0x2e, 0x76, 0x31,
 	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x1a, 0x24, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f,
 	0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xf0, 0x03, 0x0a,
+	0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xb0, 0x04, 0x0a,
 	0x0b, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x0e, 0x0a, 0x02,
 	0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x12, 0x1c, 0x0a, 0x09,
 	0x43, 0x68, 0x61, 0x69, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x18, 0x14, 0x20, 0x01, 0x28, 0x09, 0x52,
@@ -345,7 +361,11 @@ var file_web3eye_ranker_v1_token_token_proto_rawDesc = []byte{
 	0x56, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x49, 0x44, 0x18, 0x96, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
 	0x08, 0x56, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x49, 0x44, 0x12, 0x17, 0x0a, 0x06, 0x52, 0x65, 0x6d,
 	0x61, 0x72, 0x6b, 0x18, 0xa0, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x52, 0x65, 0x6d, 0x61,
-	0x72, 0x6b, 0x12, 0x1b, 0x0a, 0x08, 0x44, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x18, 0xf4,
+	0x72, 0x6b, 0x12, 0x23, 0x0a, 0x0c, 0x49, 0x50, 0x46, 0x53, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x55,
+	0x52, 0x4c, 0x18, 0xaa, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x49, 0x50, 0x46, 0x53, 0x49,
+	0x6d, 0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x12, 0x19, 0x0a, 0x07, 0x46, 0x69, 0x6c, 0x65, 0x43,
+	0x49, 0x44, 0x18, 0xb4, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x46, 0x69, 0x6c, 0x65, 0x43,
+	0x49, 0x44, 0x12, 0x1b, 0x0a, 0x08, 0x44, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x18, 0xf4,
 	0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x08, 0x44, 0x69, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x22,
 	0x42, 0x0a, 0x12, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x56, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x18,

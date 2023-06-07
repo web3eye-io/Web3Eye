@@ -1,15 +1,8 @@
 import rtoml
 import pathlib
 import os
+from singleton import singleton
 
-def singleton(cls):
-    _instance = {}
-
-    def inner():
-        if cls not in _instance:
-            _instance[cls] = cls()
-        return _instance[cls]
-    return inner
     
 @singleton
 class Config(object):
@@ -38,6 +31,7 @@ class Config(object):
                 self.config[i]=env
             except:
                 continue
+
 
 # use demo
 # Config().config["mysql_ip"]

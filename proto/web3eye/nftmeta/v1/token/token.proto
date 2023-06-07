@@ -47,6 +47,8 @@ message TokenReq {
   optional ConvertState VectorState = 140;
   optional int64 VectorID = 150;
   optional string Remark = 160;
+  optional string IPFSImageURL = 170;
+  optional string ImageCID = 180;
 }
 
 message Token {
@@ -66,6 +68,8 @@ message Token {
   ConvertState VectorState = 140;
   int64 VectorID = 150;
   string Remark = 160;
+  string IPFSImageURL = 170;
+  string ImageCID = 180;
 }
 
 message Conds {
@@ -85,8 +89,10 @@ message Conds {
   web3eye.StringVal VectorState = 140;
   web3eye.Int64Val VectorID = 150;
   web3eye.StringVal Remark = 160;
-  web3eye.StringSliceVal IDs = 170;
-  web3eye.Int64SliceVal VectorIDs = 180;
+  web3eye.StringVal IPFSImageURL = 170;
+  web3eye.StringVal ImageCID = 180;
+  web3eye.StringSliceVal IDs = 190;
+  web3eye.Int64SliceVal VectorIDs = 200;
 }
 
 message CreateTokenRequest { TokenReq Info = 10; }

@@ -50,6 +50,10 @@ func (Token) Fields() []ent.Field {
 			Optional().Default(npool.ConvertState_Default.String()),
 		field.Text("remark").
 			Optional(),
+		field.Text("ipfs_image_url").
+			Optional(),
+		field.Text("file_cid").
+			Optional(),
 	}
 }
 

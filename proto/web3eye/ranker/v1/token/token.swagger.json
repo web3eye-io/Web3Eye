@@ -113,6 +113,12 @@
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
+        "IPFSImageURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ImageCID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
         "IDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         },
@@ -227,6 +233,12 @@
         "Remark": {
           "type": "string"
         },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageCID": {
+          "type": "string"
+        },
         "Distance": {
           "type": "number",
           "format": "float"
@@ -298,6 +310,12 @@
           "format": "int64"
         },
         "Remark": {
+          "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageCID": {
           "type": "string"
         }
       }

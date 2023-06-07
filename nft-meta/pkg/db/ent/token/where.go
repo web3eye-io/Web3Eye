@@ -205,6 +205,20 @@ func Remark(v string) predicate.Token {
 	})
 }
 
+// IpfsImageURL applies equality check predicate on the "ipfs_image_url" field. It's identical to IpfsImageURLEQ.
+func IpfsImageURL(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// FileCid applies equality check predicate on the "file_cid" field. It's identical to FileCidEQ.
+func FileCid(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFileCid), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
@@ -1984,6 +1998,232 @@ func RemarkEqualFold(v string) predicate.Token {
 func RemarkContainsFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldRemark), v))
+	})
+}
+
+// IpfsImageURLEQ applies the EQ predicate on the "ipfs_image_url" field.
+func IpfsImageURLEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLNEQ applies the NEQ predicate on the "ipfs_image_url" field.
+func IpfsImageURLNEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLIn applies the In predicate on the "ipfs_image_url" field.
+func IpfsImageURLIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldIpfsImageURL), v...))
+	})
+}
+
+// IpfsImageURLNotIn applies the NotIn predicate on the "ipfs_image_url" field.
+func IpfsImageURLNotIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldIpfsImageURL), v...))
+	})
+}
+
+// IpfsImageURLGT applies the GT predicate on the "ipfs_image_url" field.
+func IpfsImageURLGT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLGTE applies the GTE predicate on the "ipfs_image_url" field.
+func IpfsImageURLGTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLLT applies the LT predicate on the "ipfs_image_url" field.
+func IpfsImageURLLT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLLTE applies the LTE predicate on the "ipfs_image_url" field.
+func IpfsImageURLLTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLContains applies the Contains predicate on the "ipfs_image_url" field.
+func IpfsImageURLContains(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLHasPrefix applies the HasPrefix predicate on the "ipfs_image_url" field.
+func IpfsImageURLHasPrefix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLHasSuffix applies the HasSuffix predicate on the "ipfs_image_url" field.
+func IpfsImageURLHasSuffix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLIsNil applies the IsNil predicate on the "ipfs_image_url" field.
+func IpfsImageURLIsNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIpfsImageURL)))
+	})
+}
+
+// IpfsImageURLNotNil applies the NotNil predicate on the "ipfs_image_url" field.
+func IpfsImageURLNotNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIpfsImageURL)))
+	})
+}
+
+// IpfsImageURLEqualFold applies the EqualFold predicate on the "ipfs_image_url" field.
+func IpfsImageURLEqualFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// IpfsImageURLContainsFold applies the ContainsFold predicate on the "ipfs_image_url" field.
+func IpfsImageURLContainsFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldIpfsImageURL), v))
+	})
+}
+
+// FileCidEQ applies the EQ predicate on the "file_cid" field.
+func FileCidEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidNEQ applies the NEQ predicate on the "file_cid" field.
+func FileCidNEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidIn applies the In predicate on the "file_cid" field.
+func FileCidIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldFileCid), v...))
+	})
+}
+
+// FileCidNotIn applies the NotIn predicate on the "file_cid" field.
+func FileCidNotIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldFileCid), v...))
+	})
+}
+
+// FileCidGT applies the GT predicate on the "file_cid" field.
+func FileCidGT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidGTE applies the GTE predicate on the "file_cid" field.
+func FileCidGTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidLT applies the LT predicate on the "file_cid" field.
+func FileCidLT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidLTE applies the LTE predicate on the "file_cid" field.
+func FileCidLTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidContains applies the Contains predicate on the "file_cid" field.
+func FileCidContains(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidHasPrefix applies the HasPrefix predicate on the "file_cid" field.
+func FileCidHasPrefix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidHasSuffix applies the HasSuffix predicate on the "file_cid" field.
+func FileCidHasSuffix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidIsNil applies the IsNil predicate on the "file_cid" field.
+func FileCidIsNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldFileCid)))
+	})
+}
+
+// FileCidNotNil applies the NotNil predicate on the "file_cid" field.
+func FileCidNotNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldFileCid)))
+	})
+}
+
+// FileCidEqualFold applies the EqualFold predicate on the "file_cid" field.
+func FileCidEqualFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldFileCid), v))
+	})
+}
+
+// FileCidContainsFold applies the ContainsFold predicate on the "file_cid" field.
+func FileCidContainsFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldFileCid), v))
 	})
 }
 
