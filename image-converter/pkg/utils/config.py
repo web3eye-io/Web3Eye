@@ -27,11 +27,14 @@ class Config(object):
         for i in self.config:
             try:
                 env=env_dist[i]
-                print(i)
-                self.config[i]=env
+                self.config[str.strip(i," ")]=str.strip(env," ")
             except:
                 continue
 
+minio_address=Config().config["minio_address"]
+minio_access_key=Config().config["minio_access_key"]
+minio_secret_key=Config().config["minio_secret_key"]
+minio_token_image_bucket=Config().config["minio_token_image_bucket"]
 
 # use demo
 # Config().config["mysql_ip"]

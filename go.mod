@@ -1,6 +1,6 @@
 module github.com/web3eye-io/Web3Eye
 
-go 1.17
+go 1.19
 
 require (
 	ariga.io/atlas v0.5.1-0.20220717122844-8593d7eb1a8e

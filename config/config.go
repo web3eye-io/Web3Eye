@@ -28,6 +28,7 @@ type Config struct {
 	Kafka          Kafka          `toml:"kafka" env:"kafka"`
 	Redis          Redis          `toml:"redis" env:"redis"`
 	Milvus         Milvus         `toml:"milvus" env:"milvus"`
+	Minio          Minio          `toml:"minio" env:"minio"`
 }
 
 type NFTMeta struct {
@@ -95,6 +96,14 @@ type Kafka struct {
 
 type Milvus struct {
 	Address string `toml:"address" env:"address"`
+}
+
+type Minio struct {
+	Address             string `toml:"address" env:"address"`
+	AccessKey           string `toml:"access-key" env:"access_key"`
+	SecretKey           string `toml:"secret-key" env:"secret_key"`
+	TokenImageBucket    string `toml:"token-image-bucket" env:"token_image_bucket"`
+	TokenImageCarBucket string `toml:"token-image-car-bucket" env:"token_image_car_bucket"`
 }
 
 type ETH struct {
