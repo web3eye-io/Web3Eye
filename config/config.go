@@ -22,7 +22,7 @@ type Config struct {
 	Ranker         Ranker         `toml:"ranker" env:"ranker"`
 	Entrance       Entrance       `toml:"entrance" env:"entrance"`
 	GenCar         GenCar         `toml:"gen-car" env:"gen_car"`
-	Dealer         Dealer         `toml:"entrance" env:"dealer"`
+	Dealer         Dealer         `toml:"dealer" env:"dealer"`
 	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
 	ETH            ETH            `toml:"eth" env:"eth"`
 	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`

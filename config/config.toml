@@ -44,7 +44,7 @@ data-dir="/tmp/gencar_data"
 log-file="/var/log/gen-car.log"
 
 [dealer]
-ip="entrance"
+ip="dealer"
 http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"

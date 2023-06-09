@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
@@ -16,7 +15,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/config"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	api "github.com/web3eye-io/Web3Eye/cloud-proxy/api/v1"
+	api "github.com/web3eye-io/Web3Eye/dealer/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
