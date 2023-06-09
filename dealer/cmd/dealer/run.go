@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -22,10 +21,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 var runCmd = &cli.Command{
 	Name:    "run",

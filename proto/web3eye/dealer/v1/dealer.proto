@@ -4,8 +4,6 @@ package dealer.v1;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1";
 
-import "web3eye/web3eye.proto";
-
 service Manager {
   rpc CreateSnapshot (CreateSnapshotRequest) returns (CreateSnapshotResponse){}
   rpc CreateBackup (CreateBackupRequest) returns (CreateBackupResponse) {}
@@ -17,6 +15,7 @@ message ContentItem {
     string ChainType = 20;
     string ChainID = 30;
     string ContractAddress = 40;
+    string UID = 50;
 }
 
 message CreateSnapshotRequest {
