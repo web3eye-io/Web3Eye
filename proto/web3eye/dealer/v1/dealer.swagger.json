@@ -82,6 +82,9 @@
         },
         "ContractAddress": {
           "type": "string"
+        },
+        "UID": {
+          "type": "string"
         }
       }
     },
