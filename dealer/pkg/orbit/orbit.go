@@ -2,7 +2,6 @@ package orbit
 
 import (
 	"context"
-	"encoding/binary"
 	"os"
 	"os/exec"
 
@@ -16,22 +15,24 @@ import (
 	"github.com/ipfs/kubo/repo/fsrepo"
 	"github.com/web3eye-io/Web3Eye/config"
 	"go.uber.org/zap"
+
+	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/filestate"
+	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/snapshot"
 )
 
 type _orbit struct {
-	ipfsRepo        repo.Repo
-	ipfsNode        *ipfscore.IpfsNode
-	api             coreiface.CoreAPI
-	db              orbitiface.OrbitDB
-	kvSnapshotIndex orbitdb.KeyValueStore
-	snapshotIndex   uint64
+	ipfsRepo    repo.Repo
+	ipfsNode    *ipfscore.IpfsNode
+	api         coreiface.CoreAPI
+	db          orbitiface.OrbitDB
+	kvSnapshot  *snapshot.SnapshotKV
+	kvFileState *filestate.FileStateKV
 }
 
 var _odb = &_orbit{}
 
 const (
-	CurrentSnapshotIndex = "current-index"
-	KVStoreSnapshotIndex = "snapshot-index"
+	KVStoreFileState = "file-state"
 )
 
 func Initialize(ctx context.Context) error {
@@ -86,39 +87,25 @@ func Initialize(ctx context.Context) error {
 		return err
 	}
 
-	replicate := true
-	_odb.kvSnapshotIndex, err = _odb.db.KeyValue(ctx, KVStoreSnapshotIndex, &orbitdb.CreateDBOptions{
-		Replicate: &replicate,
-	})
+	_odb.kvSnapshot, err = snapshot.NewSnapshotKV(ctx, _odb.db)
 	if err != nil {
 		return err
 	}
 
-	if err := _odb.kvSnapshotIndex.Load(ctx, -1); err != nil { //nolint
-		return err
-	}
-
-	b, err := _odb.kvSnapshotIndex.Get(ctx, CurrentSnapshotIndex)
+	_odb.kvFileState, err = filestate.NewFileStateKV(ctx, _odb.db)
 	if err != nil {
 		return err
-	}
-	_odb.snapshotIndex, _ = binary.Uvarint(b)
-
-	if _odb.snapshotIndex == 0 {
-		b := make([]byte, 8)
-		_odb.snapshotIndex += 1
-		binary.PutUvarint(b, _odb.snapshotIndex)
-		if _, err := _odb.kvSnapshotIndex.Put(ctx, CurrentSnapshotIndex, b); err != nil {
-			return err
-		}
 	}
 
 	return nil
 }
 
 func Finalize() {
-	if _odb.kvSnapshotIndex != nil {
-		_odb.kvSnapshotIndex.Close()
+	if _odb.kvFileState != nil {
+		_odb.kvFileState.Close()
+	}
+	if _odb.kvSnapshot != nil {
+		_odb.kvSnapshot.Close()
 	}
 	if _odb.db != nil {
 		_odb.db.Close()
