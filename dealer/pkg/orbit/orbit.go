@@ -3,6 +3,8 @@ package orbit
 import (
 	"context"
 	"encoding/binary"
+	"os"
+	"os/exec"
 
 	orbitdb "berty.tech/go-orbit-db"
 	orbitiface "berty.tech/go-orbit-db/iface"
@@ -27,8 +29,22 @@ type _orbit struct {
 
 var _odb = &_orbit{}
 
+const (
+	CurrentSnapshotIndex = "current-index"
+	KVStoreSnapshotIndex = "snapshot-index"
+)
+
 func Initialize(ctx context.Context) error {
 	cfg := config.GetConfig().Dealer
+	os.Setenv("IPFS_PATH", cfg.IpfsRepo)
+
+	cmd := exec.Command("ipfs", "stats", "repo")
+	if err := cmd.Run(); err != nil {
+		cmd = exec.Command("ipfs", "init")
+		if err := cmd.Run(); err != nil {
+			return err
+		}
+	}
 
 	plugins, err := loader.NewPluginLoader(cfg.IpfsRepo)
 	if err != nil {
@@ -71,25 +87,46 @@ func Initialize(ctx context.Context) error {
 	}
 
 	replicate := true
-	_odb.kvSnapshotIndex, err = _odb.db.KeyValue(ctx, "snapshot-index", &orbitdb.CreateDBOptions{
+	_odb.kvSnapshotIndex, err = _odb.db.KeyValue(ctx, KVStoreSnapshotIndex, &orbitdb.CreateDBOptions{
 		Replicate: &replicate,
 	})
 	if err != nil {
 		return err
 	}
 
-	b, err := _odb.kvSnapshotIndex.Get(ctx, "current-index")
+	if err := _odb.kvSnapshotIndex.Load(ctx, -1); err != nil { //nolint
+		return err
+	}
+
+	b, err := _odb.kvSnapshotIndex.Get(ctx, CurrentSnapshotIndex)
 	if err != nil {
 		return err
 	}
-	_odb.snapshotIndex = binary.LittleEndian.Uint64(b)
+	_odb.snapshotIndex, _ = binary.Uvarint(b)
+
+	if _odb.snapshotIndex == 0 {
+		b := make([]byte, 8)
+		_odb.snapshotIndex += 1
+		binary.PutUvarint(b, _odb.snapshotIndex)
+		if _, err := _odb.kvSnapshotIndex.Put(ctx, CurrentSnapshotIndex, b); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
 
 func Finalize() {
-	_odb.kvSnapshotIndex.Close()
-	_odb.db.Close()
-	_odb.ipfsNode.Close()
-	_odb.ipfsRepo.Close()
+	if _odb.kvSnapshotIndex != nil {
+		_odb.kvSnapshotIndex.Close()
+	}
+	if _odb.db != nil {
+		_odb.db.Close()
+	}
+	if _odb.ipfsNode != nil {
+		_odb.ipfsNode.Close()
+	}
+	if _odb.ipfsRepo != nil {
+		_odb.ipfsRepo.Close()
+	}
 }

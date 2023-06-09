@@ -19,25 +19,34 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+
+	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 )
 
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"r"},
 	Usage:   "Run Dealer daemon",
-	After: func(c *cli.Context) error {
+	After: func(ctx *cli.Context) error {
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
 		return logger.Init(logger.DebugLevel, config.GetConfig().Dealer.LogFile)
 	},
-	Action: func(c *cli.Context) error {
+	Action: func(ctx *cli.Context) error {
+		if err := orbit.Initialize(ctx.Context); err != nil {
+			return err
+		}
+
 		go runHTTPServer(config.GetConfig().Dealer.HTTPPort, config.GetConfig().Dealer.GrpcPort)
 		go runGRPCServer(config.GetConfig().Dealer.GrpcPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 		<-sigchan
+
+		orbit.Finalize()
+
 		os.Exit(1)
 		return nil
 	},
