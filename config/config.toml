@@ -37,7 +37,7 @@ grpc-port=30151
 log-file="/var/log/entrance.log"
 
 [dealer]
-ip="entrance"
+ip="dealer"
 http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"
