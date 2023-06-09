@@ -74,10 +74,12 @@ type Entrance struct {
 }
 
 type Dealer struct {
-	IP       string `toml:"ip" env:"ip"`
-	HTTPPort int    `toml:"http-port" env:"http_port"`
-	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogFile  string `toml:"log-file" env:"log_file"`
+	IP        string `toml:"ip" env:"ip"`
+	IpfsRepo  string `toml:"ipfs-repo" env:"ipfs_repo"`
+	OrbitRepo string `toml:"orbit-repo" env:"orbit_repo"`
+	HTTPPort  int    `toml:"http-port" env:"http_port"`
+	GrpcPort  int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile   string `toml:"log-file" env:"log_file"`
 }
 
 type IamgeConverter struct {
