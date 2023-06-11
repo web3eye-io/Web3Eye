@@ -13,7 +13,7 @@ typedic = {
     'image/jpeg': "jpg",
 }
 
-IPFS_HTTP_Gateway = "https://ipfs.io/"
+IPFS_HTTP_Gateway = "https://ipfs.io"
 
 
 def DownloadUrlImg(url) -> Tuple[str, bool]:
@@ -29,7 +29,7 @@ def DownloadUrlImg(url) -> Tuple[str, bool]:
 
 def DownloadIPFSImg(url) -> Tuple[str, bool]:
     url = url.replace("//", "/")
-    url = url.replace(":", "")
+    url = url.replace(":/", "/")
     url = f"{IPFS_HTTP_Gateway}/{url}"
     return DownloadHttpImg(url=url)
 
@@ -101,6 +101,6 @@ def TransferSVGImg(url)-> Tuple[str,bool]:
 # url = "https://ipfs.io/ipfs/QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
 
 # ipfsurl = "ipfs://QmdJk8kfwacmT4FPXEDTQax9bvSYxDy5XNr5rZWq46f3ip/Teddies_hidden.mp4"
-# ipfsurl = "ipfs://QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
+ipfsurl = "ipfs://QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
 # ipfsurl = "ipfs://QmQqzMTavQgT4f4T5v6PWBp7XNKtoPmC9jvn12WPT3gkSE"
-# DownloadUrlImg(url=ipfsurl)
+DownloadUrlImg(url=ipfsurl)

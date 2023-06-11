@@ -5,19 +5,21 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	api_v1 "github.com/web3eye-io/Web3Eye/ranker/api/v1"
+	api_v1 "github.com/web3eye-io/Web3Eye/gen-car/api/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -28,24 +30,16 @@ func init() {
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"r"},
-	Usage:   "Run Ranker daemon",
+	Usage:   "Run Gen Car daemon",
 	After: func(c *cli.Context) error {
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		return logger.Init(logger.DebugLevel, config.GetConfig().Ranker.LogFile)
+		return logger.Init(logger.DebugLevel, config.GetConfig().GenCar.LogFile)
 	},
 	Action: func(c *cli.Context) error {
-		err := db.Init()
-		if err != nil {
-			panic(fmt.Errorf("mysql init err: %v", err))
-		}
-
-		err = milvusdb.Init(c.Context)
-		if err != nil {
-			panic(fmt.Errorf("milvus init err: %v", err))
-		}
-		go runGRPCServer(config.GetConfig().Ranker.GrpcPort)
+		go runGRPCServer(config.GetConfig().GenCar.GrpcPort)
+		go runHTTPServer(config.GetConfig().GenCar.HTTPPort, config.GetConfig().GenCar.GrpcPort)
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
@@ -67,5 +61,23 @@ func runGRPCServer(grpcPort int) {
 	reflection.Register(server)
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func runHTTPServer(httpPort, grpcPort int) {
+	httpEndpoint := fmt.Sprintf(":%v", httpPort)
+	grpcEndpoint := fmt.Sprintf(":%v", grpcPort)
+
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	err := api_v1.RegisterGateway(mux, grpcEndpoint, opts)
+	if err != nil {
+		log.Fatalf("Fail to register gRPC gateway service endpoint: %v", err)
+	}
+
+	servermux.AppServerMux().Handle("/v1/", mux)
+	err = http.ListenAndServe(httpEndpoint, servermux.AppServerMux())
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
 }

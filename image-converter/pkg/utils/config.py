@@ -1,8 +1,7 @@
 import rtoml
 import pathlib
 import os
-from singleton import singleton
-
+from pkg.utils.singleton import singleton
     
 @singleton
 class Config(object):
@@ -35,6 +34,10 @@ minio_address=Config().config["minio_address"]
 minio_access_key=Config().config["minio_access_key"]
 minio_secret_key=Config().config["minio_secret_key"]
 minio_token_image_bucket=Config().config["minio_token_image_bucket"]
+
+gen_car_ip=Config().config["gen_car_ip"]
+gen_car_http_port=Config().config["gen_car_http_port"]
+
 
 # use demo
 # Config().config["mysql_ip"]

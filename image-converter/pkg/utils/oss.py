@@ -1,6 +1,6 @@
 from boto3.session import Session
-import config
-from singleton import singleton
+from pkg.utils import config
+from pkg.utils.singleton import singleton
 #Client初始化
 
 

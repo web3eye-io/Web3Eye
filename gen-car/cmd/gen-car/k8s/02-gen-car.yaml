@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gen-car
-          # image: web3eye/ranker:latest
+          # image: web3eye/gen-car:latest
           image: coastlinesss/gen-car:latest
           imagePullPolicy: Always
           volumeMounts:
@@ -32,11 +32,17 @@ spec:
                 secretKeyRef:
                   name: mysql
                   key: mysql-root-password
-            - name: redis_password
+            - name: minio_access_key
               valueFrom:
                 secretKeyRef:
-                  name: redis-cluster
-                  key: redis-password
+                  name: milvus-minio
+                  key: accesskey
+            - name: minio_secret_key
+              valueFrom:
+                secretKeyRef:
+                  name: milvus-minio
+                  key: secretkey
+
       volumes:
         - name: service-config
           configMap:

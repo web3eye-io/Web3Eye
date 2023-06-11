@@ -133,6 +133,10 @@ func GetObject(ctx context.Context, key string) ([]byte, error) {
 }
 
 func UploadFile(ctx context.Context, filePath, key string) error {
+	if s3Client == nil {
+		return ErrOssClientNotInit
+	}
+
 	s, err := os.Stat(filePath)
 	if err != nil {
 		return err
@@ -156,6 +160,10 @@ func UploadFile(ctx context.Context, filePath, key string) error {
 }
 
 func DownloadFile(ctx context.Context, filePath, key string) error {
+	if s3Client == nil {
+		return ErrOssClientNotInit
+	}
+
 	downloadFile, err := os.Create(filePath)
 	if err != nil {
 		return err
