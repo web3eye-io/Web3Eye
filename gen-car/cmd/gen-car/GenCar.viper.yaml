@@ -1,0 +1,7 @@
+---
+config:
+  hostname: "gen-car.npool.top"
+  http_port: 30160
+  grpc_port: 30161
+  prometheus_port: 30162
+  logdir: "./"

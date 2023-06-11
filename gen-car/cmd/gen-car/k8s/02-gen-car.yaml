@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ranker
+  name: gen-car
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: ranker
+      app: gen-car
   template:
     metadata:
       labels:
-        app: ranker
+        app: gen-car
     spec:
       containers:
-        - name: ranker
+        - name: gen-car
           # image: web3eye/ranker:latest
-          image: coastlinesss/ranker:latest
+          image: coastlinesss/gen-car:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
-              mountPath: /etc/Ranker
+              mountPath: /etc/gen-car
           env:
             - name: ENV_CLUSTER_NAMESPACE
               valueFrom:
@@ -40,22 +40,22 @@ spec:
       volumes:
         - name: service-config
           configMap:
-            name: ranker-config
+            name: gen-car-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ranker
+  name: gen-car
 spec:
   ports:
     - name: http
-      port: 30140
-      targetPort: 30140
+      port: 30160
+      targetPort: 30160
     - name: grpc
-      port: 30141
-      targetPort: 30141
+      port: 30161
+      targetPort: 30161
     - name: healthz
-      port: 30142
-      targetPort: 30142
+      port: 30162
+      targetPort: 30162
   selector:
-    app: ranker
+    app: gen-car

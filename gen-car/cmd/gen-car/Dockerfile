@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
-COPY ranker /usr/local/bin/ranker
-COPY Ranker.viper.yaml /etc/Ranker/Ranker.viper.yaml
+COPY gen-car /usr/local/bin/gen-car
+COPY GenCar.viper.yaml /etc/GenCar/GenCar.viper.yaml
 ENV ENV_DATA_DIR=/data \
     ENV_LOG_DIR=/var/log \
     ENV_LOG_LEVEL=debug \
@@ -16,4 +16,4 @@ RUN apt install -y --no-install-recommends ca-certificates curl
 
 WORKDIR /usr/local/bin/
 
-CMD ./ranker run
+CMD ./gen-car run

@@ -18,7 +18,7 @@ fi
 
 set +e
 version=$(git describe --tags --abbrev=0)
-echo $version "version"
+
 if [ ! $? -eq 0 ]; then
   version=latest
 fi
@@ -30,8 +30,13 @@ service_name=$(
 )
 
 ## For development environment, pass the second variable
+if [[ "x" != "x$1" ]]; then
+  version=$1
+fi
+
+## For development environment, pass the second variable
 if [[ "xdev" == "x$1" ]]; then
-  version=latest
+    version=latest
 fi
 
 # TODO: should be official registry

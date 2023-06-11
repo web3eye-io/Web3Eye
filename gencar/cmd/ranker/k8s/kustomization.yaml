@@ -1,4 +1,0 @@
-resources:
-  - 01-ranker.viper.yaml
-  - 02-ranker.yaml
-  - 03-ingress.yaml

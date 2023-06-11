@@ -7,6 +7,8 @@ from confluent_kafka import Consumer, Producer
 from pkg.model.resnet50 import Resnet50
 from pkg.utils import imggetter
 from pkg.utils import imgcheck
+from pkg.utils import oss
+from pkg.utils import config
 
 
 def UUIDCheck(id) -> bool:
@@ -83,6 +85,9 @@ def QueueDealImageURL2Vector():
 
                 imgcheck.CheckImg(path=image_path)
                 vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
+
+                oss.OSS().put_object_retries(file_path=image_path,key="",bucket=config.minio_token_image_bucket,retries=3)
+                
                 os.remove(path=image_path)
 
                 vectorInfo.success = True
