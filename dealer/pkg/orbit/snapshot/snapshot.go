@@ -137,9 +137,7 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (snap
 	if err != nil {
 		return "", nil, dealerpb.BackupState_DefaultBackupState, err
 	}
-	if err := json.Unmarshal(_items, &items); err != nil {
-		return "", nil, dealerpb.BackupState_DefaultBackupState, err
-	}
+	_ = json.Unmarshal(_items, &items)
 
 	_state, err := _kv.Get(ctx, SnapshotBackupState)
 	if err != nil {
@@ -174,14 +172,14 @@ func (kv *SnapshotKV) GetCurrentBackupSnapshot(ctx context.Context) (snapshotURI
 }
 
 func (kv *SnapshotKV) GetSnapshot(ctx context.Context, index uint64) (snapshotURI string, items []*dealerpb.ContentItem, state dealerpb.BackupState, err error) {
-	if index >= kv.backupSnapshotIndex {
+	if index >= kv.waitSnapshotIndex {
 		return "", nil, dealerpb.BackupState_DefaultBackupState, fmt.Errorf("invalid snapshot index")
 	}
 	return kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
 }
 
 func (kv *SnapshotKV) UpdateSnapshot(ctx context.Context, index uint64, state dealerpb.BackupState) (string, []*dealerpb.ContentItem, dealerpb.BackupState, error) {
-	if index >= kv.backupSnapshotIndex {
+	if index >= kv.waitSnapshotIndex {
 		return "", nil, dealerpb.BackupState_DefaultBackupState, fmt.Errorf("invalid snapshot index")
 	}
 
