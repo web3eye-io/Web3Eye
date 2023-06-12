@@ -26,7 +26,8 @@ func (s *Server) CreateSnapshot(ctx context.Context, in *npool.CreateSnapshotReq
 		return &npool.CreateSnapshotResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := handler.CreateSnapshot(ctx); err != nil {
+	info, err := handler.CreateSnapshot(ctx)
+	if err != nil {
 		logger.Sugar().Infow(
 			"CreateSnapshot",
 			"In", in,
@@ -35,5 +36,37 @@ func (s *Server) CreateSnapshot(ctx context.Context, in *npool.CreateSnapshotReq
 		return &npool.CreateSnapshotResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CreateSnapshotResponse{}, nil
+	return &npool.CreateSnapshotResponse{
+		Info: info,
+	}, nil
+}
+
+func (s *Server) GetSnapshots(ctx context.Context, in *npool.GetSnapshotsRequest) (*npool.GetSnapshotsResponse, error) {
+	handler, err := snapshot.NewHandler(
+		snapshot.WithIndexes(in.GetIndexes()),
+		snapshot.WithSnapshotType(in.GetSnapshotType()),
+	)
+	if err != nil {
+		logger.Sugar().Infow(
+			"GetSnapshots",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.GetSnapshotsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, total, err := handler.GetSnapshots(ctx)
+	if err != nil {
+		logger.Sugar().Infow(
+			"GetSnapshots",
+			"In", in,
+			"Error", err,
+		)
+		return &npool.GetSnapshotsResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.GetSnapshotsResponse{
+		Infos: infos,
+		Total: total,
+	}, nil
 }

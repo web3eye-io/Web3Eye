@@ -7,8 +7,10 @@ import (
 )
 
 type Handler struct {
-	SnapshotURI string
-	Items       []*dealerpb.ContentItem
+	SnapshotURI  string
+	Items        []*dealerpb.ContentItem
+	Indexes      []uint64
+	SnapshotType dealerpb.SnapshotType
 }
 
 func NewHandler(options ...func(*Handler) error) (*Handler, error) {
@@ -37,6 +39,26 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 			return fmt.Errorf("invalid items")
 		}
 		h.Items = items
+		return nil
+	}
+}
+
+func WithIndexes(indexes []uint64) func(*Handler) error {
+	return func(h *Handler) error {
+		h.Indexes = indexes
+		return nil
+	}
+}
+
+func WithSnapshotType(_type dealerpb.SnapshotType) func(*Handler) error {
+	return func(h *Handler) error {
+		switch _type {
+		case dealerpb.SnapshotType_SnapshotWait:
+		case dealerpb.SnapshotType_SnapshotBackup:
+		default:
+			return fmt.Errorf("invalid snapshot type")
+		}
+		h.SnapshotType = _type
 		return nil
 	}
 }

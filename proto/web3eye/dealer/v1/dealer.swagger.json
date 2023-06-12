@@ -97,7 +97,12 @@
       }
     },
     "v1CreateSnapshotResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/v1Snapshot"
+        }
+      }
     },
     "v1GetBackupsResponse": {
       "type": "object",
@@ -109,6 +114,44 @@
           }
         }
       }
+    },
+    "v1GetSnapshotsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Snapshot"
+          }
+        },
+        "Total": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1Snapshot": {
+      "type": "object",
+      "properties": {
+        "SnapshotURI": {
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ContentItem"
+          }
+        }
+      }
+    },
+    "v1SnapshotType": {
+      "type": "string",
+      "enum": [
+        "DefaultSnapshotType",
+        "SnapshotWait",
+        "SnapshotBackup"
+      ],
+      "default": "DefaultSnapshotType"
     }
   }
 }

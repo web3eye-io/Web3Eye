@@ -4,14 +4,18 @@ import (
 	"context"
 
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
+	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 )
 
-func (h *Handler) CreateSnapshot(ctx context.Context) error {
+func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error) {
 	if err := orbit.Snapshot().SetWaitSnapshot(ctx, h.SnapshotURI, h.Items); err != nil {
-		return err
+		return nil, err
 	}
 	if err := orbit.Snapshot().NextWaitSnapshot(ctx); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &dealerpb.Snapshot{
+		SnapshotURI: h.SnapshotURI,
+		Items:       h.Items,
+	}, nil
 }
