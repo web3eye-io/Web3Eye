@@ -11,6 +11,7 @@ import (
 	"time"
 
 	s3config "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/web3eye-io/Web3Eye/config"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -45,13 +46,13 @@ type S3Config struct {
 }
 
 // nolint
-func Init(storeType, bucketKey string) error {
+func Init(region, bucket string) error {
 	s3Config := S3Config{
-		Region:    "default",
-		EndPoint:  "http://web3eye-minio:9000",
-		AccessKey: "2IVIqQk0n42MbzMCuigp",
-		SecretKey: "b9lXn6Xg7WkBrXS5BJqgnSsJe7RAFFXkPI1ylsRK",
-		Bucket:    "fil-alaws-on",
+		Region:    region,
+		EndPoint:  config.GetConfig().Minio.Address,
+		AccessKey: config.GetConfig().Minio.AccessKey,
+		SecretKey: config.GetConfig().Minio.SecretKey,
+		Bucket:    bucket,
 	}
 	_s3Config = S3Config{
 		Region:    s3Config.Region,
@@ -83,10 +84,6 @@ func Init(storeType, bucketKey string) error {
 	s3Client = s3.NewFromConfig(cfg, func(o *s3.Options) {
 		o.UsePathStyle = true
 		// o.EndpointOptions.DisableHTTPS = true
-	})
-
-	s3Client.CreateBucket(context.Background(), &s3.CreateBucketInput{
-		Bucket: &s3Config.Bucket,
 	})
 
 	return nil

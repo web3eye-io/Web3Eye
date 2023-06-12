@@ -8,11 +8,14 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path"
+	"strings"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/mr-tron/base58/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
+	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 )
@@ -65,10 +68,9 @@ func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.
 		return nil, err
 	}
 
-	resInfo.FileName = fmt.Sprintf("%v.%v", sha2sum, path.Ext(in.S3Key))
+	resInfo.FileName = fmt.Sprintf("%v%v", sha2sum, path.Ext(in.S3Key))
 
-	carManager := GetCarManager()
-	carManager.PutTokenResInfo(resInfo)
+	PutTokenResInfo(resInfo)
 
 	return &v1.ReportFileResponse{
 		ID:    in.ID,
@@ -98,6 +100,7 @@ func CheckAnySHA256Sum(obj any, base58str string) (bool, error) {
 }
 
 type CarManager struct {
+	dataDir       string
 	downloadChan  chan *TokenResInfo
 	downloadClose chan struct{}
 }
@@ -109,20 +112,27 @@ const (
 
 var carManager *CarManager
 
-func GetCarManager() *CarManager {
-	if carManager != nil {
-		return carManager
-	}
+func RunCarManager() {
 	carManager = &CarManager{
 		downloadChan:  make(chan *TokenResInfo, DefaultDownloadChanLen),
 		downloadClose: make(chan struct{}),
+		dataDir:       config.GetConfig().GenCar.DataDir,
 	}
+
+	var fileMode os.FileMode = 0777
+	err := os.Mkdir(carManager.dataDir, fileMode)
+	if err != nil && !strings.Contains(err.Error(), "file exists") {
+		panic(err)
+	}
+
 	carManager.runDownloadTask(DefaultDownloadParallel)
-	return carManager
 }
 
-func (cm *CarManager) PutTokenResInfo(tokenResInfo *TokenResInfo) {
-	cm.downloadChan <- tokenResInfo
+func PutTokenResInfo(tokenResInfo *TokenResInfo) {
+	if carManager == nil {
+		panic("not init CarManager")
+	}
+	carManager.downloadChan <- tokenResInfo
 }
 
 func (cm *CarManager) runDownloadTask(parallel int) {
@@ -130,7 +140,7 @@ func (cm *CarManager) runDownloadTask(parallel int) {
 		go func() {
 			for {
 				info := <-cm.downloadChan
-				err := oss.DownloadFile(context.Background(), info.FileName, info.S3Key)
+				err := oss.DownloadFile(context.Background(), fmt.Sprintf("%v/%v", cm.dataDir, info.FileName), info.S3Key)
 				if err != nil {
 					logger.Sugar().Errorf("failed to download file from s3, err: %v", err)
 				}

@@ -21,7 +21,7 @@ type Config struct {
 	Gateway        Gateway        `toml:"gateway" env:"gateway"`
 	Ranker         Ranker         `toml:"ranker" env:"ranker"`
 	Entrance       Entrance       `toml:"entrance" env:"entrance"`
-	GenCar         GenCar         `toml:"gen-car" env:"gen-car"`
+	GenCar         GenCar         `toml:"gen-car" env:"gen_car"`
 	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
 	ETH            ETH            `toml:"eth" env:"eth"`
 	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
@@ -79,6 +79,7 @@ type GenCar struct {
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
+	DataDir  string `toml:"data-dir" env:"data_dir"`
 }
 
 type IamgeConverter struct {
@@ -111,6 +112,7 @@ type Minio struct {
 	Address             string `toml:"address" env:"address"`
 	AccessKey           string `toml:"access-key" env:"access_key"`
 	SecretKey           string `toml:"secret-key" env:"secret_key"`
+	Region              string `toml:"region" env:"region"`
 	TokenImageBucket    string `toml:"token-image-bucket" env:"token_image_bucket"`
 	TokenImageCarBucket string `toml:"token-image-car-bucket" env:"token_image_car_bucket"`
 }

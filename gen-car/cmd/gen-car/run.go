@@ -13,6 +13,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 
@@ -38,6 +39,8 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().GenCar.LogFile)
 	},
 	Action: func(c *cli.Context) error {
+		oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
+		go api_v1.RunCarManager()
 		go runGRPCServer(config.GetConfig().GenCar.GrpcPort)
 		go runHTTPServer(config.GetConfig().GenCar.HTTPPort, config.GetConfig().GenCar.GrpcPort)
 		sigchan := make(chan os.Signal, 1)

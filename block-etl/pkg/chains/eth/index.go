@@ -178,6 +178,7 @@ func (e *EthIndexer) indexTransfer(ctx context.Context, handler func([]*TokenTra
 				transfers, err := TransferLogs(ctx, int64(num), int64(num))
 				if err != nil && containErr(err.Error()) {
 					logger.Sugar().Errorf("will retry anlysis height %v for parsing transfer logs failed, %v", num, err)
+					// TODO: this will be a bug,when all consumer wait for retry,deadlock occurs
 					e.taskChan <- num
 					continue
 				}
