@@ -141,17 +141,11 @@
           "items": {
             "$ref": "#/definitions/v1ContentItem"
           }
+        },
+        "BackupState": {
+          "$ref": "#/definitions/v1BackupState"
         }
       }
-    },
-    "v1SnapshotType": {
-      "type": "string",
-      "enum": [
-        "DefaultSnapshotType",
-        "SnapshotWait",
-        "SnapshotBackup"
-      ],
-      "default": "DefaultSnapshotType"
     }
   }
 }
