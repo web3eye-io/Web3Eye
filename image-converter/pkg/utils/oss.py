@@ -25,9 +25,11 @@ class OSS(object):
     
     def put_object_retries(self,file_path:str,key:str,bucket:str,retries:int)->bool:
         for i in range(retries):
+            print(file_path, key,bucket)
             ok=self.put_object(file_path=file_path,key=key,bucket=bucket)
             if ok :
-                return
+                return True
+        return False
 
 # use demo
 # OSS().put_object(file_path="/root/code/Web3Eye/image-converter/pkg/utils/config.toml",key="config.toml",bucket="fil-alaws-on")

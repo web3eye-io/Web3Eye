@@ -67,6 +67,109 @@ func NewIndexer() (*EthIndexer, error) {
 	}, nil
 }
 
+func (e *EthIndexer) IndexTasks(ctx context.Context) {
+	logger.Sugar().Info("start to index task for ethereum")
+	e.indexTransferToDB(ctx)
+
+	conds := &synctask.Conds{
+		ChainType: &ctMessage.StringVal{
+			Value: basetype.ChainType_Ethereum.String(),
+			Op:    "eq",
+		},
+		ChainID: &ctMessage.StringVal{
+			Value: "1",
+			Op:    "eq",
+		},
+		SyncState: &ctMessage.StringVal{
+			Value: cttype.SyncState_Finsh.String(),
+			Op:    "eq",
+		},
+	}
+
+	// check wheather have task in kafka
+	tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
+	if err != nil {
+		logger.Sugar().Error(err)
+	}
+	for _, v := range tasks {
+		err = e.addTask(v.Topic)
+		if err != nil {
+			logger.Sugar().Error(err)
+			continue
+		}
+	}
+
+	conds.SyncState.Value = cttype.SyncState_Start.String()
+
+	for {
+		// TODO: limit sync topic number
+		tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		for _, v := range tasks {
+			err = e.addTask(v.Topic)
+			if err != nil {
+				logger.Sugar().Error(err)
+				continue
+			}
+		}
+		time.Sleep(CheckTopicInterval)
+	}
+}
+
+func (e *EthIndexer) addTask(topic string) error {
+	pLock.Lock()
+	defer pLock.Unlock()
+	if _, ok := e.taskMap[topic]; ok {
+		return nil
+	}
+	e.taskMap[topic] = struct{}{}
+	logger.Sugar().Infof("start to consumer task topic: %v", topic)
+	consumer, err := ctkafka.NewCTConsumer(topic)
+	if err != nil {
+		logger.Sugar().Error(err)
+		delete(e.taskMap, topic)
+		return err
+	}
+	go func() {
+		err = consumer.Consume(func(m *kafka.Message) {
+			num, err := utils.Bytes2Uint64(m.Value)
+			if err != nil {
+				logger.Sugar().Error(err)
+				return
+			}
+
+			e.taskChan <- num
+			if num%uint64(LogIntervalHeight) == 0 {
+				logger.Sugar().Infof("start sync %v height", num)
+			}
+		}, func(retryNum int) {
+			if retryNum < MaxRetriesThenTriggerTask {
+				return
+			} else {
+				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), topic)
+				if err != nil {
+					logger.Sugar().Error(err)
+				}
+			}
+
+			if retryNum >= MaxRetriesThenStopConsume {
+				logger.Sugar().Warnf("cannot consume topic %v,retry %v times", topic, MaxRetriesThenStopConsume)
+				delete(e.taskMap, topic)
+				consumer.Close()
+			}
+		})
+		if err != nil {
+			logger.Sugar().Error(err)
+			delete(e.taskMap, topic)
+			consumer.Close()
+		}
+	}()
+
+	return err
+}
+
 func (e *EthIndexer) indexTransfer(ctx context.Context, handler func([]*TokenTransfer) error) {
 	for i := 0; i < MaxDealBlockNum; i++ {
 		wg.Add(1)
@@ -295,109 +398,6 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 		break
 	}
 	return nil
-}
-
-func (e *EthIndexer) IndexTasks(ctx context.Context) {
-	logger.Sugar().Info("start to index task for ethereum")
-	e.indexTransferToDB(ctx)
-
-	conds := &synctask.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: basetype.ChainType_Ethereum.String(),
-			Op:    "eq",
-		},
-		ChainID: &ctMessage.StringVal{
-			Value: "1",
-			Op:    "eq",
-		},
-		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Finsh.String(),
-			Op:    "eq",
-		},
-	}
-
-	// check wheather have task in kafka
-	tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
-	if err != nil {
-		logger.Sugar().Error(err)
-	}
-	for _, v := range tasks {
-		err = e.addTask(v.Topic)
-		if err != nil {
-			logger.Sugar().Error(err)
-			continue
-		}
-	}
-
-	conds.SyncState.Value = cttype.SyncState_Start.String()
-
-	for {
-		// TODO: limit sync topic number
-		tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
-		for _, v := range tasks {
-			err = e.addTask(v.Topic)
-			if err != nil {
-				logger.Sugar().Error(err)
-				continue
-			}
-		}
-		time.Sleep(CheckTopicInterval)
-	}
-}
-
-func (e *EthIndexer) addTask(topic string) error {
-	pLock.Lock()
-	defer pLock.Unlock()
-	if _, ok := e.taskMap[topic]; ok {
-		return nil
-	}
-	e.taskMap[topic] = struct{}{}
-	logger.Sugar().Infof("start to consumer task topic: %v", topic)
-	consumer, err := ctkafka.NewCTConsumer(topic)
-	if err != nil {
-		logger.Sugar().Error(err)
-		delete(e.taskMap, topic)
-		return err
-	}
-	go func() {
-		err = consumer.Consume(func(m *kafka.Message) {
-			num, err := utils.Bytes2Uint64(m.Value)
-			if err != nil {
-				logger.Sugar().Error(err)
-				return
-			}
-
-			e.taskChan <- num
-			if num%uint64(LogIntervalHeight) == 0 {
-				logger.Sugar().Infof("start sync %v height", num)
-			}
-		}, func(retryNum int) {
-			if retryNum < MaxRetriesThenTriggerTask {
-				return
-			} else {
-				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), topic)
-				if err != nil {
-					logger.Sugar().Error(err)
-				}
-			}
-
-			if retryNum >= MaxRetriesThenStopConsume {
-				logger.Sugar().Warnf("cannot consume topic %v,retry %v times", topic, MaxRetriesThenStopConsume)
-				delete(e.taskMap, topic)
-				consumer.Close()
-			}
-		})
-		if err != nil {
-			logger.Sugar().Error(err)
-			delete(e.taskMap, topic)
-			consumer.Close()
-		}
-	}()
-
-	return err
 }
 
 func containErr(errStr string) bool {

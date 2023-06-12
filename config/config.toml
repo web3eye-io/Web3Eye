@@ -65,9 +65,9 @@ address="milvus:19530"
 bootstrap-servers="kafka-headless:9092"
 
 [minio]
-address="http://milvus-minio-svc:9000"
-access-key=""
-secret-key=""
+address="http://web3eye-minio:9000"
+access-key="YacNyvYLuQ1J3mMaCvMy"
+secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
 token-image-bucket="token-image-bucket"
 token-image-car-bucket="token-image-car-bucket"
 

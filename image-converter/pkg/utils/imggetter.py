@@ -4,6 +4,7 @@ from uuid import uuid4
 import urllib3
 import base64
 import hashlib
+import logging
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
 
@@ -49,7 +50,7 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         if not content_type in typedic.keys():
             return "", False
     except:
-        print(url, " have no Content-Type")
+        logging.error(url, " have no Content-Type")
         return "",False
 
     try:
@@ -57,7 +58,7 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         if not accept_ranges == "bytes":
             return "", False
     except:
-        print(url, " have no Accept-Ranges")
+        logging.warning( f"{url} have no Accept-Ranges")
     file_path = f"./img/{str(uuid4())}.{typedic[content_type]}"
     file = open(file_path, 'wb')
 
@@ -101,6 +102,6 @@ def TransferSVGImg(url)-> Tuple[str,bool]:
 # url = "https://ipfs.io/ipfs/QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
 
 # ipfsurl = "ipfs://QmdJk8kfwacmT4FPXEDTQax9bvSYxDy5XNr5rZWq46f3ip/Teddies_hidden.mp4"
-ipfsurl = "ipfs://QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
+# ipfsurl = "ipfs://QmddokWqSLYp1vUP4XNaYzAbdDWeDLA4uyapN9fsDrSRv2/3679.png"
 # ipfsurl = "ipfs://QmQqzMTavQgT4f4T5v6PWBp7XNKtoPmC9jvn12WPT3gkSE"
-DownloadUrlImg(url=ipfsurl)
+# DownloadUrlImg(url=ipfsurl)
