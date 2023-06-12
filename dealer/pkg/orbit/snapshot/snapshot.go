@@ -10,13 +10,15 @@ import (
 )
 
 type SnapshotKV struct {
-	kvSnapshotIndex orbitdb.KeyValueStore
-	snapshotIndex   uint64
+	kvSnapshotIndex     orbitdb.KeyValueStore
+	waitSnapshotIndex   uint64
+	backupSnapshotIndex uint64
 }
 
 const (
-	CurrentSnapshotIndex = "current-index"
-	KVStoreSnapshotIndex = "snapshot-index"
+	CurrentWaitSnapshotIndex   = "current-wait-index"
+	CurrentBackupSnapshotIndex = "current-wait-index"
+	KVStoreSnapshotIndex       = "snapshot-index"
 )
 
 func NewSnapshotKV(ctx context.Context, odb orbitiface.OrbitDB) (*SnapshotKV, error) {
@@ -35,30 +37,45 @@ func NewSnapshotKV(ctx context.Context, odb orbitiface.OrbitDB) (*SnapshotKV, er
 		return nil, err
 	}
 
-	b, err := kv.kvSnapshotIndex.Get(ctx, CurrentSnapshotIndex)
+	b, err := kv.kvSnapshotIndex.Get(ctx, CurrentWaitSnapshotIndex)
 	if err != nil {
 		return nil, err
 	}
-	kv.snapshotIndex, _ = binary.Uvarint(b)
+	kv.waitSnapshotIndex, _ = binary.Uvarint(b)
 
-	if kv.snapshotIndex == 0 {
-		if err := kv.NextSnapshot(ctx); err != nil {
-			return nil, err
-		}
+	b, err = kv.kvSnapshotIndex.Get(ctx, CurrentBackupSnapshotIndex)
+	if err != nil {
+		return nil, err
 	}
+	kv.backupSnapshotIndex, _ = binary.Uvarint(b)
 
 	return kv, nil
 }
 
-func (kv *SnapshotKV) NextSnapshot(ctx context.Context) error {
+func (kv *SnapshotKV) NextWaitSnapshot(ctx context.Context) error {
 	if kv.kvSnapshotIndex == nil {
 		return fmt.Errorf("invalid kvstore")
 	}
 
 	b := make([]byte, 8)
-	kv.snapshotIndex += 1
-	binary.PutUvarint(b, kv.snapshotIndex)
-	if _, err := kv.kvSnapshotIndex.Put(ctx, CurrentSnapshotIndex, b); err != nil {
+	kv.waitSnapshotIndex += 1
+	binary.PutUvarint(b, kv.waitSnapshotIndex)
+	if _, err := kv.kvSnapshotIndex.Put(ctx, CurrentWaitSnapshotIndex, b); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (kv *SnapshotKV) NextBackupSnapshot(ctx context.Context) error {
+	if kv.kvSnapshotIndex == nil {
+		return fmt.Errorf("invalid kvstore")
+	}
+
+	b := make([]byte, 8)
+	kv.backupSnapshotIndex += 1
+	binary.PutUvarint(b, kv.backupSnapshotIndex)
+	if _, err := kv.kvSnapshotIndex.Put(ctx, CurrentBackupSnapshotIndex, b); err != nil {
 		return err
 	}
 
