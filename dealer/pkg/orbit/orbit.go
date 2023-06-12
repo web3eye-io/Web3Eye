@@ -100,6 +100,14 @@ func Initialize(ctx context.Context) error {
 	return nil
 }
 
+func Snapshot() *snapshot.SnapshotKV {
+	return _odb.kvSnapshot
+}
+
+func FileState() *filestate.FileStateKV {
+	return _odb.kvFileState
+}
+
 func Finalize() {
 	if _odb.kvFileState != nil {
 		_odb.kvFileState.Close()
