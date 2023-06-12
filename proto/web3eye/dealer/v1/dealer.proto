@@ -6,6 +6,7 @@ option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1";
 
 service Manager {
   rpc CreateSnapshot (CreateSnapshotRequest) returns (CreateSnapshotResponse){}
+  rpc GetSnapshots (GetSnapshotsRequest) returns (GetSnapshotsResponse){}
   rpc CreateBackup (CreateBackupRequest) returns (CreateBackupResponse) {}
   rpc GetBackups (GetBackupsRequest) returns (GetBackupsResponse) {}
 }
@@ -18,12 +19,34 @@ message ContentItem {
     string UID = 50;
 }
 
+message Snapshot {
+    string SnapshotURI = 10;
+    repeated ContentItem Items = 20;
+}
+
 message CreateSnapshotRequest {
     string SnapshotURI = 10;
     repeated ContentItem Items = 20;
 }
 
 message CreateSnapshotResponse {
+    Snapshot Info = 10;
+}
+
+enum SnapshotType {
+    DefaultSnapshotType = 0;
+    SnapshotWait        = 10;
+    SnapshotBackup      = 20;
+}
+
+message GetSnapshotsRequest {
+    repeated uint64 Indexes      = 10;
+    SnapshotType    SnapshotType = 20;
+}
+
+message GetSnapshotsResponse {
+    repeated Snapshot Infos = 10;
+    uint64            Total = 20;
 }
 
 enum BackupState {
