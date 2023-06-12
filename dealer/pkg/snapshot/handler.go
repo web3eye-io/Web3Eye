@@ -7,6 +7,7 @@ import (
 )
 
 type Handler struct {
+	CID         string
 	SnapshotURI string
 	Items       []*dealerpb.ContentItem
 	Indexes     []uint64
@@ -20,6 +21,16 @@ func NewHandler(options ...func(*Handler) error) (*Handler, error) {
 		}
 	}
 	return handler, nil
+}
+
+func WithCID(cid string) func(*Handler) error {
+	return func(h *Handler) error {
+		if cid == "" {
+			return fmt.Errorf("invalid cid")
+		}
+		h.CID = cid
+		return nil
+	}
 }
 
 func WithSnapshotURI(uri string) func(*Handler) error {
@@ -47,10 +58,10 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 			if item.ChainID == "" {
 				return fmt.Errorf("invalid chainid")
 			}
-			if item.ContractAddress == "" {
-				return fmt.Errorf("invalid contract address")
+			if item.Contract == "" {
+				return fmt.Errorf("invalid contract")
 			}
-			if item.UID == "" {
+			if item.TokenID == "" {
 				return fmt.Errorf("invalid uid")
 			}
 		}

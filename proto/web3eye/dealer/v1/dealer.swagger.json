@@ -80,10 +80,10 @@
         "ChainID": {
           "type": "string"
         },
-        "ContractAddress": {
+        "Contract": {
           "type": "string"
         },
-        "UID": {
+        "TokenID": {
           "type": "string"
         }
       }
@@ -133,6 +133,9 @@
     "v1Snapshot": {
       "type": "object",
       "properties": {
+        "SnapshotCID": {
+          "type": "string"
+        },
         "SnapshotURI": {
           "type": "string"
         },

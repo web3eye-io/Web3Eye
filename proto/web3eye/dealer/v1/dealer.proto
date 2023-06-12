@@ -15,8 +15,8 @@ message ContentItem {
     string URI = 10;
     string ChainType = 20;
     string ChainID = 30;
-    string ContractAddress = 40;
-    string UID = 50;
+    string Contract = 40;
+    string TokenID = 50;
 }
 
 enum BackupState {
@@ -30,14 +30,16 @@ enum BackupState {
 }
 
 message Snapshot {
-    string SnapshotURI = 10;
-    repeated ContentItem Items = 20;
-    BackupState BackupState = 30;
+    string SnapshotCID = 10;
+    string SnapshotURI = 20;
+    repeated ContentItem Items = 30;
+    BackupState BackupState = 40;
 }
 
 message CreateSnapshotRequest {
-    string SnapshotURI = 10;
-    repeated ContentItem Items = 20;
+    string SnapshotCID = 10;
+    string SnapshotURI = 20;
+    repeated ContentItem Items = 30;
 }
 
 message CreateSnapshotResponse {
