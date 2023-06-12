@@ -43,7 +43,7 @@ func NewFileStateKV(ctx context.Context, odb orbitiface.OrbitDB) (*FileStateKV, 
 	return kv, nil
 }
 
-func (kv *FileStateKV) UppdateFileState(ctx context.Context, chainType, uid, chainId, state string) error {
+func (kv *FileStateKV) SetFileState(ctx context.Context, chainType, uid, chainId, state string) error {
 	if kv.kvFileState == nil {
 		return fmt.Errorf("invalid kvstore")
 	}
