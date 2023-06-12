@@ -17,6 +17,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: web3eye-minio
+                name: milvus-minio
                 port:
                   number: 9000
