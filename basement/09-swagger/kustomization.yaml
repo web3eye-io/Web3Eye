@@ -1,0 +1,7 @@
+commonLabels:
+  # app: swagger-ui
+
+resources:
+  - 01-swagger-ui-pvc.yaml
+  - 02-swagger-ui.yaml
+  - 03-traefik-ingress.yaml
