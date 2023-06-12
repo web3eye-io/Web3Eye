@@ -38,6 +38,23 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 		if len(items) == 0 {
 			return fmt.Errorf("invalid items")
 		}
+		for _, item := range items {
+			if item.URI == "" {
+				return fmt.Errorf("invalid uri")
+			}
+			if item.ChainType == "" {
+				return fmt.Errorf("invalid chaintype")
+			}
+			if item.ChainID == "" {
+				return fmt.Errorf("invalid chainid")
+			}
+			if item.ContractAddress == "" {
+				return fmt.Errorf("invalid contract address")
+			}
+			if item.UID == "" {
+				return fmt.Errorf("invalid uid")
+			}
+		}
 		h.Items = items
 		return nil
 	}
