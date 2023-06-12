@@ -19,15 +19,11 @@ func (h *Handler) GetSnapshots(ctx context.Context) ([]*dealerpb.Snapshot, uint6
 
 	snapshots := []*dealerpb.Snapshot{}
 	for _, index := range indexes {
-		uri, items, state, err := orbit.Snapshot().GetSnapshot(ctx, index)
+		snapshot, err := orbit.Snapshot().GetSnapshot(ctx, index)
 		if err != nil {
 			return nil, 0, err
 		}
-		snapshots = append(snapshots, &dealerpb.Snapshot{
-			SnapshotURI: uri,
-			Items:       items,
-			BackupState: state,
-		})
+		snapshots = append(snapshots, snapshot)
 	}
 
 	return snapshots, total, nil
