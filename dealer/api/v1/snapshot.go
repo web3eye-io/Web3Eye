@@ -44,7 +44,6 @@ func (s *Server) CreateSnapshot(ctx context.Context, in *npool.CreateSnapshotReq
 func (s *Server) GetSnapshots(ctx context.Context, in *npool.GetSnapshotsRequest) (*npool.GetSnapshotsResponse, error) {
 	handler, err := snapshot.NewHandler(
 		snapshot.WithIndexes(in.GetIndexes()),
-		snapshot.WithSnapshotType(in.GetSnapshotType()),
 	)
 	if err != nil {
 		logger.Sugar().Infow(

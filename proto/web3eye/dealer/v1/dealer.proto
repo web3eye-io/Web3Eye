@@ -19,9 +19,20 @@ message ContentItem {
     string UID = 50;
 }
 
+enum BackupState {
+    DefaultBackupState = 0;
+    BackupStateNone    = 10;
+    BackupStateCreated = 20;
+    BackupStateTransferring = 30;
+    BackupStateSealing = 40;
+    BackupStateSuccess = 50;
+    BackupStateFail    = 60;
+}
+
 message Snapshot {
     string SnapshotURI = 10;
     repeated ContentItem Items = 20;
+    BackupState BackupState = 30;
 }
 
 message CreateSnapshotRequest {
@@ -33,30 +44,13 @@ message CreateSnapshotResponse {
     Snapshot Info = 10;
 }
 
-enum SnapshotType {
-    DefaultSnapshotType = 0;
-    SnapshotWait        = 10;
-    SnapshotBackup      = 20;
-}
-
 message GetSnapshotsRequest {
-    repeated uint64 Indexes      = 10;
-    SnapshotType    SnapshotType = 20;
+    repeated uint64 Indexes = 10;
 }
 
 message GetSnapshotsResponse {
     repeated Snapshot Infos = 10;
     uint64            Total = 20;
-}
-
-enum BackupState {
-    DefaultBackupState = 0;
-    BackupStateNone    = 10;
-    BackupStateCreated = 20;
-    BackupStateTransferring = 30;
-    BackupStateSealing = 40;
-    BackupStateSuccess = 50;
-    BackupStateFail    = 60;
 }
 
 message Backup {
