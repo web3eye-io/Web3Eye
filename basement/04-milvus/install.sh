@@ -14,6 +14,6 @@ helm install milvus milvus/milvus
 sleep 20
 kubectl get pods | grep milvus
 
-kubectl apply -f 01-minio-traefik-middleware.yaml
+kubectl apply -f $SHELL_FOLDER/01-minio-traefik-middleware.yaml
 # helm install milvus milvus/milvus --set cpu=1
 # helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false --set standalone.resources.limits.cpu: 3
