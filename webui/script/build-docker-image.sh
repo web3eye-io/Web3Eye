@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
     cd $SHELL_FOLDER/../
     pwd
 )
@@ -24,7 +24,7 @@ fi
 set -e
 
 service_name=$(
-    cd $ROOT_FOLDER
+    cd $PROJECT_FOLDER
     basename $(pwd)
 )
 
@@ -45,7 +45,7 @@ if [[ "x" != $2 ]]; then
     registry=$2/
 fi
 
-cd $ROOT_FOLDER
+cd $PROJECT_FOLDER
 user=$(whoami)
 if [ "$user" == "root" ]; then
     docker build -t ${registry}${OrginazeName}/$service_name:$version .

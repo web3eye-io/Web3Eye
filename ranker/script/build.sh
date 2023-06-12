@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
     cd $SHELL_FOLDER/../
     pwd
 )
@@ -17,11 +17,11 @@ PLATFORMS=(
     # windows/amd64
     # darwin/amd64
 )
-OUTPUT=$ROOT_FOLDER/output
+OUTPUT=$PROJECT_FOLDER/output
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
 service_name=$(
-    cd $ROOT_FOLDER
+    cd $PROJECT_FOLDER
     basename $(pwd)
 )
 
@@ -50,5 +50,5 @@ for PLATFORM in "${PLATFORMS[@]}"; do
         -X $pkg.gitCommit=${git_revision} \
         -X $pkg.gitVersion=${version}     \
         -X $pkg.gitBranch=${git_branch}" \
-        -o "${OUTPUT}/${OS}/${ARCH}/" "$ROOT_FOLDER/cmd/$service_name"
+        -o "${OUTPUT}/${OS}/${ARCH}/" "$PROJECT_FOLDER/cmd/$service_name"
 done

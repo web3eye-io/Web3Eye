@@ -1,20 +1,13 @@
 package main
 
 // import (
-// 	"context"
 // 	"fmt"
 
-// 	"github.com/web3eye-io/Web3Eye/common/oss"
-// 	"github.com/web3eye-io/Web3Eye/common/utils"
+// 	v1 "github.com/web3eye-io/Web3Eye/gen-car/api/v1"
 // )
 
 // func main() {
-// 	fmt.Println(oss.Init("", ""))
-// 	// err := oss.UploadFile(context.Background(), "/root/code/Web3Eye/README.md", "reademe.md")
-// 	// fmt.Println(err)
-// 	// err := oss.DownloadFile(context.Background(), "/root/code/Web3Eye/READMEx.md", "readme.md")
-// 	// fmt.Println(err)
-// 	info, err := oss.GetObjectAttributes(context.Background(), "readme.md")
-// 	fmt.Println(err)
-// 	fmt.Println(utils.PrettyStruct(info))
+// 	fmt.Println(v1.AnySHA256Sum(v1.TokenBaseInfo{
+// 		ChainType: "ETH",
+// 	}))
 // }

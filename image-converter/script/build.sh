@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
-ROOT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
-PROJECT_FOLDER=$(cd $ROOT_FOLDER/../;pwd)
+PROJECT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
+PROJECT_FOLDER=$(cd $PROJECT_FOLDER/../;pwd)
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
 configFile=$PROJECT_FOLDER/config/config.toml
-myConfigPath=$ROOT_FOLDER/pkg/utils/
+myConfigPath=$PROJECT_FOLDER/pkg/utils/
 echo "sync config.toml from $configFile to $myConfigPath"
 cp $configFile $myConfigPath
+cp $configFile $PROJECT_FOLDER
 
-cd $ROOT_FOLDER
+cd $PROJECT_FOLDER

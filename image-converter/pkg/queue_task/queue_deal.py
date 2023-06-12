@@ -110,7 +110,7 @@ def QueueDealImageURL2Vector():
 def report_file_to_gen_car(id:str,file_s3_key)-> bool:
     try:
         http = urllib3.PoolManager()
-        data = json.dumps({'ID':id,"FileName":file_s3_key}).encode()
+        data = json.dumps({'ID':id,"S3Key":file_s3_key}).encode()
         print(config.gen_car_ip)
         http.request(
             method="POST",

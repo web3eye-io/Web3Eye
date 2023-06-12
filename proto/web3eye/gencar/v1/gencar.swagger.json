@@ -115,7 +115,7 @@
         "ID": {
           "type": "string"
         },
-        "FileName": {
+        "S3Key": {
           "type": "string"
         }
       }
@@ -126,7 +126,7 @@
         "ID": {
           "type": "string"
         },
-        "FileName": {
+        "S3Key": {
           "type": "string"
         }
       }

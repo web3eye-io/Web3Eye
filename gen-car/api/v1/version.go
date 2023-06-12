@@ -9,7 +9,6 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/version"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
-	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,15 +21,5 @@ func (s *Server) Version(ctx context.Context, in *emptypb.Empty) (*web3eye.Versi
 		logger.Sugar().Errorw("[Version] get service version error: %w", err)
 		return &web3eye.VersionResponse{}, status.Error(codes.Internal, "internal server error")
 	}
-	return resp, nil
-}
-
-func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.ReportFileResponse, error) {
-
-	resp := &v1.ReportFileResponse{
-		FileName: "sss" + in.FileName,
-		ID:       in.ID,
-	}
-
 	return resp, nil
 }

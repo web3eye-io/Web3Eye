@@ -26,10 +26,10 @@ service Manager {
 
 message ReportFileRequest{
   string ID = 10;
-  string FileName = 20;
+  string S3Key = 20;
 }
 
 message ReportFileResponse{
   string ID = 10;
-  string FileName = 20;
+  string S3Key = 20;
 }

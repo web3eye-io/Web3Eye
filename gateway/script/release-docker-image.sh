@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
   cd "$(dirname "$0")"
   pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
   cd $SHELL_FOLDER/../
   pwd
 )
@@ -13,7 +13,7 @@ set -o nounset
 set -o pipefail
 
 PLATFORM=linux/amd64
-OUTPUT=$ROOT_FOLDER/output
+OUTPUT=$PROJECT_FOLDER/output
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
 
@@ -25,7 +25,7 @@ if git_status=$(git status --porcelain --untracked=no 2>/dev/null) && [[ -z "${g
 fi
 
 service_name=$(
-  cd $ROOT_FOLDER
+  cd $PROJECT_FOLDER
   basename $(pwd)
 )
 
