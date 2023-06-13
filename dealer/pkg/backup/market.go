@@ -14,6 +14,7 @@ import (
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p/core/peer"
 	multiaddr "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multibase"
 )
 
 var (
@@ -63,19 +64,30 @@ func (b *backup) connectMiner(ctx context.Context) error {
 	return nil
 }
 
-func (b *backup) dealProposal(ctx context.Context, pieceCid cid.Cid, pieceSize abi.UnpaddedPieceSize) (*market.DealProposal, error) {
-	if err := pieceSize.Validate(); err != nil {
+func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pieceSize uint64) (*market.DealProposal, error) {
+	_size := abi.UnpaddedPieceSize(pieceSize)
+	if err := _size.Validate(); err != nil {
 		return nil, err
 	}
 
-	label, err := market.NewLabelFromString("") // TODO
+	_rootCid, err := cid.Parse(rootCid)
+	if err != nil {
+		return nil, err
+	}
+
+	_pieceCid, err := cid.Parse(pieceCid)
+	if err != nil {
+		return nil, err
+	}
+
+	label, err := market.NewLabelFromString(_rootCid.Encode(multibase.MustNewEncoder('u')))
 	if err != nil {
 		return nil, err
 	}
 
 	return &market.DealProposal{
-		PieceCID:             pieceCid,
-		PieceSize:            pieceSize.Padded(),
+		PieceCID:             _pieceCid,
+		PieceSize:            _size.Padded(),
 		Client:               clientAddress,
 		Provider:             minerId,
 		Label:                label,

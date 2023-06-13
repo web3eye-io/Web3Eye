@@ -2,6 +2,7 @@ package backup
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
@@ -26,6 +27,13 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"Snapshot", snapshot,
 		"Index", index,
 	)
+
+	if snapshot.SnapshotCID == "" {
+		return fmt.Errorf("invalid snapshot cid")
+	}
+	if snapshot.SnapshotURI == "" {
+		return fmt.Errorf("invalid snapshot uri")
+	}
 
 	return nil
 }
