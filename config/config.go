@@ -109,12 +109,11 @@ type Milvus struct {
 }
 
 type Minio struct {
-	Address             string `toml:"address" env:"address"`
-	AccessKey           string `toml:"access-key" env:"access_key"`
-	SecretKey           string `toml:"secret-key" env:"secret_key"`
-	Region              string `toml:"region" env:"region"`
-	TokenImageBucket    string `toml:"token-image-bucket" env:"token_image_bucket"`
-	TokenImageCarBucket string `toml:"token-image-car-bucket" env:"token_image_car_bucket"`
+	Address          string `toml:"address" env:"address"`
+	AccessKey        string `toml:"access-key" env:"access_key"`
+	SecretKey        string `toml:"secret-key" env:"secret_key"`
+	Region           string `toml:"region" env:"region"`
+	TokenImageBucket string `toml:"token-image-bucket" env:"token_image_bucket"`
 }
 
 type ETH struct {

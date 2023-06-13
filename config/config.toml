@@ -71,7 +71,6 @@ access-key="YacNyvYLuQ1J3mMaCvMy"
 secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
 region="default"
 token-image-bucket="token-image-bucket"
-token-image-car-bucket="token-image-car-bucket"
 
 
 [eth]

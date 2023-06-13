@@ -118,7 +118,8 @@ const (
 	DefaultDownloadChanLen  = 100
 	DefaultDownloadParallel = 3
 	// 17GB
-	maxUnTarSize = 18253611008
+	// maxUnTarSize = 18253611008
+	maxUnTarSize = 24253611
 )
 
 var carManager *CarManager
@@ -129,13 +130,19 @@ func RunCarManager() {
 		downloadClose: make(chan struct{}),
 		genCarChan:    make(chan *TokenResInfo, DefaultDownloadChanLen),
 		genCarClose:   make(chan struct{}),
+		dataDir:       filePath(""),
 	}
 
 	var fileMode os.FileMode = 0777
+	fmt.Println(carManager.dataDir)
 	err := os.Mkdir(carManager.dataDir, fileMode)
 	if err != nil && !strings.Contains(err.Error(), "file exists") {
+		logger.Sugar().Errorf("mkdir failed, path: %v", carManager.dataDir)
 		panic(err)
 	}
+
+	logger.Sugar().Info("start run car manager")
+
 	go carManager.checkAndGenCar(maxUnTarSize)
 	carManager.runDownloadTask(DefaultDownloadParallel)
 }
@@ -156,6 +163,7 @@ func (cm *CarManager) runDownloadTask(parallel int) {
 				if err != nil {
 					logger.Sugar().Errorf("failed to download file from s3, err: %v", err)
 				}
+				cm.genCarChan <- info
 			}
 		}()
 	}
@@ -167,60 +175,66 @@ func filePath(fileName string) string {
 }
 
 type CarFileInfo struct {
-	tokenList []*TokenResInfo
-	size      int64
-	tarGzName string
-	carName   string
-	s3Bucket  string
-	rootCID   string
+	TokenList []*TokenResInfo
+	Size      int64
+	TarGzName string
+	CarName   string
+	S3Bucket  string
+	RootCID   string
 }
 
 func newCarFileInfo() *CarFileInfo {
 	return &CarFileInfo{
-		tarGzName: fmt.Sprintf("%v.tar.gz", uuid.NewString()),
-		carName:   fmt.Sprintf("%v.car", uuid.NewString()),
+		TarGzName: fmt.Sprintf("%v.tar.gz", uuid.NewString()),
+		CarName:   fmt.Sprintf("%v.car", uuid.NewString()),
 	}
 }
 
 func (cm *CarManager) checkAndGenCar(maxUnTarSize int64) {
 	carFI := newCarFileInfo()
 	size := int64(0)
-	select {
-	case info := <-cm.genCarChan:
-		size = carFI.size + info.Size
-		if size > maxUnTarSize {
-			GenCarAndUpdate(context.Background(), carFI)
-			carFI = newCarFileInfo()
-			size = info.Size
+	for {
+		select {
+		case info := <-cm.genCarChan:
+			size = carFI.Size + info.Size
+			if size > maxUnTarSize {
+				err := GenCarAndUpdate(context.Background(), carFI)
+				if err != nil {
+					logger.Sugar().Errorf("gen car failed, err: %v", err)
+				}
+
+				carFI = newCarFileInfo()
+				size = info.Size
+			}
+			carFI.Size = size
+			carFI.TokenList = append(carFI.TokenList, info)
+		case <-cm.genCarClose:
+			return
 		}
-		carFI.size = size
-		carFI.tokenList = append(carFI.tokenList, info)
-	case <-cm.genCarClose:
-		return
 	}
 }
 
 func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
-	files := make([]string, len(carFI.tokenList))
-	for i, token := range carFI.tokenList {
-		files[i] = token.FileName
+	files := make([]string, len(carFI.TokenList))
+	for i, token := range carFI.TokenList {
+		files[i] = filePath(token.FileName)
 	}
-	err := ctfile.GenTarGZ(filePath(carFI.tarGzName), files)
+	err := ctfile.GenTarGZ(filePath(carFI.TarGzName), files)
 	if err != nil {
 		return err
 	}
 
-	rootCID, err := car.CreateCar(ctx, filePath(carFI.carName), []string{filePath(carFI.tarGzName)}, car.DefaultCarVersion)
+	rootCID, err := car.CreateCar(ctx, filePath(carFI.CarName), []string{filePath(carFI.TarGzName)}, car.DefaultCarVersion)
 	if err != nil {
 		return err
 	}
 
-	err = oss.UploadFile(ctx, filePath(carFI.carName), carFI.carName)
+	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
 	if err != nil {
 		return err
 	}
-	carFI.rootCID = rootCID
-	carFI.s3Bucket = oss.GetS3Bucket()
+	carFI.RootCID = rootCID
+	carFI.S3Bucket = oss.GetS3Bucket()
 	fmt.Println(utils.PrettyStruct(carFI))
 	return nil
 }
