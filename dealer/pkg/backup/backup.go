@@ -28,6 +28,9 @@ var newSnapshot chan struct{}
 
 func Watch(ctx context.Context) {
 	newSnapshot = make(chan struct{})
+
+	backupAll(ctx)
+
 	for {
 		select {
 		case <-newSnapshot:
