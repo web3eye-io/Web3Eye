@@ -3,6 +3,7 @@ package snapshot
 import (
 	"fmt"
 
+	cid1 "github.com/ipfs/go-cid"
 	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 )
 
@@ -26,7 +27,7 @@ func NewHandler(options ...func(*Handler) error) (*Handler, error) {
 
 func WithSnapshotCommP(cid string) func(*Handler) error {
 	return func(h *Handler) error {
-		if cid == "" {
+		if _, err := cid1.Parse(cid); err != nil {
 			return fmt.Errorf("invalid root")
 		}
 		h.SnapshotCommP = cid
@@ -36,7 +37,7 @@ func WithSnapshotCommP(cid string) func(*Handler) error {
 
 func WithSnapshotRoot(cid string) func(*Handler) error {
 	return func(h *Handler) error {
-		if cid == "" {
+		if _, err := cid1.Parse(cid); err != nil {
 			return fmt.Errorf("invalid root")
 		}
 		h.SnapshotRoot = cid

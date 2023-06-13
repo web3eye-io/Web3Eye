@@ -15,7 +15,9 @@ func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error
 		return nil, err
 	}
 	return &dealerpb.Snapshot{
-		SnapshotURI: h.SnapshotURI,
-		Items:       h.Items,
+		SnapshotCommP: h.SnapshotCommP,
+		SnapshotRoot:  h.SnapshotRoot,
+		SnapshotURI:   h.SnapshotURI,
+		Items:         h.Items,
 	}, nil
 }
