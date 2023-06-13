@@ -2,10 +2,26 @@ package backup
 
 import (
 	"context"
+
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 )
 
 func backupAll(ctx context.Context) {
-
+	waits, err := orbit.Backup().Waits(ctx)
+	if err != nil {
+		logger.Sugar().Errorw(
+			"backupAll",
+			"Error", err,
+		)
+		return
+	}
+	for _, wait := range waits {
+		logger.Sugar().Infow(
+			"backupAll",
+			"Wait", wait,
+		)
+	}
 }
 
 var newSnapshot chan struct{}

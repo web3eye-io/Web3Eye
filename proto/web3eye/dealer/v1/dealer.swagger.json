@@ -44,17 +44,6 @@
         }
       }
     },
-    "v1Backup": {
-      "type": "object",
-      "properties": {
-        "SnapshotURL": {
-          "type": "string"
-        },
-        "State": {
-          "$ref": "#/definitions/v1BackupState"
-        }
-      }
-    },
     "v1BackupState": {
       "type": "string",
       "enum": [
@@ -92,7 +81,7 @@
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/v1Backup"
+          "$ref": "#/definitions/v1Snapshot"
         }
       }
     },
@@ -101,17 +90,6 @@
       "properties": {
         "Info": {
           "$ref": "#/definitions/v1Snapshot"
-        }
-      }
-    },
-    "v1GetBackupsResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Backup"
-          }
         }
       }
     },
@@ -133,6 +111,10 @@
     "v1Snapshot": {
       "type": "object",
       "properties": {
+        "Index": {
+          "type": "string",
+          "format": "uint64"
+        },
         "SnapshotCID": {
           "type": "string"
         },

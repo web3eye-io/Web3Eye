@@ -8,7 +8,6 @@ service Manager {
   rpc CreateSnapshot (CreateSnapshotRequest) returns (CreateSnapshotResponse){}
   rpc GetSnapshots (GetSnapshotsRequest) returns (GetSnapshotsResponse){}
   rpc CreateBackup (CreateBackupRequest) returns (CreateBackupResponse) {}
-  rpc GetBackups (GetBackupsRequest) returns (GetBackupsResponse) {}
 }
 
 message ContentItem {
@@ -30,10 +29,11 @@ enum BackupState {
 }
 
 message Snapshot {
-    string SnapshotCID = 10;
-    string SnapshotURI = 20;
-    repeated ContentItem Items = 30;
-    BackupState BackupState = 40;
+    uint64 Index       = 10;
+    string SnapshotCID = 20;
+    string SnapshotURI = 30;
+    repeated ContentItem Items = 40;
+    BackupState BackupState = 50;
 }
 
 message CreateSnapshotRequest {
@@ -55,24 +55,11 @@ message GetSnapshotsResponse {
     uint64            Total = 20;
 }
 
-message Backup {
-    string SnapshotURL = 10;
-    BackupState State = 20;
-}
-
 message CreateBackupRequest {
-    string SnapshotURL = 10;
+    uint64 Index = 10;
 }
 
 message CreateBackupResponse {
-    Backup Info = 10;
+    Snapshot Info = 10;
 }
 
-message GetBackupsRequest {
-    int32 Offset = 10;
-    int32 Limit = 20;
-}
-
-message GetBackupsResponse {
-    repeated Backup Infos = 10;
-}

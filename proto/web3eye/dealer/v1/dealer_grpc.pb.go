@@ -25,7 +25,6 @@ type ManagerClient interface {
 	CreateSnapshot(ctx context.Context, in *CreateSnapshotRequest, opts ...grpc.CallOption) (*CreateSnapshotResponse, error)
 	GetSnapshots(ctx context.Context, in *GetSnapshotsRequest, opts ...grpc.CallOption) (*GetSnapshotsResponse, error)
 	CreateBackup(ctx context.Context, in *CreateBackupRequest, opts ...grpc.CallOption) (*CreateBackupResponse, error)
-	GetBackups(ctx context.Context, in *GetBackupsRequest, opts ...grpc.CallOption) (*GetBackupsResponse, error)
 }
 
 type managerClient struct {
@@ -63,15 +62,6 @@ func (c *managerClient) CreateBackup(ctx context.Context, in *CreateBackupReques
 	return out, nil
 }
 
-func (c *managerClient) GetBackups(ctx context.Context, in *GetBackupsRequest, opts ...grpc.CallOption) (*GetBackupsResponse, error) {
-	out := new(GetBackupsResponse)
-	err := c.cc.Invoke(ctx, "/dealer.v1.Manager/GetBackups", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ManagerServer is the server API for Manager service.
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
@@ -79,7 +69,6 @@ type ManagerServer interface {
 	CreateSnapshot(context.Context, *CreateSnapshotRequest) (*CreateSnapshotResponse, error)
 	GetSnapshots(context.Context, *GetSnapshotsRequest) (*GetSnapshotsResponse, error)
 	CreateBackup(context.Context, *CreateBackupRequest) (*CreateBackupResponse, error)
-	GetBackups(context.Context, *GetBackupsRequest) (*GetBackupsResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -95,9 +84,6 @@ func (UnimplementedManagerServer) GetSnapshots(context.Context, *GetSnapshotsReq
 }
 func (UnimplementedManagerServer) CreateBackup(context.Context, *CreateBackupRequest) (*CreateBackupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBackup not implemented")
-}
-func (UnimplementedManagerServer) GetBackups(context.Context, *GetBackupsRequest) (*GetBackupsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBackups not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -166,24 +152,6 @@ func _Manager_CreateBackup_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_GetBackups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBackupsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).GetBackups(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/dealer.v1.Manager/GetBackups",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetBackups(ctx, req.(*GetBackupsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,10 +170,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBackup",
 			Handler:    _Manager_CreateBackup_Handler,
-		},
-		{
-			MethodName: "GetBackups",
-			Handler:    _Manager_GetBackups_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
