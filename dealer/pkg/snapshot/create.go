@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error) {
-	if err := orbit.Snapshot().SetWaitSnapshot(ctx, h.SnapshotCID, h.SnapshotURI, h.Items); err != nil {
+	if err := orbit.Snapshot().SetWaitSnapshot(ctx, h.SnapshotCommP, h.SnapshotRoot, h.SnapshotURI, h.Items); err != nil {
 		return nil, err
 	}
 	if err := orbit.Snapshot().NextWaitSnapshot(ctx); err != nil {

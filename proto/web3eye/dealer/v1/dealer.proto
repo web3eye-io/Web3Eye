@@ -39,7 +39,7 @@ message Snapshot {
 
 message CreateSnapshotRequest {
     string SnapshotCommP = 10;
-    string SnapshotCID   = 20;
+    string SnapshotRoot  = 20;
     string SnapshotURI   = 30;
     repeated ContentItem Items = 40;
 }

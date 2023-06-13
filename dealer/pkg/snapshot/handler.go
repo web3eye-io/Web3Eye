@@ -7,10 +7,11 @@ import (
 )
 
 type Handler struct {
-	SnapshotCID string
-	SnapshotURI string
-	Items       []*dealerpb.ContentItem
-	Indexes     []uint64
+	SnapshotCommP string
+	SnapshotRoot  string
+	SnapshotURI   string
+	Items         []*dealerpb.ContentItem
+	Indexes       []uint64
 }
 
 func NewHandler(options ...func(*Handler) error) (*Handler, error) {
@@ -23,12 +24,22 @@ func NewHandler(options ...func(*Handler) error) (*Handler, error) {
 	return handler, nil
 }
 
-func WithSnapshotCID(cid string) func(*Handler) error {
+func WithSnapshotCommP(cid string) func(*Handler) error {
 	return func(h *Handler) error {
 		if cid == "" {
-			return fmt.Errorf("invalid cid")
+			return fmt.Errorf("invalid root")
 		}
-		h.SnapshotCID = cid
+		h.SnapshotCommP = cid
+		return nil
+	}
+}
+
+func WithSnapshotRoot(cid string) func(*Handler) error {
+	return func(h *Handler) error {
+		if cid == "" {
+			return fmt.Errorf("invalid root")
+		}
+		h.SnapshotRoot = cid
 		return nil
 	}
 }

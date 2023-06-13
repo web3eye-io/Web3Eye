@@ -6,6 +6,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
+	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 
 	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -29,15 +30,18 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	)
 
 	switch snapshot.BackupState {
-	case deaperpb.BackupState_BackupStateSuccess:
+	case dealerpb.BackupState_BackupStateSuccess:
 		fallthrough // nolint
-	case deaperpb.BackupState_BackupStateFail:
+	case dealerpb.BackupState_BackupStateFail:
 		return nil
 	default:
 	}
 
-	if snapshot.SnapshotCID == "" {
-		return fmt.Errorf("invalid snapshot cid")
+	if snapshot.SnapshotCommP == "" {
+		return fmt.Errorf("invalid snapshot commP")
+	}
+	if snapshot.SnapshotRoot == "" {
+		return fmt.Errorf("invalid snapshot root")
 	}
 	if snapshot.SnapshotURI == "" {
 		return fmt.Errorf("invalid snapshot uri")

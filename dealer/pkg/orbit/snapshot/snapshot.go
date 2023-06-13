@@ -22,9 +22,10 @@ type SnapshotKV struct {
 const (
 	CurrentWaitSnapshotIndex   = "current-wait-index"
 	CurrentBackupSnapshotIndex = "current-wait-index"
-	SnapshotURI                = "snapshot-url"
+	SnapshotURI                = "snapshot-uri"
 	ContentItems               = "content-items"
-	SnapshotCID                = "snapshot-cid"
+	SnapshotRoot               = "snapshot-root"
+	SnapshotCommP              = "snapshot-commp"
 	SnapshotBackupState        = "snapshot-backup-state"
 	KVStoreSnapshotIndex       = "snapshot-index"
 	KVStoreSnapshot            = "snapshot-"
@@ -78,7 +79,7 @@ func (kv *SnapshotKV) NextWaitSnapshot(ctx context.Context) error {
 	return nil
 }
 
-func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotCID, snapshotURI string, items []*dealerpb.ContentItem) error {
+func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotCommP, snapshotRoot, snapshotURI string, items []*dealerpb.ContentItem) error {
 	replicate := true
 	_kv, err := kv.odb.KeyValue(ctx, kvStoreName, &orbitdb.CreateDBOptions{
 		Replicate: &replicate,
@@ -92,7 +93,10 @@ func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotCID,
 		return err
 	}
 
-	if _, err := _kv.Put(ctx, SnapshotCID, []byte(snapshotCID)); err != nil {
+	if _, err := _kv.Put(ctx, SnapshotCommP, []byte(snapshotCommP)); err != nil {
+		return err
+	}
+	if _, err := _kv.Put(ctx, SnapshotRoot, []byte(snapshotRoot)); err != nil {
 		return err
 	}
 	if _, err := _kv.Put(ctx, SnapshotURI, []byte(snapshotURI)); err != nil {
@@ -114,8 +118,8 @@ func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotCID,
 	return nil
 }
 
-func (kv *SnapshotKV) SetWaitSnapshot(ctx context.Context, snapshotCID, snapshotURI string, items []*dealerpb.ContentItem) error {
-	return kv.setSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.waitSnapshotIndex), snapshotCID, snapshotURI, items)
+func (kv *SnapshotKV) SetWaitSnapshot(ctx context.Context, snapshotCommP, snapshotRoot, snapshotURI string, items []*dealerpb.ContentItem) error {
+	return kv.setSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.waitSnapshotIndex), snapshotCommP, snapshotRoot, snapshotURI, items)
 }
 
 func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dealerpb.Snapshot, error) {
@@ -137,7 +141,12 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		return nil, err
 	}
 
-	_cid, err := _kv.Get(ctx, SnapshotCID)
+	_commP, err := _kv.Get(ctx, SnapshotCommP)
+	if err != nil {
+		return nil, err
+	}
+
+	_cid, err := _kv.Get(ctx, SnapshotRoot)
 	if err != nil {
 		return nil, err
 	}
@@ -156,10 +165,11 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 	state := dealerpb.BackupState(dealerpb.BackupState_value[string(_state)])
 
 	return &dealerpb.Snapshot{
-		SnapshotCID: string(_cid),
-		SnapshotURI: string(_snapshotURI),
-		Items:       items,
-		BackupState: state,
+		SnapshotCommP: string(_commP),
+		SnapshotRoot:  string(_cid),
+		SnapshotURI:   string(_snapshotURI),
+		Items:         items,
+		BackupState:   state,
 	}, nil
 }
 
