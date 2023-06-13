@@ -180,14 +180,24 @@ func (kv *SnapshotKV) NextBackupSnapshot(ctx context.Context) error {
 }
 
 func (kv *SnapshotKV) GetCurrentBackupSnapshot(ctx context.Context) (*dealerpb.Snapshot, error) {
-	return kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.backupSnapshotIndex))
+	snapshot, err := kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.backupSnapshotIndex))
+	if err != nil {
+		return nil, err
+	}
+	snapshot.Index = kv.backupSnapshotIndex
+	return snapshot, nil
 }
 
 func (kv *SnapshotKV) GetSnapshot(ctx context.Context, index uint64) (*dealerpb.Snapshot, error) {
 	if index >= kv.waitSnapshotIndex {
 		return nil, fmt.Errorf("invalid snapshot index")
 	}
-	return kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	snapshot, err := kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	if err != nil {
+		return nil, err
+	}
+	snapshot.Index = index
+	return snapshot, nil
 }
 
 func (kv *SnapshotKV) UpdateSnapshot(ctx context.Context, index uint64, state dealerpb.BackupState) (*dealerpb.Snapshot, error) {
@@ -212,7 +222,12 @@ func (kv *SnapshotKV) UpdateSnapshot(ctx context.Context, index uint64, state de
 		return nil, err
 	}
 
-	return kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	snapshot, err := kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	if err != nil {
+		return nil, err
+	}
+	snapshot.Index = index
+	return snapshot, nil
 }
 
 func (kv *SnapshotKV) WaitSnapshotIndex() uint64 {
