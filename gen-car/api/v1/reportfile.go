@@ -133,7 +133,6 @@ func RunCarManager() {
 	}
 
 	var fileMode os.FileMode = 0777
-	fmt.Println(carManager.dataDir)
 	err := os.Mkdir(carManager.dataDir, fileMode)
 	if err != nil && !strings.Contains(err.Error(), "file exists") {
 		logger.Sugar().Errorf("mkdir failed, path: %v", carManager.dataDir)
