@@ -7,6 +7,20 @@ import (
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 )
 
+func backOne(ctx context.Context, index uint64) error {
+	snapshot, err := orbit.Snapshot().GetSnapshot(ctx, index)
+	if err != nil {
+		return err
+	}
+
+	logger.Sugar().Infow(
+		"backOne",
+		"Snapshot", snapshot,
+	)
+
+	return nil
+}
+
 func backupAll(ctx context.Context) {
 	waits, err := orbit.Backup().Waits(ctx)
 	if err != nil {
@@ -17,10 +31,13 @@ func backupAll(ctx context.Context) {
 		return
 	}
 	for _, wait := range waits {
-		logger.Sugar().Infow(
-			"backupAll",
-			"Wait", wait,
-		)
+		if err := backOne(ctx, wait); err != nil {
+			logger.Sugar().Errorw(
+				"backupAll",
+				"Wait", wait,
+				"Error", err,
+			)
+		}
 	}
 }
 

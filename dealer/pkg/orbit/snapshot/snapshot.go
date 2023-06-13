@@ -78,7 +78,7 @@ func (kv *SnapshotKV) NextWaitSnapshot(ctx context.Context) error {
 	return nil
 }
 
-func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotURI string, items []*dealerpb.ContentItem) error {
+func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotCID, snapshotURI string, items []*dealerpb.ContentItem) error {
 	replicate := true
 	_kv, err := kv.odb.KeyValue(ctx, kvStoreName, &orbitdb.CreateDBOptions{
 		Replicate: &replicate,
@@ -92,6 +92,9 @@ func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotURI 
 		return err
 	}
 
+	if _, err := _kv.Put(ctx, SnapshotCID, []byte(snapshotCID)); err != nil {
+		return err
+	}
 	if _, err := _kv.Put(ctx, SnapshotURI, []byte(snapshotURI)); err != nil {
 		return err
 	}
@@ -111,8 +114,8 @@ func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotURI 
 	return nil
 }
 
-func (kv *SnapshotKV) SetWaitSnapshot(ctx context.Context, snapshotURI string, items []*dealerpb.ContentItem) error {
-	return kv.setSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.waitSnapshotIndex), snapshotURI, items)
+func (kv *SnapshotKV) SetWaitSnapshot(ctx context.Context, snapshotCID, snapshotURI string, items []*dealerpb.ContentItem) error {
+	return kv.setSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, kv.waitSnapshotIndex), snapshotCID, snapshotURI, items)
 }
 
 func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dealerpb.Snapshot, error) {

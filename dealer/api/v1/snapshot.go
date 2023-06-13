@@ -14,6 +14,7 @@ import (
 
 func (s *Server) CreateSnapshot(ctx context.Context, in *npool.CreateSnapshotRequest) (*npool.CreateSnapshotResponse, error) {
 	handler, err := snapshot.NewHandler(
+		snapshot.WithSnapshotCID(in.GetSnapshotCID()),
 		snapshot.WithSnapshotURI(in.GetSnapshotURI()),
 		snapshot.WithItems(in.GetItems()),
 	)
