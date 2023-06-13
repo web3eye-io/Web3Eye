@@ -16,6 +16,7 @@ func backOne(ctx context.Context, index uint64) error {
 	logger.Sugar().Infow(
 		"backOne",
 		"Snapshot", snapshot,
+		"Index", index,
 	)
 
 	return nil
