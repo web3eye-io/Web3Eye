@@ -16,6 +16,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/config"
 	"go.uber.org/zap"
 
+	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/backup"
 	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/filestate"
 	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/snapshot"
 )
@@ -27,13 +28,10 @@ type _orbit struct {
 	db          orbitiface.OrbitDB
 	kvSnapshot  *snapshot.SnapshotKV
 	kvFileState *filestate.FileStateKV
+	kvBackup    *backup.BackupKV
 }
 
 var _odb = &_orbit{}
-
-const (
-	KVStoreFileState = "file-state"
-)
 
 func Initialize(ctx context.Context) error {
 	cfg := config.GetConfig().Dealer
@@ -97,6 +95,11 @@ func Initialize(ctx context.Context) error {
 		return err
 	}
 
+	_odb.kvBackup, err = backup.NewBackupKV(ctx, _odb.db)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -108,7 +111,14 @@ func FileState() *filestate.FileStateKV {
 	return _odb.kvFileState
 }
 
+func Backup() *backup.BackupKV {
+	return _odb.kvBackup
+}
+
 func Finalize() {
+	if _odb.kvBackup != nil {
+		_odb.kvBackup.Close()
+	}
 	if _odb.kvFileState != nil {
 		_odb.kvFileState.Close()
 	}

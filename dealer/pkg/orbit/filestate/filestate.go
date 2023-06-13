@@ -40,6 +40,10 @@ func NewFileStateKV(ctx context.Context, odb orbitiface.OrbitDB) (*FileStateKV, 
 		return nil, err
 	}
 
+	if err := kv.kvFileState.Load(ctx, -1); err != nil {
+		return nil, err
+	}
+
 	return kv, nil
 }
 
