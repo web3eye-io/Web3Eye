@@ -29,17 +29,19 @@ enum BackupState {
 }
 
 message Snapshot {
-    uint64 Index       = 10;
-    string SnapshotCID = 20;
-    string SnapshotURI = 30;
-    repeated ContentItem Items = 40;
-    BackupState BackupState = 50;
+    uint64 Index         = 10;
+    string SnapshotCommP = 20;
+    string SnapshotRoot  = 30;
+    string SnapshotURI   = 40;
+    repeated ContentItem Items = 50;
+    BackupState BackupState = 60;
 }
 
 message CreateSnapshotRequest {
-    string SnapshotCID = 10;
-    string SnapshotURI = 20;
-    repeated ContentItem Items = 30;
+    string SnapshotCommP = 10;
+    string SnapshotCID   = 20;
+    string SnapshotURI   = 30;
+    repeated ContentItem Items = 40;
 }
 
 message CreateSnapshotResponse {

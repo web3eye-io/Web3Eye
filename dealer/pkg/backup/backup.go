@@ -28,12 +28,23 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"Index", index,
 	)
 
+	switch snapshot.BackupState {
+	case deaperpb.BackupState_BackupStateSuccess:
+		fallthrough // nolint
+	case deaperpb.BackupState_BackupStateFail:
+		return nil
+	default:
+	}
+
 	if snapshot.SnapshotCID == "" {
 		return fmt.Errorf("invalid snapshot cid")
 	}
 	if snapshot.SnapshotURI == "" {
 		return fmt.Errorf("invalid snapshot uri")
 	}
+
+	// TODO: backup items to IPFS
+	// TODO: backup car to Filecoin
 
 	return nil
 }

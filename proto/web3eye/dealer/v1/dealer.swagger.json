@@ -115,7 +115,10 @@
           "type": "string",
           "format": "uint64"
         },
-        "SnapshotCID": {
+        "SnapshotCommP": {
+          "type": "string"
+        },
+        "SnapshotRoot": {
           "type": "string"
         },
         "SnapshotURI": {
