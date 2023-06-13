@@ -40,7 +40,16 @@ log-file="/var/log/entrance.log"
 ip="gen-car"
 http-port=30160
 grpc-port=30161
+data-dir="/tmp/gencar_data"
 log-file="/var/log/gen-car.log"
+
+[dealer]
+ip="dealer"
+ipfs-repo="/home/test/.ipfs"
+orbit-repo="/home/test/.orbit"
+http-port=30160
+grpc-port=30161
+log-file="/var/log/dealer.log"
 
 [image-converter]
 address="http://image-converter:8080"
@@ -66,10 +75,12 @@ bootstrap-servers="kafka-headless:9092"
 
 [minio]
 address="http://web3eye-minio:9000"
-access-key=""
-secret-key=""
+access-key="YacNyvYLuQ1J3mMaCvMy"
+secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
+region="default"
 token-image-bucket="token-image-bucket"
 token-image-car-bucket="token-image-car-bucket"
+
 
 [eth]
 wallets="https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0"

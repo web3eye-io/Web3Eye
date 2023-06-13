@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package dealer.v1;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1";
+
+service Manager {
+  rpc CreateSnapshot (CreateSnapshotRequest) returns (CreateSnapshotResponse){}
+  rpc GetSnapshots (GetSnapshotsRequest) returns (GetSnapshotsResponse){}
+  rpc CreateBackup (CreateBackupRequest) returns (CreateBackupResponse) {}
+}
+
+message ContentItem {
+    string URI = 10;
+    string ChainType = 20;
+    string ChainID = 30;
+    string Contract = 40;
+    string TokenID = 50;
+}
+
+enum BackupState {
+    DefaultBackupState = 0;
+    BackupStateNone    = 10;
+    BackupStateCreated = 20;
+    BackupStateTransferring = 30;
+    BackupStateSealing = 40;
+    BackupStateSuccess = 50;
+    BackupStateFail    = 60;
+}
+
+message Snapshot {
+    uint64 Index       = 10;
+    string SnapshotCID = 20;
+    string SnapshotURI = 30;
+    repeated ContentItem Items = 40;
+    BackupState BackupState = 50;
+}
+
+message CreateSnapshotRequest {
+    string SnapshotCID = 10;
+    string SnapshotURI = 20;
+    repeated ContentItem Items = 30;
+}
+
+message CreateSnapshotResponse {
+    Snapshot Info = 10;
+}
+
+message GetSnapshotsRequest {
+    repeated uint64 Indexes = 10;
+}
+
+message GetSnapshotsResponse {
+    repeated Snapshot Infos = 10;
+    uint64            Total = 20;
+}
+
+message CreateBackupRequest {
+    uint64 Index = 10;
+}
+
+message CreateBackupResponse {
+    Snapshot Info = 10;
+}
+
