@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
+	backup "github.com/web3eye-io/Web3Eye/dealer/pkg/backup"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 )
 
@@ -40,6 +41,8 @@ var runCmd = &cli.Command{
 
 		go runHTTPServer(config.GetConfig().Dealer.HTTPPort, config.GetConfig().Dealer.GrpcPort)
 		go runGRPCServer(config.GetConfig().Dealer.GrpcPort)
+		go backup.Watch(ctx.Context)
+
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 

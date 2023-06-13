@@ -11,5 +11,6 @@ func (h *Handler) CreateBackup(ctx context.Context) (*dealerpb.Snapshot, error) 
 	if err := orbit.Backup().Wait(ctx, h.Index); err != nil {
 		return nil, err
 	}
+	NewSnapshot()
 	return orbit.Snapshot().UpdateSnapshot(ctx, h.Index, dealerpb.BackupState_BackupStateCreated)
 }
