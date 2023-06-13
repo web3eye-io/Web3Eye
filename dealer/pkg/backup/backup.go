@@ -5,16 +5,24 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
+
+	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
+	"github.com/libp2p/go-libp2p/core/host"
 )
 
-func backOne(ctx context.Context, index uint64) error {
+type backup struct {
+	host   host.Host
+	stream network.StorageDealStream
+}
+
+func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	snapshot, err := orbit.Snapshot().GetSnapshot(ctx, index)
 	if err != nil {
 		return err
 	}
 
 	logger.Sugar().Infow(
-		"backOne",
+		"backupOne",
 		"Snapshot", snapshot,
 		"Index", index,
 	)
@@ -22,7 +30,7 @@ func backOne(ctx context.Context, index uint64) error {
 	return nil
 }
 
-func backupAll(ctx context.Context) {
+func (b *backup) backupAll(ctx context.Context) {
 	waits, err := orbit.Backup().Waits(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
@@ -32,7 +40,7 @@ func backupAll(ctx context.Context) {
 		return
 	}
 	for _, wait := range waits {
-		if err := backOne(ctx, wait); err != nil {
+		if err := b.backupOne(ctx, wait); err != nil {
 			logger.Sugar().Errorw(
 				"backupAll",
 				"Wait", wait,
@@ -44,15 +52,23 @@ func backupAll(ctx context.Context) {
 
 var newSnapshot chan struct{}
 
-func Watch(ctx context.Context) {
-	newSnapshot = make(chan struct{})
+func Watch(ctx context.Context) (err error) {
+	backup := &backup{}
 
-	backupAll(ctx)
+	if err := backup.buildHost(ctx); err != nil {
+		return err
+	}
+	if err := backup.connectMiner(ctx); err != nil {
+		return err
+	}
+
+	newSnapshot = make(chan struct{})
+	backup.backupAll(ctx)
 
 	for {
 		select {
 		case <-newSnapshot:
-			backupAll(ctx)
+			backup.backupAll(ctx)
 		case <-ctx.Done():
 			return
 		}

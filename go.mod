@@ -18,6 +18,7 @@ require (
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/favadi/protoc-go-inject-tag v1.3.0
+	github.com/filecoin-project/go-fil-markets v1.28.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -31,8 +32,10 @@ require (
 	github.com/ipld/go-car/v2 v2.10.0
 	github.com/ipld/go-codec-dagpb v1.6.0
 	github.com/ipld/go-ipld-prime v0.20.0
+	github.com/libp2p/go-libp2p v0.27.3
 	github.com/milvus-io/milvus-sdk-go/v2 v2.1.2
 	github.com/mr-tron/base58 v1.2.0
+	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/multiformats/go-multicodec v0.9.0
 	github.com/multiformats/go-multihash v0.2.2
 	github.com/stretchr/testify v1.8.2
@@ -95,6 +98,20 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/elastic/gosigar v0.14.2 // indirect
 	github.com/facebookgo/atomicfile v0.0.0-20151019160806-2de1f203e7d5 // indirect
+	github.com/filecoin-project/go-address v1.1.0 // indirect
+	github.com/filecoin-project/go-amt-ipld/v2 v2.1.0 // indirect
+	github.com/filecoin-project/go-amt-ipld/v4 v4.0.0 // indirect
+	github.com/filecoin-project/go-bitfield v0.2.4 // indirect
+	github.com/filecoin-project/go-cbor-util v0.0.1 // indirect
+	github.com/filecoin-project/go-data-transfer/v2 v2.0.0-rc6 // indirect
+	github.com/filecoin-project/go-ds-versioning v0.1.2 // indirect
+	github.com/filecoin-project/go-hamt-ipld v0.1.5 // indirect
+	github.com/filecoin-project/go-hamt-ipld/v3 v3.1.0 // indirect
+	github.com/filecoin-project/go-padreader v0.0.1 // indirect
+	github.com/filecoin-project/go-state-types v0.11.1 // indirect
+	github.com/filecoin-project/go-statemachine v1.0.3 // indirect
+	github.com/filecoin-project/go-statestore v0.2.0 // indirect
+	github.com/filecoin-project/specs-actors v0.9.13 // indirect
 	github.com/flynn/noise v1.0.0 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.1 // indirect
@@ -116,6 +133,7 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
+	github.com/hannahhoward/cbor-gen-for v0.0.0-20230214144701-5d17c9d5243c // indirect
 	github.com/hannahhoward/go-pubsub v0.0.0-20200423002714-8d62886cc36e // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
@@ -134,7 +152,7 @@ require (
 	github.com/ipfs/go-ds-leveldb v0.5.0 // indirect
 	github.com/ipfs/go-ds-measure v0.2.0 // indirect
 	github.com/ipfs/go-fs-lock v0.0.7 // indirect
-	github.com/ipfs/go-graphsync v0.14.4 // indirect
+	github.com/ipfs/go-graphsync v0.14.5 // indirect
 	github.com/ipfs/go-ipfs-blockstore v1.3.0 // indirect
 	github.com/ipfs/go-ipfs-chunker v0.0.5 // indirect
 	github.com/ipfs/go-ipfs-delay v0.0.1 // indirect
@@ -159,6 +177,7 @@ require (
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/klauspost/compress v1.16.4 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/koron/go-ssdp v0.0.4 // indirect
@@ -166,7 +185,6 @@ require (
 	github.com/libp2p/go-cidranger v1.1.0 // indirect
 	github.com/libp2p/go-doh-resolver v0.4.0 // indirect
 	github.com/libp2p/go-flow-metrics v0.1.0 // indirect
-	github.com/libp2p/go-libp2p v0.27.3 // indirect
 	github.com/libp2p/go-libp2p-asn-util v0.3.0 // indirect
 	github.com/libp2p/go-libp2p-kad-dht v0.23.0 // indirect
 	github.com/libp2p/go-libp2p-kbucket v0.5.0 // indirect
@@ -188,12 +206,12 @@ require (
 	github.com/miekg/dns v1.1.53 // indirect
 	github.com/mikioh/tcpinfo v0.0.0-20190314235526-30a79bb1804b // indirect
 	github.com/mikioh/tcpopt v0.0.0-20190314235656-172688c1accc // indirect
+	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
-	github.com/multiformats/go-multiaddr v0.9.0 // indirect
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
 	github.com/multiformats/go-multiaddr-fmt v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.2.0 // indirect
