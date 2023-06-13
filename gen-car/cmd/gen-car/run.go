@@ -39,7 +39,10 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().GenCar.LogFile)
 	},
 	Action: func(c *cli.Context) error {
-		oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
+		err := oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
+		if err != nil {
+			panic(err)
+		}
 		go api_v1.RunCarManager()
 		go runGRPCServer(config.GetConfig().GenCar.GrpcPort)
 		go runHTTPServer(config.GetConfig().GenCar.HTTPPort, config.GetConfig().GenCar.GrpcPort)

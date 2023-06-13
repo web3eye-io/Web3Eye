@@ -200,7 +200,7 @@ func init() {
 	}
 	err = DetectEnv(config)
 	if err != nil {
-		fmt.Printf("environment variable parse failed， %v", err)
+		fmt.Printf("environment variable parse failed, %v", err)
 	}
 }
 
