@@ -77,9 +77,10 @@ func Initialize(ctx context.Context) error {
 		return err
 	}
 
+	logger, _ := zap.NewProduction()
 	_odb.db, err = orbitdb.NewOrbitDB(ctx, _odb.api, &orbitdb.NewOrbitDBOptions{
 		Directory: &cfg.OrbitRepo,
-		Logger:    zap.NewExample(),
+		Logger:    logger,
 	})
 	if err != nil {
 		return err

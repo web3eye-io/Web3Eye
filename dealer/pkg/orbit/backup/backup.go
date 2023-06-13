@@ -62,6 +62,18 @@ func (kv *BackupKV) Wait(ctx context.Context, index uint64) error {
 		return fmt.Errorf("invalid keyvalue")
 	}
 
+	val, err := kv.kvBackup.Get(ctx, fmt.Sprintf("%v", index))
+	if err != nil {
+		return err
+	}
+
+	switch string(val) {
+	case dealerpb.BackupState_BackupStateCreated.String():
+		fallthrough //nolint
+	case dealerpb.BackupState_BackupStateSuccess.String():
+		return fmt.Errorf("already created")
+	}
+
 	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateCreated.String())); err != nil {
 		return err
 	}
