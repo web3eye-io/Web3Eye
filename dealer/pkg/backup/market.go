@@ -6,10 +6,23 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
+	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
+	"github.com/filecoin-project/go-state-types/abi"
+	"github.com/filecoin-project/go-state-types/big"
+	"github.com/filecoin-project/go-state-types/builtin/v9/market"
+	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p/core/peer"
 	multiaddr "github.com/multiformats/go-multiaddr"
 )
+
+var (
+	minerId = address.Address{}
+)
+
+func init() {
+	minerId, _ = address.NewIDAddress(1970622)
+}
 
 func (b *backup) connectMiner(ctx context.Context) error {
 	addr, err := multiaddr.NewMultiaddr("/ip4/152.32.173.11/tcp/23456/p2p/12D3KooWS26eBREdM959vDNJWyfgwsd38NMegn7KK11R9DY4EU4p")
@@ -48,4 +61,29 @@ func (b *backup) connectMiner(ctx context.Context) error {
 	)
 
 	return nil
+}
+
+func (b *backup) dealProposal(ctx context.Context, pieceCid cid.Cid, pieceSize abi.UnpaddedPieceSize) (*market.DealProposal, error) {
+	if err := pieceSize.Validate(); err != nil {
+		return nil, err
+	}
+
+	label, err := market.NewLabelFromString("") // TODO
+	if err != nil {
+		return nil, err
+	}
+
+	return &market.DealProposal{
+		PieceCID:             pieceCid,
+		PieceSize:            pieceSize.Padded(),
+		Client:               clientAddress,
+		Provider:             minerId,
+		Label:                label,
+		StartEpoch:           0,    // TODO
+		EndEpoch:             1700, // TODO
+		StoragePricePerEpoch: big.Zero(),
+		ProviderCollateral:   big.Zero(), // TODO
+		ClientCollateral:     big.Zero(),
+		VerifiedDeal:         true,
+	}, nil
 }
