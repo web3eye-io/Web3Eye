@@ -7,7 +7,7 @@ import (
 )
 
 type Handler struct {
-	CID         string
+	SnapshotCID string
 	SnapshotURI string
 	Items       []*dealerpb.ContentItem
 	Indexes     []uint64
@@ -23,12 +23,12 @@ func NewHandler(options ...func(*Handler) error) (*Handler, error) {
 	return handler, nil
 }
 
-func WithCID(cid string) func(*Handler) error {
+func WithSnapshotCID(cid string) func(*Handler) error {
 	return func(h *Handler) error {
 		if cid == "" {
 			return fmt.Errorf("invalid cid")
 		}
-		h.CID = cid
+		h.SnapshotCID = cid
 		return nil
 	}
 }
