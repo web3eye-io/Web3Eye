@@ -17,6 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 var ErrOssClientNotInit = errors.New("oss client not init")
@@ -171,6 +172,30 @@ func DownloadFile(ctx context.Context, filePath, key string) error {
 		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 	})
+	return err
+}
+
+func DeleteFiles(ctx context.Context, keys []string) error {
+	if s3Client == nil {
+		return ErrOssClientNotInit
+	}
+
+	objIDs := make([]types.ObjectIdentifier, len(keys))
+	for i, v := range keys {
+		objIDs[i] = types.ObjectIdentifier{
+			Key: aws.String(v),
+		}
+	}
+
+	input := &s3.DeleteObjectsInput{
+		Bucket: aws.String(GetS3Bucket()),
+		Delete: &types.Delete{
+			Objects: objIDs,
+			Quiet:   false,
+		},
+	}
+
+	_, err := s3Client.DeleteObjects(ctx, input)
 	return err
 }
 

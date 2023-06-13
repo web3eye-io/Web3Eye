@@ -17,7 +17,6 @@ import (
 	"github.com/mr-tron/base58/base58"
 	"github.com/web3eye-io/Web3Eye/common/ctfile"
 	"github.com/web3eye-io/Web3Eye/common/oss"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
@@ -223,11 +222,13 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	if err != nil {
 		return err
 	}
+	logger.Sugar().Infof("gen tar.gz file:%v successully, car: %v, has %v files", carFI.TarGzName, carFI.CarName, len(carFI.TokenList))
 
 	rootCID, err := car.CreateCar(ctx, filePath(carFI.CarName), []string{filePath(carFI.TarGzName)}, car.DefaultCarVersion)
 	if err != nil {
 		return err
 	}
+	logger.Sugar().Infof("gen car file: %v successully, tar: %v, rootCID: %v", carFI.CarName, carFI.TarGzName, rootCID)
 
 	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
 	if err != nil {
@@ -235,6 +236,19 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	}
 	carFI.RootCID = rootCID
 	carFI.S3Bucket = oss.GetS3Bucket()
-	fmt.Println(utils.PrettyStruct(carFI))
+	logger.Sugar().Infof("update car file: %v to s3 successully", carFI.CarName)
+
+	cleanUpUsedCarFI(ctx, carFI)
+	logger.Sugar().Infof("cleanup files related to car file: %v", carFI.CarName)
+
 	return nil
+}
+
+func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
+	os.Remove(filePath(carFI.CarName))
+	os.Remove(filePath(carFI.TarGzName))
+
+	for _, v := range carFI.TokenList {
+		os.Remove(filePath(v.FileName))
+	}
 }
