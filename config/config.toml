@@ -36,13 +36,6 @@ http-port=30150
 grpc-port=30151
 log-file="/var/log/entrance.log"
 
-[gen-car]
-ip="gen-car"
-http-port=30160
-grpc-port=30161
-data-dir="/tmp/gencar_data"
-log-file="/var/log/gen-car.log"
-
 [dealer]
 ip="dealer"
 ipfs-repo="/home/test/.ipfs"
@@ -50,6 +43,13 @@ orbit-repo="/home/test/.orbit"
 http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"
+
+[gen-car]
+ip="gen-car"
+http-port=30170
+grpc-port=30171
+data-dir="/tmp/gencar_data"
+log-file="/var/log/gen-car.log"
 
 [image-converter]
 address="http://image-converter:8080"
