@@ -1,0 +1,3 @@
+resources:
+  - 01-dealer.viper.yaml
+  - 02-dealer.yaml

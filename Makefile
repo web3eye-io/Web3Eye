@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car image-converter webui
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car image-converter dealer webui
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car dealer
 
 ##@ init project
 init:
@@ -55,7 +55,7 @@ endif
 ifndef TAG
 TAG= latest
 endif
-	
+
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
 build: ## Build project
@@ -75,7 +75,7 @@ deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
 	done
-	 
+
 
 ##@ Tests
 
