@@ -90,7 +90,7 @@ func Init(region, bucket string) error {
 }
 
 // GetStringValueWithNameSpace not network invoke
-func getS3Bucket() string {
+func GetS3Bucket() string {
 	return _s3Config.Bucket
 }
 
@@ -100,7 +100,7 @@ func PutObject(ctx context.Context, key string, body []byte) error {
 	}
 
 	_, err := s3Client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(getS3Bucket()),
+		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 		Body:   bytes.NewReader(body),
 	})
@@ -112,7 +112,7 @@ func GetObject(ctx context.Context, key string) ([]byte, error) {
 		return nil, ErrOssClientNotInit
 	}
 	s3out, err := s3Client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(getS3Bucket()),
+		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 	})
 	if err != nil {
@@ -149,7 +149,7 @@ func UploadFile(ctx context.Context, filePath, key string) error {
 
 	uploader := manager.NewUploader(s3Client)
 	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String(getS3Bucket()),
+		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 		Body:   file,
 	})
@@ -168,7 +168,7 @@ func DownloadFile(ctx context.Context, filePath, key string) error {
 
 	downloader := manager.NewDownloader(s3Client)
 	_, err = downloader.Download(context.TODO(), downloadFile, &s3.GetObjectInput{
-		Bucket: aws.String(getS3Bucket()),
+		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 	})
 	return err
@@ -180,7 +180,7 @@ func GetObjectAttributes(ctx context.Context, key string) (*s3.HeadObjectOutput,
 	}
 
 	return s3Client.HeadObject(ctx, &s3.HeadObjectInput{
-		Bucket: aws.String(getS3Bucket()),
+		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 	})
 }

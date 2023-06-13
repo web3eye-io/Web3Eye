@@ -20,28 +20,31 @@ import (
 	"github.com/multiformats/go-multihash"
 )
 
+const (
+	DefaultCarVersion = 2
+)
+
 // CreateCar creates a car
 // method from "github.com/ipld/go-car/cmd/car"
 // the method is overwrite,because the original method is in main package
-func CreateCar(ctx context.Context, carFilePath string, filesPath []string, version int) error {
-	var err error
+func CreateCar(ctx context.Context, carFilePath string, filesPath []string, version int) (rootCID string, err error) {
 	if len(filesPath) == 0 {
-		return fmt.Errorf("a source location to build the car from must be specified")
+		return "", fmt.Errorf("a source location to build the car from must be specified")
 	}
 
 	if carFilePath == "" {
-		return fmt.Errorf("a file destination must be specified")
+		return "", fmt.Errorf("a file destination must be specified")
 	}
 
 	// make a cid with the right length that we eventually will patch with the root.
 	hasher, err := multihash.GetHasher(multihash.SHA2_256)
 	if err != nil {
-		return err
+		return "", err
 	}
 	digest := hasher.Sum([]byte{})
 	hash, err := multihash.Encode(digest, multihash.SHA2_256)
 	if err != nil {
-		return err
+		return "", err
 	}
 	proxyRoot := cid.NewCidV1(uint64(multicodec.DagPb), hash)
 
@@ -52,25 +55,25 @@ func CreateCar(ctx context.Context, carFilePath string, filesPath []string, vers
 	case 2:
 		// already the default
 	default:
-		return fmt.Errorf("invalid CAR version %d", version)
+		return "", fmt.Errorf("invalid CAR version %d", version)
 	}
 
 	cdest, err := blockstore.OpenReadWrite(carFilePath, []cid.Cid{proxyRoot}, options...)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Write the unixfs blocks into the store.
 	root, err := writeFiles(ctx, cdest, filesPath...)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if err := cdest.Finalize(); err != nil {
-		return err
+		return "", err
 	}
 	// re-open/finalize with the final root.
-	return car.ReplaceRootsInFile(carFilePath, []cid.Cid{root})
+	return root.String(), car.ReplaceRootsInFile(carFilePath, []cid.Cid{root})
 }
 
 func writeFiles(ctx context.Context, bs *blockstore.ReadWrite, paths ...string) (cid.Cid, error) {
