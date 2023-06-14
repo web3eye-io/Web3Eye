@@ -29,7 +29,8 @@ type backup struct {
 }
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
-	b1 := []byte("0123456789abcdef")
+	b1 := make([]byte, 1024*1024)
+	copy(b1, []byte("0123456789abcdef"))
 	mockSrcPath := "/tmp/mockOneSource.data"
 	mockDstPath := "/tmp/mockOneDest.data"
 
@@ -41,7 +42,7 @@ func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
 		return cid.Undef, "", err
 	}
 
-	for i := 0; i < 8<<10/16; i++ {
+	for i := 0; i < 17179869184/len(b1); i++ {
 		_, err := src.Write(b1)
 		if err != nil {
 			return cid.Undef, "", err
@@ -157,6 +158,16 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	logger.Sugar().Infow(
 		"backupOne",
 		"Signed", signed,
+	)
+
+	_cid, err := b.sendDealProposal(ctx, signed, snapshot.SnapshotRoot)
+	if err != nil {
+		return err
+	}
+
+	logger.Sugar().Infow(
+		"backupOne",
+		"Cid", _cid,
 	)
 
 	return nil
