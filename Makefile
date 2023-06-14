@@ -58,7 +58,13 @@ endif
 
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
-build: ## Build project
+./extern/filecoin-ffi/filcrypto.pc:
+	mkdir extern
+	cd extern; git clone https://github.com/filecoin-project/filecoin-ffi.git || true
+	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
+	make -C extern/filecoin-ffi .install-filcrypto
+
+build: ./extern/filecoin-ffi/filcrypto.pc ## Build project
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
 	done

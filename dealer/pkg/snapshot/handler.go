@@ -3,14 +3,16 @@ package snapshot
 import (
 	"fmt"
 
+	cid1 "github.com/ipfs/go-cid"
 	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 )
 
 type Handler struct {
-	SnapshotCID string
-	SnapshotURI string
-	Items       []*dealerpb.ContentItem
-	Indexes     []uint64
+	SnapshotCommP string
+	SnapshotRoot  string
+	SnapshotURI   string
+	Items         []*dealerpb.ContentItem
+	Indexes       []uint64
 }
 
 func NewHandler(options ...func(*Handler) error) (*Handler, error) {
@@ -23,12 +25,22 @@ func NewHandler(options ...func(*Handler) error) (*Handler, error) {
 	return handler, nil
 }
 
-func WithSnapshotCID(cid string) func(*Handler) error {
+func WithSnapshotCommP(cid string) func(*Handler) error {
 	return func(h *Handler) error {
-		if cid == "" {
-			return fmt.Errorf("invalid cid")
+		if _, err := cid1.Parse(cid); err != nil {
+			return fmt.Errorf("invalid root")
 		}
-		h.SnapshotCID = cid
+		h.SnapshotCommP = cid
+		return nil
+	}
+}
+
+func WithSnapshotRoot(cid string) func(*Handler) error {
+	return func(h *Handler) error {
+		if _, err := cid1.Parse(cid); err != nil {
+			return fmt.Errorf("invalid root")
+		}
+		h.SnapshotRoot = cid
 		return nil
 	}
 }
