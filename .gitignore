@@ -10,3 +10,4 @@ tmp
 ./main.go
 webui/node_modules
 !webui/*.json
+extern

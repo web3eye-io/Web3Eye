@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	backup "github.com/web3eye-io/Web3Eye/dealer/pkg/backup"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 )
@@ -32,6 +33,7 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
+		defer oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
 		return logger.Init(logger.DebugLevel, config.GetConfig().Dealer.LogFile)
 	},
 	Action: func(ctx *cli.Context) error {

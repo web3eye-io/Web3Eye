@@ -638,6 +638,7 @@ github.com/ipfs/kubo v0.20.0/go.mod h1:f9gTqR5sgz4VoAm6ZJsaFu7SivVZPRrOHtrDdI9Br
 github.com/ipld/edelweiss v0.2.0 h1:KfAZBP8eeJtrLxLhi7r3N0cBCo7JmwSRhOJp3WSpNjk=
 github.com/ipld/edelweiss v0.2.0/go.mod h1:FJAzJRCep4iI8FOFlRriN9n0b7OuX3T/S9++NpBDmA4=
 github.com/ipld/go-car v0.5.0 h1:kcCEa3CvYMs0iE5BzD5sV7O2EwMiCIp3uF8tA6APQT8=
+github.com/ipld/go-car v0.5.0/go.mod h1:ppiN5GWpjOZU9PgpAZ9HbZd9ZgSpwPMr48fGRJOWmvE=
 github.com/ipld/go-car/v2 v2.10.0 h1:0Wrt0uk3IoBge1PjEokXsS1eOX6v8QxeTxjPQ9TH71M=
 github.com/ipld/go-car/v2 v2.10.0/go.mod h1:mBZ4d86IKvL7eKhNHhQgywQ5coZHAGhmG1P+cMrdby8=
 github.com/ipld/go-codec-dagpb v1.6.0 h1:9nYazfyu9B1p3NAgfVdpRco3Fs2nFC72DqVsMj6rOcc=
