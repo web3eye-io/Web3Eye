@@ -1,7 +1,16 @@
 package backup
 
 import (
+	"context"
+	"encoding/hex"
+	"encoding/json"
+	"strings"
+
 	"github.com/filecoin-project/go-address"
+	"github.com/filecoin-project/go-cbor-util"
+	"github.com/filecoin-project/go-state-types/builtin/v9/market"
+	"github.com/myxtype/filecoin-client/local"
+	"github.com/myxtype/filecoin-client/types"
 )
 
 const (
@@ -14,4 +23,31 @@ var (
 
 func init() {
 	clientAddress, _ = address.NewFromString("f1a6tcxpzz6cyp5geatbogmroy6cxcrstruhnp42y")
+}
+
+func (b *backup) signDealProposal(ctx context.Context, proposal *market.DealProposal) (*market.ClientDealProposal, error) {
+	data, err := hex.DecodeString(strings.TrimSpace(clientPrivKey))
+	if err != nil {
+		return nil, err
+	}
+
+	ki := types.KeyInfo{}
+	if err := json.Unmarshal(data, &ki); err != nil {
+		return nil, err
+	}
+
+	serialized, err := cborutil.Dump(proposal)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := local.WalletSign(ki.Type, ki.PrivateKey, serialized)
+	if err != nil {
+		return nil, err
+	}
+
+	return &market.ClientDealProposal{
+		Proposal:        *proposal,
+		ClientSignature: *sig,
+	}, nil
 }

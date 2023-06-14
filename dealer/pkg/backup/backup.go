@@ -149,6 +149,16 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"Proposal", proposal,
 	)
 
+	signed, err := b.signDealProposal(ctx, proposal)
+	if err != nil {
+		return err
+	}
+
+	logger.Sugar().Infow(
+		"backupOne",
+		"Signed", signed,
+	)
+
 	return nil
 }
 
