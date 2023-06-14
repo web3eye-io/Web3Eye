@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/oss"
@@ -28,13 +29,23 @@ type backup struct {
 }
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
-	b1 := []byte("asfsafkjsadlkjfdslakjfdlsakjflkdsajflkdsajflkdsajflkdsajflkdsjalkfjlkjlksdajflkdsajflkjklasjflksadjflkdsajlfkdsjalkfjlkjsakldfjlkasjfkldsajflkdsajlfkjdsalfkdjsaljfdlsakjfdlaskjflksadjflksdajflkdasjflkdsajflkdasjflkdsjaflkdsajflkdsajflkdasjflkdasjflkdasjkfjdaaslkfjlkasjfj asfnksajflkdsajflkdsajfiowuqoiruqwoiuroiasfjoasiufjlkdsajflkdsajfldksafjkdsajfkaslfjdksalfjldsafdjlsajfldsakjfldsakjflsdakfjdslafkldsalfdsajl")
+	b1 := []byte("0123456789abcdef")
 	mockSrcPath := "/tmp/mockOneSource.data"
 	mockDstPath := "/tmp/mockOneDest.data"
 
-	err := os.WriteFile(mockSrcPath, b1, 0644)
+	_ = os.Remove(mockSrcPath)
+	_ = os.Remove(mockDstPath)
+
+	src, err := os.OpenFile(mockSrcPath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return cid.Undef, "", err
+	}
+
+	for i := 0; i < 8<<10/16; i++ {
+		_, err := src.Write(b1)
+		if err != nil {
+			return cid.Undef, "", err
+		}
 	}
 
 	_cid, err := unixfs.CreateFilestore(ctx, mockSrcPath, mockDstPath)
@@ -50,12 +61,6 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	if err != nil {
 		return err
 	}
-
-	logger.Sugar().Infow(
-		"backupOne",
-		"Snapshot", snapshot,
-		"Index", index,
-	)
 
 	switch snapshot.BackupState {
 	case dealerpb.BackupState_BackupStateSuccess:
@@ -79,6 +84,7 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	// TODO: backup car to Filecoin
 
 	var rdr interface{}
+	w := &writer.Writer{}
 
 	if b.mock {
 		_cid, carPath, err := b.mockOne(ctx)
@@ -88,6 +94,9 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		snapshot.SnapshotRoot = _cid.String()
 		rdr, err = os.Open(carPath)
 		if err != nil {
+			return err
+		}
+		if _, err := rdr.(*os.File).Seek(0, io.SeekStart); err != nil {
 			return err
 		}
 	} else {
@@ -103,19 +112,32 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		return err
 	}
 
-	w := &writer.Writer{}
 	if _, err := io.CopyBuffer(w, rdr.(io.Reader), make([]byte, writer.CommPBuf)); err != nil {
 		return err
 	}
 
+	start := time.Now()
 	commP, err := w.Sum()
 	if err != nil {
 		return err
 	}
 
+	if b.mock {
+		snapshot.SnapshotCommP = commP.PieceCID.String()
+	}
+
 	if commP.PieceCID.String() != snapshot.SnapshotCommP {
 		return fmt.Errorf("mismatched commp %v != %v", commP.PieceCID, snapshot.SnapshotCommP)
 	}
+
+	logger.Sugar().Infow(
+		"backupOne",
+		"Snapshot", snapshot,
+		"Index", index,
+		"Mock", b.mock,
+		"CommP", commP,
+		"Elapsed", time.Since(start).Seconds(),
+	)
 
 	proposal, err := b.dealProposal(ctx, snapshot.SnapshotRoot, snapshot.SnapshotCommP, uint64(commP.PieceSize.Unpadded()))
 	if err != nil {
@@ -153,7 +175,9 @@ func (b *backup) backupAll(ctx context.Context) {
 var newSnapshot chan struct{}
 
 func Watch(ctx context.Context) (err error) {
-	backup := &backup{}
+	backup := &backup{
+		mock: true,
+	}
 
 	if err := backup.buildHost(ctx); err != nil {
 		return err
