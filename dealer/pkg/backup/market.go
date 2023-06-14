@@ -2,11 +2,14 @@ package backup
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
 	"github.com/filecoin-project/go-address"
+	"github.com/filecoin-project/go-cbor-util"
+	"github.com/filecoin-project/go-fil-markets/storagemarket"
 	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
 	"github.com/filecoin-project/go-state-types/abi"
 	"github.com/filecoin-project/go-state-types/big"
@@ -91,11 +94,51 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		Client:               clientAddress,
 		Provider:             minerId,
 		Label:                label,
-		StartEpoch:           0,    // TODO
-		EndEpoch:             1700, // TODO
+		StartEpoch:           2947600,          // TODO
+		EndEpoch:             2947600 + 518400, // TODO
 		StoragePricePerEpoch: big.Zero(),
-		ProviderCollateral:   big.Zero(), // TODO
+		ProviderCollateral:   big.NewInt(2125495924), // TODO
 		ClientCollateral:     big.Zero(),
 		VerifiedDeal:         true,
 	}, nil
+}
+
+func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDealProposal, root string) (*cid.Cid, error) {
+	_root, err := cid.Parse(root)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = b.stream.WriteDealProposal(network.Proposal{
+		FastRetrieval: true,
+		DealProposal:  proposal,
+		Piece: &storagemarket.DataRef{
+			TransferType: storagemarket.TTManual,
+			Root:         _root,
+			PieceCid:     &proposal.Proposal.PieceCID,
+			PieceSize:    proposal.Proposal.PieceSize.Unpadded(),
+		},
+	}); err != nil {
+		return nil, fmt.Errorf("sending deal proposal failed: %v", err)
+	}
+
+	resp, _, err := b.stream.ReadDealResponse()
+	if err != nil {
+		return nil, fmt.Errorf("reading proposal response failed: %v", err)
+	}
+
+	dealProposalIpld, err := cborutil.AsIpld(proposal)
+	if err != nil {
+		return nil, fmt.Errorf("serializing proposal node failed: %v", err)
+	}
+
+	if !dealProposalIpld.Cid().Equals(resp.Response.Proposal) {
+		return nil, fmt.Errorf("provider returned proposal cid %s but we expected %s", resp.Response.Proposal, dealProposalIpld.Cid())
+	}
+
+	if resp.Response.State != storagemarket.StorageDealWaitingForData {
+		return nil, fmt.Errorf("provider returned unexpected state %d for proposal %s, with message: %s", resp.Response.State, resp.Response.Proposal, resp.Response.Message)
+	}
+
+	return &resp.Response.Proposal, nil
 }
