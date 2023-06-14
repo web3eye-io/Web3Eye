@@ -45,20 +45,21 @@ func (b *backup) buildHost(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		logger.Sugar().Infow(
-			"buildHost",
-			"Connecting", bootstrap,
-			"Peer", peer,
-		)
 		_ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		cancel()
 		if err := host.Connect(_ctx, *peer); err != nil {
 			logger.Sugar().Warnw(
 				"buildHost",
 				"Connect Timeout", bootstrap,
 				"Peer", peer,
 			)
+			continue
 		}
-		cancel()
+		logger.Sugar().Warnw(
+			"buildHost",
+			"Connected", bootstrap,
+			"Peer", peer,
+		)
 	}
 
 	b.host = host

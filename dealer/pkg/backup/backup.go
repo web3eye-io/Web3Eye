@@ -81,6 +81,16 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		return fmt.Errorf("mismatched commp %v != %v", commP.PieceCID, snapshot.SnapshotCommP)
 	}
 
+	proposal, err := b.dealProposal(ctx, snapshot.SnapshotRoot, snapshot.SnapshotCommP, uint64(commP.PieceSize.Unpadded()))
+	if err != nil {
+		return err
+	}
+
+	logger.Sugar().Infow(
+		"backupOne",
+		"Proposal", proposal,
+	)
+
 	return nil
 }
 
