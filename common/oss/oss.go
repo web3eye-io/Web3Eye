@@ -95,6 +95,10 @@ func GetS3Bucket() string {
 	return _s3Config.Bucket
 }
 
+func GetS3Client() *s3.Client {
+	return s3Client
+}
+
 func PutObject(ctx context.Context, key string, body []byte) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit

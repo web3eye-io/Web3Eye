@@ -7,6 +7,7 @@ import (
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 	"github.com/milvus-io/milvus-sdk-go/v2/entity"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (
@@ -21,8 +22,8 @@ const (
 
 var (
 	NFTSchema = &entity.Schema{
-		CollectionName: "nft_info_images",
-		Description:    "this collection for nft-meta",
+		CollectionName: config.GetConfig().NFTMeta.CollectionName,
+		Description:    config.GetConfig().NFTMeta.Description,
 		AutoID:         true,
 		Fields: []*entity.Field{
 			{

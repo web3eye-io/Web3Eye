@@ -18,7 +18,7 @@ go.mod:
 	go mod init ${GITREPO}
 	go mod tidy -compat=1.19
 
-deps:
+deps: ./extern/filecoin-ffi/filcrypto.pc
 	go get -d ./...
 	go mod tidy -compat=1.19
 
@@ -59,7 +59,7 @@ endif
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
 ./extern/filecoin-ffi/filcrypto.pc:
-	mkdir extern
+	mkdir extern -p
 	cd extern; git clone https://github.com/filecoin-project/filecoin-ffi.git || true
 	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
 	make -C extern/filecoin-ffi .install-filcrypto

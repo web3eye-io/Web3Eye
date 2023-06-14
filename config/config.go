@@ -34,10 +34,12 @@ type Config struct {
 }
 
 type NFTMeta struct {
-	IP       string `toml:"ip" env:"ip"`
-	HTTPPort int    `toml:"http-port" env:"http_port"`
-	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogFile  string `toml:"log-file" env:"log_file"`
+	IP             string `toml:"ip" env:"ip"`
+	HTTPPort       int    `toml:"http-port" env:"http_port"`
+	GrpcPort       int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile        string `toml:"log-file" env:"log_file"`
+	CollectionName string `toml:"collection-name" env:"collection_name"`
+	Description    string `toml:"description" env:"description"`
 }
 
 type BlockETL struct {

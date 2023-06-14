@@ -15,7 +15,6 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/mr-tron/base58/base58"
-	"github.com/web3eye-io/Web3Eye/common/ctfile"
 	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
@@ -51,10 +50,12 @@ func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.
 	logger.Sugar().Infof("start deal file, id %v, s3key %v", in.ID, in.S3Key)
 	info, err := token.GetToken(ctx, in.ID)
 	if err != nil {
+		logger.Sugar().Infof("failed get token by id, err: %v", in.ID, err)
 		return nil, err
 	}
 	objAttr, err := oss.GetObjectAttributes(ctx, in.S3Key)
 	if err != nil {
+		logger.Sugar().Infof("failed get token image by id, err: %v", in.ID, err)
 		return nil, err
 	}
 	resInfo := &TokenResInfo{
@@ -175,7 +176,6 @@ func filePath(fileName string) string {
 type CarFileInfo struct {
 	TokenList []*TokenResInfo
 	Size      int64
-	TarGzName string
 	CarName   string
 	S3Bucket  string
 	RootCID   string
@@ -183,8 +183,7 @@ type CarFileInfo struct {
 
 func newCarFileInfo() *CarFileInfo {
 	return &CarFileInfo{
-		TarGzName: fmt.Sprintf("%v.tar.gz", uuid.NewString()),
-		CarName:   fmt.Sprintf("%v.car", uuid.NewString()),
+		CarName: fmt.Sprintf("%v.car", uuid.NewString()),
 	}
 }
 
@@ -217,17 +216,12 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	for i, token := range carFI.TokenList {
 		files[i] = filePath(token.FileName)
 	}
-	err := ctfile.GenTarGZ(filePath(carFI.TarGzName), files)
-	if err != nil {
-		return err
-	}
-	logger.Sugar().Infof("gen tar.gz file:%v successfully, car: %v, has %v files", carFI.TarGzName, carFI.CarName, len(carFI.TokenList))
 
-	rootCID, err := car.CreateCar(ctx, filePath(carFI.CarName), []string{filePath(carFI.TarGzName)}, car.DefaultCarVersion)
+	rootCID, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
 	if err != nil {
 		return err
 	}
-	logger.Sugar().Infof("gen car file: %v successfully, tar: %v, rootCID: %v", carFI.CarName, carFI.TarGzName, rootCID)
+	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, rootCID)
 
 	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
 	if err != nil {
@@ -245,7 +239,6 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 
 func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
 	os.Remove(filePath(carFI.CarName))
-	os.Remove(filePath(carFI.TarGzName))
 
 	for _, v := range carFI.TokenList {
 		os.Remove(filePath(v.FileName))

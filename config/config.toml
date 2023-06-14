@@ -5,6 +5,8 @@ ip="nft-meta"
 http-port=30100
 grpc-port=30101
 log-file="/var/log/nft-meta.log"
+collection-name="nft_info_images"
+description="this collection for nft-meta"
 
 [block-etl]
 ip="block-etl"
