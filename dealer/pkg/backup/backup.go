@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/oss"
@@ -14,13 +15,34 @@ import (
 
 	"github.com/filecoin-project/go-commp-utils/writer"
 	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
+	"github.com/ipfs/go-cid"
 	"github.com/ipld/go-car"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/web3eye-io/Web3Eye/common/unixfs"
 )
 
 type backup struct {
 	host   host.Host
 	stream network.StorageDealStream
+	mock   bool
+}
+
+func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
+	b1 := []byte("asfsafkjsadlkjfdslakjfdlsakjflkdsajflkdsajflkdsajflkdsajflkdsjalkfjlkjlksdajflkdsajflkjklasjflksadjflkdsajlfkdsjalkfjlkjsakldfjlkasjfkldsajflkdsajlfkjdsalfkdjsaljfdlsakjfdlaskjflksadjflksdajflkdasjflkdsajflkdasjflkdsjaflkdsajflkdsajflkdasjflkdasjflkdasjkfjdaaslkfjlkasjfj asfnksajflkdsajflkdsajfiowuqoiruqwoiuroiasfjoasiufjlkdsajflkdsajfldksafjkdsajfkaslfjdksalfjldsafdjlsajfldsakjfldsakjflsdakfjdslafkldsalfdsajl")
+	mockSrcPath := "/tmp/mockOneSource.data"
+	mockDstPath := "/tmp/mockOneDest.data"
+
+	err := os.WriteFile(mockSrcPath, b1, 0644)
+	if err != nil {
+		return cid.Undef, "", err
+	}
+
+	_cid, err := unixfs.CreateFilestore(ctx, mockSrcPath, mockDstPath)
+	if err != nil {
+		return cid.Undef, "", err
+	}
+
+	return _cid, mockDstPath, nil
 }
 
 func (b *backup) backupOne(ctx context.Context, index uint64) error {
@@ -56,19 +78,33 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	// TODO: backup items to IPFS
 	// TODO: backup car to Filecoin
 
-	buf, err := oss.GetObject(ctx, snapshot.SnapshotURI)
-	if err != nil {
-		return err
+	var rdr interface{}
+
+	if b.mock {
+		_cid, carPath, err := b.mockOne(ctx)
+		if err != nil {
+			return err
+		}
+		snapshot.SnapshotRoot = _cid.String()
+		rdr, err = os.Open(carPath)
+		if err != nil {
+			return err
+		}
+	} else {
+		buf, err := oss.GetObject(ctx, snapshot.SnapshotURI)
+		if err != nil {
+			return err
+		}
+		rdr = bytes.NewReader(buf)
 	}
 
-	rdr := bytes.NewReader(buf)
-	r := bufio.NewReader(rdr)
+	r := bufio.NewReader(rdr.(io.Reader))
 	if _, err := car.ReadHeader(r); err != nil {
 		return err
 	}
 
 	w := &writer.Writer{}
-	if _, err := io.CopyBuffer(w, rdr, make([]byte, writer.CommPBuf)); err != nil {
+	if _, err := io.CopyBuffer(w, rdr.(io.Reader), make([]byte, writer.CommPBuf)); err != nil {
 		return err
 	}
 
