@@ -217,17 +217,17 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 		files[i] = filePath(token.FileName)
 	}
 
-	rootCID, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
+	carInfo, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
 	if err != nil {
 		return err
 	}
-	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, rootCID)
+	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, carInfo.RootCID)
 
 	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
 	if err != nil {
 		return err
 	}
-	carFI.RootCID = rootCID
+	carFI.RootCID = carInfo.RootCID
 	carFI.S3Bucket = oss.GetS3Bucket()
 	logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
 
