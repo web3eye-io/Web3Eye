@@ -227,12 +227,8 @@ func Watch(ctx context.Context) (err error) {
 	newSnapshot = make(chan struct{})
 	backup.backupAll(ctx)
 
-	ticker := time.NewTicker(1 * time.Minute)
-
 	for {
 		select {
-		case <-ticker.C:
-			backup.backupAll(ctx)
 		case <-newSnapshot:
 			backup.backupAll(ctx)
 		case <-ctx.Done():
