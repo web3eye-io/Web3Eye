@@ -30,7 +30,7 @@ type backup struct {
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
 	b1 := make([]byte, 1024*1024)
-	copy(b1, []byte("0123456789abcdef"))
+	copy(b1, []byte("0123456789abcdef0123456789abcdef"))
 	mockSrcPath := "/tmp/mockOneSource.data"
 	mockDstPath := "/tmp/mockOneDest.data"
 

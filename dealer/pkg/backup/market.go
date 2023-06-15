@@ -112,7 +112,7 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		Label:                label,
 		StartEpoch:           649148 + 5600,          // TODO
 		EndEpoch:             649148 + 5600 + 518400, // TODO
-		StoragePricePerEpoch: big.NewInt(97656),
+		StoragePricePerEpoch: big.NewInt(976562),
 		ProviderCollateral:   big.Zero(), // TODO
 		ClientCollateral:     big.Zero(),
 		VerifiedDeal:         true,
@@ -124,6 +124,13 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 	if err != nil {
 		return nil, err
 	}
+
+	logger.Sugar().Infow(
+		"sendDealProposal",
+		"Proposal", proposal,
+		"Root", root,
+		"State", "Sending",
+	)
 
 	if err = b.stream.WriteDealProposal(network.Proposal{
 		FastRetrieval: true,
@@ -137,6 +144,13 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 	}); err != nil {
 		return nil, fmt.Errorf("sending deal proposal failed: %v", err)
 	}
+
+	logger.Sugar().Infow(
+		"sendDealProposal",
+		"Proposal", proposal,
+		"Root", root,
+		"State", "Sent",
+	)
 
 	resp, _, err := b.stream.ReadDealResponse()
 	if err != nil {
