@@ -21,13 +21,13 @@ message ContentItem {
 }
 
 enum BackupState {
-    DefaultBackupState = 0;
-    BackupStateNone    = 10;
-    BackupStateCreated = 20;
-    BackupStateTransferring = 30;
-    BackupStateSealing = 40;
-    BackupStateSuccess = 50;
-    BackupStateFail    = 60;
+    DefaultBackupState  = 0;
+    BackupStateNone     = 10;
+    BackupStateCreated  = 20;
+    BackupStateProposed = 30;
+    BackupStateAccepted = 40;
+    BackupStateSuccess  = 50;
+    BackupStateFail     = 60;
 }
 
 message Snapshot {
@@ -37,6 +37,7 @@ message Snapshot {
     string SnapshotURI   = 40;
     repeated ContentItem Items = 50;
     BackupState BackupState = 60;
+    string ProposalCID   = 70;
 }
 
 message CreateSnapshotRequest {
