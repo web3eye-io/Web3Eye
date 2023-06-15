@@ -24,12 +24,21 @@ var (
 	minerId = address.Address{}
 )
 
+var miners = map[uint64]string{
+	1970622: "/ip4/152.32.173.11/tcp/23456/p2p/12D3KooWS26eBREdM959vDNJWyfgwsd38NMegn7KK11R9DY4EU4p",
+	1970630: "/ip4/123.58.203.78/tcp/23456/p2p/12D3KooWHGHJiH1YuvW9BonV8YZLDpnen3JR4zNQMcMJ3gRRptrq",
+	7824:    "/ip4/172.19.16.118/tcp/23456/p2p/12D3KooWQeujGARoW6BsLWjML3KwAZEHr9n8fVKAk8yzGNw2FDdK",
+	5316:    "/ip4/172.19.16.117/tcp/3456/p2p/12D3KooWMJxYN71gbbv3MSKnwatUGaUq9WoAFgTC7PUycmeJa9TC", // Calibnet miner
+}
+
+const minerID = 5316
+
 func init() {
-	minerId, _ = address.NewIDAddress(1970622)
+	minerId, _ = address.NewIDAddress(minerID)
 }
 
 func (b *backup) connectMiner(ctx context.Context) error {
-	addr, err := multiaddr.NewMultiaddr("/ip4/152.32.173.11/tcp/23456/p2p/12D3KooWS26eBREdM959vDNJWyfgwsd38NMegn7KK11R9DY4EU4p")
+	addr, err := multiaddr.NewMultiaddr(miners[minerID])
 	if err != nil {
 		return err
 	}
@@ -62,9 +71,16 @@ func (b *backup) connectMiner(ctx context.Context) error {
 	logger.Sugar().Infow(
 		"Watch",
 		"Created Deal Stream", peer,
+		"Remote Peer", b.stream.RemotePeer(),
 	)
 
 	return nil
+}
+
+func (b *backup) disconnectMiner() {
+	if b.stream != nil {
+		b.stream.Close()
+	}
 }
 
 func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pieceSize uint64) (*market.DealProposal, error) {
@@ -94,10 +110,10 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		Client:               clientAddress,
 		Provider:             minerId,
 		Label:                label,
-		StartEpoch:           2947600,          // TODO
-		EndEpoch:             2947600 + 518400, // TODO
-		StoragePricePerEpoch: big.Zero(),
-		ProviderCollateral:   big.NewInt(2125495924), // TODO
+		StartEpoch:           649148 + 5600,          // TODO
+		EndEpoch:             649148 + 5600 + 518400, // TODO
+		StoragePricePerEpoch: big.NewInt(97656),
+		ProviderCollateral:   big.Zero(), // TODO
 		ClientCollateral:     big.Zero(),
 		VerifiedDeal:         true,
 	}, nil
@@ -127,13 +143,13 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 		return nil, fmt.Errorf("reading proposal response failed: %v", err)
 	}
 
-	dealProposalIpld, err := cborutil.AsIpld(proposal)
+	ipld, err := cborutil.AsIpld(proposal)
 	if err != nil {
 		return nil, fmt.Errorf("serializing proposal node failed: %v", err)
 	}
 
-	if !dealProposalIpld.Cid().Equals(resp.Response.Proposal) {
-		return nil, fmt.Errorf("provider returned proposal cid %s but we expected %s", resp.Response.Proposal, dealProposalIpld.Cid())
+	if !ipld.Cid().Equals(resp.Response.Proposal) {
+		return nil, fmt.Errorf("provider returned proposal cid %s but we expected %s", resp.Response.Proposal, ipld.Cid())
 	}
 
 	if resp.Response.State != storagemarket.StorageDealWaitingForData {
