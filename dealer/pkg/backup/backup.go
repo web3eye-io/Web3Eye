@@ -66,6 +66,10 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	switch snapshot.BackupState {
 	case dealerpb.BackupState_BackupStateCreated:
 	default:
+		logger.Sugar().Warnw(
+			"checkAndUpdateOne",
+			"Snapshot", snapshot,
+		)
 		return nil
 	}
 
@@ -217,6 +221,8 @@ func Watch(ctx context.Context) (err error) {
 	if err := backup.connectMiner(ctx); err != nil {
 		return err
 	}
+
+	go backup.check(ctx)
 
 	newSnapshot = make(chan struct{})
 	backup.backupAll(ctx)

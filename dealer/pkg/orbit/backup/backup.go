@@ -131,7 +131,7 @@ func (kv *BackupKV) Waits(ctx context.Context) ([]uint64, error) {
 	return waits, nil
 }
 
-func (kv *BackupKV) Done(ctx context.Context, index uint64) error {
+func (kv *BackupKV) Done(ctx context.Context, index uint64, fail bool) error {
 	if kv.kvBackup == nil {
 		return fmt.Errorf("invalid keyvalue")
 	}
@@ -147,11 +147,19 @@ func (kv *BackupKV) Done(ctx context.Context, index uint64) error {
 		return fmt.Errorf("invalid state")
 	}
 
-	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateSuccess.String())); err != nil {
+	state := dealerpb.BackupState_BackupStateSuccess
+	if fail {
+		state = dealerpb.BackupState_BackupStateFail
+	}
+
+	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(state.String())); err != nil {
 		return err
 	}
 	delete(kv.waits, index)
-	kv.dones[index] = struct{}{}
+
+	if !fail {
+		kv.dones[index] = struct{}{}
+	}
 
 	return nil
 }
