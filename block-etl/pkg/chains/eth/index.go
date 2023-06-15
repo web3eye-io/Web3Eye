@@ -81,7 +81,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Finsh.String(),
+			Value: cttype.SyncState_Finish.String(),
 			Op:    "eq",
 		},
 	}

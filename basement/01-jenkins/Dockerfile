@@ -18,6 +18,9 @@ RUN yum remove docker \
             docker-logrotate \
             docker-engine
 
+# for build gen-car ,because import something from filecoin-project
+RUN yum install -y gcc hwloc* ocl-icd*
+
 RUN yum install -y yum-utils
 RUN yum-config-manager \
     --add-repo \

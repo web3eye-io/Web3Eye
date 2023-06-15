@@ -8,6 +8,6 @@ enum SyncState {
   Default = 0;
   Start = 10;
   Pause = 20;
-  Finsh = 40;
+  Finish = 40;
   Failed = 50;
 }

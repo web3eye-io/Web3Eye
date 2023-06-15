@@ -10,6 +10,7 @@ ENV ENV_DATA_DIR=/data \
 RUN mkdir $ENV_DATA_DIR
 
 RUN apt update -y
+RUN apt install -y libhwloc-dev
 RUN apt install -y --no-install-recommends ca-certificates curl
 
 WORKDIR /usr/local/bin/

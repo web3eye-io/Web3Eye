@@ -118,7 +118,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 
 	// check sync state
 	if info.End != 0 && info.Current >= info.End {
-		info.SyncState = cttype.SyncState_Finsh.String()
+		info.SyncState = cttype.SyncState_Finish.String()
 		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
 		if err != nil {
 			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
