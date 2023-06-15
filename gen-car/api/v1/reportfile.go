@@ -235,6 +235,7 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	items := make([]*dealer_proto.ContentItem, len(carFI.TokenList))
 	for i, v := range carFI.TokenList {
 		items[i] = &dealer_proto.ContentItem{
+			ID:        v.ID,
 			URI:       v.S3Key,
 			ChainType: v.BaseInfo.ChainType,
 			ChainID:   v.BaseInfo.ChainID,
