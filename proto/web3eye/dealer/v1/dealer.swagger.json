@@ -74,6 +74,9 @@
         },
         "TokenID": {
           "type": "string"
+        },
+        "FileName": {
+          "type": "string"
         }
       }
     },

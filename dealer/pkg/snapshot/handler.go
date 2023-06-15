@@ -76,6 +76,9 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 			if item.TokenID == "" {
 				return fmt.Errorf("invalid uid")
 			}
+			if item.FileName == "" {
+				return fmt.Errorf("invalid uid")
+			}
 		}
 		h.Items = items
 		return nil

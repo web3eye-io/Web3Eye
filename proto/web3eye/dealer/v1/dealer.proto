@@ -16,6 +16,7 @@ message ContentItem {
     string ChainID = 30;
     string Contract = 40;
     string TokenID = 50;
+    string FileName = 60;
 }
 
 enum BackupState {

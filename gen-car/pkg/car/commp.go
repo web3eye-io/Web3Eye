@@ -52,9 +52,9 @@ func ClientCalcCommP(ctx context.Context, inpath string) (*CommPRet, error) {
 	}
 
 	return &CommPRet{
-		PayloadSize: commp.PayloadSize,
-		PieceSize:   uint64(commp.PieceSize),
 		Root:        commp.PieceCID,
 		Size:        uint64(commp.PieceSize.Unpadded()),
+		PayloadSize: commp.PayloadSize,
+		PieceSize:   uint64(commp.PieceSize),
 	}, nil
 }

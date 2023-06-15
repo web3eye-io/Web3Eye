@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctfile"
 	"github.com/web3eye-io/Web3Eye/common/unixfs"
@@ -18,6 +19,7 @@ const (
 type CarInfo struct {
 	FilePath    string
 	RootCID     string
+	CommPCID    string
 	PayloadSize int64
 	PieceSize   uint64
 	Size        uint64
@@ -34,7 +36,10 @@ func CreateCar(ctx context.Context, carFilePath string, filesPath []string, vers
 		return nil, err
 	}
 
-	defer os.Remove(tarFilePath)
+	defer func() {
+		err := os.Remove(tarFilePath)
+		logger.Sugar().Error(err)
+	}()
 
 	root, err := unixfs.CreateFilestore(context.Background(), tarFilePath, carFilePath)
 	if err != nil {
@@ -47,11 +52,9 @@ func CreateCar(ctx context.Context, carFilePath string, filesPath []string, vers
 	}
 
 	return &CarInfo{
-		FilePath: carFilePath,
-
-		// TODO:have two rootCID,please sure use which one
-		RootCID: root.String(),
-		// RootCID:     commp.Root.String(),
+		FilePath:    carFilePath,
+		RootCID:     root.String(),
+		CommPCID:    commp.Root.String(),
 		PayloadSize: commp.PayloadSize,
 		PieceSize:   commp.PieceSize,
 		Size:        commp.Size,
