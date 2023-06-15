@@ -13,9 +13,9 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
+	"github.com/mr-tron/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
-	dealer_client "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	dealer_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
@@ -88,16 +88,15 @@ func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequ
 func Sha256Name(info TokenBaseInfo) (string, error) {
 	_name := fmt.Sprintf("%v-%v-%v-%v", info.ChainType, info.ChainID, info.Contract, info.TokenID)
 	_h := sha256.Sum256([]byte(_name))
-	name := fmt.Sprintf("%x", _h)
-	return name, nil
+	return base58.Encode(_h[:]), nil
 }
 
-func CheckSha256Name(info TokenBaseInfo, hexString string) (bool, error) {
+func CheckSha256Name(info TokenBaseInfo, base58String string) (bool, error) {
 	h, err := Sha256Name(info)
 	if err != nil {
 		return false, err
 	}
-	if h == hexString {
+	if h == base58String {
 		return true, nil
 	}
 	return false, nil
@@ -116,7 +115,7 @@ const (
 	DefaultDownloadParallel = 3
 	// 17GB
 	// maxUnTarSize = 18253611008
-	maxUnTarSize = 24253611
+	maxUnTarSize = 1825361100
 )
 
 var carManager *CarManager
@@ -224,6 +223,7 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	if err != nil {
 		return err
 	}
+
 	carFI.RootCID = carInfo.RootCID
 	carFI.S3Bucket = oss.GetS3Bucket()
 	logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
@@ -245,15 +245,20 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 		}
 	}
 
-	dealer_client.CreateSnapshot(
-		ctx,
-		&dealer_proto.CreateSnapshotRequest{
-			SnapshotCommP: carInfo.RootCID,
-			SnapshotRoot:  carInfo.RootCID,
-			SnapshotURI:   carFI.CarName,
-			Items:         items,
-		},
-	)
+	// _, err = dealer_client.CreateSnapshot(
+	// 	ctx,
+	// 	&dealer_proto.CreateSnapshotRequest{
+	// 		SnapshotCommP: carInfo.RootCID,
+	// 		SnapshotRoot:  carInfo.RootCID,
+	// 		SnapshotURI:   carFI.CarName,
+	// 		Items:         items,
+	// 	},
+	// )
+	logger.Sugar().Infof("report to dealer for create snapshot: %v", carFI.CarName)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
