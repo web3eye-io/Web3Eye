@@ -64,23 +64,21 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	}
 
 	switch snapshot.BackupState {
-	case dealerpb.BackupState_BackupStateSuccess:
-		fallthrough // nolint
-	case dealerpb.BackupState_BackupStateFail:
-		return nil
+	case dealerpb.BackupState_BackupStateCreated:
 	default:
+		return nil
 	}
 
 	if snapshot.SnapshotCommP == "" {
-		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
+		_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot commP")
 	}
 	if snapshot.SnapshotRoot == "" {
-		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
+		_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot root")
 	}
 	if snapshot.SnapshotURI == "" {
-		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
+		_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot uri")
 	}
 
@@ -130,7 +128,7 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	}
 
 	if commP.PieceCID.String() != snapshot.SnapshotCommP {
-		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
+		_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("mismatched commp %v != %v", commP.PieceCID, snapshot.SnapshotCommP)
 	}
 
@@ -167,6 +165,9 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	if err != nil {
 		return err
 	}
+	_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateProposed)
+	_, _ = orbit.Snapshot().UpdateSnapshotProposalCID(ctx, index, _cid.String())
+	_ = orbit.Backup().Wait(ctx, index)
 
 	_state, err := b.getDealStatus(ctx, _cid.String())
 	if err != nil {
@@ -179,13 +180,11 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"State", _state,
 	)
 
-	_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateSuccess)
-
 	return nil
 }
 
 func (b *backup) backupAll(ctx context.Context) {
-	waits, err := orbit.Backup().Waits(ctx)
+	creates, err := orbit.Backup().Creates(ctx)
 	if err != nil {
 		logger.Sugar().Errorw(
 			"backupAll",
@@ -193,11 +192,11 @@ func (b *backup) backupAll(ctx context.Context) {
 		)
 		return
 	}
-	for _, wait := range waits {
-		if err := b.backupOne(ctx, wait); err != nil {
+	for _, _create := range creates {
+		if err := b.backupOne(ctx, _create); err != nil {
 			logger.Sugar().Errorw(
 				"backupAll",
-				"Wait", wait,
+				"Create", _create,
 				"Error", err,
 			)
 		}

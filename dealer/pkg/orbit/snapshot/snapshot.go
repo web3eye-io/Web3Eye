@@ -26,6 +26,7 @@ const (
 	ContentItems               = "content-items"
 	SnapshotRoot               = "snapshot-root"
 	SnapshotCommP              = "snapshot-commp"
+	SnapshotProposalCID        = "snapshot-proposal-cid"
 	SnapshotBackupState        = "snapshot-backup-state"
 	KVStoreSnapshotIndex       = "snapshot-index"
 	KVStoreSnapshot            = "snapshot-"
@@ -164,10 +165,16 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 	}
 	state := dealerpb.BackupState(dealerpb.BackupState_value[string(_state)])
 
+	_proposal, err := _kv.Get(ctx, SnapshotProposalCID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &dealerpb.Snapshot{
 		SnapshotCommP: string(_commP),
 		SnapshotRoot:  string(_cid),
 		SnapshotURI:   string(_snapshotURI),
+		ProposalCID:   string(_proposal),
 		Items:         items,
 		BackupState:   state,
 	}, nil
@@ -213,7 +220,7 @@ func (kv *SnapshotKV) GetSnapshot(ctx context.Context, index uint64) (*dealerpb.
 	return snapshot, nil
 }
 
-func (kv *SnapshotKV) UpdateSnapshot(ctx context.Context, index uint64, state dealerpb.BackupState) (*dealerpb.Snapshot, error) {
+func (kv *SnapshotKV) UpdateSnapshotState(ctx context.Context, index uint64, state dealerpb.BackupState) (*dealerpb.Snapshot, error) {
 	if index >= kv.waitSnapshotIndex {
 		return nil, fmt.Errorf("invalid snapshot index")
 	}
@@ -232,6 +239,36 @@ func (kv *SnapshotKV) UpdateSnapshot(ctx context.Context, index uint64, state de
 	}
 
 	if _, err := _kv.Put(ctx, SnapshotBackupState, []byte(state.String())); err != nil {
+		return nil, err
+	}
+
+	snapshot, err := kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	if err != nil {
+		return nil, err
+	}
+	snapshot.Index = index
+	return snapshot, nil
+}
+
+func (kv *SnapshotKV) UpdateSnapshotProposalCID(ctx context.Context, index uint64, proposal string) (*dealerpb.Snapshot, error) {
+	if index >= kv.waitSnapshotIndex {
+		return nil, fmt.Errorf("invalid snapshot index")
+	}
+
+	replicate := true
+	_kv, err := kv.odb.KeyValue(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index), &orbitdb.CreateDBOptions{
+		Replicate: &replicate,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer _kv.Close()
+
+	if err := _kv.Load(ctx, -1); err != nil {
+		return nil, err
+	}
+
+	if _, err := _kv.Put(ctx, SnapshotProposalCID, []byte(proposal)); err != nil {
 		return nil, err
 	}
 

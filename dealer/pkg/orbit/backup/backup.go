@@ -13,6 +13,7 @@ import (
 
 type BackupKV struct {
 	kvBackup orbitdb.KeyValueStore
+	creates  map[uint64]struct{}
 	waits    map[uint64]struct{}
 	dones    map[uint64]struct{}
 }
@@ -23,8 +24,9 @@ const (
 
 func NewBackupKV(ctx context.Context, odb orbitiface.OrbitDB) (*BackupKV, error) {
 	kv := &BackupKV{
-		waits: map[uint64]struct{}{},
-		dones: map[uint64]struct{}{},
+		creates: map[uint64]struct{}{},
+		waits:   map[uint64]struct{}{},
+		dones:   map[uint64]struct{}{},
 	}
 	var err error
 
@@ -48,6 +50,10 @@ func NewBackupKV(ctx context.Context, odb orbitiface.OrbitDB) (*BackupKV, error)
 		}
 		switch string(state) {
 		case dealerpb.BackupState_BackupStateCreated.String():
+			kv.creates[_index] = struct{}{}
+		case dealerpb.BackupState_BackupStateProposed.String():
+			fallthrough //nolint
+		case dealerpb.BackupState_BackupStateAccepted.String():
 			kv.waits[_index] = struct{}{}
 		case dealerpb.BackupState_BackupStateSuccess.String():
 			kv.dones[_index] = struct{}{}
@@ -55,6 +61,41 @@ func NewBackupKV(ctx context.Context, odb orbitiface.OrbitDB) (*BackupKV, error)
 	}
 
 	return kv, nil
+}
+
+func (kv *BackupKV) Create(ctx context.Context, index uint64) error {
+	if kv.kvBackup == nil {
+		return fmt.Errorf("invalid keyvalue")
+	}
+
+	val, err := kv.kvBackup.Get(ctx, fmt.Sprintf("%v", index))
+	if err != nil {
+		return err
+	}
+
+	switch string(val) {
+	case dealerpb.BackupState_BackupStateProposed.String():
+		fallthrough //nolint
+	case dealerpb.BackupState_BackupStateAccepted.String():
+		fallthrough //nolint
+	case dealerpb.BackupState_BackupStateSuccess.String():
+		return fmt.Errorf("already created")
+	}
+
+	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateCreated.String())); err != nil {
+		return err
+	}
+	kv.creates[index] = struct{}{}
+
+	return nil
+}
+
+func (kv *BackupKV) Creates(ctx context.Context) ([]uint64, error) {
+	creates := []uint64{}
+	for index, _ := range kv.creates {
+		creates = append(creates, index)
+	}
+	return creates, nil
 }
 
 func (kv *BackupKV) Wait(ctx context.Context, index uint64) error {
@@ -69,14 +110,14 @@ func (kv *BackupKV) Wait(ctx context.Context, index uint64) error {
 
 	switch string(val) {
 	case dealerpb.BackupState_BackupStateCreated.String():
-		fallthrough //nolint
-	case dealerpb.BackupState_BackupStateSuccess.String():
-		return fmt.Errorf("already created")
+	default:
+		return fmt.Errorf("invalid state")
 	}
 
-	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateCreated.String())); err != nil {
+	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateProposed.String())); err != nil {
 		return err
 	}
+	delete(kv.creates, index)
 	kv.waits[index] = struct{}{}
 
 	return nil
@@ -93,6 +134,17 @@ func (kv *BackupKV) Waits(ctx context.Context) ([]uint64, error) {
 func (kv *BackupKV) Done(ctx context.Context, index uint64) error {
 	if kv.kvBackup == nil {
 		return fmt.Errorf("invalid keyvalue")
+	}
+
+	val, err := kv.kvBackup.Get(ctx, fmt.Sprintf("%v", index))
+	if err != nil {
+		return err
+	}
+
+	switch string(val) {
+	case dealerpb.BackupState_BackupStateProposed.String():
+	default:
+		return fmt.Errorf("invalid state")
 	}
 
 	if _, err := kv.kvBackup.Put(ctx, fmt.Sprintf("%v", index), []byte(dealerpb.BackupState_BackupStateSuccess.String())); err != nil {

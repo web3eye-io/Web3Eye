@@ -50,8 +50,8 @@
         "DefaultBackupState",
         "BackupStateNone",
         "BackupStateCreated",
-        "BackupStateTransferring",
-        "BackupStateSealing",
+        "BackupStateProposed",
+        "BackupStateAccepted",
         "BackupStateSuccess",
         "BackupStateFail"
       ],
@@ -138,6 +138,9 @@
         },
         "BackupState": {
           "$ref": "#/definitions/v1BackupState"
+        },
+        "ProposalCID": {
+          "type": "string"
         }
       }
     }
