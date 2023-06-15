@@ -42,6 +42,31 @@ var (
 			},
 		},
 	}
+	// SnapshotsColumns holds the columns for the "snapshots" table.
+	SnapshotsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "index", Type: field.TypeUint64},
+		{Name: "snapshot_comm_p", Type: field.TypeString},
+		{Name: "snapshot_root", Type: field.TypeString},
+		{Name: "snapshot_uri", Type: field.TypeString},
+		{Name: "backup_state", Type: field.TypeString},
+	}
+	// SnapshotsTable holds the schema information for the "snapshots" table.
+	SnapshotsTable = &schema.Table{
+		Name:       "snapshots",
+		Columns:    SnapshotsColumns,
+		PrimaryKey: []*schema.Column{SnapshotsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "snapshot_index_backup_state",
+				Unique:  true,
+				Columns: []*schema.Column{SnapshotsColumns[4], SnapshotsColumns[8]},
+			},
+		},
+	}
 	// SyncTasksColumns holds the columns for the "sync_tasks" table.
 	SyncTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -149,6 +174,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ContractsTable,
+		SnapshotsTable,
 		SyncTasksTable,
 		TokensTable,
 		TransfersTable,

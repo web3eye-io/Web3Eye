@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/schema"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
@@ -52,6 +53,38 @@ func init() {
 	contractDescID := contractFields[0].Descriptor()
 	// contract.DefaultID holds the default value on creation for the id field.
 	contract.DefaultID = contractDescID.Default.(func() uuid.UUID)
+	snapshotMixin := schema.Snapshot{}.Mixin()
+	snapshot.Policy = privacy.NewPolicies(snapshotMixin[0], schema.Snapshot{})
+	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := snapshot.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	snapshotMixinFields0 := snapshotMixin[0].Fields()
+	_ = snapshotMixinFields0
+	snapshotFields := schema.Snapshot{}.Fields()
+	_ = snapshotFields
+	// snapshotDescCreatedAt is the schema descriptor for created_at field.
+	snapshotDescCreatedAt := snapshotMixinFields0[0].Descriptor()
+	// snapshot.DefaultCreatedAt holds the default value on creation for the created_at field.
+	snapshot.DefaultCreatedAt = snapshotDescCreatedAt.Default.(func() uint32)
+	// snapshotDescUpdatedAt is the schema descriptor for updated_at field.
+	snapshotDescUpdatedAt := snapshotMixinFields0[1].Descriptor()
+	// snapshot.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	snapshot.DefaultUpdatedAt = snapshotDescUpdatedAt.Default.(func() uint32)
+	// snapshot.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	snapshot.UpdateDefaultUpdatedAt = snapshotDescUpdatedAt.UpdateDefault.(func() uint32)
+	// snapshotDescDeletedAt is the schema descriptor for deleted_at field.
+	snapshotDescDeletedAt := snapshotMixinFields0[2].Descriptor()
+	// snapshot.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	snapshot.DefaultDeletedAt = snapshotDescDeletedAt.Default.(func() uint32)
+	// snapshotDescID is the schema descriptor for id field.
+	snapshotDescID := snapshotFields[0].Descriptor()
+	// snapshot.DefaultID holds the default value on creation for the id field.
+	snapshot.DefaultID = snapshotDescID.Default.(func() uuid.UUID)
 	synctaskMixin := schema.SyncTask{}.Mixin()
 	synctask.Policy = privacy.NewPolicies(synctaskMixin[0], schema.SyncTask{})
 	synctask.Hooks[0] = func(next ent.Mutator) ent.Mutator {

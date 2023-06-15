@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
+	// Snapshot is the client for interacting with the Snapshot builders.
+	Snapshot *SnapshotClient
 	// SyncTask is the client for interacting with the SyncTask builders.
 	SyncTask *SyncTaskClient
 	// Token is the client for interacting with the Token builders.
@@ -156,6 +158,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Contract = NewContractClient(tx.config)
+	tx.Snapshot = NewSnapshotClient(tx.config)
 	tx.SyncTask = NewSyncTaskClient(tx.config)
 	tx.Token = NewTokenClient(tx.config)
 	tx.Transfer = NewTransferClient(tx.config)

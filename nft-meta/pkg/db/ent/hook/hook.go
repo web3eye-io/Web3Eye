@@ -22,6 +22,19 @@ func (f ContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The SnapshotFunc type is an adapter to allow the use of ordinary
+// function as Snapshot mutator.
+type SnapshotFunc func(context.Context, *ent.SnapshotMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SnapshotMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SnapshotMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The SyncTaskFunc type is an adapter to allow the use of ordinary
 // function as SyncTask mutator.
 type SyncTaskFunc func(context.Context, *ent.SyncTaskMutation) (ent.Value, error)

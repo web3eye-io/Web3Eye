@@ -25,6 +25,7 @@ type config struct {
 // hooks per client, for fast access.
 type hooks struct {
 	Contract []ent.Hook
+	Snapshot []ent.Hook
 	SyncTask []ent.Hook
 	Token    []ent.Hook
 	Transfer []ent.Hook

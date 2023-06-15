@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/filecoin-project/go-commp-utils/writer"
 	"github.com/ipfs/go-cid"
 	"github.com/ipld/go-car"
@@ -24,7 +25,10 @@ func ClientCalcCommP(ctx context.Context, inpath string) (*CommPRet, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rdr.Close() //nolint:errcheck
+	defer func() {
+		err := rdr.Close()
+		logger.Sugar().Error(err)
+	}()
 
 	// check that the data is a car file; if it's not, retrieval won't work
 	_, err = car.ReadHeader(bufio.NewReader(rdr))

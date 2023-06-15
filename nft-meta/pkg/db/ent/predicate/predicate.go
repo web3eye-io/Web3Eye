@@ -9,6 +9,9 @@ import (
 // Contract is the predicate function for contract builders.
 type Contract func(*sql.Selector)
 
+// Snapshot is the predicate function for snapshot builders.
+type Snapshot func(*sql.Selector)
+
 // SyncTask is the predicate function for synctask builders.
 type SyncTask func(*sql.Selector)
 
