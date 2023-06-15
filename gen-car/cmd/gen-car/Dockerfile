@@ -11,6 +11,7 @@ RUN mkdir $ENV_DATA_DIR
 
 RUN apt update -y
 RUN apt install -y libhwloc-dev
+RUN ln -s /usr/lib/x86_64-linux-gnu/libhwloc.so /usr/lib/x86_64-linux-gnu/libhwloc.so.5
 RUN apt install -y --no-install-recommends ca-certificates curl
 
 WORKDIR /usr/local/bin/
