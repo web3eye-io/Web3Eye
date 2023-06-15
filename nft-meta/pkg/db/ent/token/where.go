@@ -212,10 +212,10 @@ func IpfsImageURL(v string) predicate.Token {
 	})
 }
 
-// ImageCid applies equality check predicate on the "image_cid" field. It's identical to ImageCidEQ.
-func ImageCid(v string) predicate.Token {
+// ImageSnapshotID applies equality check predicate on the "image_snapshot_id" field. It's identical to ImageSnapshotIDEQ.
+func ImageSnapshotID(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldImageCid), v))
+		s.Where(sql.EQ(s.C(FieldImageSnapshotID), v))
 	})
 }
 
@@ -2114,116 +2114,116 @@ func IpfsImageURLContainsFold(v string) predicate.Token {
 	})
 }
 
-// ImageCidEQ applies the EQ predicate on the "image_cid" field.
-func ImageCidEQ(v string) predicate.Token {
+// ImageSnapshotIDEQ applies the EQ predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldImageCid), v))
+		s.Where(sql.EQ(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidNEQ applies the NEQ predicate on the "image_cid" field.
-func ImageCidNEQ(v string) predicate.Token {
+// ImageSnapshotIDNEQ applies the NEQ predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDNEQ(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldImageCid), v))
+		s.Where(sql.NEQ(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidIn applies the In predicate on the "image_cid" field.
-func ImageCidIn(vs ...string) predicate.Token {
+// ImageSnapshotIDIn applies the In predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldImageCid), v...))
+		s.Where(sql.In(s.C(FieldImageSnapshotID), v...))
 	})
 }
 
-// ImageCidNotIn applies the NotIn predicate on the "image_cid" field.
-func ImageCidNotIn(vs ...string) predicate.Token {
+// ImageSnapshotIDNotIn applies the NotIn predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDNotIn(vs ...string) predicate.Token {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldImageCid), v...))
+		s.Where(sql.NotIn(s.C(FieldImageSnapshotID), v...))
 	})
 }
 
-// ImageCidGT applies the GT predicate on the "image_cid" field.
-func ImageCidGT(v string) predicate.Token {
+// ImageSnapshotIDGT applies the GT predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDGT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldImageCid), v))
+		s.Where(sql.GT(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidGTE applies the GTE predicate on the "image_cid" field.
-func ImageCidGTE(v string) predicate.Token {
+// ImageSnapshotIDGTE applies the GTE predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDGTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldImageCid), v))
+		s.Where(sql.GTE(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidLT applies the LT predicate on the "image_cid" field.
-func ImageCidLT(v string) predicate.Token {
+// ImageSnapshotIDLT applies the LT predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDLT(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldImageCid), v))
+		s.Where(sql.LT(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidLTE applies the LTE predicate on the "image_cid" field.
-func ImageCidLTE(v string) predicate.Token {
+// ImageSnapshotIDLTE applies the LTE predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDLTE(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldImageCid), v))
+		s.Where(sql.LTE(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidContains applies the Contains predicate on the "image_cid" field.
-func ImageCidContains(v string) predicate.Token {
+// ImageSnapshotIDContains applies the Contains predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDContains(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldImageCid), v))
+		s.Where(sql.Contains(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidHasPrefix applies the HasPrefix predicate on the "image_cid" field.
-func ImageCidHasPrefix(v string) predicate.Token {
+// ImageSnapshotIDHasPrefix applies the HasPrefix predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDHasPrefix(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldImageCid), v))
+		s.Where(sql.HasPrefix(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidHasSuffix applies the HasSuffix predicate on the "image_cid" field.
-func ImageCidHasSuffix(v string) predicate.Token {
+// ImageSnapshotIDHasSuffix applies the HasSuffix predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDHasSuffix(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldImageCid), v))
+		s.Where(sql.HasSuffix(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidIsNil applies the IsNil predicate on the "image_cid" field.
-func ImageCidIsNil() predicate.Token {
+// ImageSnapshotIDIsNil applies the IsNil predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDIsNil() predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldImageCid)))
+		s.Where(sql.IsNull(s.C(FieldImageSnapshotID)))
 	})
 }
 
-// ImageCidNotNil applies the NotNil predicate on the "image_cid" field.
-func ImageCidNotNil() predicate.Token {
+// ImageSnapshotIDNotNil applies the NotNil predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDNotNil() predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldImageCid)))
+		s.Where(sql.NotNull(s.C(FieldImageSnapshotID)))
 	})
 }
 
-// ImageCidEqualFold applies the EqualFold predicate on the "image_cid" field.
-func ImageCidEqualFold(v string) predicate.Token {
+// ImageSnapshotIDEqualFold applies the EqualFold predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDEqualFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldImageCid), v))
+		s.Where(sql.EqualFold(s.C(FieldImageSnapshotID), v))
 	})
 }
 
-// ImageCidContainsFold applies the ContainsFold predicate on the "image_cid" field.
-func ImageCidContainsFold(v string) predicate.Token {
+// ImageSnapshotIDContainsFold applies the ContainsFold predicate on the "image_snapshot_id" field.
+func ImageSnapshotIDContainsFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldImageCid), v))
+		s.Where(sql.ContainsFold(s.C(FieldImageSnapshotID), v))
 	})
 }
 

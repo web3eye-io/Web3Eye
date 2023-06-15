@@ -86,7 +86,7 @@ message GetSnapshotOnlyRequest { Conds Conds = 10; }
 message GetSnapshotOnlyResponse { Snapshot Info = 10; }
 
 message UpdateSnapshotRequest { 
-    string ID            = 10;
+    string ID                     = 10;
     optional uint64 Index         = 20;
     optional string SnapshotCommP = 30;
     optional string SnapshotRoot  = 40;

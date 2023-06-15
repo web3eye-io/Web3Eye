@@ -50,8 +50,8 @@ const (
 	FieldRemark = "remark"
 	// FieldIpfsImageURL holds the string denoting the ipfs_image_url field in the database.
 	FieldIpfsImageURL = "ipfs_image_url"
-	// FieldImageCid holds the string denoting the image_cid field in the database.
-	FieldImageCid = "image_cid"
+	// FieldImageSnapshotID holds the string denoting the image_snapshot_id field in the database.
+	FieldImageSnapshotID = "image_snapshot_id"
 	// Table holds the table name of the token in the database.
 	Table = "tokens"
 )
@@ -78,7 +78,7 @@ var Columns = []string{
 	FieldVectorState,
 	FieldRemark,
 	FieldIpfsImageURL,
-	FieldImageCid,
+	FieldImageSnapshotID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

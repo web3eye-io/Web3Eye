@@ -3584,37 +3584,37 @@ func (m *SyncTaskMutation) ResetEdge(name string) error {
 // TokenMutation represents an operation that mutates the Token nodes in the graph.
 type TokenMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *uuid.UUID
-	created_at     *uint32
-	addcreated_at  *int32
-	updated_at     *uint32
-	addupdated_at  *int32
-	deleted_at     *uint32
-	adddeleted_at  *int32
-	chain_type     *string
-	chain_id       *string
-	contract       *string
-	token_type     *string
-	token_id       *string
-	owner          *string
-	uri            *string
-	uri_type       *string
-	image_url      *string
-	video_url      *string
-	description    *string
-	name           *string
-	vector_id      *int64
-	addvector_id   *int64
-	vector_state   *string
-	remark         *string
-	ipfs_image_url *string
-	image_cid      *string
-	clearedFields  map[string]struct{}
-	done           bool
-	oldValue       func(context.Context) (*Token, error)
-	predicates     []predicate.Token
+	op                Op
+	typ               string
+	id                *uuid.UUID
+	created_at        *uint32
+	addcreated_at     *int32
+	updated_at        *uint32
+	addupdated_at     *int32
+	deleted_at        *uint32
+	adddeleted_at     *int32
+	chain_type        *string
+	chain_id          *string
+	contract          *string
+	token_type        *string
+	token_id          *string
+	owner             *string
+	uri               *string
+	uri_type          *string
+	image_url         *string
+	video_url         *string
+	description       *string
+	name              *string
+	vector_id         *int64
+	addvector_id      *int64
+	vector_state      *string
+	remark            *string
+	ipfs_image_url    *string
+	image_snapshot_id *string
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*Token, error)
+	predicates        []predicate.Token
 }
 
 var _ ent.Mutation = (*TokenMutation)(nil)
@@ -4629,53 +4629,53 @@ func (m *TokenMutation) ResetIpfsImageURL() {
 	delete(m.clearedFields, token.FieldIpfsImageURL)
 }
 
-// SetImageCid sets the "image_cid" field.
-func (m *TokenMutation) SetImageCid(s string) {
-	m.image_cid = &s
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (m *TokenMutation) SetImageSnapshotID(s string) {
+	m.image_snapshot_id = &s
 }
 
-// ImageCid returns the value of the "image_cid" field in the mutation.
-func (m *TokenMutation) ImageCid() (r string, exists bool) {
-	v := m.image_cid
+// ImageSnapshotID returns the value of the "image_snapshot_id" field in the mutation.
+func (m *TokenMutation) ImageSnapshotID() (r string, exists bool) {
+	v := m.image_snapshot_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldImageCid returns the old "image_cid" field's value of the Token entity.
+// OldImageSnapshotID returns the old "image_snapshot_id" field's value of the Token entity.
 // If the Token object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TokenMutation) OldImageCid(ctx context.Context) (v string, err error) {
+func (m *TokenMutation) OldImageSnapshotID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldImageCid is only allowed on UpdateOne operations")
+		return v, errors.New("OldImageSnapshotID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldImageCid requires an ID field in the mutation")
+		return v, errors.New("OldImageSnapshotID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldImageCid: %w", err)
+		return v, fmt.Errorf("querying old value for OldImageSnapshotID: %w", err)
 	}
-	return oldValue.ImageCid, nil
+	return oldValue.ImageSnapshotID, nil
 }
 
-// ClearImageCid clears the value of the "image_cid" field.
-func (m *TokenMutation) ClearImageCid() {
-	m.image_cid = nil
-	m.clearedFields[token.FieldImageCid] = struct{}{}
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (m *TokenMutation) ClearImageSnapshotID() {
+	m.image_snapshot_id = nil
+	m.clearedFields[token.FieldImageSnapshotID] = struct{}{}
 }
 
-// ImageCidCleared returns if the "image_cid" field was cleared in this mutation.
-func (m *TokenMutation) ImageCidCleared() bool {
-	_, ok := m.clearedFields[token.FieldImageCid]
+// ImageSnapshotIDCleared returns if the "image_snapshot_id" field was cleared in this mutation.
+func (m *TokenMutation) ImageSnapshotIDCleared() bool {
+	_, ok := m.clearedFields[token.FieldImageSnapshotID]
 	return ok
 }
 
-// ResetImageCid resets all changes to the "image_cid" field.
-func (m *TokenMutation) ResetImageCid() {
-	m.image_cid = nil
-	delete(m.clearedFields, token.FieldImageCid)
+// ResetImageSnapshotID resets all changes to the "image_snapshot_id" field.
+func (m *TokenMutation) ResetImageSnapshotID() {
+	m.image_snapshot_id = nil
+	delete(m.clearedFields, token.FieldImageSnapshotID)
 }
 
 // Where appends a list predicates to the TokenMutation builder.
@@ -4755,8 +4755,8 @@ func (m *TokenMutation) Fields() []string {
 	if m.ipfs_image_url != nil {
 		fields = append(fields, token.FieldIpfsImageURL)
 	}
-	if m.image_cid != nil {
-		fields = append(fields, token.FieldImageCid)
+	if m.image_snapshot_id != nil {
+		fields = append(fields, token.FieldImageSnapshotID)
 	}
 	return fields
 }
@@ -4804,8 +4804,8 @@ func (m *TokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Remark()
 	case token.FieldIpfsImageURL:
 		return m.IpfsImageURL()
-	case token.FieldImageCid:
-		return m.ImageCid()
+	case token.FieldImageSnapshotID:
+		return m.ImageSnapshotID()
 	}
 	return nil, false
 }
@@ -4853,8 +4853,8 @@ func (m *TokenMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldRemark(ctx)
 	case token.FieldIpfsImageURL:
 		return m.OldIpfsImageURL(ctx)
-	case token.FieldImageCid:
-		return m.OldImageCid(ctx)
+	case token.FieldImageSnapshotID:
+		return m.OldImageSnapshotID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Token field %s", name)
 }
@@ -4997,12 +4997,12 @@ func (m *TokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIpfsImageURL(v)
 		return nil
-	case token.FieldImageCid:
+	case token.FieldImageSnapshotID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetImageCid(v)
+		m.SetImageSnapshotID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Token field %s", name)
@@ -5118,8 +5118,8 @@ func (m *TokenMutation) ClearedFields() []string {
 	if m.FieldCleared(token.FieldIpfsImageURL) {
 		fields = append(fields, token.FieldIpfsImageURL)
 	}
-	if m.FieldCleared(token.FieldImageCid) {
-		fields = append(fields, token.FieldImageCid)
+	if m.FieldCleared(token.FieldImageSnapshotID) {
+		fields = append(fields, token.FieldImageSnapshotID)
 	}
 	return fields
 }
@@ -5168,8 +5168,8 @@ func (m *TokenMutation) ClearField(name string) error {
 	case token.FieldIpfsImageURL:
 		m.ClearIpfsImageURL()
 		return nil
-	case token.FieldImageCid:
-		m.ClearImageCid()
+	case token.FieldImageSnapshotID:
+		m.ClearImageSnapshotID()
 		return nil
 	}
 	return fmt.Errorf("unknown Token nullable field %s", name)
@@ -5236,8 +5236,8 @@ func (m *TokenMutation) ResetField(name string) error {
 	case token.FieldIpfsImageURL:
 		m.ResetIpfsImageURL()
 		return nil
-	case token.FieldImageCid:
-		m.ResetImageCid()
+	case token.FieldImageSnapshotID:
+		m.ResetImageSnapshotID()
 		return nil
 	}
 	return fmt.Errorf("unknown Token field %s", name)

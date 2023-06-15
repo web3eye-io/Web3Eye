@@ -116,7 +116,7 @@
         "IPFSImageURL": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "ImageCID": {
+        "ImageSnapshotID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "IDs": {
@@ -278,7 +278,7 @@
         "IPFSImageURL": {
           "type": "string"
         },
-        "ImageCID": {
+        "ImageSnapshotID": {
           "type": "string"
         }
       }
@@ -338,7 +338,7 @@
         "IPFSImageURL": {
           "type": "string"
         },
-        "ImageCID": {
+        "ImageSnapshotID": {
           "type": "string"
         }
       }

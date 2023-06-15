@@ -32,7 +32,7 @@ message SearchToken{
   int64 VectorID = 150;
   string Remark = 160;
   string IPFSImageURL = 170;
-  string ImageCID = 180;
+  string ImageSnapshotID = 180;
   float Distance = 500;
 }
 

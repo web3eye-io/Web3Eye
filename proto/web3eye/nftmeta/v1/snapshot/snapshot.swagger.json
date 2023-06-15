@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "web3eye/nftmeta/v1/snapshot/v1/snapshot.proto",
+    "title": "web3eye/nftmeta/v1/snapshot/snapshot.proto",
     "version": "version not set"
   },
   "tags": [
