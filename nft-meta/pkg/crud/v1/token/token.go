@@ -85,8 +85,8 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 	if in.IPFSImageURL != nil {
 		c.SetIpfsImageURL(in.GetIPFSImageURL())
 	}
-	if in.ImageCID != nil {
-		c.SetImageCid(in.GetImageCID())
+	if in.ImageSnapshotID != nil {
+		c.SetImageSnapshotID(in.GetImageSnapshotID())
 	}
 
 	return c
@@ -169,8 +169,8 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 		if in.IPFSImageURL != nil {
 			u.SetIpfsImageURL(in.GetIPFSImageURL())
 		}
-		if in.ImageCID != nil {
-			u.SetImageCid(in.GetImageCID())
+		if in.ImageSnapshotID != nil {
+			u.SetImageSnapshotID(in.GetImageSnapshotID())
 		}
 
 		info, err = u.Save(_ctx)
@@ -372,10 +372,10 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error)
 			return nil, fmt.Errorf("invalid token field")
 		}
 	}
-	if conds.ImageCID != nil {
-		switch conds.GetImageCID().GetOp() {
+	if conds.ImageSnapshotID != nil {
+		switch conds.GetImageSnapshotID().GetOp() {
 		case cruder.EQ:
-			stm.Where(token.ImageCid(conds.GetImageCID().GetValue()))
+			stm.Where(token.ImageSnapshotID(conds.GetImageSnapshotID().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid token field")
 		}

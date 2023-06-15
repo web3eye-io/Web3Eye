@@ -60,6 +60,9 @@
     "v1ContentItem": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "string"
+        },
         "URI": {
           "type": "string"
         },
@@ -73,6 +76,9 @@
           "type": "string"
         },
         "TokenID": {
+          "type": "string"
+        },
+        "FileName": {
           "type": "string"
         }
       }

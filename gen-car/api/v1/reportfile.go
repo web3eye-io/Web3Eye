@@ -6,7 +6,6 @@ package v1
 import (
 	"context"
 	"crypto/sha256"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -14,12 +13,13 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
-	"github.com/mr-tron/base58/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
+	dealer_client "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
-	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
+	dealer_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
+	gencar_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 )
 
 const (
@@ -46,7 +46,7 @@ type TokenResInfo struct {
 	ResType  string
 }
 
-func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.ReportFileResponse, error) {
+func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequest) (*gencar_proto.ReportFileResponse, error) {
 	logger.Sugar().Infof("start deal file, id %v, s3key %v", in.ID, in.S3Key)
 	info, err := token.GetToken(ctx, in.ID)
 	if err != nil {
@@ -70,7 +70,7 @@ func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.
 		ResType: ImageResType,
 		Size:    objAttr.ContentLength,
 	}
-	sha2sum, err := AnySHA256Sum(resInfo.BaseInfo)
+	sha2sum, err := Sha256Name(resInfo.BaseInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -79,28 +79,25 @@ func (s *Server) ReportFile(ctx context.Context, in *v1.ReportFileRequest) (*v1.
 
 	go PutTokenResInfo(resInfo)
 
-	return &v1.ReportFileResponse{
+	return &gencar_proto.ReportFileResponse{
 		ID:    in.ID,
 		S3Key: in.S3Key,
 	}, nil
 }
 
-func AnySHA256Sum(obj any) (string, error) {
-	rawObj, err := json.Marshal(obj)
-	if err != nil {
-		return "", err
-	}
-	_h := sha256.Sum256(rawObj)
-	h := base58.Encode(_h[:])
-	return h, nil
+func Sha256Name(info TokenBaseInfo) (string, error) {
+	_name := fmt.Sprintf("%v-%v-%v-%v", info.ChainType, info.ChainID, info.Contract, info.TokenID)
+	_h := sha256.Sum256([]byte(_name))
+	name := fmt.Sprintf("%x", _h)
+	return name, nil
 }
 
-func CheckAnySHA256Sum(obj any, base58str string) (bool, error) {
-	h, err := AnySHA256Sum(obj)
+func CheckSha256Name(info TokenBaseInfo, hexString string) (bool, error) {
+	h, err := Sha256Name(info)
 	if err != nil {
 		return false, err
 	}
-	if h == base58str {
+	if h == hexString {
 		return true, nil
 	}
 	return false, nil
@@ -233,6 +230,30 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 
 	cleanUpUsedCarFI(ctx, carFI)
 	logger.Sugar().Infof("cleanup files related to car file: %v", carFI.CarName)
+
+	// report to dealer
+	items := make([]*dealer_proto.ContentItem, len(carFI.TokenList))
+	for i, v := range carFI.TokenList {
+		items[i] = &dealer_proto.ContentItem{
+			ID:        v.ID,
+			URI:       v.S3Key,
+			ChainType: v.BaseInfo.ChainType,
+			ChainID:   v.BaseInfo.ChainID,
+			Contract:  v.BaseInfo.Contract,
+			TokenID:   v.BaseInfo.TokenID,
+			FileName:  v.FileName,
+		}
+	}
+
+	dealer_client.CreateSnapshot(
+		ctx,
+		&dealer_proto.CreateSnapshotRequest{
+			SnapshotCommP: carInfo.RootCID,
+			SnapshotRoot:  carInfo.RootCID,
+			SnapshotURI:   carFI.CarName,
+			Items:         items,
+		},
+	)
 
 	return nil
 }

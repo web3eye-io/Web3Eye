@@ -11,11 +11,13 @@ service Manager {
 }
 
 message ContentItem {
-    string URI = 10;
-    string ChainType = 20;
-    string ChainID = 30;
-    string Contract = 40;
-    string TokenID = 50;
+    string ID = 10;
+    string URI = 20;
+    string ChainType = 30;
+    string ChainID = 40;
+    string Contract = 50;
+    string TokenID = 60;
+    string FileName = 70;
 }
 
 enum BackupState {

@@ -340,23 +340,23 @@ func (tu *TokenUpdate) ClearIpfsImageURL() *TokenUpdate {
 	return tu
 }
 
-// SetImageCid sets the "image_cid" field.
-func (tu *TokenUpdate) SetImageCid(s string) *TokenUpdate {
-	tu.mutation.SetImageCid(s)
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (tu *TokenUpdate) SetImageSnapshotID(s string) *TokenUpdate {
+	tu.mutation.SetImageSnapshotID(s)
 	return tu
 }
 
-// SetNillableImageCid sets the "image_cid" field if the given value is not nil.
-func (tu *TokenUpdate) SetNillableImageCid(s *string) *TokenUpdate {
+// SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableImageSnapshotID(s *string) *TokenUpdate {
 	if s != nil {
-		tu.SetImageCid(*s)
+		tu.SetImageSnapshotID(*s)
 	}
 	return tu
 }
 
-// ClearImageCid clears the value of the "image_cid" field.
-func (tu *TokenUpdate) ClearImageCid() *TokenUpdate {
-	tu.mutation.ClearImageCid()
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (tu *TokenUpdate) ClearImageSnapshotID() *TokenUpdate {
+	tu.mutation.ClearImageSnapshotID()
 	return tu
 }
 
@@ -685,17 +685,17 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: token.FieldIpfsImageURL,
 		})
 	}
-	if value, ok := tu.mutation.ImageCid(); ok {
+	if value, ok := tu.mutation.ImageSnapshotID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: token.FieldImageCid,
+			Column: token.FieldImageSnapshotID,
 		})
 	}
-	if tu.mutation.ImageCidCleared() {
+	if tu.mutation.ImageSnapshotIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: token.FieldImageCid,
+			Column: token.FieldImageSnapshotID,
 		})
 	}
 	_spec.Modifiers = tu.modifiers
@@ -1031,23 +1031,23 @@ func (tuo *TokenUpdateOne) ClearIpfsImageURL() *TokenUpdateOne {
 	return tuo
 }
 
-// SetImageCid sets the "image_cid" field.
-func (tuo *TokenUpdateOne) SetImageCid(s string) *TokenUpdateOne {
-	tuo.mutation.SetImageCid(s)
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (tuo *TokenUpdateOne) SetImageSnapshotID(s string) *TokenUpdateOne {
+	tuo.mutation.SetImageSnapshotID(s)
 	return tuo
 }
 
-// SetNillableImageCid sets the "image_cid" field if the given value is not nil.
-func (tuo *TokenUpdateOne) SetNillableImageCid(s *string) *TokenUpdateOne {
+// SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableImageSnapshotID(s *string) *TokenUpdateOne {
 	if s != nil {
-		tuo.SetImageCid(*s)
+		tuo.SetImageSnapshotID(*s)
 	}
 	return tuo
 }
 
-// ClearImageCid clears the value of the "image_cid" field.
-func (tuo *TokenUpdateOne) ClearImageCid() *TokenUpdateOne {
-	tuo.mutation.ClearImageCid()
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (tuo *TokenUpdateOne) ClearImageSnapshotID() *TokenUpdateOne {
+	tuo.mutation.ClearImageSnapshotID()
 	return tuo
 }
 
@@ -1406,17 +1406,17 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 			Column: token.FieldIpfsImageURL,
 		})
 	}
-	if value, ok := tuo.mutation.ImageCid(); ok {
+	if value, ok := tuo.mutation.ImageSnapshotID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: token.FieldImageCid,
+			Column: token.FieldImageSnapshotID,
 		})
 	}
-	if tuo.mutation.ImageCidCleared() {
+	if tuo.mutation.ImageSnapshotIDCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: token.FieldImageCid,
+			Column: token.FieldImageSnapshotID,
 		})
 	}
 	_spec.Modifiers = tuo.modifiers
