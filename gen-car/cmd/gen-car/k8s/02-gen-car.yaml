@@ -35,12 +35,12 @@ spec:
             - name: minio_access_key
               valueFrom:
                 secretKeyRef:
-                  name: milvus-minio
+                  name: web3eye-minio
                   key: accesskey
             - name: minio_secret_key
               valueFrom:
                 secretKeyRef:
-                  name: milvus-minio
+                  name: web3eye-minio
                   key: secretkey
 
       volumes:
