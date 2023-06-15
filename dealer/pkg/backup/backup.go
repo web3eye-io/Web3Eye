@@ -30,7 +30,7 @@ type backup struct {
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
 	b1 := make([]byte, 1024*1024)
-	copy(b1, []byte("0123456789abcdef"))
+	copy(b1, []byte("0123456789abcdef0123456789abcdef"))
 	mockSrcPath := "/tmp/mockOneSource.data"
 	mockDstPath := "/tmp/mockOneDest.data"
 
@@ -42,7 +42,7 @@ func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
 		return cid.Undef, "", err
 	}
 
-	for i := 0; i < 17179869184/len(b1); i++ {
+	for i := 0; i < 8*1024*1024/len(b1); i++ {
 		_, err := src.Write(b1)
 		if err != nil {
 			return cid.Undef, "", err
@@ -160,10 +160,16 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"Signed", signed,
 	)
 
+	if err := b.connectMiner(ctx); err != nil {
+		return err
+	}
+
 	_cid, err := b.sendDealProposal(ctx, signed, snapshot.SnapshotRoot)
 	if err != nil {
 		return err
 	}
+
+	b.disconnectMiner()
 
 	logger.Sugar().Infow(
 		"backupOne",
@@ -203,15 +209,16 @@ func Watch(ctx context.Context) (err error) {
 	if err := backup.buildHost(ctx); err != nil {
 		return err
 	}
-	if err := backup.connectMiner(ctx); err != nil {
-		return err
-	}
 
 	newSnapshot = make(chan struct{})
 	backup.backupAll(ctx)
 
+	ticker := time.NewTicker(1 * time.Minute)
+
 	for {
 		select {
+		case <-ticker.C:
+			backup.backupAll(ctx)
 		case <-newSnapshot:
 			backup.backupAll(ctx)
 		case <-ctx.Done():
