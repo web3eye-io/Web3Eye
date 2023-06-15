@@ -9,6 +9,8 @@ import (
 	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/go-cbor-util"
 	"github.com/filecoin-project/go-state-types/builtin/v9/market"
+	"github.com/filecoin-project/go-state-types/crypto"
+	"github.com/ipfs/go-cid"
 	"github.com/myxtype/filecoin-client/local"
 	"github.com/myxtype/filecoin-client/types"
 )
@@ -50,4 +52,23 @@ func (b *backup) signDealProposal(ctx context.Context, proposal *market.DealProp
 		Proposal:        *proposal,
 		ClientSignature: *sig,
 	}, nil
+}
+
+func (b *backup) signCid(ctx context.Context, cid cid.Cid) (*crypto.Signature, error) {
+	data, err := hex.DecodeString(strings.TrimSpace(clientPrivKey))
+	if err != nil {
+		return nil, err
+	}
+
+	ki := types.KeyInfo{}
+	if err := json.Unmarshal(data, &ki); err != nil {
+		return nil, err
+	}
+
+	serialized, err := cborutil.Dump(&cid)
+	if err != nil {
+		return nil, err
+	}
+
+	return local.WalletSign(ki.Type, ki.PrivateKey, serialized)
 }

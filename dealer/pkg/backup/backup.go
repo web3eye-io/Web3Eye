@@ -15,17 +15,17 @@ import (
 	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 
 	"github.com/filecoin-project/go-commp-utils/writer"
-	"github.com/filecoin-project/go-fil-markets/storagemarket/network"
 	"github.com/ipfs/go-cid"
 	"github.com/ipld/go-car"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/web3eye-io/Web3Eye/common/unixfs"
 )
 
 type backup struct {
-	host   host.Host
-	stream network.StorageDealStream
-	mock   bool
+	host host.Host
+	peer *peer.AddrInfo
+	mock bool
 }
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
@@ -72,17 +72,19 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	}
 
 	if snapshot.SnapshotCommP == "" {
+		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot commP")
 	}
 	if snapshot.SnapshotRoot == "" {
+		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot root")
 	}
 	if snapshot.SnapshotURI == "" {
+		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("invalid snapshot uri")
 	}
 
 	// TODO: backup items to IPFS
-	// TODO: backup car to Filecoin
 
 	var rdr interface{}
 	w := &writer.Writer{}
@@ -128,6 +130,7 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 	}
 
 	if commP.PieceCID.String() != snapshot.SnapshotCommP {
+		_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateFail)
 		return fmt.Errorf("mismatched commp %v != %v", commP.PieceCID, snapshot.SnapshotCommP)
 	}
 
@@ -160,21 +163,23 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		"Signed", signed,
 	)
 
-	if err := b.connectMiner(ctx); err != nil {
-		return err
-	}
-
 	_cid, err := b.sendDealProposal(ctx, signed, snapshot.SnapshotRoot)
 	if err != nil {
 		return err
 	}
 
-	b.disconnectMiner()
+	_state, err := b.getDealStatus(ctx, _cid.String())
+	if err != nil {
+		return err
+	}
 
 	logger.Sugar().Infow(
 		"backupOne",
 		"Cid", _cid,
+		"State", _state,
 	)
+
+	_, _ = orbit.Snapshot().UpdateSnapshot(ctx, index, dealerpb.BackupState_BackupStateSuccess)
 
 	return nil
 }
@@ -207,6 +212,10 @@ func Watch(ctx context.Context) (err error) {
 	}
 
 	if err := backup.buildHost(ctx); err != nil {
+		return err
+	}
+
+	if err := backup.connectMiner(ctx); err != nil {
 		return err
 	}
 
