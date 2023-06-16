@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package entrance.v1.snapshot;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/snapshot";
+import "web3eye/nftmeta/v1/snapshot/snapshot.proto";
+
+service Manager {
+  rpc GetSnapshot(nftmeta.v1.snapshot.GetSnapshotRequest) returns (nftmeta.v1.snapshot.GetSnapshotResponse) {}
+  rpc GetSnapshotOnly(nftmeta.v1.snapshot.GetSnapshotOnlyRequest) returns (nftmeta.v1.snapshot.GetSnapshotOnlyResponse) {}
+  rpc GetSnapshots(nftmeta.v1.snapshot.GetSnapshotsRequest) returns (nftmeta.v1.snapshot.GetSnapshotsResponse) {}
+  rpc CountSnapshots(nftmeta.v1.snapshot.CountSnapshotsRequest) returns (nftmeta.v1.snapshot.CountSnapshotsResponse) {}
+}
