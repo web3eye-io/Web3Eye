@@ -20,6 +20,9 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/web3eye-io/Web3Eye/common/unixfs"
+
+	metacli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/snapshot"
+	metapb "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 )
 
 type backup struct {
@@ -67,6 +70,14 @@ func (b *backup) updateSnapshotState(ctx context.Context, index uint64, state de
 		if err := orbit.FileState().SetFileState(ctx, item.ChainType, uid, item.ChainID, state); err != nil {
 			return err
 		}
+	}
+
+	_state := snapshot.BackupState.String()
+	if _, err := metacli.UpdateSnapshot(ctx, &metapb.SnapshotReq{
+		ID:          &snapshot.ID,
+		BackupState: &_state,
+	}); err != nil {
+		return err
 	}
 	return nil
 }

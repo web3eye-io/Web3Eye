@@ -31,13 +31,14 @@ enum BackupState {
 }
 
 message Snapshot {
-    uint64 Index         = 10;
-    string SnapshotCommP = 20;
-    string SnapshotRoot  = 30;
-    string SnapshotURI   = 40;
-    repeated ContentItem Items = 50;
-    BackupState BackupState = 60;
-    string ProposalCID   = 70;
+    string ID            = 10;
+    uint64 Index         = 20;
+    string SnapshotCommP = 30;
+    string SnapshotRoot  = 40;
+    string SnapshotURI   = 50;
+    repeated ContentItem Items = 60;
+    BackupState BackupState = 70;
+    string ProposalCID   = 80;
 }
 
 message CreateSnapshotRequest {

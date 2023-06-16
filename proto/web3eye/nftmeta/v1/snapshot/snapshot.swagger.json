@@ -44,19 +44,6 @@
         }
       }
     },
-    "snapshotBackupState": {
-      "type": "string",
-      "enum": [
-        "DefaultBackupState",
-        "BackupStateNone",
-        "BackupStateCreated",
-        "BackupStateProposed",
-        "BackupStateAccepted",
-        "BackupStateSuccess",
-        "BackupStateFail"
-      ],
-      "default": "DefaultBackupState"
-    },
     "snapshotConds": {
       "type": "object",
       "properties": {
@@ -186,13 +173,16 @@
           "type": "string"
         },
         "BackupState": {
-          "$ref": "#/definitions/snapshotBackupState"
+          "type": "string"
         }
       }
     },
-    "snapshotSnapshotRequest": {
+    "snapshotSnapshotReq": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "string"
+        },
         "Index": {
           "type": "string",
           "format": "uint64"
@@ -207,7 +197,7 @@
           "type": "string"
         },
         "BackupState": {
-          "$ref": "#/definitions/snapshotBackupState"
+          "type": "string"
         }
       }
     },
