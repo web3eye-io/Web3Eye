@@ -38,13 +38,13 @@ func NewFileStateKV(ctx context.Context, odb orbitiface.OrbitDB) (*FileStateKV, 
 	return kv, nil
 }
 
-func (kv *FileStateKV) SetFileState(ctx context.Context, chainType, uid, chainId, state string) error {
+func (kv *FileStateKV) SetFileState(ctx context.Context, chainType, uid, chainId string, state dealerpb.BackupState) error {
 	if kv.kvFileState == nil {
 		return fmt.Errorf("invalid kvstore")
 	}
 
 	key := fmt.Sprintf("%v:%v:%v:state", chainType, uid, chainId)
-	if _, err := kv.kvFileState.Put(ctx, key, []byte(state)); err != nil {
+	if _, err := kv.kvFileState.Put(ctx, key, []byte(state.String())); err != nil {
 		return err
 	}
 
