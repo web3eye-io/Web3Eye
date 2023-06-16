@@ -10,6 +10,8 @@ import (
 
 	orbitdb "berty.tech/go-orbit-db"
 	orbitiface "berty.tech/go-orbit-db/iface"
+
+	"github.com/google/uuid"
 )
 
 type SnapshotKV struct {
@@ -22,6 +24,7 @@ type SnapshotKV struct {
 const (
 	CurrentWaitSnapshotIndex   = "current-wait-index"
 	CurrentBackupSnapshotIndex = "current-wait-index"
+	SnapshotID                 = "snapshot-id"
 	SnapshotURI                = "snapshot-uri"
 	ContentItems               = "content-items"
 	SnapshotRoot               = "snapshot-root"
@@ -94,6 +97,10 @@ func (kv *SnapshotKV) setSnapshot(ctx context.Context, kvStoreName, snapshotComm
 		return err
 	}
 
+	uid := uuid.NewString()
+	if _, err := _kv.Put(ctx, SnapshotID, []byte(uid)); err != nil {
+		return err
+	}
 	if _, err := _kv.Put(ctx, SnapshotCommP, []byte(snapshotCommP)); err != nil {
 		return err
 	}
@@ -137,6 +144,11 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		return nil, err
 	}
 
+	_id, err := _kv.Get(ctx, SnapshotID)
+	if err != nil {
+		return nil, err
+	}
+
 	_snapshotURI, err := _kv.Get(ctx, SnapshotURI)
 	if err != nil {
 		return nil, err
@@ -171,6 +183,7 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 	}
 
 	return &dealerpb.Snapshot{
+		ID:            string(_id),
 		SnapshotCommP: string(_commP),
 		SnapshotRoot:  string(_cid),
 		SnapshotURI:   string(_snapshotURI),

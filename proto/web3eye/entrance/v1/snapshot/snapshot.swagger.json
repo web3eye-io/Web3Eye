@@ -194,6 +194,9 @@
     "dealerv1Snapshot": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "string"
+        },
         "Index": {
           "type": "string",
           "format": "uint64"
