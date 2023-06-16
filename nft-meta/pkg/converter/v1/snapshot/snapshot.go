@@ -16,7 +16,7 @@ func Ent2Grpc(row *ent.Snapshot) *npool.Snapshot {
 		SnapshotCommP: row.SnapshotCommP,
 		SnapshotRoot:  row.SnapshotRoot,
 		SnapshotURI:   row.SnapshotURI,
-		BackupState:   npool.BackupState(npool.BackupState_value[row.BackupState]),
+		BackupState:   row.BackupState,
 	}
 }
 

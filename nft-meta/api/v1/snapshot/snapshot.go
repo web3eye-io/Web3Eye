@@ -52,14 +52,14 @@ func (s *Server) CreateSnapshots(ctx context.Context, in *npool.CreateSnapshotsR
 func (s *Server) UpdateSnapshot(ctx context.Context, in *npool.UpdateSnapshotRequest) (*npool.UpdateSnapshotResponse, error) {
 	var err error
 
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		logger.Sugar().Errorw("UpdateSnapshot", "ID", in.GetID(), "error", err)
+	if _, err := uuid.Parse(in.Info.GetID()); err != nil {
+		logger.Sugar().Errorw("UpdateSnapshot", "ID", in.Info.GetID(), "error", err)
 		return &npool.UpdateSnapshotResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := crud.Update(ctx, in)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateSnapshot", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("UpdateSnapshot", "ID", in.Info.GetID(), "error", err)
 		return &npool.UpdateSnapshotResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
@@ -168,15 +168,15 @@ func (s *Server) CountSnapshots(ctx context.Context, in *npool.CountSnapshotsReq
 func (s *Server) DeleteSnapshot(ctx context.Context, in *npool.DeleteSnapshotRequest) (*npool.DeleteSnapshotResponse, error) {
 	var err error
 
-	id, err := uuid.Parse(in.GetID())
+	id, err := uuid.Parse(in.Info.GetID())
 	if err != nil {
-		logger.Sugar().Errorw("DeleteSnapshot", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("DeleteSnapshot", "ID", in.Info.GetID(), "error", err)
 		return &npool.DeleteSnapshotResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := crud.Delete(ctx, id)
 	if err != nil {
-		logger.Sugar().Errorw("DeleteSnapshot", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("DeleteSnapshot", "ID", in.Info.GetID(), "error", err)
 		return &npool.DeleteSnapshotResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

@@ -81,10 +81,6 @@ func init() {
 	snapshotDescDeletedAt := snapshotMixinFields0[2].Descriptor()
 	// snapshot.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	snapshot.DefaultDeletedAt = snapshotDescDeletedAt.Default.(func() uint32)
-	// snapshotDescID is the schema descriptor for id field.
-	snapshotDescID := snapshotFields[0].Descriptor()
-	// snapshot.DefaultID holds the default value on creation for the id field.
-	snapshot.DefaultID = snapshotDescID.Default.(func() uuid.UUID)
 	synctaskMixin := schema.SyncTask{}.Mixin()
 	synctask.Policy = privacy.NewPolicies(synctaskMixin[0], schema.SyncTask{})
 	synctask.Hooks[0] = func(next ent.Mutator) ent.Mutator {

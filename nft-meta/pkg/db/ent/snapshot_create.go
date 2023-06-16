@@ -101,14 +101,6 @@ func (sc *SnapshotCreate) SetID(u uuid.UUID) *SnapshotCreate {
 	return sc
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (sc *SnapshotCreate) SetNillableID(u *uuid.UUID) *SnapshotCreate {
-	if u != nil {
-		sc.SetID(*u)
-	}
-	return sc
-}
-
 // Mutation returns the SnapshotMutation object of the builder.
 func (sc *SnapshotCreate) Mutation() *SnapshotMutation {
 	return sc.mutation
@@ -208,13 +200,6 @@ func (sc *SnapshotCreate) defaults() error {
 		}
 		v := snapshot.DefaultDeletedAt()
 		sc.mutation.SetDeletedAt(v)
-	}
-	if _, ok := sc.mutation.ID(); !ok {
-		if snapshot.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized snapshot.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := snapshot.DefaultID()
-		sc.mutation.SetID(v)
 	}
 	return nil
 }

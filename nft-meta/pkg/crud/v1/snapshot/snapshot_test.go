@@ -15,6 +15,7 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
+	dealerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 
 	"github.com/google/uuid"
@@ -34,7 +35,7 @@ var (
 	entSnapshot ent.Snapshot
 	id          string
 
-	snapshotInfo       npool.SnapshotRequest
+	snapshotInfo       npool.SnapshotReq
 	updateSnapshotInfo npool.UpdateSnapshotRequest
 	info               *ent.Snapshot
 )
@@ -46,23 +47,21 @@ func prepareData() {
 		SnapshotCommP: "eeeeeeeeeeeeee",
 		SnapshotRoot:  fmt.Sprint(RandUInt64()),
 		SnapshotURI:   "test",
-		BackupState:   npool.BackupState_BackupStateCreated.String(),
+		BackupState:   "Created",
 	}
 
 	id = entSnapshot.ID.String()
-	snapshotInfo = npool.SnapshotRequest{
-		Index:         entSnapshot.Index,
-		SnapshotCommP: entSnapshot.SnapshotCommP,
-		SnapshotRoot:  entSnapshot.SnapshotRoot,
-		SnapshotURI:   entSnapshot.SnapshotURI,
-		BackupState:   npool.BackupState(npool.BackupState_value[entSnapshot.BackupState]),
+	backupState := dealerproto.BackupState_BackupStateCreated.String()
+	snapshotInfo = npool.SnapshotReq{
+		ID:            &id,
+		Index:         &entSnapshot.Index,
+		SnapshotCommP: &entSnapshot.SnapshotCommP,
+		SnapshotRoot:  &entSnapshot.SnapshotRoot,
+		SnapshotURI:   &entSnapshot.SnapshotURI,
+		BackupState:   &backupState,
 	}
 	updateSnapshotInfo = npool.UpdateSnapshotRequest{
-		Index:         &snapshotInfo.Index,
-		SnapshotCommP: &snapshotInfo.SnapshotCommP,
-		SnapshotRoot:  &snapshotInfo.SnapshotRoot,
-		SnapshotURI:   &snapshotInfo.SnapshotURI,
-		BackupState:   &snapshotInfo.BackupState,
+		Info: &snapshotInfo,
 	}
 }
 
@@ -82,7 +81,8 @@ func create(t *testing.T) {
 	info, err = Create(context.Background(), &snapshotInfo)
 	if assert.Nil(t, err) {
 		assert.Equal(t, rowToObject(info), &entSnapshot)
-		updateSnapshotInfo.ID = info.ID.String()
+		id := info.ID.String()
+		updateSnapshotInfo.Info.ID = &id
 	}
 }
 
@@ -94,7 +94,7 @@ func createBulk(t *testing.T) {
 			SnapshotCommP: "eeeeeeeeeeeeee1",
 			SnapshotRoot:  fmt.Sprint(RandUInt64()),
 			SnapshotURI:   "test",
-			BackupState:   npool.BackupState_BackupStateCreated.String(),
+			BackupState:   dealerproto.BackupState_BackupStateCreated.String(),
 		},
 		{
 			ID:            uuid.New(),
@@ -102,18 +102,20 @@ func createBulk(t *testing.T) {
 			SnapshotCommP: "eeeeeeeeeeeeee2",
 			SnapshotRoot:  fmt.Sprint(RandUInt64()),
 			SnapshotURI:   "test",
-			BackupState:   npool.BackupState_BackupStateCreated.String(),
+			BackupState:   dealerproto.BackupState_BackupStateCreated.String(),
 		},
 	}
 
-	snapshots := []*npool.SnapshotRequest{}
+	snapshots := []*npool.SnapshotReq{}
 	for key := range entSnapshots {
-		snapshots = append(snapshots, &npool.SnapshotRequest{
-			Index:         entSnapshots[key].Index,
-			SnapshotCommP: entSnapshots[key].SnapshotCommP,
-			SnapshotRoot:  entSnapshots[key].SnapshotRoot,
-			SnapshotURI:   entSnapshots[key].SnapshotURI,
-			BackupState:   npool.BackupState(npool.BackupState_value[entSnapshots[key].BackupState]),
+		id := entSnapshots[key].ID.String()
+		snapshots = append(snapshots, &npool.SnapshotReq{
+			ID:            &id,
+			Index:         &entSnapshots[key].Index,
+			SnapshotCommP: &entSnapshots[key].SnapshotCommP,
+			SnapshotRoot:  &entSnapshots[key].SnapshotRoot,
+			SnapshotURI:   &entSnapshots[key].SnapshotURI,
+			BackupState:   &entSnapshots[key].BackupState,
 		})
 	}
 	infos, err := CreateBulk(context.Background(), snapshots)

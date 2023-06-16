@@ -14,7 +14,7 @@ import (
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 )
 
-func Create(ctx context.Context, in *npool.SnapshotRequest) (*ent.Snapshot, error) {
+func Create(ctx context.Context, in *npool.SnapshotReq) (*ent.Snapshot, error) {
 	var info *ent.Snapshot
 	var err error
 
@@ -30,17 +30,17 @@ func Create(ctx context.Context, in *npool.SnapshotRequest) (*ent.Snapshot, erro
 	return info, nil
 }
 
-func CreateSet(c *ent.SnapshotCreate, in *npool.SnapshotRequest) *ent.SnapshotCreate {
-	c.SetID(uuid.New())
-	c.SetIndex(in.Index)
-	c.SetSnapshotCommP(in.SnapshotCommP)
-	c.SetSnapshotRoot(in.SnapshotRoot)
-	c.SetSnapshotURI(in.SnapshotURI)
-	c.SetBackupState(in.BackupState.String())
+func CreateSet(c *ent.SnapshotCreate, in *npool.SnapshotReq) *ent.SnapshotCreate {
+	c.SetID(uuid.MustParse(in.GetID()))
+	c.SetIndex(in.GetIndex())
+	c.SetSnapshotCommP(in.GetSnapshotCommP())
+	c.SetSnapshotRoot(in.GetSnapshotRoot())
+	c.SetSnapshotURI(in.GetSnapshotURI())
+	c.SetBackupState(in.GetBackupState())
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.SnapshotRequest) ([]*ent.Snapshot, error) {
+func CreateBulk(ctx context.Context, in []*npool.SnapshotReq) ([]*ent.Snapshot, error) {
 	var err error
 	rows := []*ent.Snapshot{}
 
@@ -63,25 +63,25 @@ func Update(ctx context.Context, in *npool.UpdateSnapshotRequest) (*ent.Snapshot
 	var err error
 	var info *ent.Snapshot
 
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	if _, err := uuid.Parse(in.Info.GetID()); err != nil {
 		return nil, err
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Snapshot.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.Index != nil {
-			u.SetIndex(in.GetIndex())
+		u := cli.Snapshot.UpdateOneID(uuid.MustParse(in.Info.GetID()))
+		if in.Info.Index != nil {
+			u.SetIndex(in.Info.GetIndex())
 		}
-		if in.SnapshotCommP != nil {
-			u.SetSnapshotCommP(in.GetSnapshotCommP())
+		if in.Info.SnapshotCommP != nil {
+			u.SetSnapshotCommP(in.Info.GetSnapshotCommP())
 		}
-		if in.SnapshotRoot != nil {
-			u.SetSnapshotRoot(in.GetSnapshotRoot())
+		if in.Info.SnapshotRoot != nil {
+			u.SetSnapshotRoot(in.Info.GetSnapshotRoot())
 		}
-		if in.SnapshotURI != nil {
-			u.SetSnapshotURI(in.GetSnapshotURI())
+		if in.Info.SnapshotURI != nil {
+			u.SetSnapshotURI(in.Info.GetSnapshotURI())
 		}
-		if in.BackupState != nil {
-			u.SetBackupState(in.GetBackupState().String())
+		if in.Info.BackupState != nil {
+			u.SetBackupState(in.Info.GetBackupState())
 		}
 
 		info, err = u.Save(_ctx)
