@@ -48,39 +48,13 @@ func (b *backup) connectMiner(ctx context.Context) error {
 		return err
 	}
 
-	logger.Sugar().Infow(
-		"Watch",
-		"Connecting", peer,
-	)
 	if err := b.host.Connect(ctx, *peer); err != nil {
 		return err
 	}
 
-	logger.Sugar().Infow(
-		"Watch",
-		"Connected", peer,
-		"Create Deal Stream", peer,
-	)
-	b.stream, err = network.NewFromLibp2pHost(b.host,
-		network.RetryParameters(time.Second, 5*time.Minute, 15, 5),
-	).NewDealStream(ctx, peer.ID)
-	if err != nil {
-		return err
-	}
-
-	logger.Sugar().Infow(
-		"Watch",
-		"Created Deal Stream", peer,
-		"Remote Peer", b.stream.RemotePeer(),
-	)
+	b.peer = peer
 
 	return nil
-}
-
-func (b *backup) disconnectMiner() {
-	if b.stream != nil {
-		b.stream.Close()
-	}
 }
 
 func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pieceSize uint64) (*market.DealProposal, error) {
@@ -115,7 +89,7 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		StoragePricePerEpoch: big.NewInt(976562),
 		ProviderCollateral:   big.Zero(), // TODO
 		ClientCollateral:     big.Zero(),
-		VerifiedDeal:         true,
+		VerifiedDeal:         false,
 	}, nil
 }
 
@@ -125,6 +99,14 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 		return nil, err
 	}
 
+	stream, err := network.NewFromLibp2pHost(b.host,
+		network.RetryParameters(time.Second, 5*time.Minute, 15, 5),
+	).NewDealStream(ctx, b.peer.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer stream.Close()
+
 	logger.Sugar().Infow(
 		"sendDealProposal",
 		"Proposal", proposal,
@@ -132,7 +114,7 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 		"State", "Sending",
 	)
 
-	if err = b.stream.WriteDealProposal(network.Proposal{
+	if err = stream.WriteDealProposal(network.Proposal{
 		FastRetrieval: true,
 		DealProposal:  proposal,
 		Piece: &storagemarket.DataRef{
@@ -152,7 +134,7 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 		"State", "Sent",
 	)
 
-	resp, _, err := b.stream.ReadDealResponse()
+	resp, _, err := stream.ReadDealResponse()
 	if err != nil {
 		return nil, fmt.Errorf("reading proposal response failed: %v", err)
 	}
@@ -171,4 +153,40 @@ func (b *backup) sendDealProposal(ctx context.Context, proposal *market.ClientDe
 	}
 
 	return &resp.Response.Proposal, nil
+}
+
+func (b *backup) getDealStatus(ctx context.Context, proposal string) (*storagemarket.ProviderDealState, error) {
+	_proposal, err := cid.Parse(proposal)
+	if err != nil {
+		return nil, err
+	}
+
+	stream, err := network.NewFromLibp2pHost(b.host,
+		network.RetryParameters(time.Second, 5*time.Minute, 15, 5),
+	).NewDealStatusStream(ctx, b.peer.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer stream.Close()
+
+	sig, err := b.signCid(ctx, _proposal)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := stream.WriteDealStatusRequest(network.DealStatusRequest{
+		Proposal:  _proposal,
+		Signature: *sig,
+	}); err != nil {
+		return nil, err
+	}
+
+	resp, _, err := stream.ReadDealStatusResponse()
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: here we need to verify signature
+
+	return &resp.DealState, nil
 }

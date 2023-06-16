@@ -62,7 +62,7 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 		}
 		for _, item := range items {
 			if item.ID == "" {
-				return fmt.Errorf("invalid uri")
+				return fmt.Errorf("invalid id")
 			}
 			if item.URI == "" {
 				return fmt.Errorf("invalid uri")
@@ -80,7 +80,7 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 				return fmt.Errorf("invalid uid")
 			}
 			if item.FileName == "" {
-				return fmt.Errorf("invalid uid")
+				return fmt.Errorf("invalid filename")
 			}
 		}
 		h.Items = items
