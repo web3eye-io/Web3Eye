@@ -30,6 +30,7 @@ const (
 	SnapshotRoot               = "snapshot-root"
 	SnapshotCommP              = "snapshot-commp"
 	SnapshotProposalCID        = "snapshot-proposal-cid"
+	SnapshotDealID             = "snapshot-deal-id"
 	SnapshotBackupState        = "snapshot-backup-state"
 	KVStoreSnapshotIndex       = "snapshot-index"
 	KVStoreSnapshot            = "snapshot-"
@@ -182,6 +183,12 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		return nil, err
 	}
 
+	_dealID, err := _kv.Get(ctx, SnapshotDealID)
+	if err != nil {
+		return nil, err
+	}
+	_dealIDI, _ := binary.Uvarint(_dealID)
+
 	return &dealerpb.Snapshot{
 		ID:            string(_id),
 		SnapshotCommP: string(_commP),
@@ -190,6 +197,7 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		ProposalCID:   string(_proposal),
 		Items:         items,
 		BackupState:   state,
+		DealID:        _dealIDI,
 	}, nil
 }
 
@@ -282,6 +290,38 @@ func (kv *SnapshotKV) UpdateSnapshotProposalCID(ctx context.Context, index uint6
 	}
 
 	if _, err := _kv.Put(ctx, SnapshotProposalCID, []byte(proposal)); err != nil {
+		return nil, err
+	}
+
+	snapshot, err := kv.getSnapshot(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index))
+	if err != nil {
+		return nil, err
+	}
+	snapshot.Index = index
+	return snapshot, nil
+}
+
+func (kv *SnapshotKV) UpdateSnapshotDealID(ctx context.Context, index, dealID uint64) (*dealerpb.Snapshot, error) {
+	if index >= kv.waitSnapshotIndex {
+		return nil, fmt.Errorf("invalid snapshot index")
+	}
+
+	replicate := true
+	_kv, err := kv.odb.KeyValue(ctx, fmt.Sprintf("%v%v", KVStoreSnapshot, index), &orbitdb.CreateDBOptions{
+		Replicate: &replicate,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer _kv.Close()
+
+	if err := _kv.Load(ctx, -1); err != nil {
+		return nil, err
+	}
+
+	b := make([]byte, 8)
+	binary.PutUvarint(b, dealID)
+	if _, err := _kv.Put(ctx, SnapshotDealID, b); err != nil {
 		return nil, err
 	}
 

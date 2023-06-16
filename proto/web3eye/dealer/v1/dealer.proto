@@ -39,6 +39,7 @@ message Snapshot {
     repeated ContentItem Items = 60;
     BackupState BackupState = 70;
     string ProposalCID   = 80;
+    uint64 DealID        = 90;
 }
 
 message CreateSnapshotRequest {

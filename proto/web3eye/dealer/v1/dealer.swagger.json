@@ -144,6 +144,10 @@
         },
         "ProposalCID": {
           "type": "string"
+        },
+        "DealID": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     }
