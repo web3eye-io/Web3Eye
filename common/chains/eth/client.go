@@ -2,7 +2,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -39,19 +38,20 @@ func (eClients eClients) GetNode(ctx context.Context, endpointmgr *endpoints.Man
 		return nil, err
 	}
 
-	syncRet, _err := cli.SyncProgress(ctx)
-	if _err != nil {
-		cli.Close()
-		return nil, _err
-	}
+	// sync check is to many,so will be canceled
+	// syncRet, _err := cli.SyncProgress(ctx)
+	// if _err != nil {
+	// 	cli.Close()
+	// 	return nil, _err
+	// }
 
-	if syncRet != nil {
-		cli.Close()
-		return nil, fmt.Errorf(
-			"node is syncing ,current block %v ,highest block %v ",
-			syncRet.CurrentBlock, syncRet.HighestBlock,
-		)
-	}
+	// if syncRet != nil {
+	// 	cli.Close()
+	// 	return nil, fmt.Errorf(
+	// 		"node is syncing ,current block %v ,highest block %v ",
+	// 		syncRet.CurrentBlock, syncRet.HighestBlock,
+	// 	)
+	// }
 
 	return cli, nil
 }
