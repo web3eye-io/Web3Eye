@@ -63,7 +63,7 @@ func (b *backup) checkAndUpdateOne(ctx context.Context, index uint64) error {
 	case storagemarket.StorageDealCheckForAcceptance:
 	case storagemarket.StorageDealFundsReserved:
 	case storagemarket.StorageDealActive:
-		if _, err := orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateSuccess); err != nil {
+		if err := b.updateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateSuccess); err != nil {
 			return err
 		}
 		_ = orbit.Backup().Done(ctx, index, false)
@@ -71,7 +71,7 @@ func (b *backup) checkAndUpdateOne(ctx context.Context, index uint64) error {
 	case storagemarket.StorageDealSealing:
 	case storagemarket.StorageDealStaged:
 	case storagemarket.StorageDealProposalAccepted:
-		_, _ = orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateAccepted)
+		_ = b.updateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateAccepted)
 	case storagemarket.StorageDealError:
 		fallthrough //nolint
 	case storagemarket.StorageDealFailing:
@@ -87,7 +87,7 @@ func (b *backup) checkAndUpdateOne(ctx context.Context, index uint64) error {
 	case storagemarket.StorageDealProposalNotFound:
 		fallthrough //nolint
 	case storagemarket.StorageDealUnknown:
-		if _, err := orbit.Snapshot().UpdateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail); err != nil {
+		if err := b.updateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateFail); err != nil {
 			return err
 		}
 		_ = orbit.Backup().Done(ctx, index, true)
