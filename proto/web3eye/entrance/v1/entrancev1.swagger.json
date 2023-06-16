@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "web3eye/entrance/entrancev1.proto",
+    "title": "web3eye/entrance/v1/entrancev1.proto",
     "version": "version not set"
   },
   "tags": [

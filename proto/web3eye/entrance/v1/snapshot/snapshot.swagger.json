@@ -48,6 +48,38 @@
         ]
       }
     },
+    "/v1/create/backup": {
+      "post": {
+        "operationId": "Manager_CreateBackup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateBackupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateBackupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
     "/v1/get/snapshot": {
       "post": {
         "operationId": "Manager_GetSnapshot",
@@ -119,7 +151,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/snapshotGetSnapshotsResponse"
+              "$ref": "#/definitions/v1snapshotGetSnapshotsResponse"
             }
           },
           "default": {
@@ -135,7 +167,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/snapshotGetSnapshotsRequest"
+              "$ref": "#/definitions/v1snapshotGetSnapshotsRequest"
             }
           }
         ],
@@ -146,6 +178,49 @@
     }
   },
   "definitions": {
+    "dealerv1BackupState": {
+      "type": "string",
+      "enum": [
+        "DefaultBackupState",
+        "BackupStateNone",
+        "BackupStateCreated",
+        "BackupStateProposed",
+        "BackupStateAccepted",
+        "BackupStateSuccess",
+        "BackupStateFail"
+      ],
+      "default": "DefaultBackupState"
+    },
+    "dealerv1Snapshot": {
+      "type": "object",
+      "properties": {
+        "Index": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SnapshotCommP": {
+          "type": "string"
+        },
+        "SnapshotRoot": {
+          "type": "string"
+        },
+        "SnapshotURI": {
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1ContentItem"
+          }
+        },
+        "BackupState": {
+          "$ref": "#/definitions/dealerv1BackupState"
+        },
+        "ProposalCID": {
+          "type": "string"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -172,19 +247,6 @@
           }
         }
       }
-    },
-    "snapshotBackupState": {
-      "type": "string",
-      "enum": [
-        "DefaultBackupState",
-        "BackupStateNone",
-        "BackupStateCreated",
-        "BackupStateProposed",
-        "BackupStateAccepted",
-        "BackupStateSuccess",
-        "BackupStateFail"
-      ],
-      "default": "DefaultBackupState"
     },
     "snapshotConds": {
       "type": "object",
@@ -241,7 +303,7 @@
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/snapshotSnapshot"
+          "$ref": "#/definitions/v1snapshotSnapshot"
         }
       }
     },
@@ -257,11 +319,67 @@
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/snapshotSnapshot"
+          "$ref": "#/definitions/v1snapshotSnapshot"
         }
       }
     },
-    "snapshotGetSnapshotsRequest": {
+    "v1ContentItem": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "URI": {
+          "type": "string"
+        },
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "FileName": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateBackupRequest": {
+      "type": "object",
+      "properties": {
+        "Index": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "v1CreateBackupResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/dealerv1Snapshot"
+        }
+      }
+    },
+    "v1snapshotBackupState": {
+      "type": "string",
+      "enum": [
+        "DefaultBackupState",
+        "BackupStateNone",
+        "BackupStateCreated",
+        "BackupStateProposed",
+        "BackupStateAccepted",
+        "BackupStateSuccess",
+        "BackupStateFail"
+      ],
+      "default": "DefaultBackupState"
+    },
+    "v1snapshotGetSnapshotsRequest": {
       "type": "object",
       "properties": {
         "Conds": {
@@ -277,13 +395,13 @@
         }
       }
     },
-    "snapshotGetSnapshotsResponse": {
+    "v1snapshotGetSnapshotsResponse": {
       "type": "object",
       "properties": {
         "Infos": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/snapshotSnapshot"
+            "$ref": "#/definitions/v1snapshotSnapshot"
           }
         },
         "Total": {
@@ -292,7 +410,7 @@
         }
       }
     },
-    "snapshotSnapshot": {
+    "v1snapshotSnapshot": {
       "type": "object",
       "properties": {
         "ID": {
@@ -312,7 +430,7 @@
           "type": "string"
         },
         "BackupState": {
-          "$ref": "#/definitions/snapshotBackupState"
+          "$ref": "#/definitions/v1snapshotBackupState"
         }
       }
     },

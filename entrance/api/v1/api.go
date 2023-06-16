@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/web3eye-io/Web3Eye/entrance/api/v1/search"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/snapshot"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"

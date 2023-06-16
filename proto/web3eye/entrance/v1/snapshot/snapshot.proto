@@ -5,6 +5,7 @@ package entrance.v1.snapshot;
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/snapshot";
 import "google/api/annotations.proto";
 import "web3eye/nftmeta/v1/snapshot/snapshot.proto";
+import "web3eye/dealer/v1/dealer.proto";
 
 service Manager {
   rpc GetSnapshot(nftmeta.v1.snapshot.GetSnapshotRequest) returns (nftmeta.v1.snapshot.GetSnapshotResponse) {
@@ -28,6 +29,12 @@ service Manager {
   rpc CountSnapshots(nftmeta.v1.snapshot.CountSnapshotsRequest) returns (nftmeta.v1.snapshot.CountSnapshotsResponse) {
     option (google.api.http) = {
       post : "/v1/count/snapshots"
+      body : "*"
+    };
+  }
+  rpc CreateBackup (dealer.v1.CreateBackupRequest) returns (dealer.v1.CreateBackupResponse) {
+    option (google.api.http) = {
+      post : "/v1/create/backup"
       body : "*"
     };
   }

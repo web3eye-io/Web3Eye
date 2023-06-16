@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.18.1
-// source: web3eye/entrance/entrancev1.proto
+// source: web3eye/entrance/v1/entrancev1.proto
 
 package v1
 
@@ -103,5 +103,5 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "web3eye/entrance/entrancev1.proto",
+	Metadata: "web3eye/entrance/v1/entrancev1.proto",
 }

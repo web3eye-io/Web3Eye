@@ -3,9 +3,10 @@ package snapshot
 import (
 	"context"
 
+	dealerclient "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	client "github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/snapshot"
 
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/snapshot"
+	dealernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	entrancernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/snapshot"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 	"google.golang.org/grpc"
@@ -13,7 +14,6 @@ import (
 
 type Server struct {
 	entrancernpool.UnimplementedManagerServer
-	snapshot.Server
 }
 
 func (s *Server) GetSnapshot(ctx context.Context, in *nftmetanpool.GetSnapshotRequest) (*nftmetanpool.GetSnapshotResponse, error) {
@@ -34,6 +34,10 @@ func (s *Server) GetSnapshots(ctx context.Context, in *nftmetanpool.GetSnapshots
 func (s *Server) CountSnapshots(ctx context.Context, in *nftmetanpool.CountSnapshotsRequest) (*nftmetanpool.CountSnapshotsResponse, error) {
 	client.UseCloudProxyCC()
 	return client.CountSnapshots(ctx, in)
+}
+func (s *Server) CreateBackup(ctx context.Context, in *dealernpool.CreateBackupRequest) (*dealernpool.CreateBackupResponse, error) {
+	client.UseCloudProxyCC()
+	return dealerclient.CreateBackup(ctx, in)
 }
 
 func Register(server grpc.ServiceRegistrar) {

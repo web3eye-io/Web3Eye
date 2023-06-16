@@ -8,6 +8,7 @@ package snapshot
 
 import (
 	context "context"
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	snapshot "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -27,6 +28,7 @@ type ManagerClient interface {
 	GetSnapshotOnly(ctx context.Context, in *snapshot.GetSnapshotOnlyRequest, opts ...grpc.CallOption) (*snapshot.GetSnapshotOnlyResponse, error)
 	GetSnapshots(ctx context.Context, in *snapshot.GetSnapshotsRequest, opts ...grpc.CallOption) (*snapshot.GetSnapshotsResponse, error)
 	CountSnapshots(ctx context.Context, in *snapshot.CountSnapshotsRequest, opts ...grpc.CallOption) (*snapshot.CountSnapshotsResponse, error)
+	CreateBackup(ctx context.Context, in *v1.CreateBackupRequest, opts ...grpc.CallOption) (*v1.CreateBackupResponse, error)
 }
 
 type managerClient struct {
@@ -73,6 +75,15 @@ func (c *managerClient) CountSnapshots(ctx context.Context, in *snapshot.CountSn
 	return out, nil
 }
 
+func (c *managerClient) CreateBackup(ctx context.Context, in *v1.CreateBackupRequest, opts ...grpc.CallOption) (*v1.CreateBackupResponse, error) {
+	out := new(v1.CreateBackupResponse)
+	err := c.cc.Invoke(ctx, "/entrance.v1.snapshot.Manager/CreateBackup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ManagerServer is the server API for Manager service.
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
@@ -81,6 +92,7 @@ type ManagerServer interface {
 	GetSnapshotOnly(context.Context, *snapshot.GetSnapshotOnlyRequest) (*snapshot.GetSnapshotOnlyResponse, error)
 	GetSnapshots(context.Context, *snapshot.GetSnapshotsRequest) (*snapshot.GetSnapshotsResponse, error)
 	CountSnapshots(context.Context, *snapshot.CountSnapshotsRequest) (*snapshot.CountSnapshotsResponse, error)
+	CreateBackup(context.Context, *v1.CreateBackupRequest) (*v1.CreateBackupResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -99,6 +111,9 @@ func (UnimplementedManagerServer) GetSnapshots(context.Context, *snapshot.GetSna
 }
 func (UnimplementedManagerServer) CountSnapshots(context.Context, *snapshot.CountSnapshotsRequest) (*snapshot.CountSnapshotsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountSnapshots not implemented")
+}
+func (UnimplementedManagerServer) CreateBackup(context.Context, *v1.CreateBackupRequest) (*v1.CreateBackupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBackup not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -185,6 +200,24 @@ func _Manager_CountSnapshots_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Manager_CreateBackup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.CreateBackupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).CreateBackup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/entrance.v1.snapshot.Manager/CreateBackup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).CreateBackup(ctx, req.(*v1.CreateBackupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -207,6 +240,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CountSnapshots",
 			Handler:    _Manager_CountSnapshots_Handler,
+		},
+		{
+			MethodName: "CreateBackup",
+			Handler:    _Manager_CreateBackup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
