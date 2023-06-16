@@ -3,6 +3,7 @@ package snapshot
 import (
 	"context"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	dealerclient "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	client "github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/snapshot"
 
@@ -42,4 +43,8 @@ func (s *Server) CreateBackup(ctx context.Context, in *dealernpool.CreateBackupR
 
 func Register(server grpc.ServiceRegistrar) {
 	entrancernpool.RegisterManagerServer(server, &Server{})
+}
+
+func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return entrancernpool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts)
 }

@@ -24,5 +24,8 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
 		return err
 	}
+	if err := snapshot.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }
