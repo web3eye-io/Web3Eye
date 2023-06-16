@@ -15,7 +15,136 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/count/snapshots": {
+      "post": {
+        "operationId": "Manager_CountSnapshots",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/snapshotCountSnapshotsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/snapshotCountSnapshotsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/snapshot": {
+      "post": {
+        "operationId": "Manager_GetSnapshot",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/snapshot/only": {
+      "post": {
+        "operationId": "Manager_GetSnapshotOnly",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotOnlyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotOnlyRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/snapshots": {
+      "post": {
+        "operationId": "Manager_GetSnapshots",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/snapshotGetSnapshotsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
   "definitions": {
     "protobufAny": {
       "type": "object",
@@ -83,12 +212,28 @@
         }
       }
     },
+    "snapshotCountSnapshotsRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/snapshotConds"
+        }
+      }
+    },
     "snapshotCountSnapshotsResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "snapshotGetSnapshotOnlyRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/snapshotConds"
         }
       }
     },
@@ -100,11 +245,35 @@
         }
       }
     },
+    "snapshotGetSnapshotRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
     "snapshotGetSnapshotResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "$ref": "#/definitions/snapshotSnapshot"
+        }
+      }
+    },
+    "snapshotGetSnapshotsRequest": {
+      "type": "object",
+      "properties": {
+        "Conds": {
+          "$ref": "#/definitions/snapshotConds"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
