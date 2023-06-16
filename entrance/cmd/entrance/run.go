@@ -74,6 +74,7 @@ func runHTTPServer(httpPort, grpcPort int) {
 		log.Fatalf("Fail to register gRPC gateway service endpoint: %v", err)
 	}
 
+	http.Handle("/v1/", mux)
 	servermux.AppServerMux().Handle("/v1/", mux)
 	err = http.ListenAndServe(httpEndpoint, servermux.AppServerMux())
 	if err != nil {
