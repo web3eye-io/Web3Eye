@@ -61,7 +61,7 @@ func GetSnapshot(ctx context.Context, in *nftmetaproto.GetSnapshotRequest) (*nft
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp, nil
 	})
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func GetSnapshotOnly(ctx context.Context, in *nftmetaproto.GetSnapshotOnlyReques
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp, nil
 	})
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func GetSnapshots(ctx context.Context, in *nftmetaproto.GetSnapshotsRequest) (*n
 		if err != nil {
 			return nil, err
 		}
-		return resp.Infos, nil
+		return resp, nil
 	})
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func CountSnapshots(ctx context.Context, in *nftmetaproto.CountSnapshotsRequest)
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp, nil
 	})
 	if err != nil {
 		return nil, err
