@@ -178,19 +178,6 @@
     }
   },
   "definitions": {
-    "dealerv1BackupState": {
-      "type": "string",
-      "enum": [
-        "DefaultBackupState",
-        "BackupStateNone",
-        "BackupStateCreated",
-        "BackupStateProposed",
-        "BackupStateAccepted",
-        "BackupStateSuccess",
-        "BackupStateFail"
-      ],
-      "default": "DefaultBackupState"
-    },
     "dealerv1Snapshot": {
       "type": "object",
       "properties": {
@@ -217,7 +204,7 @@
           }
         },
         "BackupState": {
-          "$ref": "#/definitions/dealerv1BackupState"
+          "$ref": "#/definitions/v1BackupState"
         },
         "ProposalCID": {
           "type": "string"
@@ -326,6 +313,19 @@
         }
       }
     },
+    "v1BackupState": {
+      "type": "string",
+      "enum": [
+        "DefaultBackupState",
+        "BackupStateNone",
+        "BackupStateCreated",
+        "BackupStateProposed",
+        "BackupStateAccepted",
+        "BackupStateSuccess",
+        "BackupStateFail"
+      ],
+      "default": "DefaultBackupState"
+    },
     "v1ContentItem": {
       "type": "object",
       "properties": {
@@ -368,19 +368,6 @@
           "$ref": "#/definitions/dealerv1Snapshot"
         }
       }
-    },
-    "v1snapshotBackupState": {
-      "type": "string",
-      "enum": [
-        "DefaultBackupState",
-        "BackupStateNone",
-        "BackupStateCreated",
-        "BackupStateProposed",
-        "BackupStateAccepted",
-        "BackupStateSuccess",
-        "BackupStateFail"
-      ],
-      "default": "DefaultBackupState"
     },
     "v1snapshotGetSnapshotsRequest": {
       "type": "object",
@@ -433,7 +420,7 @@
           "type": "string"
         },
         "BackupState": {
-          "$ref": "#/definitions/v1snapshotBackupState"
+          "type": "string"
         }
       }
     },

@@ -21,23 +21,13 @@ service Manager {
   rpc DeleteSnapshot(DeleteSnapshotRequest) returns (DeleteSnapshotResponse) {}
 }
 
-enum BackupState {
-  DefaultBackupState  = 0;
-  BackupStateNone     = 10;
-  BackupStateCreated  = 20;
-  BackupStateProposed = 30;
-  BackupStateAccepted = 40;
-  BackupStateSuccess  = 50;
-  BackupStateFail     = 60;
-}
-
 message Snapshot {
   string ID            = 10;
   uint64 Index         = 20;
   string SnapshotCommP = 30;
   string SnapshotRoot  = 40;
   string SnapshotURI   = 50;
-  BackupState BackupState = 60;
+  string BackupState = 60;
 }
 
 message Conds {
@@ -51,11 +41,12 @@ message Conds {
 }
 
 message SnapshotRequest {
-    uint64 Index         = 10;
-    string SnapshotCommP = 20;
-    string SnapshotRoot  = 30;
-    string SnapshotURI   = 40;
-    BackupState BackupState = 50;
+    string ID            = 10;
+    uint64 Index         = 20;
+    string SnapshotCommP = 30;
+    string SnapshotRoot  = 40;
+    string SnapshotURI   = 50;
+    string BackupState   = 60;
   }
 
 message CreateSnapshotRequest { SnapshotRequest Info = 10; }
@@ -91,7 +82,7 @@ message UpdateSnapshotRequest {
     optional string SnapshotCommP = 30;
     optional string SnapshotRoot  = 40;
     optional string SnapshotURI   = 50;
-    optional BackupState BackupState = 60;
+    optional string BackupState = 60;
  }
 
 message UpdateSnapshotResponse { Snapshot Info = 10; }
