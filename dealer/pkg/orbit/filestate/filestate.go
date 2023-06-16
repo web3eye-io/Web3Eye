@@ -2,23 +2,14 @@ package filestate
 
 import (
 	"context"
+	"encoding/binary"
 	"fmt"
 
 	orbitdb "berty.tech/go-orbit-db"
 	orbitiface "berty.tech/go-orbit-db/iface"
-)
 
-const (
-	Invalid           = "Invalid"
-	Waiting           = "Waiting"
-	IpfsUploading     = "IpfsUploading"
-	FilecoinUploading = "FilecoinUploading"
-	FilecoinSealing   = "FilecoinSealing"
-	BackupSuccess     = "BackupSuccess"
-	BackupFail        = "BackupFail"
+	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 )
-
-type FileState string
 
 type FileStateKV struct {
 	kvFileState orbitdb.KeyValueStore
@@ -52,7 +43,7 @@ func (kv *FileStateKV) SetFileState(ctx context.Context, chainType, uid, chainId
 		return fmt.Errorf("invalid kvstore")
 	}
 
-	key := fmt.Sprintf("%v:%v:%v", chainType, uid, chainId)
+	key := fmt.Sprintf("%v:%v:%v:state", chainType, uid, chainId)
 	if _, err := kv.kvFileState.Put(ctx, key, []byte(state)); err != nil {
 		return err
 	}
@@ -60,18 +51,49 @@ func (kv *FileStateKV) SetFileState(ctx context.Context, chainType, uid, chainId
 	return nil
 }
 
-func (kv *FileStateKV) GetFileState(ctx context.Context, chainType, uid, chainId string) (FileState, error) {
+func (kv *FileStateKV) GetFileState(ctx context.Context, chainType, uid, chainId string) (dealerpb.BackupState, error) {
 	if kv.kvFileState == nil {
-		return Invalid, fmt.Errorf("invalid kvstore")
+		return dealerpb.BackupState_DefaultBackupState, fmt.Errorf("invalid kvstore")
 	}
 
 	key := fmt.Sprintf("%v:%v:%v", chainType, uid, chainId)
 	b, err := kv.kvFileState.Get(ctx, key)
 	if err != nil {
-		return Invalid, err
+		return dealerpb.BackupState_DefaultBackupState, err
 	}
 
-	return FileState(string(b)), nil
+	return dealerpb.BackupState(dealerpb.BackupState_value[string(b)]), nil
+}
+
+func (kv *FileStateKV) SetFileSnapshot(ctx context.Context, chainType, uid, chainId string, index uint64) error {
+	if kv.kvFileState == nil {
+		return fmt.Errorf("invalid kvstore")
+	}
+
+	key := fmt.Sprintf("%v:%v:%v:snapshot", chainType, uid, chainId)
+	b := make([]byte, 8)
+	binary.PutUvarint(b, index)
+
+	if _, err := kv.kvFileState.Put(ctx, key, b); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (kv *FileStateKV) GetFileSnapshot(ctx context.Context, chainType, uid, chainId string) (uint64, error) {
+	if kv.kvFileState == nil {
+		return 0, fmt.Errorf("invalid kvstore")
+	}
+
+	key := fmt.Sprintf("%v:%v:%v", chainType, uid, chainId)
+	b, err := kv.kvFileState.Get(ctx, key)
+	if err != nil {
+		return 0, err
+	}
+	index, _ := binary.Uvarint(b)
+
+	return index, nil
 }
 
 func (kv *FileStateKV) Close() {
