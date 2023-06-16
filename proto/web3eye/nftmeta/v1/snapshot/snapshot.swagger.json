@@ -177,7 +177,7 @@
         }
       }
     },
-    "snapshotSnapshotRequest": {
+    "snapshotSnapshotReq": {
       "type": "object",
       "properties": {
         "ID": {

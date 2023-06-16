@@ -25,11 +25,9 @@ func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error
 			return nil, err
 		}
 	}
-	return &dealerpb.Snapshot{
-		Index:         index,
-		SnapshotCommP: h.SnapshotCommP,
-		SnapshotRoot:  h.SnapshotRoot,
-		SnapshotURI:   h.SnapshotURI,
-		Items:         h.Items,
-	}, nil
+	snapshot, err := orbit.Snapshot().GetSnapshot(ctx, index)
+	if err != nil {
+		return nil, err
+	}
+	return snapshot, nil
 }
