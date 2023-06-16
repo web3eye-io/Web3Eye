@@ -63,6 +63,11 @@ func (b *backup) checkAndUpdateOne(ctx context.Context, index uint64) error {
 	case storagemarket.StorageDealCheckForAcceptance:
 	case storagemarket.StorageDealFundsReserved:
 	case storagemarket.StorageDealActive:
+		if _state.DealID > 0 {
+			if _, err := orbit.Snapshot().UpdateSnapshotDealID(ctx, index, uint64(_state.DealID)); err != nil {
+				return err
+			}
+		}
 		if err := b.updateSnapshotState(ctx, index, dealerpb.BackupState_BackupStateSuccess); err != nil {
 			return err
 		}
