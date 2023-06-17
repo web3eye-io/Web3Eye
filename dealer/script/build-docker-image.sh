@@ -69,7 +69,7 @@ config_d=$ROOT_FOLDER/cmd/$service_name
 mkdir -p $output_d
 cp $config_d/Dockerfile $output_d
 cp $config_d/*.yaml $output_d || echo "have no yaml files"
-cp $service_source $output_d
+cp $service_source $OUTPUT/$PLATFORM/lotus $OUTPUT/$PLATFORM/ipfs $output_d
 cd $output_d
 
 user=$(whoami)
