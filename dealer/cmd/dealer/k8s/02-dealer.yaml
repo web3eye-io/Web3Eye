@@ -48,8 +48,8 @@ spec:
   # clusterIP: None
   ports:
     - name: http
-      port: 50490
-      targetPort: 50490
+      port: 30160
+      targetPort: 30160
     - name: grpc
-      port: 50491
-      targetPort: 50491
+      port: 30161
+      targetPort: 30161

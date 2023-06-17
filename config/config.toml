@@ -46,20 +46,20 @@ http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"
 
-[retriever]
-ip="retriever"
-ipfs-repo="/home/test/.ipfs-retr"
-orbit-repo="/home/test/.orbit"
-http-port=30170
-grpc-port=30171
-log-file="/var/log/retriever.log"
-
 [gen-car]
 ip="gen-car"
 http-port=30170
 grpc-port=30171
 data-dir="/tmp/gencar_data"
 log-file="/var/log/gen-car.log"
+
+[retriever]
+ip="retriever"
+ipfs-repo="/home/test/.ipfs-retr"
+orbit-repo="/home/test/.orbit"
+http-port=30180
+grpc-port=30181
+log-file="/var/log/retriever.log"
 
 [image-converter]
 address="http://image-converter:8080"
