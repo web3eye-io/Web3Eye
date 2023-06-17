@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "web3eye/gencar/v1/gencar.proto",
+    "title": "web3eye/entrance/v1/retriever/retriever.proto",
     "version": "version not set"
   },
   "tags": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/report/file": {
+    "/v1/start/retrieve": {
       "post": {
-        "operationId": "Manager_ReportFile",
+        "operationId": "Manager_StartRetrieve",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ReportFileResponse"
+              "$ref": "#/definitions/retrieverStartRetrieveResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1ReportFileRequest"
+              "$ref": "#/definitions/retrieverStartRetrieveRequest"
             }
           }
         ],
@@ -48,14 +48,14 @@
         ]
       }
     },
-    "/v1/version": {
+    "/v1/stat/retrieve": {
       "post": {
-        "operationId": "Manager_Version",
+        "operationId": "Manager_StatRetrieve",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/web3eyeVersionResponse"
+              "$ref": "#/definitions/retrieverStatRetrieveResponse"
             }
           },
           "default": {
@@ -71,7 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/retrieverStatRetrieveRequest"
             }
           }
         ],
@@ -91,6 +91,87 @@
       },
       "additionalProperties": {}
     },
+    "retrieverRetrieve": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "RetrieveState": {
+          "type": "string"
+        },
+        "ProposalID": {
+          "type": "string"
+        },
+        "DealID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BackupPayloadCID": {
+          "type": "string"
+        }
+      },
+      "title": "will be replaced with retriever proto not in entrance"
+    },
+    "retrieverStartRetrieveRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        }
+      }
+    },
+    "retrieverStartRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/retrieverRetrieve"
+        }
+      }
+    },
+    "retrieverStatRetrieveRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        }
+      }
+    },
+    "retrieverStatRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/retrieverRetrieve"
+        }
+      }
+    },
     "rpcStatus": {
       "type": "object",
       "properties": {
@@ -106,36 +187,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "v1ReportFileRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "S3Key": {
-          "type": "string"
-        }
-      }
-    },
-    "v1ReportFileResponse": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "S3Key": {
-          "type": "string"
-        }
-      }
-    },
-    "web3eyeVersionResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "string"
         }
       }
     }
