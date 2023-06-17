@@ -1,0 +1,94 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/retriever/v1/retriever.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Retrieve": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "RetrieveState": {
+          "type": "string"
+        },
+        "ProposalID": {
+          "type": "string"
+        },
+        "DealID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BackupPayloadCID": {
+          "type": "string"
+        }
+      }
+    },
+    "v1StartRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/v1Retrieve"
+        }
+      }
+    },
+    "v1StatRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/v1Retrieve"
+        }
+      }
+    }
+  }
+}
