@@ -1,0 +1,3 @@
+resources:
+  - 01-retriever.viper.yaml
+  - 02-retriever.yaml
