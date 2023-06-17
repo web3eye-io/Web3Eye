@@ -18,6 +18,7 @@ const (
 )
 
 var (
+	// TODO:should check the chainID of erver endpoints,if them is not equal,panic
 	CurrentChainID *string
 )
 

@@ -84,7 +84,7 @@ token-image-bucket="token-image-bucket"
 
 
 [eth]
-wallets="https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0"
+wallets="https://goerli.infura.io/v3/ae1e603c17bd4a48818251f52a7970a8"
 
 [ipfs]
 http-gateway="https://ipfs.io/"
