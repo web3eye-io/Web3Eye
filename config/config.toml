@@ -40,8 +40,8 @@ log-file="/var/log/entrance.log"
 
 [dealer]
 ip="dealer"
-ipfs-repo="/home/test/.ipfs"
-orbit-repo="/home/test/.orbit"
+ipfs-repo="/root/.ipfs"
+orbit-repo="/root/.orbit"
 http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"

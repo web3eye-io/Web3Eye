@@ -19,17 +19,30 @@ func (s *Server) StartRetrieve(ctx context.Context, in *entrancernpool.StartRetr
 	// client.UseCloudProxyCC()
 	// return client.StartRetrieve(ctx, in)
 	return &entrancernpool.StartRetrieveResponse{
-		Info: &entrancernpool.Retrieve{RetrieveState: "Start"},
+		Info: &entrancernpool.Retrieve{
+			ChainType:     in.ChainType,
+			Contract:      in.Contract,
+			ChainID:       in.ChainID,
+			TokenID:       in.TokenID,
+			RetrieveState: "Start",
+		},
 	}, nil
 }
 
 func (s *Server) StatRetrieve(ctx context.Context, in *entrancernpool.StatRetrieveRequest) (*entrancernpool.StatRetrieveResponse, error) {
 	// client.UseCloudProxyCC()
 	// return client.StatRetrieve(ctx, in)
+	retrieveState := "Start"
 	if rand.Int31n(2) == 0 {
-		return &entrancernpool.StatRetrieveResponse{}, nil
+		retrieveState = ""
 	}
-	return &entrancernpool.StatRetrieveResponse{Info: &entrancernpool.Retrieve{RetrieveState: "Start"}}, nil
+	return &entrancernpool.StatRetrieveResponse{Info: &entrancernpool.Retrieve{
+		ChainType:     in.ChainType,
+		Contract:      in.Contract,
+		ChainID:       in.ChainID,
+		TokenID:       in.TokenID,
+		RetrieveState: retrieveState,
+	}}, nil
 
 }
 
