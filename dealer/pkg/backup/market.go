@@ -28,10 +28,11 @@ var miners = map[uint64]string{
 	1970622: "/ip4/152.32.173.11/tcp/23456/p2p/12D3KooWS26eBREdM959vDNJWyfgwsd38NMegn7KK11R9DY4EU4p",
 	1970630: "/ip4/123.58.203.78/tcp/23456/p2p/12D3KooWHGHJiH1YuvW9BonV8YZLDpnen3JR4zNQMcMJ3gRRptrq",
 	7824:    "/ip4/172.19.16.118/tcp/23456/p2p/12D3KooWQeujGARoW6BsLWjML3KwAZEHr9n8fVKAk8yzGNw2FDdK",
-	5316:    "/ip4/172.19.16.117/tcp/3456/p2p/12D3KooWMJxYN71gbbv3MSKnwatUGaUq9WoAFgTC7PUycmeJa9TC", // Calibnet miner
+	5316:    "/ip4/172.19.16.117/tcp/3456/p2p/12D3KooWMJxYN71gbbv3MSKnwatUGaUq9WoAFgTC7PUycmeJa9TC",  // Calibnet miner
+	1002:    "/ip4/210.209.69.38/tcp/20801/p2p/12D3KooWM6Yz39SUfqKPNbd2hjowV2Jv8BGAwVDtf9JSB65G2gVF", // Testnet miner
 }
 
-const minerID = 5316
+const minerID = 1002
 
 func init() {
 	minerId, _ = address.NewIDAddress(minerID)
@@ -78,14 +79,17 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		return nil, err
 	}
 
+	start := time.Unix(1686996002, 0)
+	startEpoch := abi.ChainEpoch(1000 + (time.Since(start).Seconds() / 4))
+
 	return &market.DealProposal{
 		PieceCID:             _pieceCid,
 		PieceSize:            _size.Padded(),
 		Client:               clientAddress,
 		Provider:             minerId,
 		Label:                label,
-		StartEpoch:           649148 + 5600,          // TODO
-		EndEpoch:             649148 + 5600 + 518400, // TODO
+		StartEpoch:           startEpoch,          // TODO
+		EndEpoch:             startEpoch + 518400, // TODO
 		StoragePricePerEpoch: big.NewInt(976562),
 		ProviderCollateral:   big.Zero(), // TODO
 		ClientCollateral:     big.Zero(),

@@ -20,7 +20,6 @@ func (b *backup) buildHost(ctx context.Context) error {
 	bootstraps := map[string][]string{
 		"mainnet": []string{
 			"/dns4/bootstrap-0.mainnet.filops.net/tcp/1347/p2p/12D3KooWCVe8MmsEMes2FzgTpt9fXtmCY7wrq91GRiaC8PHSCCBj",
-			"/dns4/bootstrap-0.mainnet.filops.net/tcp/1347/p2p/12D3KooWCVe8MmsEMes2FzgTpt9fXtmCY7wrq91GRiaC8PHSCCBj",
 			"/dns4/bootstrap-1.mainnet.filops.net/tcp/1347/p2p/12D3KooWCwevHg1yLCvktf2nvLu7L9894mcrJR4MsBCcm4syShVc",
 			"/dns4/bootstrap-2.mainnet.filops.net/tcp/1347/p2p/12D3KooWEWVwHGn2yR36gKLozmb4YjDJGerotAPGxmdWZx2nxMC4",
 			"/dns4/bootstrap-3.mainnet.filops.net/tcp/1347/p2p/12D3KooWKhgq8c7NQ9iGjbyK7v7phXvG6492HQfiDaGHLHLQjk7R",
@@ -43,8 +42,11 @@ func (b *backup) buildHost(ctx context.Context) error {
 			"/dns4/bootstrap-2.calibration.fildev.network/tcp/1347/p2p/12D3KooWNRxTHUn8bf7jz1KEUPMc2dMgGfa4f8ZJTsquVSn3vHCG",
 			"/dns4/bootstrap-3.calibration.fildev.network/tcp/1347/p2p/12D3KooWFWUqE9jgXvcKHWieYs9nhyp6NF4ftwLGAHm4sCv73jjK",
 		},
+		"testnet": []string{
+			"/ip4/210.209.69.38/tcp/20802/p2p/12D3KooWJj135pPDfTYiwnJMVYvXALWHKET75td7b7GrJa6qdnHF",
+		},
 	}
-	for _, bootstrap := range bootstraps["calibnet"] {
+	for _, bootstrap := range bootstraps["testnet"] {
 		addr, err := multiaddr.NewMultiaddr(bootstrap)
 		if err != nil {
 			return err

@@ -17,10 +17,10 @@ func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error
 	if err := orbit.Snapshot().SetWaitSnapshot(ctx, h.SnapshotCommP, h.SnapshotRoot, h.SnapshotURI, h.Items); err != nil {
 		return nil, err
 	}
+	index := orbit.Snapshot().WaitSnapshotIndex()
 	if err := orbit.Snapshot().NextWaitSnapshot(ctx); err != nil {
 		return nil, err
 	}
-	index := orbit.Snapshot().WaitSnapshotIndex()
 	snapshot, err := orbit.Snapshot().GetSnapshot(ctx, index)
 	if err != nil {
 		return nil, err
