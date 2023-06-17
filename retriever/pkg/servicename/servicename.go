@@ -1,6 +1,6 @@
 package servicename
 
 const (
-	ServiceName   = "Dealer"
-	ServiceDomain = "dealer.npool.top"
+	ServiceName   = "Retriever"
+	ServiceDomain = "retriever.npool.top"
 )

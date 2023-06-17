@@ -16,9 +16,9 @@ import (
 	"github.com/web3eye-io/Web3Eye/config"
 	"go.uber.org/zap"
 
-	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/backup"
-	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/filestate"
-	"github.com/web3eye-io/Web3Eye/dealer/pkg/orbit/snapshot"
+	"github.com/web3eye-io/Web3Eye/retriever/pkg/orbit/backup"
+	"github.com/web3eye-io/Web3Eye/retriever/pkg/orbit/filestate"
+	"github.com/web3eye-io/Web3Eye/retriever/pkg/orbit/snapshot"
 )
 
 type _orbit struct {
@@ -34,7 +34,7 @@ type _orbit struct {
 var _odb = &_orbit{}
 
 func Initialize(ctx context.Context) error {
-	cfg := config.GetConfig().Dealer
+	cfg := config.GetConfig().Retriever
 	os.Setenv("IPFS_PATH", cfg.IpfsRepo)
 
 	cmd := exec.Command("ipfs", "stats", "repo")

@@ -27,21 +27,21 @@ import (
 var runCmd = &cli.Command{
 	Name:    "run",
 	Aliases: []string{"r"},
-	Usage:   "Run Dealer daemon",
+	Usage:   "Run Retriever daemon",
 	After: func(ctx *cli.Context) error {
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
 		defer oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
-		return logger.Init(logger.DebugLevel, config.GetConfig().Dealer.LogFile)
+		return logger.Init(logger.DebugLevel, config.GetConfig().Retriever.LogFile)
 	},
 	Action: func(ctx *cli.Context) error {
 		if err := orbit.Initialize(ctx.Context); err != nil {
 			return err
 		}
 
-		go runHTTPServer(config.GetConfig().Dealer.HTTPPort, config.GetConfig().Dealer.GrpcPort)
-		go runGRPCServer(config.GetConfig().Dealer.GrpcPort)
+		go runHTTPServer(config.GetConfig().Retriever.HTTPPort, config.GetConfig().Retriever.GrpcPort)
+		go runGRPCServer(config.GetConfig().Retriever.GrpcPort)
 
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
