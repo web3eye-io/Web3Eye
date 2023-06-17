@@ -1,6 +1,8 @@
 from boto3.session import Session
 from pkg.utils import config
 from pkg.utils.singleton import singleton
+import logging
+
 #Client初始化
 
 
@@ -20,7 +22,8 @@ class OSS(object):
                 Body=open(file_path, 'rb').read())
             
             return True
-        except:
+        except Exception as e:
+            logging.error(e.message)
             return False
     
     def put_object_retries(self,file_path:str,key:str,bucket:str,retries:int)->bool:

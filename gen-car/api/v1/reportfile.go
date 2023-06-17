@@ -256,10 +256,11 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 			Items:         items,
 		},
 	)
-	logger.Sugar().Infof("report to dealer for create snapshot: %v, car: %v", snapshot.Info.ID, carFI.CarName)
-
 	if err != nil {
 		return err
+	}
+	if snapshot != nil {
+		logger.Sugar().Infof("report to dealer for create snapshot: %v, car: %v", snapshot.Info.ID, carFI.CarName)
 	}
 
 	return nil
