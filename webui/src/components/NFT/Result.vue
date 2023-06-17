@@ -144,6 +144,9 @@ const retrieve = useRetrieveStore()
 const retrieves = computed(() => retrieve.Retrieves.Retrieves)
 
 const getImageState = computed(() => (row: NFTMeta) => {
+  if (row.ImageURL?.startsWith('img')) {
+    return ImageState.Normal
+  }
   
   if(checkImageExist(row.ImageURL)) {
     return ImageState.Normal
