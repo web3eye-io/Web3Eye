@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	cteth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
@@ -212,7 +213,7 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 		tokenType := string(transfers[i].TokenType)
 		tt[i] = &transferProto.TransferReq{
 			ChainType:   &chainType,
-			ChainID:     &transfers[i].ChainID,
+			ChainID:     eth.CurrentChainID,
 			Contract:    &transfers[i].Contract,
 			TokenType:   &tokenType,
 			TokenID:     &transfers[i].TokenID,
@@ -301,7 +302,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		for i := 0; i < Retries; i++ {
 			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.TokenReq{
 				ChainType:   &transfer.ChainType,
-				ChainID:     &transfer.ChainID,
+				ChainID:     eth.CurrentChainID,
 				Contract:    &transfer.Contract,
 				TokenType:   &transfer.TokenType,
 				TokenID:     &transfer.TokenID,
@@ -376,7 +377,7 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	for i := 0; i < Retries; i++ {
 		_, err = contractNMCli.CreateContract(ctx, &contractProto.ContractReq{
 			ChainType: &transfer.ChainType,
-			ChainID:   &transfer.ChainID,
+			ChainID:   eth.CurrentChainID,
 			Address:   &transfer.Contract,
 			Name:      &contractMeta.Name,
 			Symbol:    &contractMeta.Symbol,
