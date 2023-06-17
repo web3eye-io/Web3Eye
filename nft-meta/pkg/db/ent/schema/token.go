@@ -26,7 +26,7 @@ func (Token) Fields() []ent.Field {
 			Default(uuid.New).
 			Unique(),
 		field.String("chain_type"),
-		field.Int32("chain_id"),
+		field.String("chain_id"),
 		field.String("contract"),
 		field.String("token_type"),
 		field.String("token_id"),
@@ -49,6 +49,10 @@ func (Token) Fields() []ent.Field {
 		field.String("vector_state").
 			Optional().Default(npool.ConvertState_Default.String()),
 		field.Text("remark").
+			Optional(),
+		field.Text("ipfs_image_url").
+			Optional(),
+		field.Text("image_snapshot_id").
 			Optional(),
 	}
 }

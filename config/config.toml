@@ -5,6 +5,8 @@ ip="nft-meta"
 http-port=30100
 grpc-port=30101
 log-file="/var/log/nft-meta.log"
+collection-name="nft_info_images"
+description="this collection for nft-meta"
 
 [block-etl]
 ip="block-etl"
@@ -36,6 +38,29 @@ http-port=30150
 grpc-port=30151
 log-file="/var/log/entrance.log"
 
+[dealer]
+ip="dealer"
+ipfs-repo="/home/test/.ipfs"
+orbit-repo="/home/test/.orbit"
+http-port=30160
+grpc-port=30161
+log-file="/var/log/dealer.log"
+
+[retriever]
+ip="retriever"
+ipfs-repo="/home/test/.ipfs-retr"
+orbit-repo="/home/test/.orbit"
+http-port=30170
+grpc-port=30171
+log-file="/var/log/retriever.log"
+
+[gen-car]
+ip="gen-car"
+http-port=30170
+grpc-port=30171
+data-dir="/tmp/gencar_data"
+log-file="/var/log/gen-car.log"
+
 [image-converter]
 address="http://image-converter:8080"
 task-input-topic="image-converter-input"
@@ -58,8 +83,16 @@ address="milvus:19530"
 [kafka]
 bootstrap-servers="kafka-headless:9092"
 
+[minio]
+address="http://web3eye-minio:9000"
+access-key="YacNyvYLuQ1J3mMaCvMy"
+secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
+region="default"
+token-image-bucket="token-image-bucket"
+
+
 [eth]
-wallets="https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0"
+wallets="https://goerli.infura.io/v3/ae1e603c17bd4a48818251f52a7970a8"
 
 [ipfs]
 http-gateway="https://ipfs.io/"

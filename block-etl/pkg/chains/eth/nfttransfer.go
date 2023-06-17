@@ -10,6 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	cteth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
 
 const (
@@ -27,10 +28,10 @@ const (
 // eventHash represents an event keccak256 hash
 type eventHash string
 type TokenTransfer struct {
-	ChainType   cteth.ChainType
-	ChainID     int32
+	ChainType   basetype.ChainType
+	ChainID     string
 	Contract    string
-	TokenType   cteth.TokenType
+	TokenType   basetype.TokenType
 	TokenID     string
 	From        string
 	To          string
@@ -59,12 +60,13 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			result = append(result, &TokenTransfer{
 				From:        pLog.Topics[1].Hex(),
 				To:          pLog.Topics[2].Hex(),
-				ChainType:   cteth.ChainTypeEthereumMain,
+				ChainType:   basetype.ChainType_Ethereum,
+				ChainID:     *cteth.CurrentChainID,
 				Contract:    pLog.Address.Hex(),
 				TokenID:     pLog.Topics[3].Big().String(),
 				BlockNumber: pLog.BlockNumber,
 				Amount:      1,
-				TokenType:   cteth.TokenTypeERC721,
+				TokenType:   basetype.TokenType_ERC721,
 				TxHash:      pLog.TxHash.Hex(),
 				BlockHash:   pLog.BlockHash.Hex(),
 			})
@@ -90,12 +92,12 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			result = append(result, &TokenTransfer{
 				From:        pLog.Topics[2].Hex(),
 				To:          pLog.Topics[3].Hex(),
-				ChainType:   cteth.ChainTypeEthereumMain,
+				ChainType:   basetype.ChainType_Ethereum,
 				Contract:    pLog.Address.Hex(),
 				TokenID:     id.String(),
 				Amount:      value.Uint64(),
 				BlockNumber: pLog.BlockNumber,
-				TokenType:   cteth.TokenTypeERC1155,
+				TokenType:   basetype.TokenType_ERC1155,
 				TxHash:      pLog.TxHash.Hex(),
 				BlockHash:   pLog.BlockHash.Hex(),
 			})
@@ -124,12 +126,12 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 				result = append(result, &TokenTransfer{
 					From:        pLog.Topics[2].Hex(),
 					To:          pLog.Topics[3].Hex(),
-					ChainType:   cteth.ChainTypeEthereumMain,
+					ChainType:   basetype.ChainType_Ethereum,
 					Contract:    pLog.Address.Hex(),
 					TokenID:     ids[j].String(),
 					Amount:      values[j].Uint64(),
 					BlockNumber: pLog.BlockNumber,
-					TokenType:   cteth.TokenTypeERC1155,
+					TokenType:   basetype.TokenType_ERC1155,
 					TxHash:      pLog.TxHash.Hex(),
 					BlockHash:   pLog.BlockHash.Hex(),
 				})
@@ -159,10 +161,10 @@ func TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*TokenTransf
 }
 
 type Token struct {
-	ChainType cteth.ChainType
+	ChainType basetype.ChainType
 	ChainID   int32
 	Contract  string
-	TokenType cteth.TokenType
+	TokenType basetype.TokenType
 	TokenID   string
 	TokenURI  string
 	Owner     string

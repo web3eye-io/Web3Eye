@@ -90,15 +90,8 @@ func (cu *ContractUpdate) SetChainType(s string) *ContractUpdate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (cu *ContractUpdate) SetChainID(i int32) *ContractUpdate {
-	cu.mutation.ResetChainID()
-	cu.mutation.SetChainID(i)
-	return cu
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (cu *ContractUpdate) AddChainID(i int32) *ContractUpdate {
-	cu.mutation.AddChainID(i)
+func (cu *ContractUpdate) SetChainID(s string) *ContractUpdate {
+	cu.mutation.SetChainID(s)
 	return cu
 }
 
@@ -463,14 +456,7 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := cu.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: contract.FieldChainID,
-		})
-	}
-	if value, ok := cu.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: contract.FieldChainID,
 		})
@@ -710,15 +696,8 @@ func (cuo *ContractUpdateOne) SetChainType(s string) *ContractUpdateOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (cuo *ContractUpdateOne) SetChainID(i int32) *ContractUpdateOne {
-	cuo.mutation.ResetChainID()
-	cuo.mutation.SetChainID(i)
-	return cuo
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (cuo *ContractUpdateOne) AddChainID(i int32) *ContractUpdateOne {
-	cuo.mutation.AddChainID(i)
+func (cuo *ContractUpdateOne) SetChainID(s string) *ContractUpdateOne {
+	cuo.mutation.SetChainID(s)
 	return cuo
 }
 
@@ -1113,14 +1092,7 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 	}
 	if value, ok := cuo.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: contract.FieldChainID,
-		})
-	}
-	if value, ok := cuo.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: contract.FieldChainID,
 		})

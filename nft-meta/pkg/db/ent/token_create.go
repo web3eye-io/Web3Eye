@@ -72,8 +72,8 @@ func (tc *TokenCreate) SetChainType(s string) *TokenCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tc *TokenCreate) SetChainID(i int32) *TokenCreate {
-	tc.mutation.SetChainID(i)
+func (tc *TokenCreate) SetChainID(s string) *TokenCreate {
+	tc.mutation.SetChainID(s)
 	return tc
 }
 
@@ -231,6 +231,34 @@ func (tc *TokenCreate) SetRemark(s string) *TokenCreate {
 func (tc *TokenCreate) SetNillableRemark(s *string) *TokenCreate {
 	if s != nil {
 		tc.SetRemark(*s)
+	}
+	return tc
+}
+
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tc *TokenCreate) SetIpfsImageURL(s string) *TokenCreate {
+	tc.mutation.SetIpfsImageURL(s)
+	return tc
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableIpfsImageURL(s *string) *TokenCreate {
+	if s != nil {
+		tc.SetIpfsImageURL(*s)
+	}
+	return tc
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (tc *TokenCreate) SetImageSnapshotID(s string) *TokenCreate {
+	tc.mutation.SetImageSnapshotID(s)
+	return tc
+}
+
+// SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableImageSnapshotID(s *string) *TokenCreate {
+	if s != nil {
+		tc.SetImageSnapshotID(*s)
 	}
 	return tc
 }
@@ -460,7 +488,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})
@@ -570,6 +598,22 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 		})
 		_node.Remark = value
 	}
+	if value, ok := tc.mutation.IpfsImageURL(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+		_node.IpfsImageURL = value
+	}
+	if value, ok := tc.mutation.ImageSnapshotID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldImageSnapshotID,
+		})
+		_node.ImageSnapshotID = value
+	}
 	return _node, _spec
 }
 
@@ -589,7 +633,6 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tc *TokenCreate) OnConflict(opts ...sql.ConflictOption) *TokenUpsertOne {
 	tc.conflict = opts
 	return &TokenUpsertOne{
@@ -603,7 +646,6 @@ func (tc *TokenCreate) OnConflict(opts ...sql.ConflictOption) *TokenUpsertOne {
 //	client.Token.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tc *TokenCreate) OnConflictColumns(columns ...string) *TokenUpsertOne {
 	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
 	return &TokenUpsertOne{
@@ -691,7 +733,7 @@ func (u *TokenUpsert) UpdateChainType() *TokenUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsert) SetChainID(v int32) *TokenUpsert {
+func (u *TokenUpsert) SetChainID(v string) *TokenUpsert {
 	u.Set(token.FieldChainID, v)
 	return u
 }
@@ -699,12 +741,6 @@ func (u *TokenUpsert) SetChainID(v int32) *TokenUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *TokenUpsert) UpdateChainID() *TokenUpsert {
 	u.SetExcluded(token.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsert) AddChainID(v int32) *TokenUpsert {
-	u.Add(token.FieldChainID, v)
 	return u
 }
 
@@ -930,6 +966,42 @@ func (u *TokenUpsert) ClearRemark() *TokenUpsert {
 	return u
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsert) SetIpfsImageURL(v string) *TokenUpsert {
+	u.Set(token.FieldIpfsImageURL, v)
+	return u
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateIpfsImageURL() *TokenUpsert {
+	u.SetExcluded(token.FieldIpfsImageURL)
+	return u
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsert) ClearIpfsImageURL() *TokenUpsert {
+	u.SetNull(token.FieldIpfsImageURL)
+	return u
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (u *TokenUpsert) SetImageSnapshotID(v string) *TokenUpsert {
+	u.Set(token.FieldImageSnapshotID, v)
+	return u
+}
+
+// UpdateImageSnapshotID sets the "image_snapshot_id" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateImageSnapshotID() *TokenUpsert {
+	u.SetExcluded(token.FieldImageSnapshotID)
+	return u
+}
+
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (u *TokenUpsert) ClearImageSnapshotID() *TokenUpsert {
+	u.SetNull(token.FieldImageSnapshotID)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -941,7 +1013,6 @@ func (u *TokenUpsert) ClearRemark() *TokenUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TokenUpsertOne) UpdateNewValues() *TokenUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -955,10 +1026,9 @@ func (u *TokenUpsertOne) UpdateNewValues() *TokenUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Token.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Token.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *TokenUpsertOne) Ignore() *TokenUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1058,16 +1128,9 @@ func (u *TokenUpsertOne) UpdateChainType() *TokenUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsertOne) SetChainID(v int32) *TokenUpsertOne {
+func (u *TokenUpsertOne) SetChainID(v string) *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsertOne) AddChainID(v int32) *TokenUpsertOne {
-	return u.Update(func(s *TokenUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1337,6 +1400,48 @@ func (u *TokenUpsertOne) ClearRemark() *TokenUpsertOne {
 	})
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsertOne) SetIpfsImageURL(v string) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetIpfsImageURL(v)
+	})
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateIpfsImageURL() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateIpfsImageURL()
+	})
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsertOne) ClearIpfsImageURL() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearIpfsImageURL()
+	})
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (u *TokenUpsertOne) SetImageSnapshotID(v string) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetImageSnapshotID(v)
+	})
+}
+
+// UpdateImageSnapshotID sets the "image_snapshot_id" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateImageSnapshotID() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateImageSnapshotID()
+	})
+}
+
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (u *TokenUpsertOne) ClearImageSnapshotID() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearImageSnapshotID()
+	})
+}
+
 // Exec executes the query.
 func (u *TokenUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1472,7 +1577,6 @@ func (tcb *TokenCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tcb *TokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *TokenUpsertBulk {
 	tcb.conflict = opts
 	return &TokenUpsertBulk{
@@ -1486,7 +1590,6 @@ func (tcb *TokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *TokenUpsertB
 //	client.Token.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tcb *TokenCreateBulk) OnConflictColumns(columns ...string) *TokenUpsertBulk {
 	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
 	return &TokenUpsertBulk{
@@ -1511,7 +1614,6 @@ type TokenUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TokenUpsertBulk) UpdateNewValues() *TokenUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1531,7 +1633,6 @@ func (u *TokenUpsertBulk) UpdateNewValues() *TokenUpsertBulk {
 //	client.Token.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *TokenUpsertBulk) Ignore() *TokenUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1631,16 +1732,9 @@ func (u *TokenUpsertBulk) UpdateChainType() *TokenUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TokenUpsertBulk) SetChainID(v int32) *TokenUpsertBulk {
+func (u *TokenUpsertBulk) SetChainID(v string) *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TokenUpsertBulk) AddChainID(v int32) *TokenUpsertBulk {
-	return u.Update(func(s *TokenUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1907,6 +2001,48 @@ func (u *TokenUpsertBulk) UpdateRemark() *TokenUpsertBulk {
 func (u *TokenUpsertBulk) ClearRemark() *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.ClearRemark()
+	})
+}
+
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (u *TokenUpsertBulk) SetIpfsImageURL(v string) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetIpfsImageURL(v)
+	})
+}
+
+// UpdateIpfsImageURL sets the "ipfs_image_url" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateIpfsImageURL() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateIpfsImageURL()
+	})
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (u *TokenUpsertBulk) ClearIpfsImageURL() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearIpfsImageURL()
+	})
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (u *TokenUpsertBulk) SetImageSnapshotID(v string) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetImageSnapshotID(v)
+	})
+}
+
+// UpdateImageSnapshotID sets the "image_snapshot_id" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateImageSnapshotID() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateImageSnapshotID()
+	})
+}
+
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (u *TokenUpsertBulk) ClearImageSnapshotID() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearImageSnapshotID()
 	})
 }
 

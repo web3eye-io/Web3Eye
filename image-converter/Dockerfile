@@ -1,4 +1,4 @@
-FROM coastlinesss/image-converter-base:0.0.1
+FROM coastlinesss/image-converter-base:0.0.2
 
 COPY ./ /code
 WORKDIR /code

@@ -32,6 +32,15 @@ spec:
           configMap:
             name: entrance-config
 ---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-entrance-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api/entrance
+---
 apiVersion: v1
 kind: Service
 metadata:

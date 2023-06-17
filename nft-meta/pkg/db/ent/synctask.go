@@ -25,7 +25,7 @@ type SyncTask struct {
 	// ChainType holds the value of the "chain_type" field.
 	ChainType string `json:"chain_type,omitempty"`
 	// ChainID holds the value of the "chain_id" field.
-	ChainID int32 `json:"chain_id,omitempty"`
+	ChainID string `json:"chain_id,omitempty"`
 	// Start holds the value of the "start" field.
 	Start uint64 `json:"start,omitempty"`
 	// End holds the value of the "end" field.
@@ -47,9 +47,9 @@ func (*SyncTask) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case synctask.FieldCreatedAt, synctask.FieldUpdatedAt, synctask.FieldDeletedAt, synctask.FieldChainID, synctask.FieldStart, synctask.FieldEnd, synctask.FieldCurrent:
+		case synctask.FieldCreatedAt, synctask.FieldUpdatedAt, synctask.FieldDeletedAt, synctask.FieldStart, synctask.FieldEnd, synctask.FieldCurrent:
 			values[i] = new(sql.NullInt64)
-		case synctask.FieldChainType, synctask.FieldTopic, synctask.FieldDescription, synctask.FieldSyncState, synctask.FieldRemark:
+		case synctask.FieldChainType, synctask.FieldChainID, synctask.FieldTopic, synctask.FieldDescription, synctask.FieldSyncState, synctask.FieldRemark:
 			values[i] = new(sql.NullString)
 		case synctask.FieldID:
 			values[i] = new(uuid.UUID)
@@ -99,10 +99,10 @@ func (st *SyncTask) assignValues(columns []string, values []interface{}) error {
 				st.ChainType = value.String
 			}
 		case synctask.FieldChainID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field chain_id", values[i])
 			} else if value.Valid {
-				st.ChainID = int32(value.Int64)
+				st.ChainID = value.String
 			}
 		case synctask.FieldStart:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -187,7 +187,7 @@ func (st *SyncTask) String() string {
 	builder.WriteString(st.ChainType)
 	builder.WriteString(", ")
 	builder.WriteString("chain_id=")
-	builder.WriteString(fmt.Sprintf("%v", st.ChainID))
+	builder.WriteString(st.ChainID)
 	builder.WriteString(", ")
 	builder.WriteString("start=")
 	builder.WriteString(fmt.Sprintf("%v", st.Start))

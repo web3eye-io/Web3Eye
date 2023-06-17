@@ -4,6 +4,8 @@ package nftmeta.v1.transfer;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer";
 import "web3eye/web3eye.proto";
+import "web3eye/basetype/v1/chain.proto";
+
 
 service Manager {
   rpc CreateTransfer(CreateTransferRequest) returns (CreateTransferResponse) {}
@@ -23,8 +25,8 @@ service Manager {
 
 message TransferReq {
   optional string ID = 10;
-  optional string ChainType = 20;
-  optional int32 ChainID = 30;
+  optional chain.ChainType ChainType = 20;
+  optional string ChainID = 30;
   optional string Contract = 40;
   optional string TokenType = 50;
   optional string TokenID = 60;
@@ -40,8 +42,8 @@ message TransferReq {
 
 message Transfer {
   string ID = 10;
-  string ChainType = 20;
-  int32 ChainID = 30;
+  chain.ChainType ChainType = 20;
+  string ChainID = 30;
   string Contract = 40;
   string TokenType = 50;
   string TokenID = 60;
@@ -58,7 +60,7 @@ message Transfer {
 message Conds {
   web3eye.StringVal ID = 10;
   web3eye.StringVal ChainType = 20;
-  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal ChainID = 30;
   web3eye.StringVal Contract = 40;
   web3eye.StringVal TokenType = 50;
   web3eye.StringVal TokenID = 60;

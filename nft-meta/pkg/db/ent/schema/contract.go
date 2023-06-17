@@ -25,7 +25,7 @@ func (Contract) Fields() []ent.Field {
 			Default(uuid.New).
 			Unique(),
 		field.String("chain_type"),
-		field.Int32("chain_id"),
+		field.String("chain_id"),
 		field.String("address"),
 		field.String("name"),
 		field.String("symbol"),

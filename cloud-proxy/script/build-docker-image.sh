@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
     cd $SHELL_FOLDER/../
     pwd
 )
@@ -12,7 +12,7 @@ set -o nounset
 set -o pipefail
 
 PLATFORM=linux/amd64
-OUTPUT=$ROOT_FOLDER/output
+OUTPUT=$PROJECT_FOLDER/output
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
 
@@ -32,7 +32,7 @@ fi
 set -e
 
 service_name=$(
-    cd $ROOT_FOLDER
+    cd $PROJECT_FOLDER
     basename $(pwd)
 )
 
@@ -64,7 +64,7 @@ if [ ! -f $service_source ]; then
 fi
 
 output_d=$OUTPUT/.${service_name}.tmp
-config_d=$ROOT_FOLDER/cmd/$service_name
+config_d=$PROJECT_FOLDER/cmd/$service_name
 
 mkdir -p $output_d
 cp $config_d/Dockerfile $output_d

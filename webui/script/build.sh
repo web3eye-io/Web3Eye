@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
     cd $SHELL_FOLDER/../
     pwd
 )
@@ -12,7 +12,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-cd $ROOT_FOLDER
+cd $PROJECT_FOLDER
 
 if git_status=$(git status --porcelain --untracked=no 2>/dev/null) && [[ -z "${git_status}" ]]; then
     git_tree_state=clean
@@ -52,6 +52,6 @@ if [ ! $rc -eq 0 ]; then
     PATH=/usr/local/bin:$PATH yarn add global quasar-cli@latest
 fi
 set -e
-cd $ROOT_FOLDER
+cd $PROJECT_FOLDER
 PATH=/usr/local/bin:$PATH:./node_modules/@quasar/app/bin yarn install --registry https://registry.npm.taobao.org/
 PATH=/usr/local/bin:$PATH:./node_modules/@quasar/app/bin quasar build

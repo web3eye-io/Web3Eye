@@ -4,7 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/mixin"
@@ -25,15 +26,15 @@ func (SyncTask) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
 			Unique(),
-		field.String("chain_type").Optional().Default(npool.ChainType_Unknown.String()),
-		field.Int32("chain_id"),
+		field.String("chain_type").Optional().Default(basetype.ChainType_ChainUnkonwn.String()),
+		field.String("chain_id"),
 		field.Uint64("start"),
 		field.Uint64("end"),
 		field.Uint64("current"),
 		field.String("topic").Unique(),
 		field.String("description").
 			Optional(),
-		field.String("sync_state").Optional().Default(npool.SyncState_Default.String()),
+		field.String("sync_state").Optional().Default(cttype.SyncState_Default.String()),
 		field.Text("remark").Optional(),
 	}
 }

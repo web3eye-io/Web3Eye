@@ -2,13 +2,19 @@ from fileinput import close
 from typing import Tuple
 from uuid import uuid4
 import urllib3
+import base64
+import hashlib
+import logging
+from svglib.svglib import svg2rlg
+from reportlab.graphics import renderPM
+
 
 typedic = {
     'image/png': "png",
     'image/jpeg': "jpg",
 }
 
-IPFS_HTTP_Gateway = "https://ipfs.io/"
+IPFS_HTTP_Gateway = "https://ipfs.io"
 
 
 def DownloadUrlImg(url) -> Tuple[str, bool]:
@@ -16,13 +22,15 @@ def DownloadUrlImg(url) -> Tuple[str, bool]:
         return DownloadHttpImg(url=url)
     elif url.startswith("ipfs"):
         return DownloadIPFSImg(url=url)
+    elif url.startswith("data:image/svg+xml;base64"):
+        return TransferSVGImg(url=url)
     # just try to download with http
     return DownloadHttpImg(url=url)
 
 
 def DownloadIPFSImg(url) -> Tuple[str, bool]:
     url = url.replace("//", "/")
-    url = url.replace(":", "")
+    url = url.replace(":/", "/")
     url = f"{IPFS_HTTP_Gateway}/{url}"
     return DownloadHttpImg(url=url)
 
@@ -42,7 +50,7 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         if not content_type in typedic.keys():
             return "", False
     except:
-        print(url, " have no Content-Type")
+        logging.error(url, " have no Content-Type")
         return "",False
 
     try:
@@ -50,7 +58,7 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
         if not accept_ranges == "bytes":
             return "", False
     except:
-        print(url, " have no Accept-Ranges")
+        logging.warning( f"{url} have no Accept-Ranges")
     file_path = f"./img/{str(uuid4())}.{typedic[content_type]}"
     file = open(file_path, 'wb')
 
@@ -66,6 +74,26 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
     file.close()
     http.clear()
     return file_path, True
+
+def TransferSVGImg(url)-> Tuple[str,bool]:
+    # generate image file path
+    md5=hashlib.md5()
+    md5.update(bytes(url,"utf-8"))
+    svg_file_path=f"./img/{str(md5.hexdigest())}.svg"
+    jpg_file_path=f"./img/{str(md5.hexdigest())}.jpg"
+
+    encoded = url.replace("data:image/svg+xml;base64,", "")
+    decoded = base64.b64decode(encoded)
+    file = open(svg_file_path, 'wb')
+    file.write(decoded)
+    file.close()
+
+    drawing = svg2rlg(svg_file_path)
+    
+    renderPM.drawToFile(drawing, jpg_file_path, fmt="JPG")
+
+    return jpg_file_path,True
+
 
 
 # url = "https://mirrors.aliyun.com/deepin-cd/20.1/deepin-desktop-community-1010-amd64.iso"

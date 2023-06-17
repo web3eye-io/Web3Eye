@@ -21,6 +21,9 @@ type Config struct {
 	Gateway        Gateway        `toml:"gateway" env:"gateway"`
 	Ranker         Ranker         `toml:"ranker" env:"ranker"`
 	Entrance       Entrance       `toml:"entrance" env:"entrance"`
+	GenCar         GenCar         `toml:"gen-car" env:"gen_car"`
+	Dealer         Dealer         `toml:"dealer" env:"dealer"`
+	Retriever      Retriever      `toml:"retriever" env:"retriever"`
 	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
 	ETH            ETH            `toml:"eth" env:"eth"`
 	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
@@ -28,13 +31,16 @@ type Config struct {
 	Kafka          Kafka          `toml:"kafka" env:"kafka"`
 	Redis          Redis          `toml:"redis" env:"redis"`
 	Milvus         Milvus         `toml:"milvus" env:"milvus"`
+	Minio          Minio          `toml:"minio" env:"minio"`
 }
 
 type NFTMeta struct {
-	IP       string `toml:"ip" env:"ip"`
-	HTTPPort int    `toml:"http-port" env:"http_port"`
-	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogFile  string `toml:"log-file" env:"log_file"`
+	IP             string `toml:"ip" env:"ip"`
+	HTTPPort       int    `toml:"http-port" env:"http_port"`
+	GrpcPort       int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile        string `toml:"log-file" env:"log_file"`
+	CollectionName string `toml:"collection-name" env:"collection_name"`
+	Description    string `toml:"description" env:"description"`
 }
 
 type BlockETL struct {
@@ -71,6 +77,33 @@ type Entrance struct {
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
+
+type GenCar struct {
+	IP       string `toml:"ip" env:"ip"`
+	HTTPPort int    `toml:"http-port" env:"http_port"`
+	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile  string `toml:"log-file" env:"log_file"`
+	DataDir  string `toml:"data-dir" env:"data_dir"`
+}
+
+type Dealer struct {
+	IP        string `toml:"ip" env:"ip"`
+	IpfsRepo  string `toml:"ipfs-repo" env:"ipfs_repo"`
+	OrbitRepo string `toml:"orbit-repo" env:"orbit_repo"`
+	HTTPPort  int    `toml:"http-port" env:"http_port"`
+	GrpcPort  int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile   string `toml:"log-file" env:"log_file"`
+}
+
+type Retriever struct {
+	IP        string `toml:"ip" env:"ip"`
+	IpfsRepo  string `toml:"ipfs-repo" env:"ipfs_repo"`
+	OrbitRepo string `toml:"orbit-repo" env:"orbit_repo"`
+	HTTPPort  int    `toml:"http-port" env:"http_port"`
+	GrpcPort  int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile   string `toml:"log-file" env:"log_file"`
+}
+
 type IamgeConverter struct {
 	Address         string `toml:"address" env:"address"`
 	TaskInputTopic  string `toml:"task-input-topic" env:"task_input_topic"`
@@ -95,6 +128,14 @@ type Kafka struct {
 
 type Milvus struct {
 	Address string `toml:"address" env:"address"`
+}
+
+type Minio struct {
+	Address          string `toml:"address" env:"address"`
+	AccessKey        string `toml:"access-key" env:"access_key"`
+	SecretKey        string `toml:"secret-key" env:"secret_key"`
+	Region           string `toml:"region" env:"region"`
+	TokenImageBucket string `toml:"token-image-bucket" env:"token_image_bucket"`
 }
 
 type ETH struct {
@@ -171,7 +212,7 @@ func init() {
 	}
 	err = DetectEnv(config)
 	if err != nil {
-		fmt.Printf("environment variable parse failed， %v", err)
+		fmt.Printf("environment variable parse failed, %v", err)
 	}
 }
 

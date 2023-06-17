@@ -25,7 +25,7 @@ type Contract struct {
 	// ChainType holds the value of the "chain_type" field.
 	ChainType string `json:"chain_type,omitempty"`
 	// ChainID holds the value of the "chain_id" field.
-	ChainID int32 `json:"chain_id,omitempty"`
+	ChainID string `json:"chain_id,omitempty"`
 	// Address holds the value of the "address" field.
 	Address string `json:"address,omitempty"`
 	// Name holds the value of the "name" field.
@@ -57,9 +57,9 @@ func (*Contract) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case contract.FieldCreatedAt, contract.FieldUpdatedAt, contract.FieldDeletedAt, contract.FieldChainID, contract.FieldBlockNum, contract.FieldTxTime:
+		case contract.FieldCreatedAt, contract.FieldUpdatedAt, contract.FieldDeletedAt, contract.FieldBlockNum, contract.FieldTxTime:
 			values[i] = new(sql.NullInt64)
-		case contract.FieldChainType, contract.FieldAddress, contract.FieldName, contract.FieldSymbol, contract.FieldCreator, contract.FieldTxHash, contract.FieldProfileURL, contract.FieldBaseURL, contract.FieldBannerURL, contract.FieldDescription, contract.FieldRemark:
+		case contract.FieldChainType, contract.FieldChainID, contract.FieldAddress, contract.FieldName, contract.FieldSymbol, contract.FieldCreator, contract.FieldTxHash, contract.FieldProfileURL, contract.FieldBaseURL, contract.FieldBannerURL, contract.FieldDescription, contract.FieldRemark:
 			values[i] = new(sql.NullString)
 		case contract.FieldID:
 			values[i] = new(uuid.UUID)
@@ -109,10 +109,10 @@ func (c *Contract) assignValues(columns []string, values []interface{}) error {
 				c.ChainType = value.String
 			}
 		case contract.FieldChainID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field chain_id", values[i])
 			} else if value.Valid {
-				c.ChainID = int32(value.Int64)
+				c.ChainID = value.String
 			}
 		case contract.FieldAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -227,7 +227,7 @@ func (c *Contract) String() string {
 	builder.WriteString(c.ChainType)
 	builder.WriteString(", ")
 	builder.WriteString("chain_id=")
-	builder.WriteString(fmt.Sprintf("%v", c.ChainID))
+	builder.WriteString(c.ChainID)
 	builder.WriteString(", ")
 	builder.WriteString("address=")
 	builder.WriteString(c.Address)

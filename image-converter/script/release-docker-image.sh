@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
   cd "$(dirname "$0")"
   pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
   cd $SHELL_FOLDER/../
   pwd
 )
@@ -17,7 +17,7 @@ if git_status=$(git status --porcelain --untracked=no 2>/dev/null) && [[ -z "${g
 fi
 
 service_name=$(
-  cd $ROOT_FOLDER
+  cd $PROJECT_FOLDER
   basename $(pwd)
 )
 

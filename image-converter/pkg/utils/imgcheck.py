@@ -7,3 +7,6 @@ def CheckImg(path):
         image = io.imread(path)
         image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGRA)
         cv2.imencode('.png', image)[1].tofile(path)
+
+def IsIPFS(url:str)->bool:
+    return (url.startswith("ipfs://") | url.startswith("https://ipfs.io/ipfs/"))

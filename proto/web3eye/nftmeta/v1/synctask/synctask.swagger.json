@@ -306,14 +306,13 @@
     }
   },
   "definitions": {
-    "cttypeChainType": {
+    "chainChainType": {
       "type": "string",
       "enum": [
-        "Unknown",
-        "Ethereum",
-        "Solana"
+        "ChainUnkonwn",
+        "Ethereum"
       ],
-      "default": "Unknown"
+      "default": "ChainUnkonwn"
     },
     "cttypeSyncState": {
       "type": "string",
@@ -321,7 +320,7 @@
         "Default",
         "Start",
         "Pause",
-        "Finsh",
+        "Finish",
         "Failed"
       ],
       "default": "Default"
@@ -363,7 +362,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainID": {
-          "$ref": "#/definitions/web3eyeInt32Val"
+          "$ref": "#/definitions/web3eyeStringVal"
         },
         "Start": {
           "$ref": "#/definitions/web3eyeUint64Val"
@@ -542,11 +541,10 @@
           "type": "string"
         },
         "ChainType": {
-          "$ref": "#/definitions/cttypeChainType"
+          "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Start": {
           "type": "string",
@@ -581,11 +579,10 @@
           "type": "string"
         },
         "ChainType": {
-          "$ref": "#/definitions/cttypeChainType"
+          "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Start": {
           "type": "string",
@@ -626,18 +623,6 @@
       "properties": {
         "Info": {
           "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "web3eyeInt32Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },

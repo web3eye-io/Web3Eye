@@ -2,6 +2,7 @@ package contract
 
 import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 )
 
@@ -12,7 +13,7 @@ func Ent2Grpc(row *ent.Contract) *npool.Contract {
 
 	return &npool.Contract{
 		ID:          row.ID.String(),
-		ChainType:   row.ChainType,
+		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
 		Address:     row.Address,
 		Name:        row.Name,

@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker image-converter webui
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car image-converter dealer webui
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car dealer
 
 ##@ init project
 init:
@@ -16,11 +16,11 @@ init:
 
 go.mod:
 	go mod init ${GITREPO}
-	go mod tidy -compat=1.17
+	go mod tidy -compat=1.19
 
-deps:
+deps: ./extern/filecoin-ffi/filcrypto.pc
 	go get -d ./...
-	go mod tidy -compat=1.17
+	go mod tidy -compat=1.19
 
 ##@ Verify
 
@@ -36,6 +36,7 @@ verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs ver
 	${REPO_ROOT}/hack/verify.sh
 
 gen-ent:
+	go install entgo.io/ent/cmd/ent@v0.11.2
 	go get entgo.io/ent/cmd/ent@v0.11.2
 	go run entgo.io/ent/cmd/ent generate --feature entql,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
 
@@ -54,10 +55,23 @@ endif
 ifndef TAG
 TAG= latest
 endif
-	
+
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
-build: ## Build project
+./extern/filecoin-ffi/filcrypto.pc:
+	mkdir extern -p
+	cd extern; git clone https://github.com/filecoin-project/filecoin-ffi.git || true
+	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
+	make -C extern/filecoin-ffi .install-filcrypto
+
+./dealer/output/linux/amd64/lotus:
+	curl -sL https://github.com/filecoin-project/lotus/releases/download/v1.23.1-rc2/lotus_v1.23.1-rc2_linux_amd64.tar.gz -o dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64.tar.gz
+	tar xvvf dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64.tar.gz -C dealer/output/linux/amd64/
+	mv dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64/lotus dealer/output/linux/amd64
+
+dealer: ./dealer/output/linux/amd64/lotus
+
+build: ./extern/filecoin-ffi/filcrypto.pc $(PROJECTS) ## Build project
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
 	done
@@ -74,7 +88,7 @@ deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
 	done
-	 
+
 
 ##@ Tests
 

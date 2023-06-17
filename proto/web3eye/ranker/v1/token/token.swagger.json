@@ -17,6 +17,24 @@
   ],
   "paths": {},
   "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "ERC721",
+        "ERC1155",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -54,7 +72,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainID": {
-          "$ref": "#/definitions/web3eyeInt32Val"
+          "$ref": "#/definitions/web3eyeStringVal"
         },
         "Contract": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -93,6 +111,12 @@
           "$ref": "#/definitions/web3eyeInt64Val"
         },
         "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IPFSImageURL": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ImageSnapshotID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "IDs": {
@@ -159,42 +183,15 @@
     "tokenSearchToken": {
       "type": "object",
       "properties": {
-        "Token": {
-          "$ref": "#/definitions/tokenToken"
-        },
-        "Distance": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
-    "tokenSearchTokenResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/tokenSearchToken"
-          }
-        },
-        "Total": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "tokenToken": {
-      "type": "object",
-      "properties": {
         "ID": {
-          "type": "string"
+          "type": "string",
+          "title": "nftmeta.v1.token.Token Token = 10;"
         },
         "ChainType": {
           "type": "string"
         },
         "ChainID": {
-          "type": "integer",
-          "format": "int32"
+          "type": "string"
         },
         "Contract": {
           "type": "string"
@@ -235,18 +232,91 @@
         },
         "Remark": {
           "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageSnapshotID": {
+          "type": "string"
+        },
+        "Distance": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
-    "web3eyeInt32Val": {
+    "tokenSearchTokenResponse": {
       "type": "object",
       "properties": {
-        "Op": {
-          "type": "string"
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tokenSearchToken"
+          }
         },
-        "Value": {
+        "Total": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "tokenToken": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "URI": {
+          "type": "string"
+        },
+        "URIType": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "VideoURL": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "VectorState": {
+          "$ref": "#/definitions/tokenConvertState"
+        },
+        "VectorID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageSnapshotID": {
+          "type": "string"
         }
       }
     },

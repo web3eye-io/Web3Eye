@@ -1,5 +1,6 @@
 output/
 /bin
+*__pycache__*
 tmp
 *.json
 !*.swagger.json
@@ -9,3 +10,4 @@ tmp
 ./main.go
 webui/node_modules
 !webui/*.json
+extern

@@ -1,4 +1,4 @@
-package v1
+package search
 
 import (
 	"bytes"
@@ -51,10 +51,10 @@ func init() {
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
 
-	logger.Sugar().Info(r.Header)
-	body := make([]byte, r.ContentLength)
-	r.Body.Read(body)
-	logger.Sugar().Info(string(body))
+	// logger.Sugar().Info(r.Header)
+	// body := make([]byte, r.ContentLength)
+	// r.Body.Read(body)
+	// logger.Sugar().Info(string(body))
 
 	respBody := make(map[string]interface{})
 	defer func() {

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
@@ -16,7 +17,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 4)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 5)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   contract.Table,
@@ -32,7 +33,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldUpdatedAt:   {Type: field.TypeUint32, Column: contract.FieldUpdatedAt},
 			contract.FieldDeletedAt:   {Type: field.TypeUint32, Column: contract.FieldDeletedAt},
 			contract.FieldChainType:   {Type: field.TypeString, Column: contract.FieldChainType},
-			contract.FieldChainID:     {Type: field.TypeInt32, Column: contract.FieldChainID},
+			contract.FieldChainID:     {Type: field.TypeString, Column: contract.FieldChainID},
 			contract.FieldAddress:     {Type: field.TypeString, Column: contract.FieldAddress},
 			contract.FieldName:        {Type: field.TypeString, Column: contract.FieldName},
 			contract.FieldSymbol:      {Type: field.TypeString, Column: contract.FieldSymbol},
@@ -49,6 +50,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   snapshot.Table,
+			Columns: snapshot.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: snapshot.FieldID,
+			},
+		},
+		Type: "Snapshot",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			snapshot.FieldCreatedAt:     {Type: field.TypeUint32, Column: snapshot.FieldCreatedAt},
+			snapshot.FieldUpdatedAt:     {Type: field.TypeUint32, Column: snapshot.FieldUpdatedAt},
+			snapshot.FieldDeletedAt:     {Type: field.TypeUint32, Column: snapshot.FieldDeletedAt},
+			snapshot.FieldIndex:         {Type: field.TypeUint64, Column: snapshot.FieldIndex},
+			snapshot.FieldSnapshotCommP: {Type: field.TypeString, Column: snapshot.FieldSnapshotCommP},
+			snapshot.FieldSnapshotRoot:  {Type: field.TypeString, Column: snapshot.FieldSnapshotRoot},
+			snapshot.FieldSnapshotURI:   {Type: field.TypeString, Column: snapshot.FieldSnapshotURI},
+			snapshot.FieldBackupState:   {Type: field.TypeString, Column: snapshot.FieldBackupState},
+		},
+	}
+	graph.Nodes[2] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -62,7 +84,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldUpdatedAt:   {Type: field.TypeUint32, Column: synctask.FieldUpdatedAt},
 			synctask.FieldDeletedAt:   {Type: field.TypeUint32, Column: synctask.FieldDeletedAt},
 			synctask.FieldChainType:   {Type: field.TypeString, Column: synctask.FieldChainType},
-			synctask.FieldChainID:     {Type: field.TypeInt32, Column: synctask.FieldChainID},
+			synctask.FieldChainID:     {Type: field.TypeString, Column: synctask.FieldChainID},
 			synctask.FieldStart:       {Type: field.TypeUint64, Column: synctask.FieldStart},
 			synctask.FieldEnd:         {Type: field.TypeUint64, Column: synctask.FieldEnd},
 			synctask.FieldCurrent:     {Type: field.TypeUint64, Column: synctask.FieldCurrent},
@@ -72,7 +94,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldRemark:      {Type: field.TypeString, Column: synctask.FieldRemark},
 		},
 	}
-	graph.Nodes[2] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   token.Table,
 			Columns: token.Columns,
@@ -83,27 +105,29 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Token",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			token.FieldCreatedAt:   {Type: field.TypeUint32, Column: token.FieldCreatedAt},
-			token.FieldUpdatedAt:   {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
-			token.FieldDeletedAt:   {Type: field.TypeUint32, Column: token.FieldDeletedAt},
-			token.FieldChainType:   {Type: field.TypeString, Column: token.FieldChainType},
-			token.FieldChainID:     {Type: field.TypeInt32, Column: token.FieldChainID},
-			token.FieldContract:    {Type: field.TypeString, Column: token.FieldContract},
-			token.FieldTokenType:   {Type: field.TypeString, Column: token.FieldTokenType},
-			token.FieldTokenID:     {Type: field.TypeString, Column: token.FieldTokenID},
-			token.FieldOwner:       {Type: field.TypeString, Column: token.FieldOwner},
-			token.FieldURI:         {Type: field.TypeString, Column: token.FieldURI},
-			token.FieldURIType:     {Type: field.TypeString, Column: token.FieldURIType},
-			token.FieldImageURL:    {Type: field.TypeString, Column: token.FieldImageURL},
-			token.FieldVideoURL:    {Type: field.TypeString, Column: token.FieldVideoURL},
-			token.FieldDescription: {Type: field.TypeString, Column: token.FieldDescription},
-			token.FieldName:        {Type: field.TypeString, Column: token.FieldName},
-			token.FieldVectorID:    {Type: field.TypeInt64, Column: token.FieldVectorID},
-			token.FieldVectorState: {Type: field.TypeString, Column: token.FieldVectorState},
-			token.FieldRemark:      {Type: field.TypeString, Column: token.FieldRemark},
+			token.FieldCreatedAt:       {Type: field.TypeUint32, Column: token.FieldCreatedAt},
+			token.FieldUpdatedAt:       {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
+			token.FieldDeletedAt:       {Type: field.TypeUint32, Column: token.FieldDeletedAt},
+			token.FieldChainType:       {Type: field.TypeString, Column: token.FieldChainType},
+			token.FieldChainID:         {Type: field.TypeString, Column: token.FieldChainID},
+			token.FieldContract:        {Type: field.TypeString, Column: token.FieldContract},
+			token.FieldTokenType:       {Type: field.TypeString, Column: token.FieldTokenType},
+			token.FieldTokenID:         {Type: field.TypeString, Column: token.FieldTokenID},
+			token.FieldOwner:           {Type: field.TypeString, Column: token.FieldOwner},
+			token.FieldURI:             {Type: field.TypeString, Column: token.FieldURI},
+			token.FieldURIType:         {Type: field.TypeString, Column: token.FieldURIType},
+			token.FieldImageURL:        {Type: field.TypeString, Column: token.FieldImageURL},
+			token.FieldVideoURL:        {Type: field.TypeString, Column: token.FieldVideoURL},
+			token.FieldDescription:     {Type: field.TypeString, Column: token.FieldDescription},
+			token.FieldName:            {Type: field.TypeString, Column: token.FieldName},
+			token.FieldVectorID:        {Type: field.TypeInt64, Column: token.FieldVectorID},
+			token.FieldVectorState:     {Type: field.TypeString, Column: token.FieldVectorState},
+			token.FieldRemark:          {Type: field.TypeString, Column: token.FieldRemark},
+			token.FieldIpfsImageURL:    {Type: field.TypeString, Column: token.FieldIpfsImageURL},
+			token.FieldImageSnapshotID: {Type: field.TypeString, Column: token.FieldImageSnapshotID},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
@@ -118,7 +142,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldUpdatedAt:   {Type: field.TypeUint32, Column: transfer.FieldUpdatedAt},
 			transfer.FieldDeletedAt:   {Type: field.TypeUint32, Column: transfer.FieldDeletedAt},
 			transfer.FieldChainType:   {Type: field.TypeString, Column: transfer.FieldChainType},
-			transfer.FieldChainID:     {Type: field.TypeInt32, Column: transfer.FieldChainID},
+			transfer.FieldChainID:     {Type: field.TypeString, Column: transfer.FieldChainID},
 			transfer.FieldContract:    {Type: field.TypeString, Column: transfer.FieldContract},
 			transfer.FieldTokenType:   {Type: field.TypeString, Column: transfer.FieldTokenType},
 			transfer.FieldTokenID:     {Type: field.TypeString, Column: transfer.FieldTokenID},
@@ -201,8 +225,8 @@ func (f *ContractFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(contract.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *ContractFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *ContractFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(contract.FieldChainID))
 }
 
@@ -267,6 +291,86 @@ func (f *ContractFilter) WhereRemark(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (sq *SnapshotQuery) addPredicate(pred func(s *sql.Selector)) {
+	sq.predicates = append(sq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SnapshotQuery builder.
+func (sq *SnapshotQuery) Filter() *SnapshotFilter {
+	return &SnapshotFilter{config: sq.config, predicateAdder: sq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SnapshotMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SnapshotMutation builder.
+func (m *SnapshotMutation) Filter() *SnapshotFilter {
+	return &SnapshotFilter{config: m.config, predicateAdder: m}
+}
+
+// SnapshotFilter provides a generic filtering capability at runtime for SnapshotQuery.
+type SnapshotFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SnapshotFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *SnapshotFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(snapshot.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *SnapshotFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(snapshot.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *SnapshotFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(snapshot.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *SnapshotFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(snapshot.FieldDeletedAt))
+}
+
+// WhereIndex applies the entql uint64 predicate on the index field.
+func (f *SnapshotFilter) WhereIndex(p entql.Uint64P) {
+	f.Where(p.Field(snapshot.FieldIndex))
+}
+
+// WhereSnapshotCommP applies the entql string predicate on the snapshot_comm_p field.
+func (f *SnapshotFilter) WhereSnapshotCommP(p entql.StringP) {
+	f.Where(p.Field(snapshot.FieldSnapshotCommP))
+}
+
+// WhereSnapshotRoot applies the entql string predicate on the snapshot_root field.
+func (f *SnapshotFilter) WhereSnapshotRoot(p entql.StringP) {
+	f.Where(p.Field(snapshot.FieldSnapshotRoot))
+}
+
+// WhereSnapshotURI applies the entql string predicate on the snapshot_uri field.
+func (f *SnapshotFilter) WhereSnapshotURI(p entql.StringP) {
+	f.Where(p.Field(snapshot.FieldSnapshotURI))
+}
+
+// WhereBackupState applies the entql string predicate on the backup_state field.
+func (f *SnapshotFilter) WhereBackupState(p entql.StringP) {
+	f.Where(p.Field(snapshot.FieldBackupState))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (stq *SyncTaskQuery) addPredicate(pred func(s *sql.Selector)) {
 	stq.predicates = append(stq.predicates, pred)
 }
@@ -295,7 +399,7 @@ type SyncTaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SyncTaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -326,8 +430,8 @@ func (f *SyncTaskFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(synctask.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *SyncTaskFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *SyncTaskFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(synctask.FieldChainID))
 }
 
@@ -395,7 +499,7 @@ type TokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -426,8 +530,8 @@ func (f *TokenFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(token.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *TokenFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *TokenFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(token.FieldChainID))
 }
 
@@ -496,6 +600,16 @@ func (f *TokenFilter) WhereRemark(p entql.StringP) {
 	f.Where(p.Field(token.FieldRemark))
 }
 
+// WhereIpfsImageURL applies the entql string predicate on the ipfs_image_url field.
+func (f *TokenFilter) WhereIpfsImageURL(p entql.StringP) {
+	f.Where(p.Field(token.FieldIpfsImageURL))
+}
+
+// WhereImageSnapshotID applies the entql string predicate on the image_snapshot_id field.
+func (f *TokenFilter) WhereImageSnapshotID(p entql.StringP) {
+	f.Where(p.Field(token.FieldImageSnapshotID))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (tq *TransferQuery) addPredicate(pred func(s *sql.Selector)) {
 	tq.predicates = append(tq.predicates, pred)
@@ -525,7 +639,7 @@ type TransferFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransferFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -556,8 +670,8 @@ func (f *TransferFilter) WhereChainType(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldChainType))
 }
 
-// WhereChainID applies the entql int32 predicate on the chain_id field.
-func (f *TransferFilter) WhereChainID(p entql.Int32P) {
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *TransferFilter) WhereChainID(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldChainID))
 }
 

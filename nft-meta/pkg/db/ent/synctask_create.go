@@ -80,8 +80,8 @@ func (stc *SyncTaskCreate) SetNillableChainType(s *string) *SyncTaskCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (stc *SyncTaskCreate) SetChainID(i int32) *SyncTaskCreate {
-	stc.mutation.SetChainID(i)
+func (stc *SyncTaskCreate) SetChainID(s string) *SyncTaskCreate {
+	stc.mutation.SetChainID(s)
 	return stc
 }
 
@@ -380,7 +380,7 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := stc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: synctask.FieldChainID,
 		})
@@ -461,7 +461,6 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (stc *SyncTaskCreate) OnConflict(opts ...sql.ConflictOption) *SyncTaskUpsertOne {
 	stc.conflict = opts
 	return &SyncTaskUpsertOne{
@@ -475,7 +474,6 @@ func (stc *SyncTaskCreate) OnConflict(opts ...sql.ConflictOption) *SyncTaskUpser
 //	client.SyncTask.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (stc *SyncTaskCreate) OnConflictColumns(columns ...string) *SyncTaskUpsertOne {
 	stc.conflict = append(stc.conflict, sql.ConflictColumns(columns...))
 	return &SyncTaskUpsertOne{
@@ -569,7 +567,7 @@ func (u *SyncTaskUpsert) ClearChainType() *SyncTaskUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsert) SetChainID(v int32) *SyncTaskUpsert {
+func (u *SyncTaskUpsert) SetChainID(v string) *SyncTaskUpsert {
 	u.Set(synctask.FieldChainID, v)
 	return u
 }
@@ -577,12 +575,6 @@ func (u *SyncTaskUpsert) SetChainID(v int32) *SyncTaskUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *SyncTaskUpsert) UpdateChainID() *SyncTaskUpsert {
 	u.SetExcluded(synctask.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsert) AddChainID(v int32) *SyncTaskUpsert {
-	u.Add(synctask.FieldChainID, v)
 	return u
 }
 
@@ -717,7 +709,6 @@ func (u *SyncTaskUpsert) ClearRemark() *SyncTaskUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *SyncTaskUpsertOne) UpdateNewValues() *SyncTaskUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -731,10 +722,9 @@ func (u *SyncTaskUpsertOne) UpdateNewValues() *SyncTaskUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.SyncTask.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.SyncTask.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *SyncTaskUpsertOne) Ignore() *SyncTaskUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -841,16 +831,9 @@ func (u *SyncTaskUpsertOne) ClearChainType() *SyncTaskUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsertOne) SetChainID(v int32) *SyncTaskUpsertOne {
+func (u *SyncTaskUpsertOne) SetChainID(v string) *SyncTaskUpsertOne {
 	return u.Update(func(s *SyncTaskUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsertOne) AddChainID(v int32) *SyncTaskUpsertOne {
-	return u.Update(func(s *SyncTaskUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1136,7 +1119,6 @@ func (stcb *SyncTaskCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (stcb *SyncTaskCreateBulk) OnConflict(opts ...sql.ConflictOption) *SyncTaskUpsertBulk {
 	stcb.conflict = opts
 	return &SyncTaskUpsertBulk{
@@ -1150,7 +1132,6 @@ func (stcb *SyncTaskCreateBulk) OnConflict(opts ...sql.ConflictOption) *SyncTask
 //	client.SyncTask.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (stcb *SyncTaskCreateBulk) OnConflictColumns(columns ...string) *SyncTaskUpsertBulk {
 	stcb.conflict = append(stcb.conflict, sql.ConflictColumns(columns...))
 	return &SyncTaskUpsertBulk{
@@ -1175,7 +1156,6 @@ type SyncTaskUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *SyncTaskUpsertBulk) UpdateNewValues() *SyncTaskUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1195,7 +1175,6 @@ func (u *SyncTaskUpsertBulk) UpdateNewValues() *SyncTaskUpsertBulk {
 //	client.SyncTask.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *SyncTaskUpsertBulk) Ignore() *SyncTaskUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1302,16 +1281,9 @@ func (u *SyncTaskUpsertBulk) ClearChainType() *SyncTaskUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *SyncTaskUpsertBulk) SetChainID(v int32) *SyncTaskUpsertBulk {
+func (u *SyncTaskUpsertBulk) SetChainID(v string) *SyncTaskUpsertBulk {
 	return u.Update(func(s *SyncTaskUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *SyncTaskUpsertBulk) AddChainID(v int32) *SyncTaskUpsertBulk {
-	return u.Update(func(s *SyncTaskUpsert) {
-		s.AddChainID(v)
 	})
 }
 

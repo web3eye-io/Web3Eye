@@ -1,0 +1,175 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/ranker/v1/snapshot/snapshot.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "snapshotConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Index": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "SnapshotCommP": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "SnapshotRoot": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "SnapshotURI": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BackupState": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "snapshotCountSnapshotsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "snapshotGetSnapshotOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/snapshotSnapshot"
+        }
+      }
+    },
+    "snapshotGetSnapshotResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/snapshotSnapshot"
+        }
+      }
+    },
+    "snapshotGetSnapshotsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/snapshotSnapshot"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "snapshotSnapshot": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Index": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "SnapshotCommP": {
+          "type": "string"
+        },
+        "SnapshotRoot": {
+          "type": "string"
+        },
+        "SnapshotURI": {
+          "type": "string"
+        },
+        "BackupState": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}

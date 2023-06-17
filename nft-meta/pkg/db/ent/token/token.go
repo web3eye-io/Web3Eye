@@ -48,6 +48,10 @@ const (
 	FieldVectorState = "vector_state"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
+	// FieldIpfsImageURL holds the string denoting the ipfs_image_url field in the database.
+	FieldIpfsImageURL = "ipfs_image_url"
+	// FieldImageSnapshotID holds the string denoting the image_snapshot_id field in the database.
+	FieldImageSnapshotID = "image_snapshot_id"
 	// Table holds the table name of the token in the database.
 	Table = "tokens"
 )
@@ -73,6 +77,8 @@ var Columns = []string{
 	FieldVectorID,
 	FieldVectorState,
 	FieldRemark,
+	FieldIpfsImageURL,
+	FieldImageSnapshotID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -90,7 +96,6 @@ func ValidColumn(column string) bool {
 // it should be imported in the main as follows:
 //
 //	import _ "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime"
-//
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy

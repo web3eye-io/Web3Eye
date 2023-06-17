@@ -264,7 +264,6 @@ func (stq *SyncTaskQuery) Clone() *SyncTaskQuery {
 //		GroupBy(synctask.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (stq *SyncTaskQuery) GroupBy(field string, fields ...string) *SyncTaskGroupBy {
 	grbuild := &SyncTaskGroupBy{config: stq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (stq *SyncTaskQuery) GroupBy(field string, fields ...string) *SyncTaskGroup
 //	client.SyncTask.Query().
 //		Select(synctask.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (stq *SyncTaskQuery) Select(fields ...string) *SyncTaskSelect {
 	stq.fields = append(stq.fields, fields...)
 	selbuild := &SyncTaskSelect{SyncTaskQuery: stq}

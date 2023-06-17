@@ -35,7 +35,7 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 		c.SetID(uuid.New())
 	}
 	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType())
+		c.SetChainType(in.GetChainType().String())
 	}
 	if in.ChainID != nil {
 		c.SetChainID(in.GetChainID())
@@ -106,7 +106,7 @@ func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		u := cli.Transfer.UpdateOneID(uuid.MustParse(in.GetID()))
 		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType())
+			u.SetChainType(in.GetChainType().String())
 		}
 		if in.ChainID != nil {
 			u.SetChainID(in.GetChainID())

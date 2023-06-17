@@ -36,7 +36,7 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 		c.SetID(uuid.New())
 	}
 	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType())
+		c.SetChainType(in.GetChainType().String())
 	}
 	if in.ChainID != nil {
 		c.SetChainID(in.GetChainID())
@@ -45,7 +45,7 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 		c.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType())
+		c.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		c.SetTokenID(in.GetTokenID())
@@ -82,6 +82,12 @@ func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
 	if in.Remark != nil {
 		c.SetRemark(in.GetRemark())
 	}
+	if in.IPFSImageURL != nil {
+		c.SetIpfsImageURL(in.GetIPFSImageURL())
+	}
+	if in.ImageSnapshotID != nil {
+		c.SetImageSnapshotID(in.GetImageSnapshotID())
+	}
 
 	return c
 }
@@ -116,7 +122,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		u := cli.Token.UpdateOneID(uuid.MustParse(in.GetID()))
 		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType())
+			u.SetChainType(in.GetChainType().String())
 		}
 		if in.ChainID != nil {
 			u.SetChainID(in.GetChainID())
@@ -125,7 +131,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 			u.SetContract(in.GetContract())
 		}
 		if in.TokenType != nil {
-			u.SetTokenType(in.GetTokenType())
+			u.SetTokenType(in.GetTokenType().String())
 		}
 		if in.TokenID != nil {
 			u.SetTokenID(in.GetTokenID())
@@ -159,6 +165,12 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 		}
 		if in.Remark != nil {
 			u.SetRemark(in.GetRemark())
+		}
+		if in.IPFSImageURL != nil {
+			u.SetIpfsImageURL(in.GetIPFSImageURL())
+		}
+		if in.ImageSnapshotID != nil {
+			u.SetImageSnapshotID(in.GetImageSnapshotID())
 		}
 
 		info, err = u.Save(_ctx)
@@ -196,7 +208,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	return info, nil
 }
 
-//nolint
+// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error) {
 	stm := cli.Token.Query()
 	if conds == nil {
@@ -348,6 +360,22 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error)
 		switch conds.GetRemark().GetOp() {
 		case cruder.EQ:
 			stm.Where(token.Remark(conds.GetRemark().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid token field")
+		}
+	}
+	if conds.IPFSImageURL != nil {
+		switch conds.GetIPFSImageURL().GetOp() {
+		case cruder.EQ:
+			stm.Where(token.IpfsImageURL(conds.GetIPFSImageURL().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid token field")
+		}
+	}
+	if conds.ImageSnapshotID != nil {
+		switch conds.GetImageSnapshotID().GetOp() {
+		case cruder.EQ:
+			stm.Where(token.ImageSnapshotID(conds.GetImageSnapshotID().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid token field")
 		}

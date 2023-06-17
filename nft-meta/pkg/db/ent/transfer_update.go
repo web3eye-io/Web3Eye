@@ -90,15 +90,8 @@ func (tu *TransferUpdate) SetChainType(s string) *TransferUpdate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tu *TransferUpdate) SetChainID(i int32) *TransferUpdate {
-	tu.mutation.ResetChainID()
-	tu.mutation.SetChainID(i)
-	return tu
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tu *TransferUpdate) AddChainID(i int32) *TransferUpdate {
-	tu.mutation.AddChainID(i)
+func (tu *TransferUpdate) SetChainID(s string) *TransferUpdate {
+	tu.mutation.SetChainID(s)
 	return tu
 }
 
@@ -366,14 +359,7 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: transfer.FieldChainID,
-		})
-	}
-	if value, ok := tu.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldChainID,
 		})
@@ -571,15 +557,8 @@ func (tuo *TransferUpdateOne) SetChainType(s string) *TransferUpdateOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tuo *TransferUpdateOne) SetChainID(i int32) *TransferUpdateOne {
-	tuo.mutation.ResetChainID()
-	tuo.mutation.SetChainID(i)
-	return tuo
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tuo *TransferUpdateOne) AddChainID(i int32) *TransferUpdateOne {
-	tuo.mutation.AddChainID(i)
+func (tuo *TransferUpdateOne) SetChainID(s string) *TransferUpdateOne {
+	tuo.mutation.SetChainID(s)
 	return tuo
 }
 
@@ -877,14 +856,7 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 	}
 	if value, ok := tuo.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: transfer.FieldChainID,
-		})
-	}
-	if value, ok := tuo.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldChainID,
 		})

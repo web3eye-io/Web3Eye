@@ -1,6 +1,10 @@
 #!/bin/bash
 # install docs
 # https://milvus.io/docs/install_cluster-helm.md
+SHELL_FOLDER=$(
+    cd "$(dirname "$0")"
+    pwd
+)
 
 helm repo add milvus https://milvus-io.github.io/milvus-helm/
 helm repo update

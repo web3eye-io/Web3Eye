@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gen-car
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gen-car
+  template:
+    metadata:
+      labels:
+        app: gen-car
+    spec:
+      containers:
+        - name: gen-car
+          # image: web3eye/gen-car:latest
+          image: coastlinesss/gen-car:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/gen-car
+          env:
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: mysql_password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: minio_access_key
+              valueFrom:
+                secretKeyRef:
+                  name: web3eye-minio
+                  key: accesskey
+            - name: minio_secret_key
+              valueFrom:
+                secretKeyRef:
+                  name: web3eye-minio
+                  key: secretkey
+
+      volumes:
+        - name: service-config
+          configMap:
+            name: gen-car-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gen-car
+spec:
+  ports:
+    - name: http
+      port: 30170
+      targetPort: 30170
+    - name: grpc
+      port: 30171
+      targetPort: 30171
+    - name: healthz
+      port: 30172
+      targetPort: 30172
+  selector:
+    app: gen-car

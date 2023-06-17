@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
   cd "$(dirname "$0")"
   pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
   cd $SHELL_FOLDER/../
   pwd
 )
@@ -13,7 +13,7 @@ set -o nounset
 set -o pipefail
 
 PLATFORM=linux/amd64
-OUTPUT=$ROOT_FOLDER/output
+OUTPUT=$PROJECT_FOLDER/output
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
 
@@ -41,13 +41,13 @@ fi
 # fi
 
 service_name=$(
-  cd $ROOT_FOLDER
+  cd $PROJECT_FOLDER
   basename $(pwd)
 )
 
 echo "Deploy docker image for $PLATFORM -- $version"
 
-sed -i "s/$service_name:latest/$service_name:$version/g" $ROOT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
+sed -i "s/$service_name:latest/$service_name:$version/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
 # sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/02-$service_name.yaml
 
 set +e
@@ -55,7 +55,7 @@ set +e
 # check have deployment
 kubectl get deployment | grep $service_name
 if [ $? == 0 ]; then
-  kubectl replace -k $ROOT_FOLDER/cmd/$service_name/k8s
+  kubectl replace -k $PROJECT_FOLDER/cmd/$service_name/k8s
 else
-  kubectl apply -k $ROOT_FOLDER/cmd/$service_name/k8s
+  kubectl apply -k $PROJECT_FOLDER/cmd/$service_name/k8s
 fi

@@ -20,15 +20,15 @@ if [[ ! -f .eslintrc.js ]]; then
 fi
 
 if ! command -v n; then
-    npm install -g n -y
+    sudo npm install -g n -y
 fi
 
 if ! command -v yarn; then
-    npm install -g yarn -y
+    sudo npm install -g yarn -y
 fi
 
 
-n v16.14.0
+sudo n v16.14.0
 npm install @typescript-eslint/eslint-plugin@latest --save-dev
 yarn lint
 

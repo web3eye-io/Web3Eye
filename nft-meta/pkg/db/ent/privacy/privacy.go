@@ -174,6 +174,30 @@ func (f ContractMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContractMutation", m)
 }
 
+// The SnapshotQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SnapshotQueryRuleFunc func(context.Context, *ent.SnapshotQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SnapshotQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SnapshotQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SnapshotQuery", q)
+}
+
+// The SnapshotMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SnapshotMutationRuleFunc func(context.Context, *ent.SnapshotMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SnapshotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SnapshotMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SnapshotMutation", m)
+}
+
 // The SyncTaskQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SyncTaskQueryRuleFunc func(context.Context, *ent.SyncTaskQuery) error
@@ -283,6 +307,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.ContractQuery:
 		return q.Filter(), nil
+	case *ent.SnapshotQuery:
+		return q.Filter(), nil
 	case *ent.SyncTaskQuery:
 		return q.Filter(), nil
 	case *ent.TokenQuery:
@@ -297,6 +323,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.ContractMutation:
+		return m.Filter(), nil
+	case *ent.SnapshotMutation:
 		return m.Filter(), nil
 	case *ent.SyncTaskMutation:
 		return m.Filter(), nil

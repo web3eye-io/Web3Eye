@@ -3,7 +3,9 @@ package synctask
 import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
 
@@ -11,12 +13,11 @@ func Ent2Grpc(row *ent.SyncTask) *npool.SyncTask {
 	if row == nil {
 		return nil
 	}
-	chainT := cttype.ChainType(cttype.ChainType_value[row.ChainType])
 	syncS := cttype.SyncState(cttype.SyncState_value[row.SyncState])
 
 	return &npool.SyncTask{
 		ID:          row.ID.String(),
-		ChainType:   chainT,
+		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
 		Start:       row.Start,
 		End:         row.End,
@@ -32,13 +33,13 @@ func Ent2GrpcReq(row *ent.SyncTask) *npool.SyncTaskReq {
 	if row == nil {
 		return nil
 	}
-	chainT := cttype.ChainType(cttype.ChainType_value[row.ChainType])
+	ChainType := basetype.ChainType(basetype.ChainType_value[row.ChainType])
 	syncS := cttype.SyncState(cttype.SyncState_value[row.SyncState])
 
 	id := row.ID.String()
 	return &npool.SyncTaskReq{
 		ID:          &id,
-		ChainType:   &chainT,
+		ChainType:   &ChainType,
 		ChainID:     &row.ChainID,
 		Start:       &row.Start,
 		End:         &row.End,

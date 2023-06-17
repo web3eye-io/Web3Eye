@@ -4,16 +4,10 @@ package cttype;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype";
 
-enum ChainType {
-  Unknown = 0;
-  Ethereum = 10;
-  Solana = 20;
-}
-
 enum SyncState {
   Default = 0;
   Start = 10;
   Pause = 20;
-  Finsh = 40;
+  Finish = 40;
   Failed = 50;
 }

@@ -4,6 +4,7 @@ package nftmeta.v1.contract;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract";
 import "web3eye/web3eye.proto";
+import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc CreateContract(CreateContractRequest) returns (CreateContractResponse) {}
@@ -23,8 +24,8 @@ service Manager {
 
 message ContractReq {
   optional string ID = 10;
-  optional string ChainType = 20;
-  optional int32 ChainID = 30;
+  optional chain.ChainType ChainType = 20;
+  optional string ChainID = 30;
   optional string Address = 40;
   optional string Name = 50;
   optional string Symbol = 60;
@@ -41,8 +42,8 @@ message ContractReq {
 
 message Contract {
   string ID = 10;
-  string ChainType = 20;
-  int32 ChainID = 30;
+  chain.ChainType ChainType = 20;
+  string ChainID = 30;
   string Address = 40;
   string Name = 50;
   string Symbol = 60;
@@ -60,7 +61,7 @@ message Contract {
 message Conds {
   web3eye.StringVal ID = 10;
   web3eye.StringVal ChainType = 20;
-  web3eye.Int32Val ChainID = 30;
+  web3eye.StringVal ChainID = 30;
   web3eye.StringVal Address = 40;
   web3eye.StringVal Name = 50;
   web3eye.StringVal Symbol = 60;

@@ -2,7 +2,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -16,6 +15,11 @@ const (
 	MaxRetries       = 3
 	retriesSleepTime = 200 * time.Millisecond
 	dialTimeout      = 3 * time.Second
+)
+
+var (
+	// TODO:should check the chainID of erver endpoints,if them is not equal,panic
+	CurrentChainID *string
 )
 
 type EClientI interface {
@@ -39,19 +43,29 @@ func (eClients eClients) GetNode(ctx context.Context, endpointmgr *endpoints.Man
 		return nil, err
 	}
 
-	syncRet, _err := cli.SyncProgress(ctx)
-	if _err != nil {
-		cli.Close()
-		return nil, _err
+	if CurrentChainID == nil {
+		_chainID, err := cli.ChainID(ctx)
+		if err != nil {
+			return nil, err
+		}
+		chainID := _chainID.String()
+		CurrentChainID = &chainID
 	}
 
-	if syncRet != nil {
-		cli.Close()
-		return nil, fmt.Errorf(
-			"node is syncing ,current block %v ,highest block %v ",
-			syncRet.CurrentBlock, syncRet.HighestBlock,
-		)
-	}
+	// sync check is to many,so will be canceled
+	// syncRet, _err := cli.SyncProgress(ctx)
+	// if _err != nil {
+	// 	cli.Close()
+	// 	return nil, _err
+	// }
+
+	// if syncRet != nil {
+	// 	cli.Close()
+	// 	return nil, fmt.Errorf(
+	// 		"node is syncing ,current block %v ,highest block %v ",
+	// 		syncRet.CurrentBlock, syncRet.HighestBlock,
+	// 	)
+	// }
 
 	return cli, nil
 }

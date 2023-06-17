@@ -264,7 +264,6 @@ func (tq *TransferQuery) Clone() *TransferQuery {
 //		GroupBy(transfer.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-//
 func (tq *TransferQuery) GroupBy(field string, fields ...string) *TransferGroupBy {
 	grbuild := &TransferGroupBy{config: tq.config}
 	grbuild.fields = append([]string{field}, fields...)
@@ -291,7 +290,6 @@ func (tq *TransferQuery) GroupBy(field string, fields ...string) *TransferGroupB
 //	client.Transfer.Query().
 //		Select(transfer.FieldCreatedAt).
 //		Scan(ctx, &v)
-//
 func (tq *TransferQuery) Select(fields ...string) *TransferSelect {
 	tq.fields = append(tq.fields, fields...)
 	selbuild := &TransferSelect{TransferQuery: tq}

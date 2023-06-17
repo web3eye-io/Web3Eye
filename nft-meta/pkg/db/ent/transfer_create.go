@@ -72,8 +72,8 @@ func (tc *TransferCreate) SetChainType(s string) *TransferCreate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tc *TransferCreate) SetChainID(i int32) *TransferCreate {
-	tc.mutation.SetChainID(i)
+func (tc *TransferCreate) SetChainID(s string) *TransferCreate {
+	tc.mutation.SetChainID(s)
 	return tc
 }
 
@@ -398,7 +398,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ChainID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldChainID,
 		})
@@ -511,7 +511,6 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tc *TransferCreate) OnConflict(opts ...sql.ConflictOption) *TransferUpsertOne {
 	tc.conflict = opts
 	return &TransferUpsertOne{
@@ -525,7 +524,6 @@ func (tc *TransferCreate) OnConflict(opts ...sql.ConflictOption) *TransferUpsert
 //	client.Transfer.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tc *TransferCreate) OnConflictColumns(columns ...string) *TransferUpsertOne {
 	tc.conflict = append(tc.conflict, sql.ConflictColumns(columns...))
 	return &TransferUpsertOne{
@@ -613,7 +611,7 @@ func (u *TransferUpsert) UpdateChainType() *TransferUpsert {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsert) SetChainID(v int32) *TransferUpsert {
+func (u *TransferUpsert) SetChainID(v string) *TransferUpsert {
 	u.Set(transfer.FieldChainID, v)
 	return u
 }
@@ -621,12 +619,6 @@ func (u *TransferUpsert) SetChainID(v int32) *TransferUpsert {
 // UpdateChainID sets the "chain_id" field to the value that was provided on create.
 func (u *TransferUpsert) UpdateChainID() *TransferUpsert {
 	u.SetExcluded(transfer.FieldChainID)
-	return u
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsert) AddChainID(v int32) *TransferUpsert {
-	u.Add(transfer.FieldChainID, v)
 	return u
 }
 
@@ -803,7 +795,6 @@ func (u *TransferUpsert) ClearRemark() *TransferUpsert {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TransferUpsertOne) UpdateNewValues() *TransferUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -817,10 +808,9 @@ func (u *TransferUpsertOne) UpdateNewValues() *TransferUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//  client.Transfer.Create().
-//      OnConflict(sql.ResolveWithIgnore()).
-//      Exec(ctx)
-//
+//	client.Transfer.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
 func (u *TransferUpsertOne) Ignore() *TransferUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -920,16 +910,9 @@ func (u *TransferUpsertOne) UpdateChainType() *TransferUpsertOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsertOne) SetChainID(v int32) *TransferUpsertOne {
+func (u *TransferUpsertOne) SetChainID(v string) *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsertOne) AddChainID(v int32) *TransferUpsertOne {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddChainID(v)
 	})
 }
 
@@ -1264,7 +1247,6 @@ func (tcb *TransferCreateBulk) ExecX(ctx context.Context) {
 //			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
-//
 func (tcb *TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransferUpsertBulk {
 	tcb.conflict = opts
 	return &TransferUpsertBulk{
@@ -1278,7 +1260,6 @@ func (tcb *TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransferU
 //	client.Transfer.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-//
 func (tcb *TransferCreateBulk) OnConflictColumns(columns ...string) *TransferUpsertBulk {
 	tcb.conflict = append(tcb.conflict, sql.ConflictColumns(columns...))
 	return &TransferUpsertBulk{
@@ -1303,7 +1284,6 @@ type TransferUpsertBulk struct {
 //			}),
 //		).
 //		Exec(ctx)
-//
 func (u *TransferUpsertBulk) UpdateNewValues() *TransferUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
@@ -1323,7 +1303,6 @@ func (u *TransferUpsertBulk) UpdateNewValues() *TransferUpsertBulk {
 //	client.Transfer.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-//
 func (u *TransferUpsertBulk) Ignore() *TransferUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
@@ -1423,16 +1402,9 @@ func (u *TransferUpsertBulk) UpdateChainType() *TransferUpsertBulk {
 }
 
 // SetChainID sets the "chain_id" field.
-func (u *TransferUpsertBulk) SetChainID(v int32) *TransferUpsertBulk {
+func (u *TransferUpsertBulk) SetChainID(v string) *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetChainID(v)
-	})
-}
-
-// AddChainID adds v to the "chain_id" field.
-func (u *TransferUpsertBulk) AddChainID(v int32) *TransferUpsertBulk {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddChainID(v)
 	})
 }
 

@@ -3,7 +3,7 @@ SHELL_FOLDER=$(
     cd "$(dirname "$0")"
     pwd
 )
-ROOT_FOLDER=$(
+PROJECT_FOLDER=$(
     cd $SHELL_FOLDER/../
     pwd
 )

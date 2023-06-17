@@ -90,15 +90,8 @@ func (tu *TokenUpdate) SetChainType(s string) *TokenUpdate {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tu *TokenUpdate) SetChainID(i int32) *TokenUpdate {
-	tu.mutation.ResetChainID()
-	tu.mutation.SetChainID(i)
-	return tu
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tu *TokenUpdate) AddChainID(i int32) *TokenUpdate {
-	tu.mutation.AddChainID(i)
+func (tu *TokenUpdate) SetChainID(s string) *TokenUpdate {
+	tu.mutation.SetChainID(s)
 	return tu
 }
 
@@ -327,6 +320,46 @@ func (tu *TokenUpdate) ClearRemark() *TokenUpdate {
 	return tu
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tu *TokenUpdate) SetIpfsImageURL(s string) *TokenUpdate {
+	tu.mutation.SetIpfsImageURL(s)
+	return tu
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableIpfsImageURL(s *string) *TokenUpdate {
+	if s != nil {
+		tu.SetIpfsImageURL(*s)
+	}
+	return tu
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (tu *TokenUpdate) ClearIpfsImageURL() *TokenUpdate {
+	tu.mutation.ClearIpfsImageURL()
+	return tu
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (tu *TokenUpdate) SetImageSnapshotID(s string) *TokenUpdate {
+	tu.mutation.SetImageSnapshotID(s)
+	return tu
+}
+
+// SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableImageSnapshotID(s *string) *TokenUpdate {
+	if s != nil {
+		tu.SetImageSnapshotID(*s)
+	}
+	return tu
+}
+
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (tu *TokenUpdate) ClearImageSnapshotID() *TokenUpdate {
+	tu.mutation.ClearImageSnapshotID()
+	return tu
+}
+
 // Mutation returns the TokenMutation object of the builder.
 func (tu *TokenUpdate) Mutation() *TokenMutation {
 	return tu.mutation
@@ -476,14 +509,7 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: token.FieldChainID,
-		})
-	}
-	if value, ok := tu.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})
@@ -646,6 +672,32 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: token.FieldRemark,
 		})
 	}
+	if value, ok := tu.mutation.IpfsImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if tu.mutation.IpfsImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if value, ok := tu.mutation.ImageSnapshotID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldImageSnapshotID,
+		})
+	}
+	if tu.mutation.ImageSnapshotIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldImageSnapshotID,
+		})
+	}
 	_spec.Modifiers = tu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -729,15 +781,8 @@ func (tuo *TokenUpdateOne) SetChainType(s string) *TokenUpdateOne {
 }
 
 // SetChainID sets the "chain_id" field.
-func (tuo *TokenUpdateOne) SetChainID(i int32) *TokenUpdateOne {
-	tuo.mutation.ResetChainID()
-	tuo.mutation.SetChainID(i)
-	return tuo
-}
-
-// AddChainID adds i to the "chain_id" field.
-func (tuo *TokenUpdateOne) AddChainID(i int32) *TokenUpdateOne {
-	tuo.mutation.AddChainID(i)
+func (tuo *TokenUpdateOne) SetChainID(s string) *TokenUpdateOne {
+	tuo.mutation.SetChainID(s)
 	return tuo
 }
 
@@ -966,6 +1011,46 @@ func (tuo *TokenUpdateOne) ClearRemark() *TokenUpdateOne {
 	return tuo
 }
 
+// SetIpfsImageURL sets the "ipfs_image_url" field.
+func (tuo *TokenUpdateOne) SetIpfsImageURL(s string) *TokenUpdateOne {
+	tuo.mutation.SetIpfsImageURL(s)
+	return tuo
+}
+
+// SetNillableIpfsImageURL sets the "ipfs_image_url" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableIpfsImageURL(s *string) *TokenUpdateOne {
+	if s != nil {
+		tuo.SetIpfsImageURL(*s)
+	}
+	return tuo
+}
+
+// ClearIpfsImageURL clears the value of the "ipfs_image_url" field.
+func (tuo *TokenUpdateOne) ClearIpfsImageURL() *TokenUpdateOne {
+	tuo.mutation.ClearIpfsImageURL()
+	return tuo
+}
+
+// SetImageSnapshotID sets the "image_snapshot_id" field.
+func (tuo *TokenUpdateOne) SetImageSnapshotID(s string) *TokenUpdateOne {
+	tuo.mutation.SetImageSnapshotID(s)
+	return tuo
+}
+
+// SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableImageSnapshotID(s *string) *TokenUpdateOne {
+	if s != nil {
+		tuo.SetImageSnapshotID(*s)
+	}
+	return tuo
+}
+
+// ClearImageSnapshotID clears the value of the "image_snapshot_id" field.
+func (tuo *TokenUpdateOne) ClearImageSnapshotID() *TokenUpdateOne {
+	tuo.mutation.ClearImageSnapshotID()
+	return tuo
+}
+
 // Mutation returns the TokenMutation object of the builder.
 func (tuo *TokenUpdateOne) Mutation() *TokenMutation {
 	return tuo.mutation
@@ -1145,14 +1230,7 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 	}
 	if value, ok := tuo.mutation.ChainID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
-			Value:  value,
-			Column: token.FieldChainID,
-		})
-	}
-	if value, ok := tuo.mutation.AddedChainID(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt32,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: token.FieldChainID,
 		})
@@ -1313,6 +1391,32 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: token.FieldRemark,
+		})
+	}
+	if value, ok := tuo.mutation.IpfsImageURL(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if tuo.mutation.IpfsImageURLCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldIpfsImageURL,
+		})
+	}
+	if value, ok := tuo.mutation.ImageSnapshotID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldImageSnapshotID,
+		})
+	}
+	if tuo.mutation.ImageSnapshotIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldImageSnapshotID,
 		})
 	}
 	_spec.Modifiers = tuo.modifiers

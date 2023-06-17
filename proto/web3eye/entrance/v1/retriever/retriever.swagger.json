@@ -1,0 +1,194 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/entrance/v1/retriever/retriever.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/start/retrieve": {
+      "post": {
+        "operationId": "Manager_StartRetrieve",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/retrieverStartRetrieveResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/retrieverStartRetrieveRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/stat/retrieve": {
+      "post": {
+        "operationId": "Manager_StatRetrieve",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/retrieverStatRetrieveResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/retrieverStatRetrieveRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "retrieverRetrieve": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "RetrieveState": {
+          "type": "string"
+        },
+        "ProposalID": {
+          "type": "string"
+        },
+        "DealID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BackupPayloadCID": {
+          "type": "string"
+        }
+      },
+      "title": "will be replaced with retriever proto not in entrance"
+    },
+    "retrieverStartRetrieveRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        }
+      }
+    },
+    "retrieverStartRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/retrieverRetrieve"
+        }
+      }
+    },
+    "retrieverStatRetrieveRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "type": "string"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        }
+      }
+    },
+    "retrieverStatRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/retrieverRetrieve"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
