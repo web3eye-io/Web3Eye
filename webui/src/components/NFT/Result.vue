@@ -123,6 +123,8 @@ const nfts = computed(() => {
   return rows
 })
 
+const currentImg = computed(() => nft.NTFMetas.Current)
+
 enum ImageState {
   Normal = 'Normal',
   IPFS = 'IPFS',
@@ -130,6 +132,9 @@ enum ImageState {
   WaitRecover = 'WaitRecover'
 }
 
+const getImageState = computed(() => (id: string) => {
+  return true
+})
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImage = computed(() => (row: NFTMeta) => {
   return () => {
@@ -139,10 +144,22 @@ const checkImage = computed(() => (row: NFTMeta) => {
       return ImageState.Normal
     }
 
+    image.src = row.IPFSImageURL
+    if (image.width > 0 && image.height > 0) {
+      return ImageState.IPFS
+    }
 
+    if (row.ImageSnapshotID?.length > 0) {
+      // get state
+      // true
+      if (getImageState.value(row.ImageSnapshotID)) {
+        return ImageState.Retrieving
+      }
+    }
+    return ImageState.WaitRecover
   }
 })
-const currentImg = computed(() => nft.NTFMetas.Current)
+
 </script>
 <style lang='sass' scoped>
 .nft-container
