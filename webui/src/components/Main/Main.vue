@@ -28,6 +28,7 @@
       :form-fields='[{name: "topN", value: "10"}]'
       auto-upload
       flat
+      accept=".jpg, image/*"
       :disable='uploading'
       @failed='onFailed'
       @uploaded='onUploaded'

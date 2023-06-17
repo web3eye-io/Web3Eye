@@ -11,6 +11,8 @@ export interface NFTMeta {
   URIType: string;
   VectorID:string;
   VectorState: number;
+  IPFSImageURL: string;
+  ImageSnapshotID: string;
 }
 
 export interface UploadResponse {

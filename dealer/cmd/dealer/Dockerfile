@@ -2,6 +2,7 @@ FROM debian:stable-slim
 
 COPY dealer /usr/local/bin/dealer
 COPY lotus /usr/local/bin/lotus
+COPY ipfs /usr/local/bin/ipfs
 COPY Dealer.viper.yaml /etc/Dealer/Dealer.viper.yaml
 ENV ENV_DATA_DIR=/data \
     ENV_LOG_DIR=/var/log \

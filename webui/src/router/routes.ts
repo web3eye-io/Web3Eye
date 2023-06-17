@@ -3,7 +3,6 @@ import { RouteRecordRaw } from 'vue-router'
 declare module 'vue-router' {
   interface RouteMeta {
     DisplayToolbarSearchBox: boolean
-    NeedLogined?: boolean
   }
 }
 
@@ -14,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', component: () => import('pages/Index.vue'), meta: { DisplayToolbarSearchBox: false } },
       { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
-      { path: 'transaction', component: () => import('pages/Transaction.vue'), meta: { DisplayToolbarSearchBox: true, NeedLogined: true } },
+      { path: 'transaction', component: () => import('pages/Transaction.vue'), meta: { DisplayToolbarSearchBox: true } },
       { path: 'deck', component: () => import('pages/Deck.vue'), meta: { DisplayToolbarSearchBox: true } }
     ],
   },
@@ -26,8 +25,23 @@ const routes: RouteRecordRaw[] = [
         path: '', 
         component: () => import('components/NFT/Result.vue'), 
         meta: {
-          DisplayToolbarSearchBox: false,
-          NeedLogined: false,
+          DisplayToolbarSearchBox: false 
+        } 
+      },
+      // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
+      // { path: 'transaction', component: () => import('pages/Transaction.vue'), meta: { DisplayToolbarSearchBox: true } },
+      // { path: 'deck', component: () => import('pages/Deck.vue'), meta: { DisplayToolbarSearchBox: true } }
+    ],
+  },
+  {
+    path: '/backup',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('components/Backup/Backup.vue'), 
+        meta: {
+          DisplayToolbarSearchBox: false 
         } 
       },
       // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
