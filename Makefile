@@ -64,7 +64,14 @@ endif
 	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
 	make -C extern/filecoin-ffi .install-filcrypto
 
-build: ./extern/filecoin-ffi/filcrypto.pc ## Build project
+./dealer/output/linux/amd64/lotus:
+	curl -sL https://github.com/filecoin-project/lotus/releases/download/v1.23.1-rc2/lotus_v1.23.1-rc2_linux_amd64.tar.gz -o dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64.tar.gz
+	tar xvvf dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64.tar.gz -C dealer/output/linux/amd64/
+	mv dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64/lotus dealer/output/linux/amd64
+
+dealer: ./dealer/output/linux/amd64/lotus
+
+build: ./extern/filecoin-ffi/filcrypto.pc $(PROJECTS) ## Build project
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
 	done
