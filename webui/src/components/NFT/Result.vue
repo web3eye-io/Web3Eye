@@ -102,7 +102,8 @@
 <script lang='ts' setup>
 import { useNFTMetaStore } from 'src/localstore/nft';
 import { NFTMeta } from 'src/localstore/nft/types';
-import { computed, ref } from 'vue';
+import { useRetrieveStore } from 'src/teststore/retrieve';
+import { computed, ref, watch } from 'vue';
 
 const splitterModel = ref(40)
 
@@ -125,6 +126,9 @@ const nfts = computed(() => {
 
 const currentImg = computed(() => nft.NTFMetas.Current)
 
+const retrieve = useRetrieveStore()
+const retrieves = computed(() => retrieve.Retrieves.Retrieves)
+
 enum ImageState {
   Normal = 'Normal',
   IPFS = 'IPFS',
@@ -132,9 +136,7 @@ enum ImageState {
   WaitRecover = 'WaitRecover'
 }
 
-const getImageState = computed(() => (id: string) => {
-  return true
-})
+const currentRetrieveNFTMeta = ref({} as NFTMeta)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImage = computed(() => (row: NFTMeta) => {
   return () => {
@@ -150,15 +152,37 @@ const checkImage = computed(() => (row: NFTMeta) => {
     }
 
     if (row.ImageSnapshotID?.length > 0) {
-      // get state
-      // true
-      if (getImageState.value(row.ImageSnapshotID)) {
+      currentRetrieveNFTMeta.value = row // trigger watch
+
+      const _row = retrieves.value?.find((el) => el.ChainType === row.ChainType && el.ChainID === row.ChainID && el.Contract === row.Contract && el.TokenID === row.TokenID)
+      if (!_row) {
+        console.log('not found')
+        return ImageState.WaitRecover
+      }
+      if (_row.RetrieveState?.length > 0) {
         return ImageState.Retrieving
       }
     }
     return ImageState.WaitRecover
   }
 })
+
+
+watch(currentRetrieveNFTMeta, () => {
+  statRetrieve(currentRetrieveNFTMeta.value)
+})
+
+const statRetrieve = (row: NFTMeta) => {
+  retrieve.statRetrieve({
+    ChainType: row.ChainType,
+    ChainID: row.ChainID,
+    Contract: row.Contract,
+    TokenID: row.TokenID,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
 
 </script>
 <style lang='sass' scoped>

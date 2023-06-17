@@ -1,5 +1,6 @@
 export interface NFTMeta {
   ChainType: string;
+  ChainID: string;
   Contract: string;
   Description: string;
   Distance: number;
