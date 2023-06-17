@@ -85,6 +85,7 @@ def QueueDealImageURL2Vector():
                 if not ok:
                     vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
                     logging.warning(vectorInfo.msg)
+                    vectorInfo.success = False
                     producer.produce(pTopic, json.dumps(
                         vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
                     continue
