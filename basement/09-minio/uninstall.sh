@@ -1,8 +1,16 @@
-# mysql
+#!/bin/bash
+SHELL_FOLDER=$(
+    cd "$(dirname "$0")"
+    pwd
+)
+PROJECT_FOLDER=$(
+    cd $SHELL_FOLDER/../
+    pwd
+)
 
-read accesskey and secretkey
+set -o errexit
+set -o nounset
+set -o pipefail
 
-```shell
-kubectl get secret --namespace "default" web3eye-minio -o jsonpath="{.data.accesskey}" | base64 -d && echo ""
-kubectl get secret --namespace "default" web3eye-minio -o jsonpath="{.data.secretkey}" | base64 -d && echo ""
-```
+helm uninstall web3eye-minio
+kubectl get pvc | grep web3eye-minio | awk '{print $1}' | xargs -n1 kubectl delete pvc
