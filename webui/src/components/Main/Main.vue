@@ -28,6 +28,7 @@
       :form-fields='[{name: "topN", value: "10"}]'
       auto-upload
       flat
+      accept=".jpg, image/*"
       :disable='uploading'
       @failed='onFailed'
       @uploaded='onUploaded'
@@ -79,6 +80,7 @@ const uploading = ref(false)
 const onAdded = (files: readonly any[]) => {
   const _file = files[0] as File
   fileName.value = _file.name
+  console.log('--------------------')
 }
 
 

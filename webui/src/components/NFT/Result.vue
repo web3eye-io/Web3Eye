@@ -53,7 +53,13 @@
             <q-timeline-entry subtitle='February 22, 1986'>
               <div class="row">
                 <div class='col-md-2'>
+                  <q-icon
+                    v-if='nft?.ImageURL?.startsWith("img")'
+                    size='300px' 
+                    :name='nft.ImageURL' 
+                  />
                   <q-img
+                    v-else
                     :src="nft.ImageURL"
                     spinner-color="red"
                   />
@@ -95,12 +101,43 @@
 </template>
 <script lang='ts' setup>
 import { useNFTMetaStore } from 'src/localstore/nft';
+import { NFTMeta } from 'src/localstore/nft/types';
 import { computed, ref } from 'vue';
 
 const splitterModel = ref(40)
 
 const nft = useNFTMetaStore()
-const nfts = computed(() => nft.NTFMetas.NTFMetas)
+const nfts = computed(() => {
+  const rows = [] as Array<NFTMeta>
+  nft.NTFMetas.NTFMetas.forEach((el) => {
+    if(el.ImageURL?.startsWith('ipfs://')){
+      el.ImageURL = el.ImageURL.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    }
+    if (el.ImageURL?.startsWith('data:image')) {
+      el.ImageURL = `img:${el.ImageURL}`
+    }
+    rows.push(el)
+  })
+  return rows
+})
+
+enum ImageState {
+  Normal = 'Normal',
+  IPFS = 'IPFS',
+  Retrieving = 'Retrieving',
+  WaitRecover = 'WaitRecover'
+}
+
+const checkImage = computed(() => (row: NFTMeta) => {
+  return () => {
+    const image = new Image()
+    image.src = row.ImageURL
+    if (image.width > 0 && image.height > 0) {
+      return ImageState.Normal
+    }
+
+  }
+})
 const currentImg = computed(() => nft.NTFMetas.Current)
 </script>
 <style lang='sass' scoped>
