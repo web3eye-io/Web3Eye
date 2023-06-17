@@ -55,13 +55,13 @@ metadata:
 spec:
   ports:
     - name: http
-      port: 30170
-      targetPort: 30170
+      port: 30180
+      targetPort: 30180
     - name: grpc
-      port: 30171
-      targetPort: 30171
+      port: 30181
+      targetPort: 30181
     - name: healthz
-      port: 30172
-      targetPort: 30172
+      port: 30182
+      targetPort: 30182
   selector:
     app: gen-car
