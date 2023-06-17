@@ -14,6 +14,7 @@ export interface NFTMeta {
   VectorState: number;
   IPFSImageURL: string;
   ImageSnapshotID: string;
+  VideoURL: string;
 }
 
 export interface UploadResponse {

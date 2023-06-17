@@ -30,6 +30,7 @@ export const useRetrieveStore = defineStore('Retrieve', {
         req,
         req.Message,
         (resp: StatRetrieveResponse): void => {
+          if (resp.Info === undefined) return
           const index = this.Retrieves.Retrieves.findIndex((el) => el.TokenID === resp.Info.TokenID)
           this.Retrieves.Retrieves.splice(index < 0 ? 0 : index, index < 0 ? 0 : 1, resp.Info)
           this.Retrieves.Total += 1

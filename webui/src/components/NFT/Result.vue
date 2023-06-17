@@ -53,7 +53,8 @@
             <q-timeline-entry subtitle='February 22, 1986'>
               <div class="row">
                 <div class='col-md-2'>
-                  <q-icon
+                  <div v-if='getImageState(nft) === ImageState.Normal'>
+                    <q-icon
                     v-if='nft?.ImageURL?.startsWith("img")'
                     size='300px' 
                     :name='nft.ImageURL' 
@@ -63,8 +64,17 @@
                     :src="nft.ImageURL"
                     spinner-color="red"
                   />
+                  </div>
+                  <div v-if='getImageState(nft) === ImageState.IPFS'>
+                    IPFS
+                  </div>
+                  <div v-if='getImageState(nft) === ImageState.Retrieving'>
+                    Retrieving
+                  </div>
+                  <div v-if='getImageState(nft) === ImageState.WaitRecover'>
+                    WaitRecover
+                  </div>
                 </div>
-                
                 <div class='column col-md-9' style="margin-left: 15px;">
                   <div>
                     <span class='label'>相似度:</span>
@@ -84,7 +94,7 @@
                   </div>
                 <div>
                     <span class='label'>作者:</span>
-                    <span class='value'> XXX</span>
+                    <span class='value'> {{nft.ImageURL}}</span>
                   </div>
                 </div>
               </div>
@@ -137,34 +147,33 @@ enum ImageState {
 }
 
 const currentRetrieveNFTMeta = ref({} as NFTMeta)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const checkImage = computed(() => (row: NFTMeta) => {
-  return () => {
-    const image = new Image()
-    image.src = row.ImageURL
-    if (image.width > 0 && image.height > 0) {
-      return ImageState.Normal
-    }
-
-    image.src = row.IPFSImageURL
-    if (image.width > 0 && image.height > 0) {
-      return ImageState.IPFS
-    }
-
-    if (row.ImageSnapshotID?.length > 0) {
-      currentRetrieveNFTMeta.value = row // trigger watch
-
-      const _row = retrieves.value?.find((el) => el.ChainType === row.ChainType && el.ChainID === row.ChainID && el.Contract === row.Contract && el.TokenID === row.TokenID)
-      if (!_row) {
-        console.log('not found')
-        return ImageState.WaitRecover
-      }
-      if (_row.RetrieveState?.length > 0) {
-        return ImageState.Retrieving
-      }
-    }
-    return ImageState.WaitRecover
+const getImageState = computed(() => (row: NFTMeta) => {
+  const image = new Image()
+  image.src = row.ImageURL
+  
+  if (image.width > 0 && image.height > 0) {
+    return ImageState.Normal
   }
+
+  image.src = row.IPFSImageURL
+  if (image.width > 0 && image.height > 0) {
+    return ImageState.IPFS
+  }
+
+  if (row.ImageSnapshotID?.length > 0) {
+    currentRetrieveNFTMeta.value = row // trigger watch
+
+    const _row = retrieves.value?.find((el) => el.ChainType === row.ChainType && el.ChainID === row.ChainID && el.Contract === row.Contract && el.TokenID === row.TokenID)
+    if (!_row) {
+      console.log('not found')
+      return ImageState.WaitRecover
+    }
+    if (_row.RetrieveState?.length > 0) {
+      return ImageState.Retrieving
+    }
+  }
+
+  return ImageState.WaitRecover
 })
 
 
