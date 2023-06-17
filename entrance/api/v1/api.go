@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 
+	"github.com/web3eye-io/Web3Eye/entrance/api/v1/retriever"
 	_ "github.com/web3eye-io/Web3Eye/entrance/api/v1/search"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/snapshot"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1"
@@ -18,6 +19,7 @@ type Server struct {
 func Register(server grpc.ServiceRegistrar) {
 	npool.RegisterManagerServer(server, &Server{})
 	snapshot.Register(server)
+	retriever.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -25,6 +27,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := snapshot.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := retriever.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
