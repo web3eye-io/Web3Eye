@@ -33,7 +33,7 @@ type backup struct {
 
 func (b *backup) mockOne(ctx context.Context) (cid.Cid, string, error) {
 	b1 := make([]byte, 1024*1024)
-	copy(b1, []byte("0123456789abcdef0123456789abcdef"))
+	copy(b1, []byte("0123456789abcdef0123456789abcdef123456789abcdef"))
 	mockSrcPath := "/tmp/mockOneSource.data"
 	mockDstPath := "/tmp/mockOneDest.data"
 
@@ -236,7 +236,7 @@ var newSnapshot chan struct{}
 
 func Watch(ctx context.Context) (err error) {
 	backup := &backup{
-		mock: true,
+		mock: false,
 	}
 
 	if err := backup.buildHost(ctx); err != nil {
@@ -252,8 +252,12 @@ func Watch(ctx context.Context) (err error) {
 	newSnapshot = make(chan struct{})
 	backup.backupAll(ctx)
 
+	ticker := time.NewTicker(time.Minute)
+
 	for {
 		select {
+		case <-ticker.C:
+			backup.backupAll(ctx)
 		case <-newSnapshot:
 			backup.backupAll(ctx)
 		case <-ctx.Done():
