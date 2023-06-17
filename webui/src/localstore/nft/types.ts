@@ -1,3 +1,10 @@
+export enum ImageState {
+  Normal = 'Normal',
+  IPFS = 'IPFS',
+  Retrieving = 'Retrieving',
+  WaitRecover = 'WaitRecover'
+}
+
 export interface NFTMeta {
   ChainType: string;
   ChainID: string;
@@ -15,6 +22,9 @@ export interface NFTMeta {
   IPFSImageURL: string;
   ImageSnapshotID: string;
   VideoURL: string;
+  // just for frontend
+  ImageState: ImageState;
+  Loading: boolean;
 }
 
 export interface UploadResponse {

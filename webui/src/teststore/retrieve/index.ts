@@ -18,7 +18,9 @@ export const useRetrieveStore = defineStore('Retrieve', {
         req,
         req.Message,
         (resp: StartRetrieveResponse): void => {
-          this.Retrieves.Retrieves.push(resp.Info)
+          if (resp.Info === undefined) return
+          const index = this.Retrieves.Retrieves.findIndex((el) => el.ChainType === resp.Info.ChainType && el.ChainID === resp.Info.ChainID && el.Contract === resp.Info.Contract && el.TokenID === resp.Info.TokenID)
+          this.Retrieves.Retrieves.splice(index < 0 ? 0 : index, index < 0 ? 0 : 1, resp.Info)
           done(false, resp.Info)
         }, () => {
           done(true, {} as Retrieve)
@@ -31,7 +33,7 @@ export const useRetrieveStore = defineStore('Retrieve', {
         req.Message,
         (resp: StatRetrieveResponse): void => {
           if (resp.Info === undefined) return
-          const index = this.Retrieves.Retrieves.findIndex((el) => el.TokenID === resp.Info.TokenID)
+          const index = this.Retrieves.Retrieves.findIndex((el) => el.ChainType === resp.Info.ChainType && el.ChainID === resp.Info.ChainID && el.Contract === resp.Info.Contract && el.TokenID === resp.Info.TokenID)
           this.Retrieves.Retrieves.splice(index < 0 ? 0 : index, index < 0 ? 0 : 1, resp.Info)
           this.Retrieves.Total += 1
           done(false, resp.Info)
