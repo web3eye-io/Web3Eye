@@ -184,6 +184,19 @@ const statRetrieve = (row: NFTMeta) => {
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const startRetrieve = (row: NFTMeta) => {
+  retrieve.startRetrieve({
+    ChainType: row.ChainType,
+    ChainID: row.ChainID,
+    Contract: row.Contract,
+    TokenID: row.TokenID,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
+
 </script>
 <style lang='sass' scoped>
 .nft-container
