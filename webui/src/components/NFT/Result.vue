@@ -14,8 +14,8 @@
             </div>
           </div>
           <div class='content-container column'>
-            <h5>目标标题</h5>
-            <div>
+            <!-- <h5>目标标题</h5> -->
+            <!-- <div>
               <span class='label'>首发时间:</span>
               <span class='value'> XXXX-XX-XX</span>
             </div>
@@ -42,7 +42,7 @@
             <div>
               <span class='label'>稀缺度:</span>
               <span class='value'> 1%</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </template>
@@ -79,23 +79,23 @@
                 </div>
                 <div class='column col-md-9' style="margin-left: 15px;">
                   <div>
-                    <span class='label'>相似度:</span>
+                    <span class='label'>Similarity:</span>
                     <span class='value'>&nbsp; {{ nft.Distance }}</span>
                   </div>
                   <div>
-                    <span class='label'>发布时间:</span>
-                    <span class='value'> XXX</span>
+                    <span class='label'>ReleaseTime:</span>
+                    <span class='value'></span>
                   </div>
                   <div>
-                    <span class='label'>公链信息:</span>
+                    <span class='label'>ChainType:</span>
                     <span class='value'> {{ nft.ChainType }}</span>
                   </div>
                   <div>
-                    <span class='label'>网站信息:</span>
+                    <span class='label'>Contract:</span>
                     <span class='value'> {{ nft.Contract }}</span>
                   </div>
                 <div>
-                    <span class='label'>链接:</span>
+                    <span class='label'>Link:</span>
                     <span class='value'> {{nft.ImageURL}}</span>
                   </div>
                 </div>
