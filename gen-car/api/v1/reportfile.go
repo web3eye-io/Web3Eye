@@ -253,7 +253,7 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	snapshot, err := dealer_client.CreateSnapshot(
 		ctx,
 		&dealer_proto.CreateSnapshotRequest{
-			SnapshotCommP: carInfo.RootCID,
+			SnapshotCommP: carInfo.CommPCID,
 			SnapshotRoot:  carInfo.RootCID,
 			SnapshotURI:   carFI.CarName,
 			Items:         items,
