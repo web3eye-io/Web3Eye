@@ -16,6 +16,7 @@ import (
 	"github.com/mr-tron/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
+	dealer_client "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	dealer_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
@@ -115,7 +116,8 @@ const (
 	DefaultDownloadParallel = 3
 	// 17GB
 	// maxUnTarSize = 18253611008
-	maxUnTarSize = 1825361100
+	// 100M
+	maxUnTarSize = 10485760
 )
 
 var carManager *CarManager
@@ -245,16 +247,16 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 		}
 	}
 
-	// _, err = dealer_client.CreateSnapshot(
-	// 	ctx,
-	// 	&dealer_proto.CreateSnapshotRequest{
-	// 		SnapshotCommP: carInfo.RootCID,
-	// 		SnapshotRoot:  carInfo.RootCID,
-	// 		SnapshotURI:   carFI.CarName,
-	// 		Items:         items,
-	// 	},
-	// )
-	logger.Sugar().Infof("report to dealer for create snapshot: %v", carFI.CarName)
+	snapshot, err := dealer_client.CreateSnapshot(
+		ctx,
+		&dealer_proto.CreateSnapshotRequest{
+			SnapshotCommP: carInfo.RootCID,
+			SnapshotRoot:  carInfo.RootCID,
+			SnapshotURI:   carFI.CarName,
+			Items:         items,
+		},
+	)
+	logger.Sugar().Infof("report to dealer for create snapshot: %v, car: %v", snapshot.Info.ID, carFI.CarName)
 
 	if err != nil {
 		return err
