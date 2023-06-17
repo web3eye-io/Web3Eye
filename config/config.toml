@@ -49,7 +49,7 @@ log-file="/var/log/dealer.log"
 [retriever]
 ip="retriever"
 ipfs-repo="/home/test/.ipfs-retr"
-orbit-repo="/home/test/.orbit-retr"
+orbit-repo="/home/test/.orbit"
 http-port=30170
 grpc-port=30171
 log-file="/var/log/retriever.log"
