@@ -62,7 +62,7 @@ endif
 	mkdir extern -p
 	cd extern; git clone https://github.com/filecoin-project/filecoin-ffi.git || true
 	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
-	make -C extern/filecoin-ffi .install-filcrypto
+	FFI_USE_CUDA=0 FFI_USE_OPENCL=1 make -C extern/filecoin-ffi .install-filcrypto
 
 ./dealer/output/linux/amd64/lotus:
 	mkdir -p dealer/output/linux/amd64/

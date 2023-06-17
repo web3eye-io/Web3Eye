@@ -62,7 +62,7 @@
         "RetrieveState": {
           "type": "string"
         },
-        "ProposalID": {
+        "ProposalCID": {
           "type": "string"
         },
         "DealID": {
