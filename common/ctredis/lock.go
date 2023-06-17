@@ -9,10 +9,11 @@ import (
 	"golang.org/x/xerrors"
 )
 
+// Lock with lockID
 func TryLock(key string, expire time.Duration) (string, error) {
 	cli := GetClient()
 
-	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultLockTime)
 	defer cancel()
 
 	lockID := uuid.New().String()
@@ -33,7 +34,7 @@ func TryLock(key string, expire time.Duration) (string, error) {
 func Unlock(lockKey, lockID string) error {
 	cli := GetClient()
 
-	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultLockTime)
 	defer cancel()
 
 	_lockID, err := cli.Get(ctx, lockKey).Result()
@@ -50,10 +51,11 @@ func Unlock(lockKey, lockID string) error {
 	return ErrFilter(err)
 }
 
+// Lock without lockID
 func TryPubLock(key string, expire time.Duration) error {
 	cli := GetClient()
 
-	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultLockTime)
 	defer cancel()
 
 	resp := cli.SetNX(ctx, key, true, expire)
@@ -73,7 +75,7 @@ func TryPubLock(key string, expire time.Duration) error {
 func UnPubLock(lockKey string) error {
 	cli := GetClient()
 
-	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultLockTime)
 	defer cancel()
 
 	_, err := cli.Get(ctx, lockKey).Result()

@@ -255,7 +255,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		remark := ""
 		conds := &tokenProto.Conds{
 			ChainType: &ctMessage.StringVal{
-				Value: string(transfer.ChainType),
+				Value: transfer.ChainType.String(),
 				Op:    "eq",
 			},
 			ChainID: &ctMessage.StringVal{
@@ -335,7 +335,7 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 
 	conds := &contractProto.Conds{
 		ChainType: &ctMessage.StringVal{
-			Value: string(transfer.ChainType),
+			Value: transfer.ChainType.String(),
 			Op:    "eq",
 		},
 		ChainID: &ctMessage.StringVal{
@@ -355,11 +355,6 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	}
 
 	remark := ""
-	creator, err := cteth.GetContractCreator(ctx, transfer.Contract)
-	if err != nil {
-		creator = &cteth.ContractCreator{}
-		remark = err.Error()
-	}
 
 	contractMeta, err := cteth.GetERC721Metadata(ctx, transfer.Contract)
 	if err != nil {
@@ -367,10 +362,17 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 		remark = fmt.Sprintf("%v,%v", remark, err)
 	}
 
-	from := creator.From.String()
-	txHash := creator.TxHash.Hex()
-	blockNum := creator.BlockNumber
-	txTime := uint32(creator.TxTime)
+	// stop get info for creator
+	// creator, err := cteth.GetContractCreator(ctx, transfer.Contract)
+	// if err != nil {
+	// 	creator = &cteth.ContractCreator{}
+	// 	remark = err.Error()
+	// }
+
+	// from := creator.From.String()
+	// txHash := creator.TxHash.Hex()
+	// blockNum := creator.BlockNumber
+	// txTime := uint32(creator.TxTime)
 	for i := 0; i < Retries; i++ {
 		_, err = contractNMCli.CreateContract(ctx, &contractProto.ContractReq{
 			ChainType: &transfer.ChainType,
@@ -378,11 +380,11 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 			Address:   &transfer.Contract,
 			Name:      &contractMeta.Name,
 			Symbol:    &contractMeta.Symbol,
-			Creator:   &from,
-			BlockNum:  &blockNum,
-			TxHash:    &txHash,
-			TxTime:    &txTime,
-			Remark:    &remark,
+			// Creator:   &from,
+			// BlockNum:  &blockNum,
+			// TxHash:    &txHash,
+			// TxTime:    &txTime,
+			Remark: &remark,
 		})
 		if err != nil && containErr(err.Error()) {
 			logger.Sugar().Errorf("will retry for creating contract record failed, %v", err)

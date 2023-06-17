@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	ConnectTimeout = 5 * time.Minute
+	ConnectTimeout  = 3 * time.Second
+	DefaultLockTime = 10 * time.Minute
 )
 
 func Set(key string, value interface{}, expire time.Duration) error {
