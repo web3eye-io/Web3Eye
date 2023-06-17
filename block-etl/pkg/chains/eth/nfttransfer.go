@@ -61,6 +61,7 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 				From:        pLog.Topics[1].Hex(),
 				To:          pLog.Topics[2].Hex(),
 				ChainType:   basetype.ChainType_Ethereum,
+				ChainID:     *cteth.CurrentChainID,
 				Contract:    pLog.Address.Hex(),
 				TokenID:     pLog.Topics[3].Big().String(),
 				BlockNumber: pLog.BlockNumber,

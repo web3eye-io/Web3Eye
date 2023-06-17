@@ -17,6 +17,10 @@ const (
 	dialTimeout      = 3 * time.Second
 )
 
+var (
+	CurrentChainID *string
+)
+
 type EClientI interface {
 	GetNode(ctx context.Context, endpointmgr *endpoints.Manager) (*ethclient.Client, error)
 	WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error
@@ -36,6 +40,15 @@ func (eClients eClients) GetNode(ctx context.Context, endpointmgr *endpoints.Man
 	cli, err := ethclient.DialContext(ctx, endpoint)
 	if err != nil {
 		return nil, err
+	}
+
+	if CurrentChainID == nil {
+		_chainID, err := cli.ChainID(ctx)
+		if err != nil {
+			return nil, err
+		}
+		chainID := _chainID.String()
+		CurrentChainID = &chainID
 	}
 
 	// sync check is to many,so will be canceled

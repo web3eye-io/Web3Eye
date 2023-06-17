@@ -76,10 +76,6 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 			Value: basetype.ChainType_Ethereum.String(),
 			Op:    "eq",
 		},
-		ChainID: &ctMessage.StringVal{
-			Value: "1",
-			Op:    "eq",
-		},
 		SyncState: &ctMessage.StringVal{
 			Value: cttype.SyncState_Finish.String(),
 			Op:    "eq",
