@@ -56,7 +56,7 @@ func (kv *FileStateKV) GetFileState(ctx context.Context, chainType, uid, chainId
 		return dealerpb.BackupState_DefaultBackupState, fmt.Errorf("invalid kvstore")
 	}
 
-	key := fmt.Sprintf("%v:%v:%v", chainType, uid, chainId)
+	key := fmt.Sprintf("%v:%v:%v:state", chainType, uid, chainId)
 	b, err := kv.kvFileState.Get(ctx, key)
 	if err != nil {
 		return dealerpb.BackupState_DefaultBackupState, err
@@ -86,7 +86,7 @@ func (kv *FileStateKV) GetFileSnapshot(ctx context.Context, chainType, uid, chai
 		return 0, fmt.Errorf("invalid kvstore")
 	}
 
-	key := fmt.Sprintf("%v:%v:%v", chainType, uid, chainId)
+	key := fmt.Sprintf("%v:%v:%v:snapshot", chainType, uid, chainId)
 	b, err := kv.kvFileState.Get(ctx, key)
 	if err != nil {
 		return 0, err
@@ -94,6 +94,33 @@ func (kv *FileStateKV) GetFileSnapshot(ctx context.Context, chainType, uid, chai
 	index, _ := binary.Uvarint(b)
 
 	return index, nil
+}
+
+func (kv *FileStateKV) SetFileRetrieve(ctx context.Context, chainType, uid, chainId string, state string) error {
+	if kv.kvFileState == nil {
+		return fmt.Errorf("invalid kvstore")
+	}
+
+	key := fmt.Sprintf("%v:%v:%v:retrieve", chainType, uid, chainId)
+	if _, err := kv.kvFileState.Put(ctx, key, []byte(state)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (kv *FileStateKV) GetFileRetrieve(ctx context.Context, chainType, uid, chainId string) (string, error) {
+	if kv.kvFileState == nil {
+		return "", fmt.Errorf("invalid kvstore")
+	}
+
+	key := fmt.Sprintf("%v:%v:%v:retrieve", chainType, uid, chainId)
+	b, err := kv.kvFileState.Get(ctx, key)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
 
 func (kv *FileStateKV) Close() {

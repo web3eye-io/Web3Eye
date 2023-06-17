@@ -15,7 +15,7 @@ message Retrieve {
     string Contract  = 30;
     string TokenID   = 40;
     string RetrieveState = 50;
-    string ProposalID = 60;
+    string ProposalCID = 60;
     uint64 DealID     = 70;
     string BackupPayloadCID = 80;
 }
