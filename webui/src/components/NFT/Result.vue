@@ -118,6 +118,8 @@ const nfts = computed(() => {
     }
     rows.push(el)
   })
+
+  rows.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
   return rows
 })
 
@@ -128,6 +130,7 @@ enum ImageState {
   WaitRecover = 'WaitRecover'
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImage = computed(() => (row: NFTMeta) => {
   return () => {
     const image = new Image()
@@ -135,6 +138,7 @@ const checkImage = computed(() => (row: NFTMeta) => {
     if (image.width > 0 && image.height > 0) {
       return ImageState.Normal
     }
+
 
   }
 })

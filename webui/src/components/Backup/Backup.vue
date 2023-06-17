@@ -40,7 +40,7 @@
 <script setup lang='ts'>
 import { useSnapshotStore } from 'src/teststore/snapshot';
 import { Snapshot, BackupState } from 'src/teststore/snapshot/types';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const snapshot = useSnapshotStore()
 const snapshots = computed(() => snapshot.Snapshots.Snapshots)
