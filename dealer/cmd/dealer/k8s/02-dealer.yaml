@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
-              mountPath: /etc/BlockETL
+              mountPath: /etc/dealer
           env:
             - name: ENV_CLUSTER_NAMESPACE
               valueFrom:
