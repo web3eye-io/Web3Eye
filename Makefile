@@ -75,9 +75,7 @@ endif
 	cp dealer/output/linux/amd64/kubo/ipfs dealer/output/linux/amd64/
 
 
-
-
-dealer: ./dealer/output/linux/amd64/lotus
+dealer: ./dealer/output/linux/amd64/lotus ./dealer/output/linux/amd64/ipfs
 
 build: ./extern/filecoin-ffi/filcrypto.pc $(PROJECTS) ## Build project
 	@for x in $(PROJECTS); do \
