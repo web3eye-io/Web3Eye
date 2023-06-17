@@ -69,6 +69,14 @@ endif
 	tar xvvf dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64.tar.gz -C dealer/output/linux/amd64/
 	mv dealer/output/linux/amd64/lotus_v1.23.1-rc2_linux_amd64/lotus dealer/output/linux/amd64
 
+./dealer/output/linux/amd64/ipfs:
+	curl -sL https://dist.ipfs.tech/kubo/v0.20.0/kubo_v0.20.0_linux-amd64.tar.gz -o dealer/output/linux/amd64/kubo_v0.20.0_linux-amd64.tar.gz
+	tar -xvzf dealer/output/linux/amd64/kubo_v0.20.0_linux-amd64.tar.gz -C dealer/output/linux/amd64/
+	cp dealer/output/linux/amd64/kubo/ipfs dealer/output/linux/amd64/
+
+
+
+
 dealer: ./dealer/output/linux/amd64/lotus
 
 build: ./extern/filecoin-ffi/filcrypto.pc $(PROJECTS) ## Build project
