@@ -69,12 +69,12 @@
                   <div v-if='getImageState(nft) === ImageState.IPFS'>
                     IPFS
                   </div>
-                  <div v-if='getImageState(nft) === ImageState.Retrieving'>
+                  <!-- <div v-if='getImageState(nft) === ImageState.Retrieving'>
                     Retrieving
-                  </div>
+                  </div> -->
                   <div v-if='getImageState(nft) === ImageState.WaitRecover'>
                     WaitRecover
-                    <q-btn outline rounded color="primary" label="Backup" @click='startRetrieve(nft)' :loading='nft.Loading' />
+                    <q-btn outline rounded color="primary" label="Recover" @click='startRetrieve(nft)' :loading='nft.Loading' />
                   </div>
                 </div>
                 <div class='column col-md-9' style="margin-left: 15px;">
@@ -82,9 +82,14 @@
                     <span class='label'>Similarity:</span>
                     <span class='value'>&nbsp; {{ nft.Distance }}</span>
                   </div>
+                  
                   <div>
                     <span class='label'>ReleaseTime:</span>
                     <span class='value'></span>
+                  </div>
+                  <div>
+                    <span class='label'>ChainID:</span>
+                    <span class='value'>&nbsp; {{ nft.ChainID }}</span>
                   </div>
                   <div>
                     <span class='label'>ChainType:</span>
@@ -93,6 +98,10 @@
                   <div>
                     <span class='label'>Contract:</span>
                     <span class='value'> {{ nft.Contract }}</span>
+                  </div>
+                  <div>
+                    <span class='label'>TokenID:</span>
+                    <span class='value'> {{ nft.TokenID }}</span>
                   </div>
                 <div>
                     <span class='label'>Link:</span>
@@ -148,10 +157,10 @@ const getImageState = computed(() => (row: NFTMeta) => {
     return ImageState.Normal
   }
   
-  if(checkImageExist(row.ImageURL)) {
+  if(checkImageExistTest.value(row.ImageURL)) {
     return ImageState.Normal
   }
-  if (checkImageExist(row.IPFSImageURL)) {
+  if (checkImageExistTest.value(row.IPFSImageURL)) {
     return ImageState.IPFS
   }
 
@@ -161,17 +170,19 @@ const getImageState = computed(() => (row: NFTMeta) => {
       el?.Contract === row.Contract && 
       el?.TokenID === row.TokenID
     )
+    console.log('retrieves: ', retrieves.value)
     if (!_row) {
       console.log('not found')
       return ImageState.WaitRecover
     }
     if (_row.RetrieveState?.length > 0) {
-      return ImageState.Retrieving
+      return ImageState.WaitRecover
     }
   }
   return ImageState.WaitRecover
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImageExist = (url: string) => {
   const image = new Image()
   image.src = url
@@ -180,6 +191,16 @@ const checkImageExist = (url: string) => {
   }
   return false
 }
+
+const checkImageExistTest = computed(() => (url: string) => {
+  const image = new Image()
+  image.src = url
+  console.log('url: ', url)
+  if (image.height > 0 && image.width > 0) {
+    return true
+  }
+  return false
+} )
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImgExist = (imgUrl: string) => {

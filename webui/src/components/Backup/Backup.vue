@@ -109,6 +109,7 @@ const columns = computed(() => [
     label: 'SnapshotRoot',
     field: (row: Snapshot) => row.SnapshotRoot,
     align: 'left',
+    style: 'max-width:240px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis'
   },
   {
     name: 'SnapshotURI',
