@@ -3,6 +3,7 @@ package token
 import (
 	"context"
 	"errors"
+	"sort"
 
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
@@ -55,6 +56,10 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		info.Distance = scores[info.VectorID]
 		infos = append(infos, info)
 	}
+
+	sort.Slice(infos, func(i, j int) bool {
+		return infos[i].Distance < infos[j].Distance
+	})
 
 	return &rankernpool.SearchTokenResponse{Infos: infos, Total: int32(len(infos))}, nil
 }
