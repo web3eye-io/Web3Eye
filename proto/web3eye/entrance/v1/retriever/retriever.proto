@@ -1,56 +1,23 @@
 syntax = "proto3";
 
-package entrance.v1.retriever;
+package entrance.v1.retriever1;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/retriever";
 import "google/api/annotations.proto";
+import "web3eye/retriever/v1/retriever.proto";
 
 
 service Manager {
-  rpc StartRetrieve (StartRetrieveRequest) returns (StartRetrieveResponse) {
+  rpc StartRetrieve (retriever.v1.StartRetrieveRequest) returns (retriever.v1.StartRetrieveResponse) {
     option (google.api.http) = {
       post : "/v1/start/retrieve"
       body : "*"
     };
   }
-  rpc StatRetrieve (StatRetrieveRequest) returns (StatRetrieveResponse) {
+  rpc StatRetrieve (retriever.v1.StatRetrieveRequest) returns (retriever.v1.StatRetrieveResponse) {
     option (google.api.http) = {
       post : "/v1/stat/retrieve"
       body : "*"
     };
   }
-}
-
-// will be replaced with retriever proto not in entrance
-message Retrieve {
-    string ChainType = 10;
-    string ChainID   = 20;
-    string Contract  = 30;
-    string TokenID   = 40;
-    string RetrieveState = 50;
-    string ProposalID = 60;
-    uint64 DealID     = 70;
-    string BackupPayloadCID = 80;
-}
-
-message StartRetrieveRequest {
-    string ChainType = 10;
-    string ChainID   = 20;
-    string Contract  = 30;
-    string TokenID   = 40;
-}
-
-message StartRetrieveResponse {
-    Retrieve Info = 10;
-}
-
-message StatRetrieveRequest {
-    string ChainType = 10;
-    string ChainID   = 20;
-    string Contract  = 30;
-    string TokenID   = 40;
-}
-
-message StatRetrieveResponse {
-    Retrieve Info = 10;
 }

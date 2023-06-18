@@ -8,6 +8,7 @@ package retriever
 
 import (
 	context "context"
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/retriever/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	StartRetrieve(ctx context.Context, in *StartRetrieveRequest, opts ...grpc.CallOption) (*StartRetrieveResponse, error)
-	StatRetrieve(ctx context.Context, in *StatRetrieveRequest, opts ...grpc.CallOption) (*StatRetrieveResponse, error)
+	StartRetrieve(ctx context.Context, in *v1.StartRetrieveRequest, opts ...grpc.CallOption) (*v1.StartRetrieveResponse, error)
+	StatRetrieve(ctx context.Context, in *v1.StatRetrieveRequest, opts ...grpc.CallOption) (*v1.StatRetrieveResponse, error)
 }
 
 type managerClient struct {
@@ -34,18 +35,18 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) StartRetrieve(ctx context.Context, in *StartRetrieveRequest, opts ...grpc.CallOption) (*StartRetrieveResponse, error) {
-	out := new(StartRetrieveResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.retriever.Manager/StartRetrieve", in, out, opts...)
+func (c *managerClient) StartRetrieve(ctx context.Context, in *v1.StartRetrieveRequest, opts ...grpc.CallOption) (*v1.StartRetrieveResponse, error) {
+	out := new(v1.StartRetrieveResponse)
+	err := c.cc.Invoke(ctx, "/entrance.v1.retriever1.Manager/StartRetrieve", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managerClient) StatRetrieve(ctx context.Context, in *StatRetrieveRequest, opts ...grpc.CallOption) (*StatRetrieveResponse, error) {
-	out := new(StatRetrieveResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.retriever.Manager/StatRetrieve", in, out, opts...)
+func (c *managerClient) StatRetrieve(ctx context.Context, in *v1.StatRetrieveRequest, opts ...grpc.CallOption) (*v1.StatRetrieveResponse, error) {
+	out := new(v1.StatRetrieveResponse)
+	err := c.cc.Invoke(ctx, "/entrance.v1.retriever1.Manager/StatRetrieve", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +57,8 @@ func (c *managerClient) StatRetrieve(ctx context.Context, in *StatRetrieveReques
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	StartRetrieve(context.Context, *StartRetrieveRequest) (*StartRetrieveResponse, error)
-	StatRetrieve(context.Context, *StatRetrieveRequest) (*StatRetrieveResponse, error)
+	StartRetrieve(context.Context, *v1.StartRetrieveRequest) (*v1.StartRetrieveResponse, error)
+	StatRetrieve(context.Context, *v1.StatRetrieveRequest) (*v1.StatRetrieveResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -65,10 +66,10 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) StartRetrieve(context.Context, *StartRetrieveRequest) (*StartRetrieveResponse, error) {
+func (UnimplementedManagerServer) StartRetrieve(context.Context, *v1.StartRetrieveRequest) (*v1.StartRetrieveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartRetrieve not implemented")
 }
-func (UnimplementedManagerServer) StatRetrieve(context.Context, *StatRetrieveRequest) (*StatRetrieveResponse, error) {
+func (UnimplementedManagerServer) StatRetrieve(context.Context, *v1.StatRetrieveRequest) (*v1.StatRetrieveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StatRetrieve not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
@@ -85,7 +86,7 @@ func RegisterManagerServer(s grpc.ServiceRegistrar, srv ManagerServer) {
 }
 
 func _Manager_StartRetrieve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartRetrieveRequest)
+	in := new(v1.StartRetrieveRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -94,16 +95,16 @@ func _Manager_StartRetrieve_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/entrance.v1.retriever.Manager/StartRetrieve",
+		FullMethod: "/entrance.v1.retriever1.Manager/StartRetrieve",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).StartRetrieve(ctx, req.(*StartRetrieveRequest))
+		return srv.(ManagerServer).StartRetrieve(ctx, req.(*v1.StartRetrieveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_StatRetrieve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StatRetrieveRequest)
+	in := new(v1.StatRetrieveRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -112,10 +113,10 @@ func _Manager_StatRetrieve_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/entrance.v1.retriever.Manager/StatRetrieve",
+		FullMethod: "/entrance.v1.retriever1.Manager/StatRetrieve",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).StatRetrieve(ctx, req.(*StatRetrieveRequest))
+		return srv.(ManagerServer).StatRetrieve(ctx, req.(*v1.StatRetrieveRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -124,7 +125,7 @@ func _Manager_StatRetrieve_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Manager_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "entrance.v1.retriever.Manager",
+	ServiceName: "entrance.v1.retriever1.Manager",
 	HandlerType: (*ManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

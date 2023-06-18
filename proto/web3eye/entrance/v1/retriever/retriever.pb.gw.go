@@ -15,6 +15,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/retriever/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -32,7 +33,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Manager_StartRetrieve_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StartRetrieveRequest
+	var protoReq v1.StartRetrieveRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -49,7 +50,7 @@ func request_Manager_StartRetrieve_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_Manager_StartRetrieve_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StartRetrieveRequest
+	var protoReq v1.StartRetrieveRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -66,7 +67,7 @@ func local_request_Manager_StartRetrieve_0(ctx context.Context, marshaler runtim
 }
 
 func request_Manager_StatRetrieve_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StatRetrieveRequest
+	var protoReq v1.StatRetrieveRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -83,7 +84,7 @@ func request_Manager_StatRetrieve_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_StatRetrieve_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq StatRetrieveRequest
+	var protoReq v1.StatRetrieveRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -111,7 +112,7 @@ func RegisterManagerHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/entrance.v1.retriever.Manager/StartRetrieve", runtime.WithHTTPPathPattern("/v1/start/retrieve"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/entrance.v1.retriever1.Manager/StartRetrieve", runtime.WithHTTPPathPattern("/v1/start/retrieve"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -134,7 +135,7 @@ func RegisterManagerHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/entrance.v1.retriever.Manager/StatRetrieve", runtime.WithHTTPPathPattern("/v1/stat/retrieve"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/entrance.v1.retriever1.Manager/StatRetrieve", runtime.WithHTTPPathPattern("/v1/stat/retrieve"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -196,7 +197,7 @@ func RegisterManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/entrance.v1.retriever.Manager/StartRetrieve", runtime.WithHTTPPathPattern("/v1/start/retrieve"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/entrance.v1.retriever1.Manager/StartRetrieve", runtime.WithHTTPPathPattern("/v1/start/retrieve"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -216,7 +217,7 @@ func RegisterManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/entrance.v1.retriever.Manager/StatRetrieve", runtime.WithHTTPPathPattern("/v1/stat/retrieve"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/entrance.v1.retriever1.Manager/StatRetrieve", runtime.WithHTTPPathPattern("/v1/stat/retrieve"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
