@@ -16,7 +16,7 @@ import (
 const mock = true
 
 func (h *Handler) StartRetrieve(ctx context.Context) (*retrieverpb.Retrieve, error) {
-	os.Setenv("FULLNODE_API_INFO", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.pSLTE16BE7rYSzlpcAdPUqQz5V4tF1ksGIWZmAaB_Rc:/ip4/172.21.132.205/tcp/1234/http")
+	os.Setenv("FULLNODE_API_INFO", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.pSLTE16BE7rYSzlpcAdPUqQz5V4tF1ksGIWZmAaB_Rc:/ip4/210.209.69.38/tcp/20803/http")
 
 	uid := fmt.Sprintf("%v:%v", h.Contract, h.TokenID)
 	index, err := orbit.FileState().GetFileSnapshot(ctx, h.ChainType, uid, h.ChainID)

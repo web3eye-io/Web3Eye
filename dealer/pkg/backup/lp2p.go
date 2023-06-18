@@ -43,7 +43,7 @@ func (b *backup) buildHost(ctx context.Context) error {
 			"/dns4/bootstrap-3.calibration.fildev.network/tcp/1347/p2p/12D3KooWFWUqE9jgXvcKHWieYs9nhyp6NF4ftwLGAHm4sCv73jjK",
 		},
 		"testnet": []string{
-			"/ip4/172.21.132.205/tcp/12345/p2p/12D3KooWJj135pPDfTYiwnJMVYvXALWHKET75td7b7GrJa6qdnHF",
+			"/ip4/210.209.69.38/tcp/20802/p2p/12D3KooWJj135pPDfTYiwnJMVYvXALWHKET75td7b7GrJa6qdnHF",
 		},
 	}
 	for _, bootstrap := range bootstraps["testnet"] {
