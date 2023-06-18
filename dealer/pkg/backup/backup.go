@@ -126,6 +126,10 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 		if err != nil {
 			return err
 		}
+		r := bufio.NewReader(rdr.(io.Reader))
+		if _, err := car.ReadHeader(r); err != nil {
+			return err
+		}
 		if _, err := rdr.(*os.File).Seek(0, io.SeekStart); err != nil {
 			return err
 		}
@@ -135,11 +139,6 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 			return err
 		}
 		rdr = bytes.NewReader(buf)
-	}
-
-	r := bufio.NewReader(rdr.(io.Reader))
-	if _, err := car.ReadHeader(r); err != nil {
-		return err
 	}
 
 	if _, err := io.CopyBuffer(w, rdr.(io.Reader), make([]byte, writer.CommPBuf)); err != nil {
