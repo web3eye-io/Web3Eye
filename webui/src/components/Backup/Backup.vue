@@ -27,7 +27,7 @@
           <!-- <q-td key='ProposalCID' :props='props'>{{ props.row.ProposalCID }}</q-td> -->
           <!-- <q-td key='DealID' :props='props'>{{ props.row.DealID }}</q-td> -->
           <!-- <q-td key='Items' :props='props'>{{ props.row.Items?.join(',') }}</q-td> -->
-          <q-td key='Op' :props='props' v-if='props.row?.BackupState === BackupState.BackupStateCreated'>
+          <q-td key='Op' :props='props' v-if='props.row?.BackupState === BackupState.BackupStateNone'>
             <q-btn outline rounded color="primary" label="Backup" @click='onBackupClick(props.row)' :loading='props.row.Loading' />
           </q-td>
 
@@ -109,6 +109,7 @@ const columns = computed(() => [
     label: 'SnapshotRoot',
     field: (row: Snapshot) => row.SnapshotRoot,
     align: 'left',
+    style: 'max-width:240px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis'
   },
   {
     name: 'SnapshotURI',

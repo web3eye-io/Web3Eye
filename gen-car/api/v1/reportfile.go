@@ -116,8 +116,8 @@ const (
 	DefaultDownloadParallel = 3
 	// 17GB
 	// maxUnTarSize = 18253611008
-	// 100M
-	maxUnTarSize = 10485760
+	// 4M
+	maxUnTarSize = 4194304
 )
 
 var carManager *CarManager
@@ -191,6 +191,9 @@ func (cm *CarManager) checkAndGenCar(maxUnTarSize int64) {
 	for {
 		select {
 		case info := <-cm.genCarChan:
+			if info.Size > maxUnTarSize || info.BaseInfo.ChainID == "" {
+				continue
+			}
 			size = carFI.Size + info.Size
 			if size > maxUnTarSize {
 				err := GenCarAndUpdate(context.Background(), carFI)
@@ -250,7 +253,7 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	snapshot, err := dealer_client.CreateSnapshot(
 		ctx,
 		&dealer_proto.CreateSnapshotRequest{
-			SnapshotCommP: carInfo.RootCID,
+			SnapshotCommP: carInfo.CommPCID,
 			SnapshotRoot:  carInfo.RootCID,
 			SnapshotURI:   carFI.CarName,
 			Items:         items,

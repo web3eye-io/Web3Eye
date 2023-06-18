@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/retrieverStartRetrieveResponse"
+              "$ref": "#/definitions/v1StartRetrieveResponse"
             }
           },
           "default": {
@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/retrieverStartRetrieveRequest"
+              "$ref": "#/definitions/v1StartRetrieveRequest"
             }
           }
         ],
@@ -55,7 +55,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/retrieverStatRetrieveResponse"
+              "$ref": "#/definitions/v1StatRetrieveResponse"
             }
           },
           "default": {
@@ -71,7 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/retrieverStatRetrieveRequest"
+              "$ref": "#/definitions/v1StatRetrieveRequest"
             }
           }
         ],
@@ -91,7 +91,25 @@
       },
       "additionalProperties": {}
     },
-    "retrieverRetrieve": {
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Retrieve": {
       "type": "object",
       "properties": {
         "ChainType": {
@@ -109,7 +127,7 @@
         "RetrieveState": {
           "type": "string"
         },
-        "ProposalID": {
+        "ProposalCID": {
           "type": "string"
         },
         "DealID": {
@@ -119,10 +137,9 @@
         "BackupPayloadCID": {
           "type": "string"
         }
-      },
-      "title": "will be replaced with retriever proto not in entrance"
+      }
     },
-    "retrieverStartRetrieveRequest": {
+    "v1StartRetrieveRequest": {
       "type": "object",
       "properties": {
         "ChainType": {
@@ -139,15 +156,15 @@
         }
       }
     },
-    "retrieverStartRetrieveResponse": {
+    "v1StartRetrieveResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/retrieverRetrieve"
+          "$ref": "#/definitions/v1Retrieve"
         }
       }
     },
-    "retrieverStatRetrieveRequest": {
+    "v1StatRetrieveRequest": {
       "type": "object",
       "properties": {
         "ChainType": {
@@ -164,29 +181,11 @@
         }
       }
     },
-    "retrieverStatRetrieveResponse": {
+    "v1StatRetrieveResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/retrieverRetrieve"
-        }
-      }
-    },
-    "rpcStatus": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
+          "$ref": "#/definitions/v1Retrieve"
         }
       }
     }

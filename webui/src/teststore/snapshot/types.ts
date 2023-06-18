@@ -11,6 +11,7 @@ export interface ContentItem {
 }
 
 export enum BackupState {
+  BackupStateNone  = 'BackupStateNone',
   BackupStateCreated  = 'BackupStateCreated',
   BackupStateProposed = 'BackupStateProposed',
   BackupStateAccepted = 'BackupStateAccepted',
