@@ -56,22 +56,23 @@
                   <div v-if='getImageState(nft) === ImageState.Normal'>
                     <!-- for svg display -->
                     <q-icon
-                    v-if='nft?.ImageURL?.startsWith("img")'
-                    size='300px' 
-                    :name='nft.ImageURL' 
-                  />
-                  <q-img
-                    v-else
-                    :src="nft.ImageURL"
-                    spinner-color="red"
-                  />
+                      v-if='nft?.ImageURL?.startsWith("img")'
+                      size='300px' 
+                      :name='nft.ImageURL'
+                    />
+                    <q-img
+                      v-else
+                      :src="nft.ImageURL"
+                      spinner-color="red"
+                      @error='() => onLoadImageError(nft)'
+                    />
                   </div>
                   <div v-if='getImageState(nft) === ImageState.IPFS'>
                     IPFS
                   </div>
-                  <!-- <div v-if='getImageState(nft) === ImageState.Retrieving'>
+                  <div v-if='getImageState(nft) === ImageState.Retrieving'>
                     Retrieving
-                  </div> -->
+                  </div>
                   <div v-if='getImageState(nft) === ImageState.WaitRecover'>
                     WaitRecover
                     <q-btn outline rounded color="primary" label="Recover" @click='startRetrieve(nft)' :loading='nft.Loading' />
@@ -129,11 +130,9 @@ import { computed, onMounted, ref, watch } from 'vue';
 const splitterModel = ref(40)
 
 const nft = useNFTMetaStore()
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const nfts = computed(() => {
   const rows = [] as Array<NFTMeta>
-  nft.NTFMetas.NTFMetas.forEach((el) => {
+  nft.NTFMetas.NTFMetas?.forEach((el) => {
     if(el.ImageURL?.startsWith('ipfs://')){
       el.ImageURL = el.ImageURL.replace('ipfs://', 'https://ipfs.io/ipfs/')
     }
@@ -153,10 +152,13 @@ const retrieve = useRetrieveStore()
 const retrieves = computed(() => retrieve.Retrieves.Retrieves)
 
 const getImageState = computed(() => (row: NFTMeta) => {
-  if (row.ImageURL?.startsWith('img')) {
+  if (!row.LoadError) {
     return ImageState.Normal
   }
-  
+  if (row.ImageURL?.startsWith('img')) { // svg 
+    return ImageState.Normal
+  }
+
   if(checkImageExistTest.value(row.ImageURL)) {
     return ImageState.Normal
   }
@@ -176,11 +178,15 @@ const getImageState = computed(() => (row: NFTMeta) => {
       return ImageState.WaitRecover
     }
     if (_row.RetrieveState?.length > 0) {
-      return ImageState.WaitRecover
+      return ImageState.Retrieving
     }
   }
   return ImageState.WaitRecover
 })
+
+const onLoadImageError = (nft: NFTMeta) => {
+  nft.LoadError = true
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImageExist = (url: string) => {

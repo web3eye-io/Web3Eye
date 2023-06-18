@@ -25,6 +25,7 @@ export interface NFTMeta {
   // just for frontend
   ImageState: ImageState;
   Loading: boolean;
+  LoadError: boolean
 }
 
 export interface UploadResponse {
