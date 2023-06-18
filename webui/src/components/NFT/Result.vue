@@ -56,15 +56,16 @@
                   <div v-if='getImageState(nft) === ImageState.Normal'>
                     <!-- for svg display -->
                     <q-icon
-                    v-if='nft?.ImageURL?.startsWith("img")'
-                    size='300px' 
-                    :name='nft.ImageURL' 
-                  />
-                  <q-img
-                    v-else
-                    :src="nft.ImageURL"
-                    spinner-color="red"
-                  />
+                      v-if='nft?.ImageURL?.startsWith("img")'
+                      size='300px' 
+                      :name='nft.ImageURL'
+                    />
+                    <q-img
+                      v-else
+                      :src="nft.ImageURL"
+                      spinner-color="red"
+                      @error='() => onLoadImageError(nft)'
+                    />
                   </div>
                   <div v-if='getImageState(nft) === ImageState.IPFS'>
                     IPFS
@@ -153,10 +154,13 @@ const retrieve = useRetrieveStore()
 const retrieves = computed(() => retrieve.Retrieves.Retrieves)
 
 const getImageState = computed(() => (row: NFTMeta) => {
+  if (!row.LoadError) {
+    return ImageState.Normal
+  }
   if (row.ImageURL?.startsWith('img')) {
     return ImageState.Normal
   }
-  
+
   if(checkImageExistTest.value(row.ImageURL)) {
     return ImageState.Normal
   }
@@ -181,6 +185,10 @@ const getImageState = computed(() => (row: NFTMeta) => {
   }
   return ImageState.WaitRecover
 })
+
+const onLoadImageError = (nft: NFTMeta) => {
+  nft.LoadError = true
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const checkImageExist = (url: string) => {
