@@ -23,7 +23,7 @@ class OSS(object):
             
             return True
         except Exception as e:
-            logging.error(e.message)
+            logging.error(e)
             return False
     
     def put_object_retries(self,file_path:str,key:str,bucket:str,retries:int)->bool:

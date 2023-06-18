@@ -159,10 +159,10 @@ const getImageState = computed(() => (row: NFTMeta) => {
     return ImageState.Normal
   }
 
-  if(checkImageExistTest.value(row.ImageURL)) {
+  if(checkImageExist.value(row.ImageURL)) {
     return ImageState.Normal
   }
-  if (checkImageExistTest.value(row.IPFSImageURL)) {
+  if (checkImageExist.value(row.IPFSImageURL)) {
     return ImageState.IPFS
   }
 
@@ -188,17 +188,8 @@ const onLoadImageError = (nft: NFTMeta) => {
   nft.LoadError = true
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const checkImageExist = (url: string) => {
-  const image = new Image()
-  image.src = url
-  if (image.height > 0 && image.width > 0) {
-    return true
-  }
-  return false
-}
-
-const checkImageExistTest = computed(() => (url: string) => {
+const checkImageExist = computed(() => (url: string) => {
+  if (url === undefined) return false
   const image = new Image()
   image.src = url
   console.log('url: ', url)

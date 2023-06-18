@@ -76,22 +76,24 @@ def DownloadHttpImg(url) -> Tuple[str, bool]:
     return file_path, True
 
 def TransferSVGImg(url)-> Tuple[str,bool]:
-    # generate image file path
-    md5=hashlib.md5()
-    md5.update(bytes(url,"utf-8"))
-    svg_file_path=f"./img/{str(md5.hexdigest())}.svg"
-    jpg_file_path=f"./img/{str(md5.hexdigest())}.jpg"
+    try:
+        # generate image file path
+        md5=hashlib.md5()
+        md5.update(bytes(url,"utf-8"))
+        svg_file_path=f"./img/{str(md5.hexdigest())}.svg"
+        jpg_file_path=f"./img/{str(md5.hexdigest())}.jpg"
 
-    encoded = url.replace("data:image/svg+xml;base64,", "")
-    decoded = base64.b64decode(encoded)
-    file = open(svg_file_path, 'wb')
-    file.write(decoded)
-    file.close()
+        encoded = url.replace("data:image/svg+xml;base64,", "")
+        decoded = base64.b64decode(encoded)
+        file = open(svg_file_path, 'wb')
+        file.write(decoded)
+        file.close()
 
-    drawing = svg2rlg(svg_file_path)
-    
-    renderPM.drawToFile(drawing, jpg_file_path, fmt="JPG")
-
+        drawing = svg2rlg(svg_file_path,resolve_entities=False)
+        
+        renderPM.drawToFile(drawing, jpg_file_path, fmt="JPG")
+    except Exception as e:
+        logging.error(e)
     return jpg_file_path,True
 
 
