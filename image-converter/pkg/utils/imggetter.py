@@ -93,7 +93,7 @@ def TransferSVGImg(url)-> Tuple[str,bool]:
         
         renderPM.drawToFile(drawing, jpg_file_path, fmt="JPG")
     except Exception as e:
-        logging.error(e.message)
+        logging.error(e)
     return jpg_file_path,True
 
 
