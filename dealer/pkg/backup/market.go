@@ -90,7 +90,7 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		Label:                label,
 		StartEpoch:           startEpoch,          // TODO
 		EndEpoch:             startEpoch + 518400, // TODO
-		StoragePricePerEpoch: big.NewInt(976562),
+		StoragePricePerEpoch: big.NewInt(9765620),
 		ProviderCollateral:   big.Zero(), // TODO
 		ClientCollateral:     big.Zero(),
 		VerifiedDeal:         false,
