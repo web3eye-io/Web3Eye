@@ -28,11 +28,11 @@ var miners = map[uint64]string{
 	1970622: "/ip4/152.32.173.11/tcp/23456/p2p/12D3KooWS26eBREdM959vDNJWyfgwsd38NMegn7KK11R9DY4EU4p",
 	1970630: "/ip4/123.58.203.78/tcp/23456/p2p/12D3KooWHGHJiH1YuvW9BonV8YZLDpnen3JR4zNQMcMJ3gRRptrq",
 	7824:    "/ip4/172.19.16.118/tcp/23456/p2p/12D3KooWQeujGARoW6BsLWjML3KwAZEHr9n8fVKAk8yzGNw2FDdK",
-	5316:    "/ip4/172.19.16.117/tcp/3456/p2p/12D3KooWMJxYN71gbbv3MSKnwatUGaUq9WoAFgTC7PUycmeJa9TC",  // Calibnet miner
-	1002:    "/ip4/172.23.51.211/tcp/23456/p2p/12D3KooWM6Yz39SUfqKPNbd2hjowV2Jv8BGAwVDtf9JSB65G2gVF", // Testnet miner
+	5316:    "/ip4/172.19.16.117/tcp/3456/p2p/12D3KooWMJxYN71gbbv3MSKnwatUGaUq9WoAFgTC7PUycmeJa9TC",   // Calibnet miner
+	1004:    "/ip4/115.42.169.230/tcp/20903/p2p/12D3KooWCfNbvKMYneBVt2RiMjyN8VQEbM231RxDgD6Cg8PPK62j", // Testnet miner
 }
 
-const minerID = 1002
+const minerID = 1004
 
 func init() {
 	minerId, _ = address.NewIDAddress(minerID)
@@ -79,8 +79,8 @@ func (b *backup) dealProposal(ctx context.Context, rootCid, pieceCid string, pie
 		return nil, err
 	}
 
-	start := time.Unix(1686996002, 0)
-	startEpoch := abi.ChainEpoch(1000 + (time.Since(start).Seconds() / 4))
+	start := time.Unix(1687065270, 0)
+	startEpoch := abi.ChainEpoch(16471 + 60*65/4 + (time.Since(start).Seconds() / 4))
 
 	return &market.DealProposal{
 		PieceCID:             _pieceCid,
