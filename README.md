@@ -29,6 +29,10 @@ Microservice modules:
 
 **Image-Converter** converts images into vectors.
 
+**IPFS** persistent cache storage
+
+**Filecoin** persistent snapshot cold storage
+
 ![Architecture](doc/picture/archi.jpg)
 
 Among the three main microservice modules, NFT-Meta is responsible for providing search, information storage query, task distribution and other functions, while the other two modules are more focused on obtaining and processing tasks. Image-Converter not only processes tasks sent by NFT-Meta from Kafka, but also provides HTTP service support to directly request vectors, mainly used to provide image search services. Block-ETL does not provide external interfaces, only receives tasks and submits tasks.
