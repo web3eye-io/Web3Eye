@@ -32,6 +32,16 @@ spec:
                 secretKeyRef:
                   name: redis-cluster
                   key: redis-password
+            - name: minio_access_key
+              valueFrom:
+                secretKeyRef:
+                  name: web3eye-minio
+                  key: accesskey
+            - name: minio_secret_key
+              valueFrom:
+                secretKeyRef:
+                  name: web3eye-minio
+                  key: secretkey
       volumes:
         - name: service-config
           configMap:
