@@ -91,7 +91,11 @@ def QueueDealImageURL2Vector():
                     continue
 
                 imgcheck.CheckImg(path=image_path)
-                vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
+                try:
+                    vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
+                except Exception as e:
+                    logging.error(e)
+                    continue
 
                 file_s3_key = os.path.basename(image_path)
                 # put the file to s3
