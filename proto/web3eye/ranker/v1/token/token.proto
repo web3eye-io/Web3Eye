@@ -13,7 +13,7 @@ service Manager {
   rpc Search(SearchTokenRequest) returns (SearchTokenResponse) {}
 }
 
-message SiblingTokens{
+message SiblingToken{
   string TokenID = 10;
   string ImageURL = 20;
   string IPFSImageURL = 30;
@@ -39,7 +39,7 @@ message SearchToken{
   string Remark = 160;
   string IPFSImageURL = 170;
   string ImageSnapshotID = 180;
-  SiblingTokens SiblingTokens = 400;
+  repeated SiblingToken SiblingTokens = 400;
   float Distance = 500;
 }
 

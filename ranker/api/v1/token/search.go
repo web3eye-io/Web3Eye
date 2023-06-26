@@ -36,7 +36,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 	logger.Sugar().Infof("Search Result %v", _scores)
 
 	scores := _scores[0]
-	vIDs := []int64{}
+	vIDs := make([]int64, len(scores))
 	for i := range scores {
 		vIDs = append(vIDs, i)
 	}
@@ -57,6 +57,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 	for i := 0; i < len(rows); i++ {
 		info := converter.Ent2Grpc(rows[i])
 		info.Distance = scores[info.VectorID]
+		info.SiblingTokens = make([]*rankernpool.SiblingToken, 0)
 		infos = append(infos, info)
 	}
 
@@ -64,5 +65,21 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return infos[i].Distance < infos[j].Distance
 	})
 
-	return &rankernpool.SearchTokenResponse{Infos: infos, Total: int32(len(infos))}, nil
+	contractRecord := make(map[string]int)
+	result := []*rankernpool.SearchToken{}
+	for _, v := range infos {
+		if _, ok := contractRecord[v.ID]; ok {
+			result[contractRecord[v.ID]].SiblingTokens = append(
+				result[contractRecord[v.ID]].SiblingTokens, &rankernpool.SiblingToken{
+					TokenID:      v.TokenID,
+					ImageURL:     v.ImageURL,
+					IPFSImageURL: v.IPFSImageURL,
+				})
+		} else {
+			result = append(result, v)
+			contractRecord[v.ID] = len(result) - 1
+		}
+	}
+
+	return &rankernpool.SearchTokenResponse{Infos: result, Total: int32(len(result)), Vector: in.Vector}, nil
 }

@@ -240,7 +240,10 @@
           "type": "string"
         },
         "SiblingTokens": {
-          "$ref": "#/definitions/tokenSiblingTokens"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tokenSiblingToken"
+          }
         },
         "Distance": {
           "type": "number",
@@ -270,7 +273,7 @@
         }
       }
     },
-    "tokenSiblingTokens": {
+    "tokenSiblingToken": {
       "type": "object",
       "properties": {
         "TokenID": {
