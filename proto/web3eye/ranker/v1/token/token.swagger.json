@@ -239,6 +239,9 @@
         "ImageSnapshotID": {
           "type": "string"
         },
+        "SiblingTokens": {
+          "$ref": "#/definitions/tokenSiblingTokens"
+        },
         "Distance": {
           "type": "number",
           "format": "float"
@@ -257,6 +260,27 @@
         "Total": {
           "type": "integer",
           "format": "int32"
+        },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      }
+    },
+    "tokenSiblingTokens": {
+      "type": "object",
+      "properties": {
+        "TokenID": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
         }
       }
     },

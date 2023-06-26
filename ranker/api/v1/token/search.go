@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sort"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -31,6 +32,8 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 	if len(_scores) == 0 {
 		return nil, errors.New("have no result")
 	}
+
+	logger.Sugar().Infof("Search Result %v", _scores)
 
 	scores := _scores[0]
 	vIDs := []int64{}
