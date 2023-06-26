@@ -104,6 +104,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	respBody["msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
 	respBody["data"] = resp.Infos
+	respBody["vector"] = resp.Vector
 }
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
