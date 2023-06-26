@@ -68,16 +68,16 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 	contractRecord := make(map[string]int)
 	result := []*rankernpool.SearchToken{}
 	for _, v := range infos {
-		if _, ok := contractRecord[v.ID]; ok {
-			result[contractRecord[v.ID]].SiblingTokens = append(
-				result[contractRecord[v.ID]].SiblingTokens, &rankernpool.SiblingToken{
+		if _, ok := contractRecord[v.Contract]; ok {
+			result[contractRecord[v.Contract]].SiblingTokens = append(
+				result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
 					TokenID:      v.TokenID,
 					ImageURL:     v.ImageURL,
 					IPFSImageURL: v.IPFSImageURL,
 				})
 		} else {
 			result = append(result, v)
-			contractRecord[v.ID] = len(result) - 1
+			contractRecord[v.Contract] = len(result) - 1
 		}
 	}
 
