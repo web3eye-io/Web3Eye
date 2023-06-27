@@ -245,6 +245,10 @@
             "$ref": "#/definitions/tokenSiblingToken"
           }
         },
+        "SiblingsNum": {
+          "type": "integer",
+          "format": "int64"
+        },
         "Distance": {
           "type": "number",
           "format": "float"

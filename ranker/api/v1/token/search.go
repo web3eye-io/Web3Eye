@@ -81,5 +81,55 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		}
 	}
 
+	for _, v := range result {
+		conds = &nftmetanpool.Conds{
+			ChainType: &val.StringVal{
+				Op:    "eq",
+				Value: v.ChainType,
+			},
+			ChainID: &val.StringVal{
+				Op:    "eq",
+				Value: v.ChainID,
+			},
+			Contract: &val.StringVal{
+				Op:    "eq",
+				Value: v.Contract,
+			},
+		}
+
+		tokens, num, err := crud.Rows(ctx, conds, 0, 10)
+		if err != nil {
+			return nil, err
+		}
+		v.SiblingsNum = uint32(num)
+
+		for _, token := range tokens {
+			v.SiblingTokens = append(v.SiblingTokens, &rankernpool.SiblingToken{
+				TokenID:      token.TokenID,
+				ImageURL:     token.ImageURL,
+				IPFSImageURL: token.IpfsImageURL,
+			})
+		}
+
+		v.SiblingTokens = SliceDeduplicate(v.SiblingTokens)
+	}
+
 	return &rankernpool.SearchTokenResponse{Infos: result, Total: int32(len(result)), Vector: in.Vector}, nil
+}
+
+func SliceDeduplicate[T comparable](s []T) []T {
+	mapRecord := make(map[T]struct{})
+	listRecord := []int{}
+	for i, v := range s {
+		if _, ok := mapRecord[v]; ok {
+			listRecord = append(listRecord, i)
+		} else {
+			mapRecord[v] = struct{}{}
+		}
+	}
+	recordLen := len(listRecord)
+	for i := range listRecord {
+		s = append(s[0:listRecord[recordLen-i]], s[listRecord[recordLen-i]-1:]...)
+	}
+	return s
 }

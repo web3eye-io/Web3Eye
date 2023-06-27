@@ -40,6 +40,7 @@ message SearchToken{
   string IPFSImageURL = 170;
   string ImageSnapshotID = 180;
   repeated SiblingToken SiblingTokens = 400;
+  uint32 SiblingsNum = 410;
   float Distance = 500;
 }
 
