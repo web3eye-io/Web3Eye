@@ -6,7 +6,6 @@ import (
 	"sort"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -114,20 +113,19 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 
 		v.SiblingTokens = SliceDeduplicate(v.SiblingTokens)
 
-		logger.Sugar().Info(utils.PrettyStruct(v))
 	}
 
 	return &rankernpool.SearchTokenResponse{Infos: result, Total: int32(len(result)), Vector: in.Vector}, nil
 }
 
-func SliceDeduplicate[T comparable](s []T) []T {
-	mapRecord := make(map[T]struct{})
+func SliceDeduplicate(s []*rankernpool.SiblingToken) []*rankernpool.SiblingToken {
+	mapRecord := make(map[string]struct{})
 	listRecord := []int{}
 	for i, v := range s {
-		if _, ok := mapRecord[v]; ok {
+		if _, ok := mapRecord[v.TokenID]; ok {
 			listRecord = append(listRecord, i)
 		} else {
-			mapRecord[v] = struct{}{}
+			mapRecord[v.TokenID] = struct{}{}
 		}
 	}
 	recordLen := len(listRecord)
