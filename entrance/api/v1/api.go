@@ -34,5 +34,8 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 	if err := retriever.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
+	if err := transfer.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
 	return nil
 }
