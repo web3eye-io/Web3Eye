@@ -128,9 +128,9 @@ func SliceDeduplicate(s []*rankernpool.SiblingToken) []*rankernpool.SiblingToken
 			mapRecord[v.TokenID] = struct{}{}
 		}
 	}
-	recordLen := len(listRecord)
+	recordLen := len(listRecord) - 1
 	for i := range listRecord {
-		s = append(s[0:listRecord[recordLen-i]], s[listRecord[recordLen-i]-1:]...)
+		s = append(s[0:listRecord[recordLen-i]], s[listRecord[recordLen-i]+1:]...)
 	}
 	return s
 }
