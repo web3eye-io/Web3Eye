@@ -5,6 +5,7 @@ package entrance.v1.transfer;
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/transfer";
 import "google/api/annotations.proto";
 import "web3eye/nftmeta/v1/transfer/transfer.proto";
+import "web3eye/ranker/v1/transfer/transfer.proto";
 
 service Manager {
   rpc GetTransfer(nftmeta.v1.transfer.GetTransferRequest) returns (nftmeta.v1.transfer.GetTransferResponse) {
@@ -20,13 +21,13 @@ service Manager {
           body : "*"
         };
       }
-  rpc GetTransfers(nftmeta.v1.transfer.GetTransfersRequest) returns (nftmeta.v1.transfer.GetTransfersResponse) {
+  rpc GetTransfers(ranker.v1.transfer.GetTransfersRequest) returns (nftmeta.v1.transfer.GetTransfersResponse) {
     option (google.api.http) = {
       post : "/v1/get/transfers"
       body : "*"
     };
   }
-  rpc CountTransfers(nftmeta.v1.transfer.CountTransfersRequest) returns (nftmeta.v1.transfer.CountTransfersResponse) {
+  rpc CountTransfers(ranker.v1.transfer.CountTransfersRequest) returns (nftmeta.v1.transfer.CountTransfersResponse) {
     option (google.api.http) = {
       post : "/v1/count/transfers"
       body : "*"

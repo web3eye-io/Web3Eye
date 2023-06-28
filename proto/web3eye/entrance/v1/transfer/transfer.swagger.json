@@ -39,7 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/transferCountTransfersRequest"
+              "$ref": "#/definitions/rankerv1transferCountTransfersRequest"
             }
           }
         ],
@@ -135,7 +135,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/transferGetTransfersRequest"
+              "$ref": "#/definitions/rankerv1transferGetTransfersRequest"
             }
           }
         ],
@@ -162,6 +162,56 @@
         }
       },
       "additionalProperties": {}
+    },
+    "rankerv1transferCountTransfersRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "rankerv1transferGetTransfersRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "rpcStatus": {
       "type": "object",
@@ -231,14 +281,6 @@
         }
       }
     },
-    "transferCountTransfersRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/transferConds"
-        }
-      }
-    },
     "transferCountTransfersResponse": {
       "type": "object",
       "properties": {
@@ -277,22 +319,6 @@
       "properties": {
         "Info": {
           "$ref": "#/definitions/transferTransfer"
-        }
-      }
-    },
-    "transferGetTransfersRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/transferConds"
-        },
-        "Offset": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Limit": {
-          "type": "integer",
-          "format": "int32"
         }
       }
     },

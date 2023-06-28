@@ -109,7 +109,7 @@ func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]
 		return ret, err
 	}
 
-	sParam, err := entity.NewIndexFlatSearchParam(ProbeNum)
+	sParam, err := entity.NewIndexFlatSearchParam()
 	if err != nil {
 		return ret, err
 	}

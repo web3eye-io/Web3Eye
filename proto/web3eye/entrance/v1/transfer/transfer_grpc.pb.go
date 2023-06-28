@@ -9,6 +9,7 @@ package transfer
 import (
 	context "context"
 	transfer "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
+	transfer1 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -25,8 +26,8 @@ const _ = grpc.SupportPackageIsVersion7
 type ManagerClient interface {
 	GetTransfer(ctx context.Context, in *transfer.GetTransferRequest, opts ...grpc.CallOption) (*transfer.GetTransferResponse, error)
 	GetTransferOnly(ctx context.Context, in *transfer.GetTransferOnlyRequest, opts ...grpc.CallOption) (*transfer.GetTransferOnlyResponse, error)
-	GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error)
-	CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error)
+	GetTransfers(ctx context.Context, in *transfer1.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error)
+	CountTransfers(ctx context.Context, in *transfer1.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error)
 }
 
 type managerClient struct {
@@ -55,7 +56,7 @@ func (c *managerClient) GetTransferOnly(ctx context.Context, in *transfer.GetTra
 	return out, nil
 }
 
-func (c *managerClient) GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error) {
+func (c *managerClient) GetTransfers(ctx context.Context, in *transfer1.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error) {
 	out := new(transfer.GetTransfersResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.transfer.Manager/GetTransfers", in, out, opts...)
 	if err != nil {
@@ -64,7 +65,7 @@ func (c *managerClient) GetTransfers(ctx context.Context, in *transfer.GetTransf
 	return out, nil
 }
 
-func (c *managerClient) CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error) {
+func (c *managerClient) CountTransfers(ctx context.Context, in *transfer1.CountTransfersRequest, opts ...grpc.CallOption) (*transfer.CountTransfersResponse, error) {
 	out := new(transfer.CountTransfersResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.transfer.Manager/CountTransfers", in, out, opts...)
 	if err != nil {
@@ -79,8 +80,8 @@ func (c *managerClient) CountTransfers(ctx context.Context, in *transfer.CountTr
 type ManagerServer interface {
 	GetTransfer(context.Context, *transfer.GetTransferRequest) (*transfer.GetTransferResponse, error)
 	GetTransferOnly(context.Context, *transfer.GetTransferOnlyRequest) (*transfer.GetTransferOnlyResponse, error)
-	GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error)
-	CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer.CountTransfersResponse, error)
+	GetTransfers(context.Context, *transfer1.GetTransfersRequest) (*transfer.GetTransfersResponse, error)
+	CountTransfers(context.Context, *transfer1.CountTransfersRequest) (*transfer.CountTransfersResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -94,10 +95,10 @@ func (UnimplementedManagerServer) GetTransfer(context.Context, *transfer.GetTran
 func (UnimplementedManagerServer) GetTransferOnly(context.Context, *transfer.GetTransferOnlyRequest) (*transfer.GetTransferOnlyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransferOnly not implemented")
 }
-func (UnimplementedManagerServer) GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error) {
+func (UnimplementedManagerServer) GetTransfers(context.Context, *transfer1.GetTransfersRequest) (*transfer.GetTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransfers not implemented")
 }
-func (UnimplementedManagerServer) CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer.CountTransfersResponse, error) {
+func (UnimplementedManagerServer) CountTransfers(context.Context, *transfer1.CountTransfersRequest) (*transfer.CountTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountTransfers not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
@@ -150,7 +151,7 @@ func _Manager_GetTransferOnly_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _Manager_GetTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(transfer.GetTransfersRequest)
+	in := new(transfer1.GetTransfersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -162,13 +163,13 @@ func _Manager_GetTransfers_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/entrance.v1.transfer.Manager/GetTransfers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetTransfers(ctx, req.(*transfer.GetTransfersRequest))
+		return srv.(ManagerServer).GetTransfers(ctx, req.(*transfer1.GetTransfersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(transfer.CountTransfersRequest)
+	in := new(transfer1.CountTransfersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -180,7 +181,7 @@ func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/entrance.v1.transfer.Manager/CountTransfers",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTransfers(ctx, req.(*transfer.CountTransfersRequest))
+		return srv.(ManagerServer).CountTransfers(ctx, req.(*transfer1.CountTransfersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

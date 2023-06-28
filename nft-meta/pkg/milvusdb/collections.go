@@ -16,8 +16,6 @@ const (
 	DefaultPartition = "default"
 	// TODO: verify rationality
 	VectorDim = 2048
-	ShardsNum = 3  // for collection:https://milvus.io/docs/v2.1.x/data_processing.md#Data-insertion
-	ProbeNum  = 10 // for search
 )
 
 var (
@@ -61,7 +59,7 @@ func initCollections(ctx context.Context, c client.Client) error {
 				return err
 			}
 
-			idx, err := entity.NewIndexFlat(entity.L2, ShardsNum)
+			idx, err := entity.NewIndexFlat(entity.L2)
 			if err != nil {
 				return err
 			}

@@ -83,7 +83,7 @@ func GetTransferOnly(ctx context.Context, in *nftmetaproto.GetTransferOnlyReques
 	return info.(*nftmetaproto.GetTransferOnlyResponse), nil
 }
 
-func GetTransfers(ctx context.Context, in *nftmetaproto.GetTransfersRequest) (*nftmetaproto.GetTransfersResponse, error) {
+func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (*nftmetaproto.GetTransfersResponse, error) {
 	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err := cli.GetTransfers(ctx, in)
 		if err != nil {
@@ -97,7 +97,7 @@ func GetTransfers(ctx context.Context, in *nftmetaproto.GetTransfersRequest) (*n
 	return info.(*nftmetaproto.GetTransfersResponse), nil
 }
 
-func CountTransfers(ctx context.Context, in *nftmetaproto.CountTransfersRequest) (*nftmetaproto.CountTransfersResponse, error) {
+func CountTransfers(ctx context.Context, in *rankerproto.CountTransfersRequest) (*nftmetaproto.CountTransfersResponse, error) {
 	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err := cli.CountTransfers(ctx, in)
 		if err != nil {
