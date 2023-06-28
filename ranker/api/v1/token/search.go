@@ -14,26 +14,45 @@ import (
 	converter "github.com/web3eye-io/Web3Eye/ranker/pkg/converter/v1/token"
 )
 
-func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchTokenResponse, error) {
-	milvusmgr := milvusdb.NewNFTConllectionMGR()
-	_vector := imageconvert.ToArrayVector(in.Vector)
-	// TODO: It should be given by request
-	defaultTopN := int(in.Limit)
-	_scores, err := milvusmgr.Search(
-		context.Background(),
-		[][milvusdb.VectorDim]float32{_vector},
-		defaultTopN,
-	)
+const (
+	TopN           = 100
+	PageLimit      = 10
+	ShowSiblinsNum = 10
+)
 
+func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchTokenResponse, error) {
+	// search from milvus
+	scores, err := SerachFromMilvus(ctx, in.Vector)
 	if err != nil {
 		return nil, err
 	}
-	if len(_scores) == 0 {
+
+	infos, err := QueryAndCollectTokens(ctx, scores)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rankernpool.SearchTokenResponse{Infos: infos, Total: int32(len(infos)), Vector: in.Vector}, nil
+}
+
+func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32, error) {
+	// search from milvus
+	milvusmgr := milvusdb.NewNFTConllectionMGR()
+	_vector := imageconvert.ToArrayVector(vector)
+
+	_scores, err := milvusmgr.Search(ctx, [][milvusdb.VectorDim]float32{_vector}, TopN)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(_scores) == 0 || len(_scores[0]) == 0 {
 		return nil, errors.New("have no result")
 	}
 
-	scores := _scores[0]
+	return _scores[0], nil
+}
 
+func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*rankernpool.SearchToken, error) {
 	vIDs := []int64{}
 	for i := range scores {
 		vIDs = append(vIDs, i)
@@ -46,6 +65,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		},
 	}
 
+	// query from db
 	rows, _, err := crud.Rows(ctx, conds, 0, len(vIDs))
 	if err != nil {
 		return nil, err
@@ -63,10 +83,14 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return infos[i].Distance < infos[j].Distance
 	})
 
+	// collection
 	contractRecord := make(map[string]int)
 	result := []*rankernpool.SearchToken{}
 	for _, v := range infos {
 		if _, ok := contractRecord[v.Contract]; ok {
+			if len(result[contractRecord[v.Contract]].SiblingTokens) >= ShowSiblinsNum {
+				continue
+			}
 			result[contractRecord[v.Contract]].SiblingTokens = append(
 				result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
 					TokenID:      v.TokenID,
@@ -79,6 +103,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		}
 	}
 
+	// count transfers and
 	for _, v := range result {
 		conds = &nftmetanpool.Conds{
 			ChainType: &val.StringVal{
@@ -95,7 +120,12 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 			},
 		}
 
-		tokens, num, err := crud.Rows(ctx, conds, 0, 10)
+		limit := ShowSiblinsNum - len(v.SiblingTokens)
+		if limit <= 0 {
+			continue
+		}
+
+		tokens, num, err := crud.Rows(ctx, conds, 0, limit)
 		if err != nil {
 			return nil, err
 		}
@@ -111,8 +141,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 
 		v.SiblingTokens = SliceDeduplicate(v.SiblingTokens)
 	}
-
-	return &rankernpool.SearchTokenResponse{Infos: result, Total: int32(len(result)), Vector: in.Vector}, nil
+	return result, nil
 }
 
 func SliceDeduplicate(s []*rankernpool.SiblingToken) []*rankernpool.SiblingToken {
