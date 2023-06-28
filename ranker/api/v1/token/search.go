@@ -5,7 +5,6 @@ import (
 	"errors"
 	"sort"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -33,10 +32,9 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return nil, errors.New("have no result")
 	}
 
-	logger.Sugar().Infof("Search Result %v", _scores)
-
 	scores := _scores[0]
-	vIDs := make([]int64, len(scores))
+
+	vIDs := []int64{}
 	for i := range scores {
 		vIDs = append(vIDs, i)
 	}
@@ -112,7 +110,6 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		}
 
 		v.SiblingTokens = SliceDeduplicate(v.SiblingTokens)
-
 	}
 
 	return &rankernpool.SearchTokenResponse{Infos: result, Total: int32(len(result)), Vector: in.Vector}, nil
