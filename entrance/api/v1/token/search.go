@@ -1,4 +1,4 @@
-package search
+package token
 
 import (
 	"bytes"
@@ -13,11 +13,15 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	entranceproto "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/token"
+
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
+	"google.golang.org/grpc"
 
 	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
@@ -106,10 +110,13 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	inT = time.Now()
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
-	respBody["msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
-	respBody["data"] = resp.Infos
-	respBody["page"] = resp.Page
-	// respBody["totalPages"]
+	respBody["Msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
+	respBody["Infos"] = resp.Infos
+	respBody["Page"] = resp.Page
+	respBody["StorageKey"] = resp.StorageKey
+	respBody["TotalPages"] = resp.TotalPages
+	respBody["TotalTokens"] = resp.TotalTokens
+	respBody["PageLimit"] = resp.PageLimit
 }
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
@@ -171,4 +178,21 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	}
 
 	return resp.Vector, nil
+}
+
+type Server struct {
+	entranceproto.UnimplementedManagerServer
+}
+
+func (s *Server) GetTransfer(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {
+	token.UseCloudProxyCC()
+	return token.SearchPage(ctx, in)
+}
+
+func Register(server grpc.ServiceRegistrar) {
+	entranceproto.RegisterManagerServer(server, &Server{})
+}
+
+func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
+	return entranceproto.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts)
 }

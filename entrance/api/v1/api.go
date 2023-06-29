@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/retriever"
-	_ "github.com/web3eye-io/Web3Eye/entrance/api/v1/search"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/snapshot"
+	"github.com/web3eye-io/Web3Eye/entrance/api/v1/token"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/transfer"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1"
 
@@ -22,6 +22,7 @@ func Register(server grpc.ServiceRegistrar) {
 	snapshot.Register(server)
 	retriever.Register(server)
 	transfer.Register(server)
+	token.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
@@ -35,6 +36,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := transfer.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := token.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	return nil
