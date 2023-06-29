@@ -211,12 +211,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			},
 		}
 
-		limit := ShowSiblinsNum - len(v.SiblingTokens)
-		if limit <= 0 {
-			continue
-		}
-
-		tokens, num, err := crud.Rows(ctx, conds, 0, limit)
+		tokens, num, err := crud.Rows(ctx, conds, 0, ShowSiblinsNum)
 		if err != nil {
 			return nil, err
 		}
@@ -232,6 +227,10 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 		}
 
 		v.SiblingTokens = SliceDeduplicate(v.SiblingTokens)
+
+		if ShowSiblinsNum < len(v.SiblingTokens) {
+			v.SiblingTokens = v.SiblingTokens[:ShowSiblinsNum]
+		}
 	}
 	return result, nil
 }
