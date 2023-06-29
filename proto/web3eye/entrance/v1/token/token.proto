@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package entrance.v1.token;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/token";
+import "google/api/annotations.proto";
+import "web3eye/nftmeta/v1/token/token.proto";
+import "web3eye/ranker/v1/token/token.proto";
+
+service Manager {
+  rpc GetToken(nftmeta.v1.token.GetTokenRequest) returns (nftmeta.v1.token.GetTokenResponse) {
+    option (google.api.http) = {
+      post : "/v1/get/token"
+      body : "*"
+    };
+  }
+  rpc SearchPage(ranker.v1.token.SearchPageRequest) returns (ranker.v1.token.SearchResponse) {
+    option (google.api.http) = {
+      post : "/v1/search/page"
+      body : "*"
+    };
+  }
+}

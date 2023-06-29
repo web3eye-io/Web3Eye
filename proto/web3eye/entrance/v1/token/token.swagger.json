@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "web3eye/ranker/v1/token/token.proto",
+    "title": "web3eye/entrance/v1/token/token.proto",
     "version": "version not set"
   },
   "tags": [
@@ -15,7 +15,72 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/v1/get/token": {
+      "post": {
+        "operationId": "Manager_GetToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tokenGetTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tokenGetTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/search/page": {
+      "post": {
+        "operationId": "Manager_SearchPage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tokenSearchResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tokenSearchPageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
   "definitions": {
     "chainChainType": {
       "type": "string",
@@ -62,71 +127,6 @@
         }
       }
     },
-    "tokenConds": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Contract": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Owner": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "URI": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "URIType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ImageURL": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "VideoURL": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Description": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Name": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "VectorState": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "VectorID": {
-          "$ref": "#/definitions/web3eyeInt64Val"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IPFSImageURL": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ImageSnapshotID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        },
-        "VectorIDs": {
-          "$ref": "#/definitions/web3eyeInt64SliceVal"
-        }
-      }
-    },
     "tokenConvertState": {
       "type": "string",
       "enum": [
@@ -140,20 +140,11 @@
       "default": "Default",
       "title": "for show the state that resource_addr is converted to vector"
     },
-    "tokenCountTokensResponse": {
+    "tokenGetTokenRequest": {
       "type": "object",
       "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "tokenGetTokenOnlyResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/tokenToken"
+        "ID": {
+          "type": "string"
         }
       }
     },
@@ -165,16 +156,13 @@
         }
       }
     },
-    "tokenGetTokensResponse": {
+    "tokenSearchPageRequest": {
       "type": "object",
       "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/tokenToken"
-          }
+        "StorageKey": {
+          "type": "string"
         },
-        "Total": {
+        "Page": {
           "type": "integer",
           "format": "int64"
         }
@@ -358,58 +346,6 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
-        }
-      }
-    },
-    "web3eyeInt64SliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "int64"
-          }
-        }
-      }
-    },
-    "web3eyeInt64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
           "type": "string"
         }
       }

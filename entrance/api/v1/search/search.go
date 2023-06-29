@@ -16,6 +16,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
+	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
 
 	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
@@ -23,7 +24,7 @@ import (
 
 // 8mb
 const MaxUploadFileSize = 1 << 10 << 10 << 3
-const SearchTopN = 10
+const PageLimit = 10
 
 type Img2VectorResp struct {
 	Vector  []float32 `json:"vector"`
@@ -92,7 +93,10 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	logger.Sugar().Infof("finish convert to vector %v ms", inT.UnixMilli()-startT.UnixMilli())
 
 	token.UseCloudProxyCC()
-	resp, err := token.Search(context.Background(), vector, SearchTopN)
+	resp, err := token.Search(context.Background(), &rankerproto.SearchTokenRequest{
+		Vector: vector,
+		Limit:  PageLimit,
+	})
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
 		w.WriteHeader(http.StatusBadRequest)

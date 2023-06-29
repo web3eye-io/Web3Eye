@@ -27,7 +27,8 @@ type ManagerClient interface {
 	GetTokenOnly(ctx context.Context, in *token.GetTokenOnlyRequest, opts ...grpc.CallOption) (*token.GetTokenOnlyResponse, error)
 	GetTokens(ctx context.Context, in *token.GetTokensRequest, opts ...grpc.CallOption) (*token.GetTokensResponse, error)
 	CountTokens(ctx context.Context, in *token.CountTokensRequest, opts ...grpc.CallOption) (*token.CountTokensResponse, error)
-	Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchTokenResponse, error)
+	Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchResponse, error)
+	SearchPage(ctx context.Context, in *SearchPageRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 }
 
 type managerClient struct {
@@ -74,9 +75,18 @@ func (c *managerClient) CountTokens(ctx context.Context, in *token.CountTokensRe
 	return out, nil
 }
 
-func (c *managerClient) Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchTokenResponse, error) {
-	out := new(SearchTokenResponse)
+func (c *managerClient) Search(ctx context.Context, in *SearchTokenRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
+	out := new(SearchResponse)
 	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) SearchPage(ctx context.Context, in *SearchPageRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
+	out := new(SearchResponse)
+	err := c.cc.Invoke(ctx, "/ranker.v1.token.Manager/SearchPage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +101,8 @@ type ManagerServer interface {
 	GetTokenOnly(context.Context, *token.GetTokenOnlyRequest) (*token.GetTokenOnlyResponse, error)
 	GetTokens(context.Context, *token.GetTokensRequest) (*token.GetTokensResponse, error)
 	CountTokens(context.Context, *token.CountTokensRequest) (*token.CountTokensResponse, error)
-	Search(context.Context, *SearchTokenRequest) (*SearchTokenResponse, error)
+	Search(context.Context, *SearchTokenRequest) (*SearchResponse, error)
+	SearchPage(context.Context, *SearchPageRequest) (*SearchResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -111,8 +122,11 @@ func (UnimplementedManagerServer) GetTokens(context.Context, *token.GetTokensReq
 func (UnimplementedManagerServer) CountTokens(context.Context, *token.CountTokensRequest) (*token.CountTokensResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountTokens not implemented")
 }
-func (UnimplementedManagerServer) Search(context.Context, *SearchTokenRequest) (*SearchTokenResponse, error) {
+func (UnimplementedManagerServer) Search(context.Context, *SearchTokenRequest) (*SearchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedManagerServer) SearchPage(context.Context, *SearchPageRequest) (*SearchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchPage not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -217,6 +231,24 @@ func _Manager_Search_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Manager_SearchPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).SearchPage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ranker.v1.token.Manager/SearchPage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).SearchPage(ctx, req.(*SearchPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -243,6 +275,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Search",
 			Handler:    _Manager_Search_Handler,
+		},
+		{
+			MethodName: "SearchPage",
+			Handler:    _Manager_SearchPage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

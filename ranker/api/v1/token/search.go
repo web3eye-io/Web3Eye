@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -23,17 +24,25 @@ const (
 	TopN           = 100
 	PageLimit      = 10
 	ShowSiblinsNum = 10
-	StorageExpr    = time.Second * 10
+	StorageExpr    = time.Minute * 5
 )
 
-type PageTokens struct {
-	Tokens      []*rankernpool.SearchToken
+type SearchTokenBone struct {
+	ID          string
+	SiblingIDs  []string
+	SiblingsNum uint32
+	Distance    float32
+}
+
+type PageBone struct {
+	TokenBones  []*SearchTokenBone
 	Page        uint32
 	TotalPages  uint32
 	TotalTokens uint32
+	PageLimit   uint32
 }
 
-func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchTokenResponse, error) {
+func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
 	// search from milvus
 	scores, err := SerachFromMilvus(ctx, in.Vector)
 	if err != nil {
@@ -45,38 +54,74 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return nil, err
 	}
 
-	pageNum := len(infos) / PageLimit
-	if len(infos)%pageNum > 0 {
-		pageNum += 1
+	totalPages := uint32(len(infos) / PageLimit)
+	if len(infos)%PageLimit > 0 {
+		totalPages += 1
 	}
 
 	storageKey := uuid.NewString()
 
-	totalPages := uint32(pageNum)
 	totalTokens := uint32(len(infos))
-	for i := 0; i < pageNum; i++ {
-		pTokens := &PageTokens{
-			Tokens:      infos[i*pageNum : (i+1)*pageNum],
+	for i := uint32(0); i < totalPages; i++ {
+		start := i * PageLimit
+		end := (i + 1) * PageLimit
+		if end > totalTokens {
+			end = totalTokens - 1
+		}
+		pBone := &PageBone{
+			TokenBones:  ToTokenBones(infos[start:end]),
 			Page:        uint32(i + 1),
 			TotalPages:  totalPages,
 			TotalTokens: totalTokens,
+			PageLimit:   PageLimit,
 		}
-		ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pTokens.Page), pTokens, StorageExpr)
+
+		err = ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pBone.Page), pBone, StorageExpr)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return &rankernpool.SearchTokenResponse{
-		Infos:       infos[:pageNum],
+	return &rankernpool.SearchResponse{
+		Infos:       infos[:PageLimit],
 		StorageKey:  storageKey,
 		Page:        1,
 		TotalPages:  totalPages,
-		TotalTokens: totalTokens}, nil
+		TotalTokens: totalTokens,
+		PageLimit:   PageLimit,
+	}, nil
 }
 
-func (pt *PageTokens) MarshalBinary() (data []byte, err error) {
-	return json.Marshal(pt)
+func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageRequest) (*rankernpool.SearchResponse, error) {
+	pBone := &PageBone{}
+	err := ctredis.Get(fmt.Sprintf("SearchToken:%v:%v", in.StorageKey, in.Page), pBone)
+	if err != nil {
+		return nil, err
+	}
+
+	tokens, err := ToSearchTokens(ctx, pBone.TokenBones)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rankernpool.SearchResponse{
+		Infos:       tokens,
+		StorageKey:  in.StorageKey,
+		Page:        pBone.Page,
+		TotalPages:  pBone.TotalPages,
+		TotalTokens: pBone.TotalTokens,
+		PageLimit:   pBone.PageLimit,
+	}, nil
 }
 
-func (pt *PageTokens) UnmarshalBinary(data []byte) error {
+func (pt *PageBone) MarshalBinary() (data []byte, err error) {
+	data, err = json.Marshal(pt)
+	fmt.Println(utils.PrettyStruct(pt))
+	return data, err
+	// return json.Marshal(pt)
+}
+
+func (pt *PageBone) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, pt)
 }
 
@@ -138,6 +183,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			}
 			result[contractRecord[v.Contract]].SiblingTokens = append(
 				result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
+					ID:           v.ID,
 					TokenID:      v.TokenID,
 					ImageURL:     v.ImageURL,
 					IPFSImageURL: v.IPFSImageURL,
@@ -178,6 +224,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 
 		for _, token := range tokens {
 			v.SiblingTokens = append(v.SiblingTokens, &rankernpool.SiblingToken{
+				ID:           token.ID.String(),
 				TokenID:      token.TokenID,
 				ImageURL:     token.ImageURL,
 				IPFSImageURL: token.IpfsImageURL,
@@ -204,4 +251,56 @@ func SliceDeduplicate(s []*rankernpool.SiblingToken) []*rankernpool.SiblingToken
 		s = append(s[0:listRecord[recordLen-i]], s[listRecord[recordLen-i]+1:]...)
 	}
 	return s
+}
+
+func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
+	bones := make([]*SearchTokenBone, len(infos))
+	for i, v := range infos {
+		bones[i] = &SearchTokenBone{
+			ID:          v.ID,
+			SiblingsNum: v.SiblingsNum,
+			Distance:    v.Distance,
+		}
+		siblingIDs := make([]string, len(v.SiblingTokens))
+		for i, token := range v.SiblingTokens {
+			siblingIDs[i] = token.ID
+		}
+		bones[i].SiblingIDs = siblingIDs
+	}
+	return bones
+}
+
+func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpool.SearchToken, error) {
+	tokens := make([]*rankernpool.SearchToken, len(bones))
+	for i, v := range bones {
+		IDs := []string{v.ID}
+		IDs = append(IDs, v.SiblingIDs...)
+		conds := &nftmetanpool.Conds{
+			IDs: &val.StringSliceVal{
+				Op:    "in",
+				Value: IDs,
+			},
+		}
+		// query from db
+		rows, _, err := crud.Rows(ctx, conds, 0, len(IDs))
+		if err != nil {
+			return nil, err
+		}
+
+		tokens[i] = converter.Ent2Grpc(rows[0])
+		tokens[i].Distance = v.Distance
+		tokens[i].SiblingsNum = v.SiblingsNum
+		tokens[i].SiblingTokens = make([]*rankernpool.SiblingToken, len(rows)-1)
+
+		for j := 1; j < len(rows); j++ {
+			tokens[i].SiblingTokens[j-1] = &rankernpool.SiblingToken{
+				ID:           rows[j].ID.String(),
+				TokenID:      rows[j].TokenID,
+				ImageURL:     rows[j].ImageURL,
+				IPFSImageURL: rows[j].IpfsImageURL,
+			}
+		}
+	}
+
+	return tokens, nil
 }

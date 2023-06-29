@@ -15,7 +15,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
-	v1_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	snapshot_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -170,7 +170,7 @@ func local_request_Manager_CountSnapshots_0(ctx context.Context, marshaler runti
 }
 
 func request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq v1_0.CreateBackupRequest
+	var protoReq v1.CreateBackupRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -187,7 +187,7 @@ func request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq v1_0.CreateBackupRequest
+	var protoReq v1.CreateBackupRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

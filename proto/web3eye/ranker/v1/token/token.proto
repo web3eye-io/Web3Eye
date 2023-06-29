@@ -10,13 +10,15 @@ service Manager {
   rpc GetTokenOnly(nftmeta.v1.token.GetTokenOnlyRequest) returns (nftmeta.v1.token.GetTokenOnlyResponse) {}
   rpc GetTokens(nftmeta.v1.token.GetTokensRequest) returns (nftmeta.v1.token.GetTokensResponse) {}
   rpc CountTokens(nftmeta.v1.token.CountTokensRequest) returns (nftmeta.v1.token.CountTokensResponse) {}
-  rpc Search(SearchTokenRequest) returns (SearchTokenResponse) {}
+  rpc Search(SearchTokenRequest) returns (SearchResponse) {}
+  rpc SearchPage(SearchPageRequest) returns (SearchResponse) {}
 }
 
 message SiblingToken{
-  string TokenID = 10;
-  string ImageURL = 20;
-  string IPFSImageURL = 30;
+  string ID = 10;
+  string TokenID = 20;
+  string ImageURL = 30;
+  string IPFSImageURL = 40;
 }
 
 message SearchToken{
@@ -49,10 +51,18 @@ message SearchTokenRequest {
   int32 Limit = 20;
 }
 
-message SearchTokenResponse {
+message SearchPageRequest {
+  string StorageKey =10;
+  uint32 Page = 20;
+}
+
+message SearchResponse {
   repeated SearchToken Infos = 10;
   string StorageKey =20;
   uint32 Page = 30;
   uint32 TotalPages = 40;
   uint32 TotalTokens = 50;
+  uint32 PageLimit = 60;
 }
+
+
