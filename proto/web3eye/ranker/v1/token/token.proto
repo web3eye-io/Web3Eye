@@ -48,7 +48,7 @@ message SearchToken{
 
 message SearchTokenRequest {
   repeated float Vector = 10;
-  int32 Limit = 20;
+  uint32 Limit = 20;
 }
 
 message SearchPageRequest {

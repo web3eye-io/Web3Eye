@@ -10,6 +10,7 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -27,8 +28,12 @@ import (
 )
 
 // 8mb
-const MaxUploadFileSize = 1 << 10 << 10 << 3
-const PageLimit = 10
+
+const (
+	MaxUploadFileSize = 1 << 10 << 10 << 3
+	UploadFileFeild   = "UploadFile"
+	PageLimitFeild    = "PageLimit"
+)
 
 type Img2VectorResp struct {
 	Vector  []float32 `json:"vector"`
@@ -55,12 +60,6 @@ func init() {
 // nolint
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
-
-	// logger.Sugar().Info(r.Header)
-	// body := make([]byte, r.ContentLength)
-	// r.Body.Read(body)
-	// logger.Sugar().Info(string(body))
-
 	respBody := make(map[string]interface{})
 	defer func() {
 		_respBody, err := json.Marshal(respBody)
@@ -73,12 +72,20 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
+	_pageLimit := r.FormValue(PageLimitFeild)
+	pageLimit, err := strconv.ParseUint(_pageLimit, 10, 32)
+
+	if err != nil {
+		respBody["msg"] = fmt.Sprintf("failed to parse feild PageLimit %v, %v", _pageLimit, err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	// judge weather filesize exceed max-size
-	err := r.ParseMultipartForm(MaxUploadFileSize)
+	err = r.ParseMultipartForm(MaxUploadFileSize)
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
 		w.WriteHeader(http.StatusBadRequest)
-
 		return
 	}
 
@@ -99,7 +106,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	token.UseCloudProxyCC()
 	resp, err := token.Search(context.Background(), &rankerproto.SearchTokenRequest{
 		Vector: vector,
-		Limit:  PageLimit,
+		Limit:  uint32(pageLimit),
 	})
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
@@ -123,7 +130,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 // converte http request with image file to vector
 func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	// get file info
-	file, handler, err := r.FormFile("upload")
+	file, handler, err := r.FormFile(UploadFileFeild)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +139,7 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	// rewrite file to new request-body
 	body := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(body)
-	fileWriter, err := bodyWriter.CreateFormFile("upload", handler.Filename)
+	fileWriter, err := bodyWriter.CreateFormFile(UploadFileFeild, handler.Filename)
 	if err != nil {
 		return nil, err
 	}
