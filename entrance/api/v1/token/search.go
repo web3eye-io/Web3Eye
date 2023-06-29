@@ -191,7 +191,7 @@ type Server struct {
 	entranceproto.UnimplementedManagerServer
 }
 
-func (s *Server) GetTransfer(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {
+func (s *Server) SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {
 	token.UseCloudProxyCC()
 	return token.SearchPage(ctx, in)
 }
