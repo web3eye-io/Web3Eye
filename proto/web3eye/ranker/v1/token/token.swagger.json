@@ -264,16 +264,20 @@
             "$ref": "#/definitions/tokenSearchToken"
           }
         },
-        "Total": {
-          "type": "integer",
-          "format": "int32"
+        "StorageKey": {
+          "type": "string"
         },
-        "Vector": {
-          "type": "array",
-          "items": {
-            "type": "number",
-            "format": "float"
-          }
+        "Page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "TotalPages": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "TotalTokens": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

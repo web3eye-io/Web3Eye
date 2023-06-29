@@ -2,10 +2,9 @@ package ctredis
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
-
-	"golang.org/x/xerrors"
 )
 
 const (
@@ -23,19 +22,19 @@ func Set(key string, value interface{}, expire time.Duration) error {
 	return ErrFilter(err)
 }
 
-func Get(key string) (interface{}, error) {
+func Get(key string, v any) error {
 	cli := GetClient()
 
 	ctx, cancel := context.WithTimeout(context.Background(), ConnectTimeout)
 	defer cancel()
 
-	v, err := cli.Get(ctx, key).Result()
+	err := cli.Get(ctx, key).Scan(v)
 	err = ErrFilter(err)
 	if err != nil {
-		return nil, xerrors.Errorf("fail get key %v: %v", key, err)
+		return fmt.Errorf("fail get key %v: %v", key, err)
 	}
 
-	return v, nil
+	return nil
 }
 
 func Del(key string) error {

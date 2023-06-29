@@ -51,6 +51,8 @@ message SearchTokenRequest {
 
 message SearchTokenResponse {
   repeated SearchToken Infos = 10;
-  int32 Total = 20;
-  repeated float Vector = 30;
+  string StorageKey =20;
+  uint32 Page = 30;
+  uint32 TotalPages = 40;
+  uint32 TotalTokens = 50;
 }

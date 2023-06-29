@@ -2,9 +2,14 @@ package token
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"sort"
+	"time"
 
+	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -18,7 +23,15 @@ const (
 	TopN           = 100
 	PageLimit      = 10
 	ShowSiblinsNum = 10
+	StorageExpr    = time.Second * 10
 )
+
+type PageTokens struct {
+	Tokens      []*rankernpool.SearchToken
+	Page        uint32
+	TotalPages  uint32
+	TotalTokens uint32
+}
 
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchTokenResponse, error) {
 	// search from milvus
@@ -32,7 +45,39 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return nil, err
 	}
 
-	return &rankernpool.SearchTokenResponse{Infos: infos, Total: int32(len(infos)), Vector: in.Vector}, nil
+	pageNum := len(infos) / PageLimit
+	if len(infos)%pageNum > 0 {
+		pageNum += 1
+	}
+
+	storageKey := uuid.NewString()
+
+	totalPages := uint32(pageNum)
+	totalTokens := uint32(len(infos))
+	for i := 0; i < pageNum; i++ {
+		pTokens := &PageTokens{
+			Tokens:      infos[i*pageNum : (i+1)*pageNum],
+			Page:        uint32(i + 1),
+			TotalPages:  totalPages,
+			TotalTokens: totalTokens,
+		}
+		ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pTokens.Page), pTokens, StorageExpr)
+	}
+
+	return &rankernpool.SearchTokenResponse{
+		Infos:       infos[:pageNum],
+		StorageKey:  storageKey,
+		Page:        1,
+		TotalPages:  totalPages,
+		TotalTokens: totalTokens}, nil
+}
+
+func (pt *PageTokens) MarshalBinary() (data []byte, err error) {
+	return json.Marshal(pt)
+}
+
+func (pt *PageTokens) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, pt)
 }
 
 func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32, error) {
