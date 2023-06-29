@@ -24,7 +24,7 @@
       url="/api/entrance/search/file"
       color='white'
       :square='false'
-      field-name='upload'
+      field-name='UploadFile'
       :form-fields='[{name: "PageLimit", value: "10"}]'
       auto-upload
       flat
