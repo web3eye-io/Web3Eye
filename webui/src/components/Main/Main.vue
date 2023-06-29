@@ -25,7 +25,7 @@
       color='white'
       :square='false'
       field-name='upload'
-      :form-fields='[{name: "topN", value: "10"}]'
+      :form-fields='[{name: "PageLimit", value: "10"}]'
       auto-upload
       flat
       accept=".jpg, image/*"
