@@ -29,6 +29,11 @@ export interface NFTMeta {
 }
 
 export interface UploadResponse {
-  data: Array<NFTMeta>
-  info: string
+  Infos: Array<NFTMeta>
+  Msg: string
+  Page: number
+  StorageKey : string
+  TotalPages: number
+  TotalTokens: number
+  PageLimit: number
 }

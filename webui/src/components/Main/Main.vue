@@ -97,7 +97,7 @@ const onUploaded = (info: {
     nft.NTFMetas.Current = window.URL.createObjectURL(info.files[0] as Blob)
 	}
   const response = JSON.parse(info.xhr.response as string) as UploadResponse
-  nft.setNftMeta(response.data)
+  nft.setNftMeta(response.Infos)
   void router.push({
     path: '/result'
   })
