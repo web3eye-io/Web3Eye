@@ -4,6 +4,7 @@ package ranker.v1.contract;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract";
 import "web3eye/nftmeta/v1/contract/contract.proto";
+import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc GetContract(nftmeta.v1.contract.GetContractRequest) returns (nftmeta.v1.contract.GetContractResponse) {}
@@ -11,4 +12,31 @@ service Manager {
       returns (nftmeta.v1.contract.GetContractOnlyResponse) {}
   rpc GetContracts(nftmeta.v1.contract.GetContractsRequest) returns (nftmeta.v1.contract.GetContractsResponse) {}
   rpc CountContracts(nftmeta.v1.contract.CountContractsRequest) returns (nftmeta.v1.contract.CountContractsResponse) {}
+  rpc GetContractAndTokens(GetContractAndTokensReq) returns (GetContractAndTokensResp) {}
+}
+
+message GetContractAndTokensReq{
+  string Contract  = 10;
+  uint32 Offset  = 20;
+  uint32 Limit = 30;
+}
+
+message ShotToken {
+  string ID = 10;
+  chain.ChainType ChainType = 20;
+  chain.TokenType TokenType = 30;
+  string TokenID = 40;
+  string Owner = 50;
+  string ImageURL = 60;
+  string Name = 70;
+  string IPFSImageURL = 80;
+  string ImageSnapshotID = 90;
+  uint32 TransfersNum = 100;
+}
+
+
+message GetContractAndTokensResp{
+  nftmeta.v1.contract.Contract Contract  = 10;
+  repeated ShotToken Toknes = 20;
+  uint32 TotalTokens = 30;
 }

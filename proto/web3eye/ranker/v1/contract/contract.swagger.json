@@ -25,6 +25,16 @@
       ],
       "default": "ChainUnkonwn"
     },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "ERC721",
+        "ERC1155",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
     "contractConds": {
       "type": "object",
       "properties": {
@@ -139,6 +149,24 @@
         }
       }
     },
+    "contractGetContractAndTokensResp": {
+      "type": "object",
+      "properties": {
+        "Contract": {
+          "$ref": "#/definitions/contractContract"
+        },
+        "Toknes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contractShotToken"
+          }
+        },
+        "TotalTokens": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "contractGetContractOnlyResponse": {
       "type": "object",
       "properties": {
@@ -165,6 +193,42 @@
           }
         },
         "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "contractShotToken": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageSnapshotID": {
+          "type": "string"
+        },
+        "TransfersNum": {
           "type": "integer",
           "format": "int64"
         }

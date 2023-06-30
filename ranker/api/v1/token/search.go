@@ -21,10 +21,10 @@ import (
 )
 
 const (
-	TopN           = 100
-	PageLimit      = 10
-	ShowSiblinsNum = 10
-	StorageExpr    = time.Minute * 5
+	TopN               = 100
+	PageLimit          = 10
+	ShowSiblinsNum int = 10
+	StorageExpr        = time.Minute * 5
 )
 
 type SearchTokenBone struct {
@@ -54,7 +54,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return nil, err
 	}
 
-	totalPages := uint32(len(infos) / PageLimit)
+	totalPages := uint32(len(infos) / int(in.Limit))
 	if len(infos)%PageLimit > 0 {
 		totalPages += 1
 	}
@@ -63,8 +63,8 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 
 	totalTokens := uint32(len(infos))
 	for i := uint32(0); i < totalPages; i++ {
-		start := i * PageLimit
-		end := (i + 1) * PageLimit
+		start := i * in.Limit
+		end := (i + 1) * in.Limit
 		if end > totalTokens {
 			end = totalTokens - 1
 		}
@@ -73,7 +73,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 			Page:        uint32(i + 1),
 			TotalPages:  totalPages,
 			TotalTokens: totalTokens,
-			PageLimit:   PageLimit,
+			PageLimit:   in.Limit,
 		}
 
 		err = ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pBone.Page), pBone, StorageExpr)
@@ -88,7 +88,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		Page:        1,
 		TotalPages:  totalPages,
 		TotalTokens: totalTokens,
-		PageLimit:   PageLimit,
+		PageLimit:   in.Limit,
 	}, nil
 }
 

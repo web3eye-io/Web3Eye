@@ -27,6 +27,7 @@ type ManagerClient interface {
 	GetContractOnly(ctx context.Context, in *contract.GetContractOnlyRequest, opts ...grpc.CallOption) (*contract.GetContractOnlyResponse, error)
 	GetContracts(ctx context.Context, in *contract.GetContractsRequest, opts ...grpc.CallOption) (*contract.GetContractsResponse, error)
 	CountContracts(ctx context.Context, in *contract.CountContractsRequest, opts ...grpc.CallOption) (*contract.CountContractsResponse, error)
+	GetContractAndTokens(ctx context.Context, in *GetContractAndTokensReq, opts ...grpc.CallOption) (*GetContractAndTokensResp, error)
 }
 
 type managerClient struct {
@@ -73,6 +74,15 @@ func (c *managerClient) CountContracts(ctx context.Context, in *contract.CountCo
 	return out, nil
 }
 
+func (c *managerClient) GetContractAndTokens(ctx context.Context, in *GetContractAndTokensReq, opts ...grpc.CallOption) (*GetContractAndTokensResp, error) {
+	out := new(GetContractAndTokensResp)
+	err := c.cc.Invoke(ctx, "/ranker.v1.contract.Manager/GetContractAndTokens", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ManagerServer is the server API for Manager service.
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
@@ -81,6 +91,7 @@ type ManagerServer interface {
 	GetContractOnly(context.Context, *contract.GetContractOnlyRequest) (*contract.GetContractOnlyResponse, error)
 	GetContracts(context.Context, *contract.GetContractsRequest) (*contract.GetContractsResponse, error)
 	CountContracts(context.Context, *contract.CountContractsRequest) (*contract.CountContractsResponse, error)
+	GetContractAndTokens(context.Context, *GetContractAndTokensReq) (*GetContractAndTokensResp, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -99,6 +110,9 @@ func (UnimplementedManagerServer) GetContracts(context.Context, *contract.GetCon
 }
 func (UnimplementedManagerServer) CountContracts(context.Context, *contract.CountContractsRequest) (*contract.CountContractsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountContracts not implemented")
+}
+func (UnimplementedManagerServer) GetContractAndTokens(context.Context, *GetContractAndTokensReq) (*GetContractAndTokensResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetContractAndTokens not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -185,6 +199,24 @@ func _Manager_CountContracts_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Manager_GetContractAndTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractAndTokensReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).GetContractAndTokens(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ranker.v1.contract.Manager/GetContractAndTokens",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).GetContractAndTokens(ctx, req.(*GetContractAndTokensReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -207,6 +239,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CountContracts",
 			Handler:    _Manager_CountContracts_Handler,
+		},
+		{
+			MethodName: "GetContractAndTokens",
+			Handler:    _Manager_GetContractAndTokens_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
