@@ -7,17 +7,15 @@ import (
 	"sync"
 	"time"
 
-	"ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect"
-	entsql "entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/schema"
-	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 
-	crudermigrate "github.com/NpoolPlatform/libent-cruder/pkg/migrate"
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
+
+	// ent policy runtime
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/runtime"
 )
@@ -92,47 +90,12 @@ func GetConn() (*sql.DB, error) {
 	return conn, nil
 }
 
-func alterColumnNames(next schema.Applier) schema.Applier {
-	return schema.ApplyFunc(func(ctx context.Context, conn dialect.ExecQuerier, plan *migrate.Plan) error {
-		tables := []string{
-			token.Table,
-		}
-
-		columns := [][]string{
-			{"create_at", "created_at"},
-			{"update_at", "updated_at"},
-			{"delete_at", "deleted_at"},
-		}
-
-		for _, table := range tables {
-			for _, column := range columns {
-				if err := crudermigrate.RenameColumn(
-					ctx, conn, table,
-					column[0], column[1],
-					field.TypeInt.String(), true, true); err != nil {
-					logger.Sugar().Errorw("alterColumnNames", "src", column[0], "dst", column[1], "error", err)
-					return err
-				}
-			}
-		}
-
-		return next.Apply(ctx, conn, plan)
-	})
-}
-
 func Init() error {
 	cli, err := client()
 	if err != nil {
 		return err
 	}
-	err = cli.Schema.Create(
-		context.Background(),
-		schema.WithApplyHook(alterColumnNames),
-	)
-	if err != nil {
-		return err
-	}
-	return nil
+	return cli.Schema.Create(context.Background())
 }
 
 func Client() (*ent.Client, error) {
@@ -144,7 +107,6 @@ func WithTx(ctx context.Context, fn func(ctx context.Context, tx *ent.Tx) error)
 	if err != nil {
 		return err
 	}
-	defer cli.Close()
 
 	tx, err := cli.Tx(ctx)
 	if err != nil {
@@ -179,7 +141,6 @@ func WithClient(ctx context.Context, fn func(ctx context.Context, cli *ent.Clien
 	if err != nil {
 		return fmt.Errorf("fail get db client: %v", err)
 	}
-	defer cli.Close()
 
 	if err := fn(ctx, cli); err != nil {
 		return err

@@ -160,14 +160,9 @@ var (
 		PrimaryKey: []*schema.Column{TransfersColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "transfer_contract_token_id",
-				Unique:  false,
-				Columns: []*schema.Column{TransfersColumns[6], TransfersColumns[8]},
-			},
-			{
-				Name:    "transfer_tx_hash_token_id",
-				Unique:  false,
-				Columns: []*schema.Column{TransfersColumns[13], TransfersColumns[8]},
+				Name:    "transfer_contract_token_id_tx_hash",
+				Unique:  true,
+				Columns: []*schema.Column{TransfersColumns[6], TransfersColumns[8], TransfersColumns[13]},
 			},
 		},
 	}

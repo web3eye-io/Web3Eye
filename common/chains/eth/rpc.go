@@ -147,6 +147,7 @@ func getContractCreator(ctx context.Context, ethClient *ethclient.Client, contra
 	if err != nil {
 		return nil, err
 	}
+
 	txs := block.Transactions()
 	for _, tx := range txs {
 		if tx.To() != nil || len(tx.Data()) == 0 {
@@ -158,13 +159,13 @@ func getContractCreator(ctx context.Context, ethClient *ethclient.Client, contra
 		}
 
 		if receipt.ContractAddress == contract {
-			msg, err := tx.AsMessage(types.NewLondonSigner(tx.ChainId()), nil)
+			from, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
 			if err != nil {
 				return nil, err
 			}
 
 			return &ContractCreator{
-				From:        msg.From(),
+				From:        from,
 				BlockNumber: receipt.BlockNumber.Uint64(),
 				TxHash:      receipt.TxHash,
 				TxTime:      block.Time(),

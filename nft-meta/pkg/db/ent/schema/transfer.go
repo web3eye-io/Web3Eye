@@ -44,7 +44,6 @@ func (Transfer) Fields() []ent.Field {
 
 func (Transfer) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("contract", "token_id"),
-		index.Fields("tx_hash", "token_id"),
+		index.Fields("contract", "token_id", "tx_hash").Unique(),
 	}
 }

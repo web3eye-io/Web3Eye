@@ -5,5 +5,5 @@ import (
 )
 
 type TimeMixin struct {
-	cruder.Schema
+	cruder.TimeMixin
 }
