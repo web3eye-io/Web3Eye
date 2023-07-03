@@ -40,7 +40,7 @@ linters-settings:
       - strings.SplitN
 
   lll:
-    line-length: 140
+    line-length: 180
   misspell:
     locale: US
   nolintlint:

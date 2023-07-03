@@ -18,12 +18,9 @@ RUN service ssh restart
 ARG ALL_PROXY
 RUN apt-get install golang-go -y
 
-RUN all_proxy=$ALL_PROXY curl -sL -o /tmp/go1.19.8.tar.gz https://github.com/golang/go/archive/refs/tags/go1.19.8.tar.gz
-RUN mkdir -p /usr/local/go
-RUN cd /usr/local/go; tar xvvf /tmp/go1.19.8.tar.gz
-RUN mv /usr/local/go/go-go1.19.8/* /usr/local/go
-RUN rm -rf /usr/local/go/go-go1.19.8
-RUN cd /usr/local/go/src; ./all.bash
+RUN all_proxy=$ALL_PROXY curl -sL -o /tmp/go1.19.9.linux-amd64.tar.gz https://dl.google.com/go/go1.19.9.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf /tmp/go1.19.9.linux-amd64.tar.gz
+# RUN mv /usr/local/go1.19.9 /usr/local/go
 RUN cp /usr/local/go/bin/go /usr/bin/go
 RUN curl -sSL "https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin
 
