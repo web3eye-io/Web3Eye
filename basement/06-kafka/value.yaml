@@ -9,4 +9,7 @@ zookeeper:
   replicaCount: 3
 
 # 100m
-logRetentionBytes: "104857600"
+logRetentionBytes: "1048576000"
+
+kraft.enabled: false
+zookeeper.enabled: true
