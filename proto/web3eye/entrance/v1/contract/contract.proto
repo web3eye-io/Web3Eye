@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package entrance.v1.contract;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/contract";
+import "google/api/annotations.proto";
+import "web3eye/ranker/v1/contract/contract.proto";
+
+service Manager {
+  rpc GetContractAndTokens(ranker.v1.contract.GetContractAndTokensReq) returns (ranker.v1.contract.GetContractAndTokensResp) {
+    option (google.api.http) = {
+      post : "/v1/get/contract/and/tokens"
+      body : "*"
+    };
+  }
+}

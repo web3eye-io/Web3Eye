@@ -1,0 +1,221 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/entrance/v1/contract/contract.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/get/contract/and/tokens": {
+      "post": {
+        "operationId": "Manager_GetContractAndTokens",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contractGetContractAndTokensResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contractGetContractAndTokensReq"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "ERC721",
+        "ERC1155",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
+    "contractContract": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Symbol": {
+          "type": "string"
+        },
+        "Creator": {
+          "type": "string"
+        },
+        "BlockNum": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "TxTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ProfileURL": {
+          "type": "string"
+        },
+        "BaseURL": {
+          "type": "string"
+        },
+        "BannerURL": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "contractGetContractAndTokensReq": {
+      "type": "object",
+      "properties": {
+        "Contract": {
+          "type": "string"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "contractGetContractAndTokensResp": {
+      "type": "object",
+      "properties": {
+        "Contract": {
+          "$ref": "#/definitions/contractContract"
+        },
+        "Toknes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contractShotToken"
+          }
+        },
+        "TotalTokens": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "contractShotToken": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "IPFSImageURL": {
+          "type": "string"
+        },
+        "ImageSnapshotID": {
+          "type": "string"
+        },
+        "TransfersNum": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

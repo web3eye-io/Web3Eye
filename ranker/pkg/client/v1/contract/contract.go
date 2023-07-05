@@ -109,3 +109,17 @@ func CountContracts(ctx context.Context, in *nftmetaproto.CountContractsRequest)
 	}
 	return infos.(*nftmetaproto.CountContractsResponse), nil
 }
+
+func GetContractAndTokens(ctx context.Context, in *rankerproto.GetContractAndTokensReq) (*rankerproto.GetContractAndTokensResp, error) {
+	infos, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.GetContractAndTokens(_ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.(*rankerproto.GetContractAndTokensResp), nil
+}
