@@ -20,6 +20,10 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.Transfer.Create(), in)
+		err = c.OnConflict().UpdateNewValues().Exec(ctx)
+		if err != nil {
+			return err
+		}
 		info, err = c.Save(_ctx)
 		return err
 	})
