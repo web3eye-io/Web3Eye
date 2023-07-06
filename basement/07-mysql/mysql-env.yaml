@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-env
+  namespace: kube-system
+data:
+  consul-register-enable: "false"
+  pmm-amdin-enable: "false"
+
+---
+apiVersion: v1
+kind: ConfigMapcd 
+metadata:
+  name: system-environment
+  namespace: kube-system
+data:
+  environment.target: ""
+  environment.consul_host: ""
+  environment.consul_port: ""
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pmm-secret
+  namespace: kube-system
+stringData:
+  PMM_ADMIN_PASSWORD: ""

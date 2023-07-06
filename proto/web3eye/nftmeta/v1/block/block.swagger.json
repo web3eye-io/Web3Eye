@@ -1,0 +1,272 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/block/block.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "blockBlock": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "BlockID": {
+          "type": "string"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BlockHash": {
+          "type": "string"
+        },
+        "Time": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "blockBlockReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "BlockID": {
+          "type": "string"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BlockHash": {
+          "type": "string"
+        },
+        "Time": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "blockConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BlockID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BlockNumber": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "BlockHash": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Time": {
+          "$ref": "#/definitions/web3eyeInt64Val"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "blockCountBlocksResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "blockCreateBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
+    "blockCreateBlocksResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/blockBlock"
+          }
+        }
+      }
+    },
+    "blockDeleteBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
+    "blockExistBlockCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockExistBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "boolean"
+        }
+      }
+    },
+    "blockGetBlockOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
+    "blockGetBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
+    "blockGetBlocksResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/blockBlock"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "blockUpdateBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "web3eyeInt64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}
