@@ -28,11 +28,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: mysql_password
-              valueFrom:
-                secretKeyRef:
-                  name: kube-system.mysql-password-secret
-                  key: rootpassword
             - name: redis_password
               valueFrom:
                 secretKeyRef:

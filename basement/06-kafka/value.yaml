@@ -4,12 +4,8 @@ resources:
   requests:
     memory: 2Gi
 
-replicaCount: 3
-zookeeper:
-  replicaCount: 3
+replicaCount: 1
+
 
 # 100m
 logRetentionBytes: "1048576000"
-
-kraft.enabled: false
-zookeeper.enabled: true

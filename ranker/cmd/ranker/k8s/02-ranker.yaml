@@ -31,7 +31,7 @@ spec:
             - name: mysql_password
               valueFrom:
                 secretKeyRef:
-                  name: kube-system.mysql-password-secret
+                  name: mysql-password-secret
                   key: rootpassword
             - name: redis_password
               valueFrom:

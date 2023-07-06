@@ -67,7 +67,7 @@ task-input-topic="image-converter-input"
 task-output-topic="image-converter-output"
 
 [mysql]
-ip="kube-system.mysql"
+ip="mysql"
 port=3306
 user="root"
 password="QARo5aA6zO"
