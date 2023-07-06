@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: development-box
-  # namespace: kube-system
+  namespace: kube-system
 spec:
   serviceName: "development-box"
   replicas: 1
@@ -54,7 +54,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: development-box
-  # namespace: kube-system
+  namespace: kube-system
 spec:
   type: NodePort
   ports:

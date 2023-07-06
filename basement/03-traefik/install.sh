@@ -15,4 +15,4 @@ set -o pipefail
 kubectl apply -k $SHELL_FOLDER
 
 sleep 5
-kubectl get pods | grep traefik
+kubectl get pods -n kube-system | grep traefik

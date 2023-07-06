@@ -12,5 +12,5 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-helm uninstall web3eye-minio
-kubectl get pvc | grep web3eye-minio | awk '{print $1}' | xargs -n1 kubectl delete pvc
+helm uninstall  -n kube-system web3eye-minio
+kubectl get pvc  -n kube-system | grep web3eye-minio | awk '{print $1}' | xargs -n1 kubectl delete pvc -n kube-system

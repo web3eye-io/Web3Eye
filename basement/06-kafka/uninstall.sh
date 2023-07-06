@@ -12,5 +12,5 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-helm delete kafka
-kubectl get pvc | grep kafka | awk '{print $1}' | xargs -n1 kubectl delete pvc
+helm delete -n kube-system kafka
+kubectl get pvc  -n kube-system | grep kafka | awk '{print $1}' | xargs -n1 kubectl delete pvc  -n kube-system

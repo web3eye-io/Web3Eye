@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kube-system
   name: ranker
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
@@ -45,6 +46,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: kube-system
   name: ranker
 spec:
   ports:

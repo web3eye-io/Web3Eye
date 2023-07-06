@@ -14,6 +14,6 @@ set -o pipefail
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
 # helm install kafka oci://registry-1.docker.io/bitnamicharts/kafka
-helm install -f $SHELL_FOLDER/value.yaml kafka bitnami/kafka
+helm install -n kube-system -f $SHELL_FOLDER/value.yaml kafka bitnami/kafka
 sleep 5
-kubectl get pods | grep kafka
+kubectl get pods  -n kube-system | grep kafka

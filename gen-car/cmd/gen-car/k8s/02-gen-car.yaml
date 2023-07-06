@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: kube-system
   name: gen-car
   annotations:
     "sidecar.jaegertracing.io/inject": "true"
@@ -51,6 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: kube-system
   name: gen-car
 spec:
   ports:

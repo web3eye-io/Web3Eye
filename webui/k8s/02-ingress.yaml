@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: webui-ingress
-  namespace: default
+  namespace: kube-system
   annotations:
     # k8s.kuboard.cn/displayName: webui
     # k8s.kuboard.cn/workload: webui

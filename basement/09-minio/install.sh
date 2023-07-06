@@ -13,7 +13,7 @@ set -o nounset
 set -o pipefail
 
 helm repo add minio https://helm.min.io/
-helm install web3eye-minio minio/minio -f $SHELL_FOLDER/value.yaml
+helm install -n kube-system web3eye-minio minio/minio -f $SHELL_FOLDER/value.yaml
 
 sleep 5
-kubectl get pods | grep minio
+kubectl get pods -n kube-system | grep minio

@@ -12,5 +12,5 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-helm uninstall mysql
-kubectl delete pvc data-mysql-0
+# helm uninstall mysql
+# kubectl delete pvc data-mysql-0

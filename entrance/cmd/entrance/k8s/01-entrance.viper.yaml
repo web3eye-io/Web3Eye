@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: kube-system
   name: entrance-config
 data:
   hostname: box

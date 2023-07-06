@@ -70,7 +70,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: common-headers
-  # namespace: kube-system
+  namespace: kube-system
 spec:
   headers:
     accessControlAllowCredentials: true
@@ -150,7 +150,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: http-redirect-https-testing
-  # namespace: kube-system
+  namespace: kube-system
 spec:
   redirectRegex:
     regex: ^http://([-a-zA-Z0-9|.]*):20401/(.*)
@@ -161,7 +161,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: http-redirect-https
-  # namespace: kube-system
+  namespace: kube-system
 spec:
   redirectRegex:
     regex: ^http://([-a-zA-Z0-9|.]*)/(.*)

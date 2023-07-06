@@ -12,5 +12,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-helm uninstall default-nfs-provisioner
-kubectl get pods | grep nfs
+helm uninstall -n kube-system default-nfs-provisioner
+kubectl get pods -n kube-system | grep nfs
+kubectl get storageclass -A
