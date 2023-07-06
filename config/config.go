@@ -35,7 +35,7 @@ type Config struct {
 }
 
 type NFTMeta struct {
-	IP             string `toml:"ip" env:"ip"`
+	Domain         string `toml:"domain" env:"domain"`
 	HTTPPort       int    `toml:"http-port" env:"http_port"`
 	GrpcPort       int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile        string `toml:"log-file" env:"log_file"`
@@ -44,42 +44,42 @@ type NFTMeta struct {
 }
 
 type BlockETL struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type CloudProxy struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type Gateway struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type Ranker struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type Entrance struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
 }
 
 type GenCar struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
 	LogFile  string `toml:"log-file" env:"log_file"`
@@ -87,7 +87,7 @@ type GenCar struct {
 }
 
 type Dealer struct {
-	IP        string `toml:"ip" env:"ip"`
+	Domain    string `toml:"domain" env:"domain"`
 	IpfsRepo  string `toml:"ipfs-repo" env:"ipfs_repo"`
 	OrbitRepo string `toml:"orbit-repo" env:"orbit_repo"`
 	HTTPPort  int    `toml:"http-port" env:"http_port"`
@@ -96,7 +96,7 @@ type Dealer struct {
 }
 
 type Retriever struct {
-	IP        string `toml:"ip" env:"ip"`
+	Domain    string `toml:"domain" env:"domain"`
 	IpfsRepo  string `toml:"ipfs-repo" env:"ipfs_repo"`
 	OrbitRepo string `toml:"orbit-repo" env:"orbit_repo"`
 	HTTPPort  int    `toml:"http-port" env:"http_port"`
@@ -110,7 +110,7 @@ type IamgeConverter struct {
 	TaskOutputTopic string `toml:"task-output-topic" env:"task_output_topic"`
 }
 type MySQL struct {
-	IP       string `toml:"ip" env:"ip"`
+	Domain   string `toml:"domain" env:"domain"`
 	Port     int    `toml:"port" env:"port"`
 	User     string `toml:"user" env:"user"`
 	Password string `toml:"password" env:"password"`

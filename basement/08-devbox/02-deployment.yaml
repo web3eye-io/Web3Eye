@@ -30,11 +30,11 @@ spec:
               value: "/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/sbin:/bin"
             - name: GOPROXY
               value: "https://goproxy.cn,direct"
-            # - name: mysql_password
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: mysql-password-secret
-            #       key: rootpassword
+            - name: mysql_password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password-secret
+                  key: rootpassword
             # - name: redis_password
             #   valueFrom:
             #     secretKeyRef:

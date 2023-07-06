@@ -23,7 +23,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	defer cancel()
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			config.GetConfig().NFTMeta.IP,
+			config.GetConfig().NFTMeta.Domain,
 			config.GetConfig().NFTMeta.GrpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

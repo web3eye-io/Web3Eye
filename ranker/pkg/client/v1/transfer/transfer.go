@@ -30,7 +30,7 @@ func WithCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	if cc == nil {
 		conn, err := grpc.Dial(
 			fmt.Sprintf("%v:%v",
-				config.GetConfig().Ranker.IP,
+				config.GetConfig().Ranker.Domain,
 				config.GetConfig().Ranker.GrpcPort),
 			grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -50,7 +50,7 @@ func WithCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 func UseCloudProxyCC() {
 	cc = &cloudproxy.CloudProxyCC{
 		TargetServer: fmt.Sprintf("%v:%v",
-			config.GetConfig().Ranker.IP,
+			config.GetConfig().Ranker.Domain,
 			config.GetConfig().Ranker.GrpcPort,
 		)}
 }

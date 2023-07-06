@@ -22,7 +22,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	defer cancel()
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			config.GetConfig().GenCar.IP,
+			config.GetConfig().GenCar.Domain,
 			config.GetConfig().GenCar.GrpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

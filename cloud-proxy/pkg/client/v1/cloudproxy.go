@@ -70,7 +70,7 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	defer cancel()
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			config.GetConfig().CloudProxy.IP,
+			config.GetConfig().CloudProxy.Domain,
 			config.GetConfig().CloudProxy.GrpcPort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -85,16 +85,16 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
-	config.GetConfig().CloudProxy.IP = "cloud-proxy.testnet.web3eye.io"
+	config.GetConfig().CloudProxy.Domain = "cloud-proxy.testnet.web3eye.io"
 	config.GetConfig().CloudProxy.GrpcPort = 80
 
 	fmt.Printf("%v:%v",
-		config.GetConfig().CloudProxy.IP,
+		config.GetConfig().CloudProxy.Domain,
 		config.GetConfig().CloudProxy.GrpcPort)
 
 	conn, err := grpc.Dial(
 		fmt.Sprintf("%v:%v",
-			config.GetConfig().CloudProxy.IP,
+			config.GetConfig().CloudProxy.Domain,
 			config.GetConfig().CloudProxy.GrpcPort),
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
