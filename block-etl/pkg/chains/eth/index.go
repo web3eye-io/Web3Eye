@@ -232,7 +232,7 @@ func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*TokenTransfe
 	}
 
 	for i := 0; i < Retries; i++ {
-		_, err := transferNMCli.CreateTransfers(ctx, tt)
+		_, err := transferNMCli.UpsertTransfers(ctx, &transferProto.UpsertTransfersRequest{Infos: tt})
 		if err != nil && containErr(err.Error()) {
 			logger.Sugar().Errorf("will retry for creating transfer record failed, %v", err)
 			continue

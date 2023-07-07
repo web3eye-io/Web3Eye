@@ -293,6 +293,17 @@
         }
       }
     },
+    "transferUpsertTransferResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/transferTransfer"
+        }
+      }
+    },
+    "transferUpsertTransfersResponse": {
+      "type": "object"
+    },
     "web3eyeStringSliceVal": {
       "type": "object",
       "properties": {

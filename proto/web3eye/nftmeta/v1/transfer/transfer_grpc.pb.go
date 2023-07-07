@@ -23,7 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	CreateTransfer(ctx context.Context, in *CreateTransferRequest, opts ...grpc.CallOption) (*CreateTransferResponse, error)
+	UpsertTransfer(ctx context.Context, in *UpsertTransferRequest, opts ...grpc.CallOption) (*UpsertTransferResponse, error)
 	CreateTransfers(ctx context.Context, in *CreateTransfersRequest, opts ...grpc.CallOption) (*CreateTransfersResponse, error)
+	UpsertTransfers(ctx context.Context, in *UpsertTransfersRequest, opts ...grpc.CallOption) (*UpsertTransfersResponse, error)
 	UpdateTransfer(ctx context.Context, in *UpdateTransferRequest, opts ...grpc.CallOption) (*UpdateTransferResponse, error)
 	GetTransfer(ctx context.Context, in *GetTransferRequest, opts ...grpc.CallOption) (*GetTransferResponse, error)
 	GetTransferOnly(ctx context.Context, in *GetTransferOnlyRequest, opts ...grpc.CallOption) (*GetTransferOnlyResponse, error)
@@ -51,9 +53,27 @@ func (c *managerClient) CreateTransfer(ctx context.Context, in *CreateTransferRe
 	return out, nil
 }
 
+func (c *managerClient) UpsertTransfer(ctx context.Context, in *UpsertTransferRequest, opts ...grpc.CallOption) (*UpsertTransferResponse, error) {
+	out := new(UpsertTransferResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.transfer.Manager/UpsertTransfer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *managerClient) CreateTransfers(ctx context.Context, in *CreateTransfersRequest, opts ...grpc.CallOption) (*CreateTransfersResponse, error) {
 	out := new(CreateTransfersResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.transfer.Manager/CreateTransfers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpsertTransfers(ctx context.Context, in *UpsertTransfersRequest, opts ...grpc.CallOption) (*UpsertTransfersResponse, error) {
+	out := new(UpsertTransfersResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.transfer.Manager/UpsertTransfers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +157,9 @@ func (c *managerClient) DeleteTransfer(ctx context.Context, in *DeleteTransferRe
 // for forward compatibility
 type ManagerServer interface {
 	CreateTransfer(context.Context, *CreateTransferRequest) (*CreateTransferResponse, error)
+	UpsertTransfer(context.Context, *UpsertTransferRequest) (*UpsertTransferResponse, error)
 	CreateTransfers(context.Context, *CreateTransfersRequest) (*CreateTransfersResponse, error)
+	UpsertTransfers(context.Context, *UpsertTransfersRequest) (*UpsertTransfersResponse, error)
 	UpdateTransfer(context.Context, *UpdateTransferRequest) (*UpdateTransferResponse, error)
 	GetTransfer(context.Context, *GetTransferRequest) (*GetTransferResponse, error)
 	GetTransferOnly(context.Context, *GetTransferOnlyRequest) (*GetTransferOnlyResponse, error)
@@ -156,8 +178,14 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) CreateTransfer(context.Context, *CreateTransferRequest) (*CreateTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTransfer not implemented")
 }
+func (UnimplementedManagerServer) UpsertTransfer(context.Context, *UpsertTransferRequest) (*UpsertTransferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertTransfer not implemented")
+}
 func (UnimplementedManagerServer) CreateTransfers(context.Context, *CreateTransfersRequest) (*CreateTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTransfers not implemented")
+}
+func (UnimplementedManagerServer) UpsertTransfers(context.Context, *UpsertTransfersRequest) (*UpsertTransfersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertTransfers not implemented")
 }
 func (UnimplementedManagerServer) UpdateTransfer(context.Context, *UpdateTransferRequest) (*UpdateTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTransfer not implemented")
@@ -214,6 +242,24 @@ func _Manager_CreateTransfer_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Manager_UpsertTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.transfer.Manager/UpsertTransfer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertTransfer(ctx, req.(*UpsertTransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Manager_CreateTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTransfersRequest)
 	if err := dec(in); err != nil {
@@ -228,6 +274,24 @@ func _Manager_CreateTransfers_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateTransfers(ctx, req.(*CreateTransfersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpsertTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertTransfersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertTransfers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.transfer.Manager/UpsertTransfers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertTransfers(ctx, req.(*UpsertTransfersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -388,8 +452,16 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_CreateTransfer_Handler,
 		},
 		{
+			MethodName: "UpsertTransfer",
+			Handler:    _Manager_UpsertTransfer_Handler,
+		},
+		{
 			MethodName: "CreateTransfers",
 			Handler:    _Manager_CreateTransfers_Handler,
+		},
+		{
+			MethodName: "UpsertTransfers",
+			Handler:    _Manager_UpsertTransfers_Handler,
 		},
 		{
 			MethodName: "UpdateTransfer",

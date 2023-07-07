@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 )
 
@@ -20,7 +21,6 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.Transfer.Create(), in)
-		err = c.OnConflict().UpdateNewValues().Exec(ctx)
 		if err != nil {
 			return err
 		}
@@ -34,10 +34,39 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	return info, nil
 }
 
-func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate {
-	if in.ID != nil {
-		c.SetID(uuid.New())
+func Upsert(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
+	conds := &npool.Conds{
+		Contract: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.GetContract(),
+		},
+		TokenID: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.GetTokenID(),
+		},
+		TxHash: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.GetTxHash(),
+		},
 	}
+	rows, total, err := Rows(ctx, conds, 0, 1)
+	if err != nil {
+		return nil, err
+	}
+
+	if total != 0 {
+		id := rows[0].ID.String()
+		in.ID = &id
+		return Update(ctx, in)
+	}
+
+	return Create(ctx, in)
+}
+
+func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate {
+	// if in.ID != nil {
+	// 	c.SetID(uuid.New())
+	// }
 	if in.ChainType != nil {
 		c.SetChainType(in.GetChainType().String())
 	}
@@ -80,6 +109,19 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 	return c
 }
 
+func UpsertBulk(ctx context.Context, in []*npool.TransferReq) error {
+	var err error
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		bulk := make([]*ent.TransferCreate, len(in))
+		for i, info := range in {
+			bulk[i] = CreateSet(tx.Transfer.Create(), info)
+		}
+		err = tx.Transfer.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
+		return err
+	})
+	return err
+}
+
 func CreateBulk(ctx context.Context, in []*npool.TransferReq) ([]*ent.Transfer, error) {
 	var err error
 	rows := []*ent.Transfer{}
@@ -109,45 +151,7 @@ func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		u := cli.Transfer.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.Contract != nil {
-			u.SetContract(in.GetContract())
-		}
-		if in.TokenType != nil {
-			u.SetTokenType(in.GetTokenType())
-		}
-		if in.TokenID != nil {
-			u.SetTokenID(in.GetTokenID())
-		}
-		if in.From != nil {
-			u.SetFrom(in.GetFrom())
-		}
-		if in.To != nil {
-			u.SetTo(in.GetTo())
-		}
-		if in.BlockNumber != nil {
-			u.SetBlockNumber(in.GetBlockNumber())
-		}
-		if in.Amount != nil {
-			u.SetAmount(in.GetAmount())
-		}
-		if in.TxHash != nil {
-			u.SetTxHash(in.GetTxHash())
-		}
-		if in.BlockHash != nil {
-			u.SetBlockHash(in.GetBlockHash())
-		}
-		if in.TxTime != nil {
-			u.SetTxTime(in.GetTxTime())
-		}
-		if in.Remark != nil {
-			u.SetRemark(in.GetRemark())
-		}
+		u = UpdateSet(u, in)
 		info, err = u.Save(_ctx)
 		return err
 	})
@@ -158,15 +162,48 @@ func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	return info, nil
 }
 
-// func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpdateOne {
-// 	if in.VectorID != nil {
-// 		u.SetVectorID(in.GetVectorID())
-// 	}
-// 	if in.Remark != nil {
-// 		u.SetRemark(in.GetRemark())
-// 	}
-// 	return u
-// }
+func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpdateOne {
+	if in.ChainType != nil {
+		u.SetChainType(in.GetChainType().String())
+	}
+	if in.ChainID != nil {
+		u.SetChainID(in.GetChainID())
+	}
+	if in.Contract != nil {
+		u.SetContract(in.GetContract())
+	}
+	if in.TokenType != nil {
+		u.SetTokenType(in.GetTokenType())
+	}
+	if in.TokenID != nil {
+		u.SetTokenID(in.GetTokenID())
+	}
+	if in.From != nil {
+		u.SetFrom(in.GetFrom())
+	}
+	if in.To != nil {
+		u.SetTo(in.GetTo())
+	}
+	if in.BlockNumber != nil {
+		u.SetBlockNumber(in.GetBlockNumber())
+	}
+	if in.Amount != nil {
+		u.SetAmount(in.GetAmount())
+	}
+	if in.TxHash != nil {
+		u.SetTxHash(in.GetTxHash())
+	}
+	if in.BlockHash != nil {
+		u.SetBlockHash(in.GetBlockHash())
+	}
+	if in.TxTime != nil {
+		u.SetTxTime(in.GetTxTime())
+	}
+	if in.Remark != nil {
+		u.SetRemark(in.GetRemark())
+	}
+	return u
+}
 
 func Row(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
 	var info *ent.Transfer

@@ -36,20 +36,32 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateTransfer(ctx context.Context, in *npool.TransferReq) (*npool.Transfer, error) {
+func CreateTransfer(ctx context.Context, in *npool.CreateTransferRequest) (*npool.CreateTransferResponse, error) {
 	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateTransfer(ctx, &npool.CreateTransferRequest{
-			Info: in,
-		})
+		resp, err := cli.CreateTransfer(ctx, in)
 		if err != nil {
 			return nil, err
 		}
-		return resp.Info, nil
+		return resp, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return info.(*npool.Transfer), nil
+	return info.(*npool.CreateTransferResponse), nil
+}
+
+func UpsertTransfer(ctx context.Context, in *npool.UpsertTransferRequest) (*npool.UpsertTransferResponse, error) {
+	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.UpsertTransfer(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return info.(*npool.UpsertTransferResponse), nil
 }
 
 func CreateTransfers(ctx context.Context, in []*npool.TransferReq) ([]*npool.Transfer, error) {
@@ -66,6 +78,20 @@ func CreateTransfers(ctx context.Context, in []*npool.TransferReq) ([]*npool.Tra
 		return nil, err
 	}
 	return infos.([]*npool.Transfer), nil
+}
+
+func UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
+	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err := cli.UpsertTransfers(ctx, in)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return infos.(*npool.UpsertTransfersResponse), nil
 }
 
 func UpdateTransfer(ctx context.Context, in *npool.TransferReq) (*npool.Transfer, error) {

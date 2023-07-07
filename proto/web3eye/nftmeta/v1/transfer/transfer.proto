@@ -9,8 +9,11 @@ import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc CreateTransfer(CreateTransferRequest) returns (CreateTransferResponse) {}
+  rpc UpsertTransfer(UpsertTransferRequest) returns (UpsertTransferResponse) {}
   rpc CreateTransfers(CreateTransfersRequest)
       returns (CreateTransfersResponse) {}
+  rpc UpsertTransfers(UpsertTransfersRequest)
+      returns (UpsertTransfersResponse) {}
   rpc UpdateTransfer(UpdateTransferRequest) returns (UpdateTransferResponse) {}
   rpc GetTransfer(GetTransferRequest) returns (GetTransferResponse) {}
   rpc GetTransferOnly(GetTransferOnlyRequest)
@@ -79,9 +82,15 @@ message CreateTransferRequest { TransferReq Info = 10; }
 
 message CreateTransferResponse { Transfer Info = 10; }
 
-message CreateTransfersRequest { repeated TransferReq Infos = 10; }
+message UpsertTransferRequest { TransferReq Info = 10; }
 
+message UpsertTransferResponse { Transfer Info = 10; }
+
+message CreateTransfersRequest { repeated TransferReq Infos = 10; }
 message CreateTransfersResponse { repeated Transfer Infos = 10; }
+message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
+
+message UpsertTransfersResponse { }
 
 message GetTransferRequest { string ID = 10; }
 
