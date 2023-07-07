@@ -55,58 +55,34 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetSnapshot(ctx context.Context, in *nftmetaproto.GetSnapshotRequest) (*nftmetaproto.GetSnapshotResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshot(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetSnapshot(ctx context.Context, in *nftmetaproto.GetSnapshotRequest) (resp *nftmetaproto.GetSnapshotResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetSnapshotResponse), nil
+	return resp, err
 }
 
-func GetSnapshotOnly(ctx context.Context, in *nftmetaproto.GetSnapshotOnlyRequest) (*nftmetaproto.GetSnapshotOnlyResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshotOnly(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetSnapshotOnly(ctx context.Context, in *nftmetaproto.GetSnapshotOnlyRequest) (resp *nftmetaproto.GetSnapshotOnlyResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshotOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetSnapshotOnlyResponse), nil
+	return resp, err
 }
 
-func GetSnapshots(ctx context.Context, in *nftmetaproto.GetSnapshotsRequest) (*nftmetaproto.GetSnapshotsResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshots(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetSnapshots(ctx context.Context, in *nftmetaproto.GetSnapshotsRequest) (resp *nftmetaproto.GetSnapshotsResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshots(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.GetSnapshotsResponse), nil
+	return resp, err
 }
 
-func CountSnapshots(ctx context.Context, in *nftmetaproto.CountSnapshotsRequest) (*nftmetaproto.CountSnapshotsResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountSnapshots(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func CountSnapshots(ctx context.Context, in *nftmetaproto.CountSnapshotsRequest) (resp *nftmetaproto.CountSnapshotsResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountSnapshots(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.CountSnapshotsResponse), nil
+	return resp, err
 }

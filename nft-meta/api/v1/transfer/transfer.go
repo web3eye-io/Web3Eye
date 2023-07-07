@@ -162,7 +162,7 @@ func (s *Server) ExistTransfer(ctx context.Context, in *npool.ExistTransferReque
 	}
 
 	return &npool.ExistTransferResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 
@@ -176,7 +176,7 @@ func (s *Server) ExistTransferConds(ctx context.Context, in *npool.ExistTransfer
 	}
 
 	return &npool.ExistTransferCondsResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 

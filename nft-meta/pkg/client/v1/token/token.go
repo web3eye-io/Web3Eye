@@ -36,166 +36,82 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateToken(ctx context.Context, in *npool.TokenReq) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateToken(ctx, &npool.CreateTokenRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CreateToken(ctx context.Context, in *npool.CreateTokenRequest) (resp *npool.CreateTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+	return resp, err
 }
 
-func CreateTokens(ctx context.Context, in []*npool.TokenReq) ([]*npool.Token, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateTokens(ctx, &npool.CreateTokensRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
+func CreateTokens(ctx context.Context, in *npool.CreateTokensRequest) (resp *npool.CreateTokensResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateTokens(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Token), nil
+	return resp, err
 }
 
-func UpdateToken(ctx context.Context, in *npool.TokenReq) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateToken(ctx, &npool.UpdateTokenRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) (resp *npool.UpdateTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+	return resp, err
 }
 
-func GetToken(ctx context.Context, id string) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetToken(ctx, &npool.GetTokenRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetToken(ctx context.Context, in *npool.GetTokenRequest) (resp *npool.GetTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+	return resp, err
 }
 
-func GetTokenOnly(ctx context.Context, conds *npool.Conds) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokenOnly(ctx, &npool.GetTokenOnlyRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetTokenOnly(ctx context.Context, in *npool.GetTokenOnlyRequest) (resp *npool.GetTokenOnlyResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTokenOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+	return resp, err
 }
 
-func GetTokens(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Token, uint32, error) {
-	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokens(ctx, &npool.GetTokensRequest{
-			Conds:  conds,
-			Limit:  limit,
-			Offset: offset,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.GetTotal()
-		return resp.Infos, nil
+func GetTokens(ctx context.Context, in *npool.GetTokensRequest) (resp *npool.GetTokensResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTokens(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Token), total, nil
+	return resp, err
 }
 
-func ExistToken(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistToken(ctx, &npool.ExistTokenRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistToken(ctx context.Context, in *npool.ExistTokenRequest) (resp *npool.ExistTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func ExistTokenConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistTokenConds(ctx, &npool.ExistTokenCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistTokenConds(ctx context.Context, in *npool.ExistTokenCondsRequest) (resp *npool.ExistTokenCondsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistTokenConds(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func CountTokens(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountTokens(ctx, &npool.CountTokensRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CountTokens(ctx context.Context, in *npool.CountTokensRequest) (resp *npool.CountTokensResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountTokens(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return 0, err
-	}
-	return infos.(uint32), nil
+	return resp, err
 }
 
-func DeleteToken(ctx context.Context, id string) (*npool.Token, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteToken(ctx, &npool.DeleteTokenRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) (resp *npool.DeleteTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.DeleteToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Token), nil
+	return resp, err
 }

@@ -132,7 +132,7 @@
     "blockExistBlockCondsResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }
@@ -140,7 +140,7 @@
     "blockExistBlockResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }

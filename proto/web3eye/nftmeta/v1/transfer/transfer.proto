@@ -117,11 +117,11 @@ message UpdateTransferResponse { Transfer Info = 10; }
 
 message ExistTransferRequest { string ID = 10; }
 
-message ExistTransferResponse { bool Info = 10; }
+message ExistTransferResponse { bool Exist = 10; }
 
 message ExistTransferCondsRequest { Conds Conds = 10; }
 
-message ExistTransferCondsResponse { bool Info = 10; }
+message ExistTransferCondsResponse { bool Exist = 10; }
 
 message CountTransfersRequest { Conds Conds = 10; }
 

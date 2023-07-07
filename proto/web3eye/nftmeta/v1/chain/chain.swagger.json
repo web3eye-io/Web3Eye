@@ -119,7 +119,7 @@
     "chain1ExistChainCondsResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }
@@ -127,7 +127,7 @@
     "chain1ExistChainResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }

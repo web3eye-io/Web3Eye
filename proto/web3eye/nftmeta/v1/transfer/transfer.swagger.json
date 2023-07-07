@@ -141,7 +141,7 @@
     "transferExistTransferCondsResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }
@@ -149,7 +149,7 @@
     "transferExistTransferResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }

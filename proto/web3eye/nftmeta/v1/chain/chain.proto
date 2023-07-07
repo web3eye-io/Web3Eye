@@ -80,11 +80,11 @@ message UpdateChainResponse { Chain Info = 10; }
 
 message ExistChainRequest { string ID = 10; }
 
-message ExistChainResponse { bool Info = 10; }
+message ExistChainResponse { bool Exist = 10; }
 
 message ExistChainCondsRequest { Conds Conds = 10; }
 
-message ExistChainCondsResponse { bool Info = 10; }
+message ExistChainCondsResponse { bool Exist = 10; }
 
 message CountChainsRequest { Conds Conds = 10; }
 

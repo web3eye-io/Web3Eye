@@ -109,7 +109,7 @@
     "snapshotExistSnapshotCondsResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }
@@ -117,7 +117,7 @@
     "snapshotExistSnapshotResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }

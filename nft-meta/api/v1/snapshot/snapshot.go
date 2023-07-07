@@ -133,7 +133,7 @@ func (s *Server) ExistSnapshot(ctx context.Context, in *npool.ExistSnapshotReque
 	}
 
 	return &npool.ExistSnapshotResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 
@@ -147,7 +147,7 @@ func (s *Server) ExistSnapshotConds(ctx context.Context, in *npool.ExistSnapshot
 	}
 
 	return &npool.ExistSnapshotCondsResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 

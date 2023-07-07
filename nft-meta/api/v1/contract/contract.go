@@ -133,7 +133,7 @@ func (s *Server) ExistContract(ctx context.Context, in *npool.ExistContractReque
 	}
 
 	return &npool.ExistContractResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 
@@ -147,7 +147,7 @@ func (s *Server) ExistContractConds(ctx context.Context, in *npool.ExistContract
 	}
 
 	return &npool.ExistContractCondsResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 

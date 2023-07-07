@@ -37,166 +37,82 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateContract(_ctx, &npool.CreateContractRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CreateContract(ctx context.Context, in *npool.CreateContractRequest) (resp *npool.CreateContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Contract), nil
+	return resp, err
 }
 
-func CreateContracts(ctx context.Context, in []*npool.ContractReq) ([]*npool.Contract, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateContracts(_ctx, &npool.CreateContractsRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
+func CreateContracts(ctx context.Context, in *npool.CreateContractsRequest) (resp *npool.CreateContractsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateContracts(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Contract), nil
+	return resp, err
 }
 
-func UpdateContract(ctx context.Context, in *npool.ContractReq) (*npool.Contract, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateContract(_ctx, &npool.UpdateContractRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func UpdateContract(ctx context.Context, in *npool.UpdateContractRequest) (resp *npool.UpdateContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Contract), nil
+	return resp, err
 }
 
-func GetContract(ctx context.Context, id string) (*npool.Contract, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContract(_ctx, &npool.GetContractRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetContract(ctx context.Context, in *npool.GetContractRequest) (resp *npool.GetContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Contract), nil
+	return resp, err
 }
 
-func GetContractOnly(ctx context.Context, conds *npool.Conds) (*npool.Contract, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContractOnly(_ctx, &npool.GetContractOnlyRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetContractOnly(ctx context.Context, in *npool.GetContractOnlyRequest) (resp *npool.GetContractOnlyResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContractOnly(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Contract), nil
+	return resp, err
 }
 
-func GetContracts(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Contract, uint32, error) {
-	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContracts(_ctx, &npool.GetContractsRequest{
-			Conds:  conds,
-			Limit:  limit,
-			Offset: offset,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.GetTotal()
-		return resp.Infos, nil
+func GetContracts(ctx context.Context, in *npool.GetContractsRequest) (resp *npool.GetContractsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContracts(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Contract), total, nil
+	return resp, err
 }
 
-func ExistContract(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistContract(_ctx, &npool.ExistContractRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistContract(ctx context.Context, in *npool.ExistContractRequest) (resp *npool.ExistContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func ExistContractConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistContractConds(_ctx, &npool.ExistContractCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistContractConds(ctx context.Context, in *npool.ExistContractCondsRequest) (resp *npool.ExistContractCondsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistContractConds(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func CountContracts(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountContracts(_ctx, &npool.CountContractsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CountContracts(ctx context.Context, in *npool.CountContractsRequest) (resp *npool.CountContractsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountContracts(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return 0, err
-	}
-	return infos.(uint32), nil
+	return resp, err
 }
 
-func DeleteContract(ctx context.Context, id string) (*npool.Contract, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteContract(_ctx, &npool.DeleteContractRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func DeleteContract(ctx context.Context, in *npool.DeleteContractRequest) (resp *npool.DeleteContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.DeleteContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Contract), nil
+	return resp, err
 }

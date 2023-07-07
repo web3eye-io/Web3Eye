@@ -84,11 +84,11 @@ message UpdateSnapshotResponse { Snapshot Info = 10; }
 
 message ExistSnapshotRequest { string ID = 10; }
 
-message ExistSnapshotResponse { bool Info = 10; }
+message ExistSnapshotResponse { bool Exist = 10; }
 
 message ExistSnapshotCondsRequest { Conds Conds = 10; }
 
-message ExistSnapshotCondsResponse { bool Info = 10; }
+message ExistSnapshotCondsResponse { bool Exist = 10; }
 
 message CountSnapshotsRequest { Conds Conds = 10; }
 

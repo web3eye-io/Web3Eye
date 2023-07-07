@@ -54,72 +54,42 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetContract(ctx context.Context, in *nftmetaproto.GetContractRequest) (*nftmetaproto.GetContractResponse, error) {
-	info, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContract(_ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetContract(ctx context.Context, in *nftmetaproto.GetContractRequest) (resp *nftmetaproto.GetContractResponse, err error) {
+	_, err = WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContract(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetContractResponse), nil
+	return resp, err
 }
 
-func GetContractOnly(ctx context.Context, in *nftmetaproto.GetContractOnlyRequest) (*nftmetaproto.GetContractOnlyResponse, error) {
-	info, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContractOnly(_ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetContractOnly(ctx context.Context, in *nftmetaproto.GetContractOnlyRequest) (resp *nftmetaproto.GetContractOnlyResponse, err error) {
+	_, err = WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContractOnly(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetContractOnlyResponse), nil
+	return resp, err
 }
 
-func GetContracts(ctx context.Context, in *nftmetaproto.GetContractsRequest) (*nftmetaproto.GetContractsResponse, error) {
-	infos, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContracts(_ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetContracts(ctx context.Context, in *nftmetaproto.GetContractsRequest) (resp *nftmetaproto.GetContractsResponse, err error) {
+	_, err = WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContracts(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.GetContractsResponse), nil
+	return resp, err
 }
 
-func CountContracts(ctx context.Context, in *nftmetaproto.CountContractsRequest) (*nftmetaproto.CountContractsResponse, error) {
-	infos, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountContracts(_ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func CountContracts(ctx context.Context, in *nftmetaproto.CountContractsRequest) (resp *nftmetaproto.CountContractsResponse, err error) {
+	_, err = WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountContracts(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.CountContractsResponse), nil
+	return resp, err
 }
 
-func GetContractAndTokens(ctx context.Context, in *rankerproto.GetContractAndTokensReq) (*rankerproto.GetContractAndTokensResp, error) {
-	infos, err := WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetContractAndTokens(_ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetContractAndTokens(ctx context.Context, in *rankerproto.GetContractAndTokensReq) (resp *rankerproto.GetContractAndTokensResp, err error) {
+	_, err = WithCRUD(ctx, func(_ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetContractAndTokens(_ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*rankerproto.GetContractAndTokensResp), nil
+	return resp, err
 }

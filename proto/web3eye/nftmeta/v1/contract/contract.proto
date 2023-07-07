@@ -110,11 +110,11 @@ message UpdateContractResponse { Contract Info = 10; }
 
 message ExistContractRequest { string ID = 10; }
 
-message ExistContractResponse { bool Info = 10; }
+message ExistContractResponse { bool Exist = 10; }
 
 message ExistContractCondsRequest { Conds Conds = 10; }
 
-message ExistContractCondsResponse { bool Info = 10; }
+message ExistContractCondsResponse { bool Exist = 10; }
 
 message CountContractsRequest { Conds Conds = 10; }
 

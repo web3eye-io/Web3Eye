@@ -128,11 +128,11 @@ message UpdateTokenResponse { Token Info = 10; }
 
 message ExistTokenRequest { string ID = 10; }
 
-message ExistTokenResponse { bool Info = 10; }
+message ExistTokenResponse { bool Exist = 10; }
 
 message ExistTokenCondsRequest { Conds Conds = 10; }
 
-message ExistTokenCondsResponse { bool Info = 10; }
+message ExistTokenCondsResponse { bool Exist = 10; }
 
 message CountTokensRequest { Conds Conds = 10; }
 

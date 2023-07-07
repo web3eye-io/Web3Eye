@@ -73,9 +73,11 @@ func (b *backup) updateSnapshotState(ctx context.Context, index uint64, state de
 	}
 
 	_state := snapshot.BackupState.String()
-	if _, err := metacli.UpdateSnapshot(ctx, &metapb.SnapshotReq{
-		ID:          &snapshot.ID,
-		BackupState: &_state,
+	if _, err := metacli.UpdateSnapshot(ctx, &metapb.UpdateSnapshotRequest{
+		Info: &metapb.SnapshotReq{
+			ID:          &snapshot.ID,
+			BackupState: &_state,
+		},
 	}); err != nil {
 		return err
 	}

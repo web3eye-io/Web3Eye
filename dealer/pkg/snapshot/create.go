@@ -34,21 +34,25 @@ func (h *Handler) CreateSnapshot(ctx context.Context) (*dealerpb.Snapshot, error
 			return nil, err
 		}
 		// TODO: May need to do async
-		if _, err := tokencli.UpdateToken(ctx, &tokenpb.TokenReq{
-			ID:              &item.ID,
-			ImageSnapshotID: &snapshot.ID,
+		if _, err := tokencli.UpdateToken(ctx, &tokenpb.UpdateTokenRequest{
+			Info: &tokenpb.TokenReq{
+				ID:              &item.ID,
+				ImageSnapshotID: &snapshot.ID,
+			},
 		}); err != nil {
 			return nil, err
 		}
 	}
 	state := snapshot.BackupState.String()
-	if _, err := metacli.CreateSnapshot(ctx, &metapb.SnapshotReq{
-		ID:            &snapshot.ID,
-		Index:         &snapshot.Index,
-		SnapshotCommP: &snapshot.SnapshotCommP,
-		SnapshotRoot:  &snapshot.SnapshotRoot,
-		SnapshotURI:   &snapshot.SnapshotURI,
-		BackupState:   &state,
+	if _, err := metacli.CreateSnapshot(ctx, &metapb.CreateSnapshotRequest{
+		Info: &metapb.SnapshotReq{
+			ID:            &snapshot.ID,
+			Index:         &snapshot.Index,
+			SnapshotCommP: &snapshot.SnapshotCommP,
+			SnapshotRoot:  &snapshot.SnapshotRoot,
+			SnapshotURI:   &snapshot.SnapshotURI,
+			BackupState:   &state,
+		},
 	}); err != nil {
 		return nil, err
 	}

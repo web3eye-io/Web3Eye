@@ -11,7 +11,6 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
-	cteth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/common/utils"
@@ -84,11 +83,11 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 	}
 
 	// check wheather have task in kafka
-	tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
+	resp, err := synctaskNMCli.GetSyncTasks(ctx, &synctask.GetSyncTasksRequest{Conds: conds, Offset: 0, Limit: 0})
 	if err != nil {
 		logger.Sugar().Error(err)
 	}
-	for _, v := range tasks {
+	for _, v := range resp.GetInfos() {
 		err = e.addTask(v.Topic)
 		if err != nil {
 			logger.Sugar().Error(err)
@@ -100,11 +99,11 @@ func (e *EthIndexer) IndexTasks(ctx context.Context) {
 
 	for {
 		// TODO: limit sync topic number
-		tasks, _, err := synctaskNMCli.GetSyncTasks(ctx, conds, 0, 0)
+		resp, err := synctaskNMCli.GetSyncTasks(ctx, &synctask.GetSyncTasksRequest{Conds: conds, Offset: 0, Limit: 0})
 		if err != nil {
 			logger.Sugar().Error(err)
 		}
-		for _, v := range tasks {
+		for _, v := range resp.GetInfos() {
 			err = e.addTask(v.Topic)
 			if err != nil {
 				logger.Sugar().Error(err)
@@ -145,7 +144,7 @@ func (e *EthIndexer) addTask(topic string) error {
 			if retryNum < MaxRetriesThenTriggerTask {
 				return
 			} else {
-				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), topic)
+				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), &synctask.TriggerSyncTaskRequest{Topic: topic})
 				if err != nil {
 					logger.Sugar().Error(err)
 				}
@@ -273,7 +272,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			},
 		}
 
-		if exist, err := tokenNMCli.ExistTokenConds(ctx, conds); exist && err == nil {
+		if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
 			continue
 		} else if err != nil {
 			logger.Sugar().Error(err)
@@ -285,7 +284,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 			logger.Sugar().Error(err)
 		}
 
-		tokenURI, err := cteth.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
+		tokenURI, err := eth.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
 			remark = err.Error()
 		}
@@ -300,20 +299,22 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*TokenTransf
 		}
 
 		for i := 0; i < Retries; i++ {
-			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.TokenReq{
-				ChainType:   &transfer.ChainType,
-				ChainID:     eth.CurrentChainID,
-				Contract:    &transfer.Contract,
-				TokenType:   &transfer.TokenType,
-				TokenID:     &transfer.TokenID,
-				URI:         &tokenURI,
-				URIType:     (*string)(&tokenURIInfo.URIType),
-				ImageURL:    &tokenURIInfo.ImageURL,
-				VideoURL:    &tokenURIInfo.VideoURL,
-				Name:        &tokenURIInfo.Name,
-				Description: &tokenURIInfo.Description,
-				VectorState: tokenProto.ConvertState_Waiting.Enum(),
-				Remark:      &remark,
+			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
+				Info: &tokenProto.TokenReq{
+					ChainType:   &transfer.ChainType,
+					ChainID:     eth.CurrentChainID,
+					Contract:    &transfer.Contract,
+					TokenType:   &transfer.TokenType,
+					TokenID:     &transfer.TokenID,
+					URI:         &tokenURI,
+					URIType:     (*string)(&tokenURIInfo.URIType),
+					ImageURL:    &tokenURIInfo.ImageURL,
+					VideoURL:    &tokenURIInfo.VideoURL,
+					Name:        &tokenURIInfo.Name,
+					Description: &tokenURIInfo.Description,
+					VectorState: tokenProto.ConvertState_Waiting.Enum(),
+					Remark:      &remark,
+				},
 			})
 			if err != nil && containErr(err.Error()) {
 				logger.Sugar().Errorf("will retry for creating token record failed, %v", err)
@@ -349,7 +350,9 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 		},
 	}
 
-	if exist, err := contractNMCli.ExistContractConds(ctx, conds); exist && err == nil {
+	if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
+		Conds: conds,
+	}); err == nil && resp != nil && resp.GetExist() {
 		return nil
 	} else if err != nil {
 		logger.Sugar().Error(err)
@@ -357,9 +360,9 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 
 	remark := ""
 
-	contractMeta, err := cteth.GetERC721Metadata(ctx, transfer.Contract)
+	contractMeta, err := eth.GetERC721Metadata(ctx, transfer.Contract)
 	if err != nil {
-		contractMeta = &cteth.ERC721Metadata{}
+		contractMeta = &eth.ERC721Metadata{}
 		remark = fmt.Sprintf("%v,%v", remark, err)
 	}
 
@@ -375,17 +378,19 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *TokenTransfer) 
 	// blockNum := creator.BlockNumber
 	// txTime := uint32(creator.TxTime)
 	for i := 0; i < Retries; i++ {
-		_, err = contractNMCli.CreateContract(ctx, &contractProto.ContractReq{
-			ChainType: &transfer.ChainType,
-			ChainID:   eth.CurrentChainID,
-			Address:   &transfer.Contract,
-			Name:      &contractMeta.Name,
-			Symbol:    &contractMeta.Symbol,
-			// Creator:   &from,
-			// BlockNum:  &blockNum,
-			// TxHash:    &txHash,
-			// TxTime:    &txTime,
-			Remark: &remark,
+		_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
+			Info: &contractProto.ContractReq{
+				ChainType: &transfer.ChainType,
+				ChainID:   eth.CurrentChainID,
+				Address:   &transfer.Contract,
+				Name:      &contractMeta.Name,
+				Symbol:    &contractMeta.Symbol,
+				// Creator:   &from,
+				// BlockNum:  &blockNum,
+				// TxHash:    &txHash,
+				// TxTime:    &txTime,
+				Remark: &remark,
+			},
 		})
 		if err != nil && containErr(err.Error()) {
 			logger.Sugar().Errorf("will retry for creating contract record failed, %v", err)

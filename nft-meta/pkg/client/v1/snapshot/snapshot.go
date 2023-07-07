@@ -36,168 +36,82 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateSnapshot(ctx context.Context, in *npool.SnapshotReq) (*npool.Snapshot, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateSnapshot(ctx, &npool.CreateSnapshotRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CreateSnapshot(ctx context.Context, in *npool.CreateSnapshotRequest) (resp *npool.CreateSnapshotResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Snapshot), nil
+	return resp, err
 }
 
-func CreateSnapshots(ctx context.Context, in []*npool.SnapshotReq) ([]*npool.Snapshot, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateSnapshots(ctx, &npool.CreateSnapshotsRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
+func CreateSnapshots(ctx context.Context, in *npool.CreateSnapshotsRequest) (resp *npool.CreateSnapshotsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateSnapshots(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Snapshot), nil
+	return resp, err
 }
 
-func UpdateSnapshot(ctx context.Context, in *npool.SnapshotReq) (*npool.Snapshot, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateSnapshot(ctx, &npool.UpdateSnapshotRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func UpdateSnapshot(ctx context.Context, in *npool.UpdateSnapshotRequest) (resp *npool.UpdateSnapshotResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Snapshot), nil
+	return resp, err
 }
 
-func GetSnapshot(ctx context.Context, id string) (*npool.Snapshot, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshot(ctx, &npool.GetSnapshotRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetSnapshot(ctx context.Context, in *npool.GetSnapshotRequest) (resp *npool.GetSnapshotResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Snapshot), nil
+	return resp, err
 }
 
-func GetSnapshotOnly(ctx context.Context, conds *npool.Conds) (*npool.Snapshot, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshotOnly(ctx, &npool.GetSnapshotOnlyRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetSnapshotOnly(ctx context.Context, in *npool.GetSnapshotOnlyRequest) (resp *npool.GetSnapshotOnlyResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshotOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Snapshot), nil
+	return resp, err
 }
 
-func GetSnapshots(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Snapshot, uint32, error) {
-	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSnapshots(ctx, &npool.GetSnapshotsRequest{
-			Conds:  conds,
-			Limit:  limit,
-			Offset: offset,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.GetTotal()
-		return resp.Infos, nil
+func GetSnapshots(ctx context.Context, in *npool.GetSnapshotsRequest) (resp *npool.GetSnapshotsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSnapshots(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Snapshot), total, nil
+	return resp, err
 }
 
-func ExistSnapshot(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistSnapshot(ctx, &npool.ExistSnapshotRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistSnapshot(ctx context.Context, in *npool.ExistSnapshotRequest) (resp *npool.ExistSnapshotResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func ExistSnapshotConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistSnapshotConds(ctx, &npool.ExistSnapshotCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistSnapshotConds(ctx context.Context, in *npool.ExistSnapshotCondsRequest) (resp *npool.ExistSnapshotCondsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistSnapshotConds(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func CountSnapshots(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountSnapshots(ctx, &npool.CountSnapshotsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CountSnapshots(ctx context.Context, in *npool.CountSnapshotsRequest) (resp *npool.CountSnapshotsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountSnapshots(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return 0, err
-	}
-	return infos.(uint32), nil
+	return resp, err
 }
 
-func DeleteSnapshot(ctx context.Context, id string) (*npool.Snapshot, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteSnapshot(ctx, &npool.DeleteSnapshotRequest{
-			Info: &npool.SnapshotReq{
-				ID: &id,
-			},
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func DeleteSnapshot(ctx context.Context, in *npool.DeleteSnapshotRequest) (resp *npool.DeleteSnapshotResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.DeleteSnapshot(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Snapshot), nil
+	return resp, err
 }

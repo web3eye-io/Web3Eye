@@ -55,58 +55,34 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetTransfer(ctx context.Context, in *nftmetaproto.GetTransferRequest) (*nftmetaproto.GetTransferResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransfer(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetTransfer(ctx context.Context, in *nftmetaproto.GetTransferRequest) (resp *nftmetaproto.GetTransferResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetTransferResponse), nil
+	return resp, err
 }
 
-func GetTransferOnly(ctx context.Context, in *nftmetaproto.GetTransferOnlyRequest) (*nftmetaproto.GetTransferOnlyResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransferOnly(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetTransferOnly(ctx context.Context, in *nftmetaproto.GetTransferOnlyRequest) (resp *nftmetaproto.GetTransferOnlyResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransferOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetTransferOnlyResponse), nil
+	return resp, err
 }
 
-func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (*nftmetaproto.GetTransfersResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransfers(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (resp *nftmetaproto.GetTransfersResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetTransfersResponse), nil
+	return resp, err
 }
 
-func CountTransfers(ctx context.Context, in *rankerproto.CountTransfersRequest) (*nftmetaproto.CountTransfersResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountTransfers(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func CountTransfers(ctx context.Context, in *rankerproto.CountTransfersRequest) (resp *nftmetaproto.CountTransfersResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.CountTransfersResponse), nil
+	return resp, err
 }

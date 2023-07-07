@@ -138,11 +138,11 @@ message UpdateSyncTaskResponse { SyncTask Info = 10; }
 
 message ExistSyncTaskRequest { string ID = 10; }
 
-message ExistSyncTaskResponse { bool Info = 10; }
+message ExistSyncTaskResponse { bool Exist = 10; }
 
 message ExistSyncTaskCondsRequest { Conds Conds = 10; }
 
-message ExistSyncTaskCondsResponse { bool Info = 10; }
+message ExistSyncTaskCondsResponse { bool Exist = 10; }
 
 message CountSyncTasksRequest { Conds Conds = 10; }
 

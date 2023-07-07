@@ -83,11 +83,11 @@ message UpdateBlockResponse { Block Info = 10; }
 
 message ExistBlockRequest { string ID = 10; }
 
-message ExistBlockResponse { bool Info = 10; }
+message ExistBlockResponse { bool Exist = 10; }
 
 message ExistBlockCondsRequest { Conds Conds = 10; }
 
-message ExistBlockCondsResponse { bool Info = 10; }
+message ExistBlockCondsResponse { bool Exist = 10; }
 
 message CountBlocksRequest { Conds Conds = 10; }
 

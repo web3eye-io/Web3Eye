@@ -450,7 +450,7 @@
     "synctaskExistSyncTaskCondsResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }
@@ -466,7 +466,7 @@
     "synctaskExistSyncTaskResponse": {
       "type": "object",
       "properties": {
-        "Info": {
+        "Exist": {
           "type": "boolean"
         }
       }

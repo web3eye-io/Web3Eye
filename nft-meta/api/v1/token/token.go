@@ -150,7 +150,7 @@ func (s *Server) ExistToken(ctx context.Context, in *npool.ExistTokenRequest) (*
 	}
 
 	return &npool.ExistTokenResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 
@@ -164,7 +164,7 @@ func (s *Server) ExistTokenConds(ctx context.Context, in *npool.ExistTokenCondsR
 	}
 
 	return &npool.ExistTokenCondsResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 

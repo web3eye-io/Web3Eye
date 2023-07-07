@@ -256,7 +256,7 @@ func (s *Server) ExistSyncTask(ctx context.Context, in *npool.ExistSyncTaskReque
 	}
 
 	return &npool.ExistSyncTaskResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 
@@ -271,7 +271,7 @@ func (s *Server) ExistSyncTaskConds(ctx context.Context, in *npool.ExistSyncTask
 	}
 
 	return &npool.ExistSyncTaskCondsResponse{
-		Info: exist,
+		Exist: exist,
 	}, nil
 }
 

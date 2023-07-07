@@ -36,166 +36,82 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateSyncTask(ctx context.Context, in *npool.SyncTaskReq) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateSyncTask(ctx, &npool.CreateSyncTaskRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (resp *npool.CreateSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.SyncTask), nil
+	return resp, err
 }
 
-func TriggerSyncTask(ctx context.Context, topic string) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.TriggerSyncTask(ctx, &npool.TriggerSyncTaskRequest{
-			Topic: topic,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (resp *npool.GetSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.TriggerSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.GetSyncTaskResponse).Info, nil
+	return resp, err
 }
 
-func UpdateSyncTask(ctx context.Context, in *npool.SyncTaskReq) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateSyncTask(ctx, &npool.UpdateSyncTaskRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func UpdateSyncTask(ctx context.Context, in *npool.UpdateSyncTaskRequest) (resp *npool.UpdateSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.SyncTask), nil
+	return resp, err
 }
 
-func GetSyncTask(ctx context.Context, id string) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSyncTask(ctx, &npool.GetSyncTaskRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetSyncTask(ctx context.Context, in *npool.GetSyncTaskRequest) (resp *npool.GetSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.SyncTask), nil
+	return resp, err
 }
 
-func GetSyncTaskOnly(ctx context.Context, conds *npool.Conds) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSyncTaskOnly(ctx, &npool.GetSyncTaskOnlyRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetSyncTaskOnly(ctx context.Context, in *npool.GetSyncTaskOnlyRequest) (resp *npool.GetSyncTaskOnlyResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSyncTaskOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.SyncTask), nil
+	return resp, err
 }
 
-func GetSyncTasks(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.SyncTask, uint32, error) {
-	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetSyncTasks(ctx, &npool.GetSyncTasksRequest{
-			Conds:  conds,
-			Limit:  limit,
-			Offset: offset,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.GetTotal()
-		return resp.Infos, nil
+func GetSyncTasks(ctx context.Context, in *npool.GetSyncTasksRequest) (resp *npool.GetSyncTasksResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetSyncTasks(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.SyncTask), total, nil
+	return resp, err
 }
 
-func ExistSyncTask(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistSyncTask(ctx, &npool.ExistSyncTaskRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistSyncTask(ctx context.Context, in *npool.ExistSyncTaskRequest) (resp *npool.ExistSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func ExistSyncTaskConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistSyncTaskConds(ctx, &npool.ExistSyncTaskCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistSyncTaskConds(ctx context.Context, in *npool.ExistSyncTaskCondsRequest) (resp *npool.ExistSyncTaskCondsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistSyncTaskConds(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func CountSyncTasks(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountSyncTasks(ctx, &npool.CountSyncTasksRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CountSyncTasks(ctx context.Context, in *npool.CountSyncTasksRequest) (resp *npool.CountSyncTasksResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountSyncTasks(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return 0, err
-	}
-	return infos.(uint32), nil
+	return resp, err
 }
 
-func DeleteSyncTask(ctx context.Context, id string) (*npool.SyncTask, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteSyncTask(ctx, &npool.DeleteSyncTaskRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func DeleteSyncTask(ctx context.Context, in *npool.DeleteSyncTaskRequest) (resp *npool.DeleteSyncTaskResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.DeleteSyncTask(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.SyncTask), nil
+	return resp, err
 }

@@ -55,86 +55,50 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetToken(ctx context.Context, in *nftmetaproto.GetTokenRequest) (*nftmetaproto.GetTokenResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetToken(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetToken(ctx context.Context, in *nftmetaproto.GetTokenRequest) (resp *nftmetaproto.GetTokenResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetToken(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetTokenResponse), nil
+	return resp, err
 }
 
-func GetTokenOnly(ctx context.Context, in *nftmetaproto.GetTokenOnlyRequest) (*nftmetaproto.GetTokenOnlyResponse, error) {
-	info, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokenOnly(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetTokenOnly(ctx context.Context, in *nftmetaproto.GetTokenOnlyRequest) (resp *nftmetaproto.GetTokenOnlyResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTokenOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*nftmetaproto.GetTokenOnlyResponse), nil
+	return resp, err
 }
 
-func GetTokens(ctx context.Context, in *nftmetaproto.GetTokensRequest) (*nftmetaproto.GetTokensResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTokens(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func GetTokens(ctx context.Context, in *nftmetaproto.GetTokensRequest) (resp *nftmetaproto.GetTokensResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTokens(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.GetTokensResponse), nil
+	return resp, err
 }
 
-func Search(ctx context.Context, in *rankerproto.SearchTokenRequest) (*rankerproto.SearchResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.Search(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func Search(ctx context.Context, in *rankerproto.SearchTokenRequest) (resp *rankerproto.SearchResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.Search(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*rankerproto.SearchResponse), nil
+	return resp, err
 }
 
-func SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.SearchPage(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (resp *rankerproto.SearchResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.SearchPage(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*rankerproto.SearchResponse), nil
+	return resp, err
 }
 
-func CountTokens(ctx context.Context, in *nftmetaproto.CountTokensRequest) (*nftmetaproto.CountTokensResponse, error) {
-	infos, err := WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountTokens(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func CountTokens(ctx context.Context, in *nftmetaproto.CountTokensRequest) (resp *nftmetaproto.CountTokensResponse, err error) {
+	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountTokens(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*nftmetaproto.CountTokensResponse), nil
+	return resp, err
 }

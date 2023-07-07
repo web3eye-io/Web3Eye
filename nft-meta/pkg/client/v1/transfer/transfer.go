@@ -36,192 +36,98 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	return handler(_ctx, cli)
 }
 
-func CreateTransfer(ctx context.Context, in *npool.CreateTransferRequest) (*npool.CreateTransferResponse, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateTransfer(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func CreateTransfer(ctx context.Context, in *npool.CreateTransferRequest) (resp *npool.CreateTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.CreateTransferResponse), nil
+	return resp, err
 }
 
-func UpsertTransfer(ctx context.Context, in *npool.UpsertTransferRequest) (*npool.UpsertTransferResponse, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpsertTransfer(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func UpsertTransfer(ctx context.Context, in *npool.UpsertTransferRequest) (resp *npool.UpsertTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.UpsertTransferResponse), nil
+	return resp, err
 }
 
-func CreateTransfers(ctx context.Context, in []*npool.TransferReq) ([]*npool.Transfer, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CreateTransfers(ctx, &npool.CreateTransfersRequest{
-			Infos: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Infos, nil
+func CreateTransfers(ctx context.Context, in *npool.CreateTransfersRequest) (resp *npool.CreateTransfersResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CreateTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.([]*npool.Transfer), nil
+	return resp, err
 }
 
-func UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpsertTransfers(ctx, in)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+func UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (resp *npool.UpsertTransfersResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return infos.(*npool.UpsertTransfersResponse), nil
+	return resp, err
 }
 
-func UpdateTransfer(ctx context.Context, in *npool.TransferReq) (*npool.Transfer, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.UpdateTransfer(ctx, &npool.UpdateTransferRequest{
-			Info: in,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func UpdateTransfer(ctx context.Context, in *npool.UpdateTransferRequest) (resp *npool.UpdateTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Transfer), nil
+	return resp, err
 }
 
-func GetTransfer(ctx context.Context, id string) (*npool.Transfer, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransfer(ctx, &npool.GetTransferRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetTransfer(ctx context.Context, in *npool.GetTransferRequest) (resp *npool.GetTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Transfer), nil
+	return resp, err
 }
 
-func GetTransferOnly(ctx context.Context, conds *npool.Conds) (*npool.Transfer, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransferOnly(ctx, &npool.GetTransferOnlyRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func GetTransferOnly(ctx context.Context, in *npool.GetTransferOnlyRequest) (resp *npool.GetTransferOnlyResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransferOnly(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Transfer), nil
+	return resp, err
 }
 
-func GetTransfers(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]*npool.Transfer, uint32, error) {
-	var total uint32
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.GetTransfers(ctx, &npool.GetTransfersRequest{
-			Conds:  conds,
-			Limit:  limit,
-			Offset: offset,
-		})
-		if err != nil {
-			return nil, err
-		}
-		total = resp.GetTotal()
-		return resp.Infos, nil
+func GetTransfers(ctx context.Context, in *npool.GetTransfersRequest) (resp *npool.GetTransfersResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.GetTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, 0, err
-	}
-	return infos.([]*npool.Transfer), total, nil
+	return resp, err
 }
 
-func ExistTransfer(ctx context.Context, id string) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistTransfer(ctx, &npool.ExistTransferRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistTransfer(ctx context.Context, in *npool.ExistTransferRequest) (resp *npool.ExistTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func ExistTransferConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.ExistTransferConds(ctx, &npool.ExistTransferCondsRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func ExistTransferConds(ctx context.Context, in *npool.ExistTransferCondsRequest) (resp *npool.ExistTransferCondsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.ExistTransferConds(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return false, err
-	}
-	return info.(bool), nil
+	return resp, err
 }
 
-func CountTransfers(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	infos, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.CountTransfers(ctx, &npool.CountTransfersRequest{
-			Conds: conds,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func CountTransfers(ctx context.Context, in *npool.CountTransfersRequest) (resp *npool.CountTransfersResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.CountTransfers(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return 0, err
-	}
-	return infos.(uint32), nil
+	return resp, err
 }
 
-func DeleteTransfer(ctx context.Context, id string) (*npool.Transfer, error) {
-	info, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err := cli.DeleteTransfer(ctx, &npool.DeleteTransferRequest{
-			ID: id,
-		})
-		if err != nil {
-			return nil, err
-		}
-		return resp.Info, nil
+func DeleteTransfer(ctx context.Context, in *npool.DeleteTransferRequest) (resp *npool.DeleteTransferResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.DeleteTransfer(ctx, in)
+		return resp, err
 	})
-	if err != nil {
-		return nil, err
-	}
-	return info.(*npool.Transfer), nil
+	return resp, err
 }

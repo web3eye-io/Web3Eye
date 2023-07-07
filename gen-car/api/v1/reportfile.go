@@ -21,6 +21,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	dealer_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	gencar_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
+	token_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
 
 const (
@@ -49,7 +50,7 @@ type TokenResInfo struct {
 
 func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequest) (*gencar_proto.ReportFileResponse, error) {
 	logger.Sugar().Infof("start deal file, id %v, s3key %v", in.ID, in.S3Key)
-	info, err := token.GetToken(ctx, in.ID)
+	resp, err := token.GetToken(ctx, &token_proto.GetTokenRequest{ID: in.ID})
 	if err != nil {
 		logger.Sugar().Infof("failed get token by id, err: %v", in.ID, err)
 		return nil, err
@@ -61,10 +62,10 @@ func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequ
 	}
 	resInfo := &TokenResInfo{
 		BaseInfo: TokenBaseInfo{
-			ChainType: info.ChainType.String(),
-			ChainID:   info.ChainID,
-			Contract:  info.Contract,
-			TokenID:   info.TokenID,
+			ChainType: resp.Info.ChainType.String(),
+			ChainID:   resp.Info.ChainID,
+			Contract:  resp.Info.Contract,
+			TokenID:   resp.Info.TokenID,
 		},
 		S3Key:   in.S3Key,
 		ID:      in.ID,
