@@ -150,6 +150,30 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The BlockQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BlockQueryRuleFunc func(context.Context, *ent.BlockQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BlockQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BlockQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BlockQuery", q)
+}
+
+// The BlockMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BlockMutationRuleFunc func(context.Context, *ent.BlockMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BlockMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BlockMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BlockMutation", m)
+}
+
 // The ContractQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ContractQueryRuleFunc func(context.Context, *ent.ContractQuery) error
@@ -305,6 +329,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *ent.BlockQuery:
+		return q.Filter(), nil
 	case *ent.ContractQuery:
 		return q.Filter(), nil
 	case *ent.SnapshotQuery:
@@ -322,6 +348,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *ent.BlockMutation:
+		return m.Filter(), nil
 	case *ent.ContractMutation:
 		return m.Filter(), nil
 	case *ent.SnapshotMutation:

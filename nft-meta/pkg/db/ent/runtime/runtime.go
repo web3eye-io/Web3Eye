@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/schema"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
@@ -21,6 +22,38 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	blockMixin := schema.Block{}.Mixin()
+	block.Policy = privacy.NewPolicies(blockMixin[0], schema.Block{})
+	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := block.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	blockMixinFields0 := blockMixin[0].Fields()
+	_ = blockMixinFields0
+	blockFields := schema.Block{}.Fields()
+	_ = blockFields
+	// blockDescCreatedAt is the schema descriptor for created_at field.
+	blockDescCreatedAt := blockMixinFields0[0].Descriptor()
+	// block.DefaultCreatedAt holds the default value on creation for the created_at field.
+	block.DefaultCreatedAt = blockDescCreatedAt.Default.(func() uint32)
+	// blockDescUpdatedAt is the schema descriptor for updated_at field.
+	blockDescUpdatedAt := blockMixinFields0[1].Descriptor()
+	// block.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	block.DefaultUpdatedAt = blockDescUpdatedAt.Default.(func() uint32)
+	// block.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	block.UpdateDefaultUpdatedAt = blockDescUpdatedAt.UpdateDefault.(func() uint32)
+	// blockDescDeletedAt is the schema descriptor for deleted_at field.
+	blockDescDeletedAt := blockMixinFields0[2].Descriptor()
+	// block.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	block.DefaultDeletedAt = blockDescDeletedAt.Default.(func() uint32)
+	// blockDescID is the schema descriptor for id field.
+	blockDescID := blockFields[0].Descriptor()
+	// block.DefaultID holds the default value on creation for the id field.
+	block.DefaultID = blockDescID.Default.(func() uuid.UUID)
 	contractMixin := schema.Contract{}.Mixin()
 	contract.Policy = privacy.NewPolicies(contractMixin[0], schema.Contract{})
 	contract.Hooks[0] = func(next ent.Mutator) ent.Mutator {

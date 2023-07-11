@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 
+	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
@@ -21,6 +22,7 @@ type Server struct {
 func Register(server grpc.ServiceRegistrar) {
 	npool.RegisterManagerServer(server, &Server{})
 	token.Register(server)
+	block.Register(server)
 	transfer.Register(server)
 	contract.Register(server)
 	synctask.Register(server)

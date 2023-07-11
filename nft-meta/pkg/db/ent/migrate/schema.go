@@ -8,6 +8,31 @@ import (
 )
 
 var (
+	// BlocksColumns holds the columns for the "blocks" table.
+	BlocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "chain_type", Type: field.TypeString},
+		{Name: "chain_id", Type: field.TypeString},
+		{Name: "block_number", Type: field.TypeUint64},
+		{Name: "block_hash", Type: field.TypeString},
+		{Name: "block_time", Type: field.TypeInt64},
+	}
+	// BlocksTable holds the schema information for the "blocks" table.
+	BlocksTable = &schema.Table{
+		Name:       "blocks",
+		Columns:    BlocksColumns,
+		PrimaryKey: []*schema.Column{BlocksColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "block_chain_type_chain_id_block_number",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[5], BlocksColumns[6]},
+			},
+		},
+	}
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -168,6 +193,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		BlocksTable,
 		ContractsTable,
 		SnapshotsTable,
 		SyncTasksTable,

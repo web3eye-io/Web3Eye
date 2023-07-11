@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/migrate"
 
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
@@ -26,6 +27,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Block is the client for interacting with the Block builders.
+	Block *BlockClient
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
 	// Snapshot is the client for interacting with the Snapshot builders.
@@ -49,6 +52,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Block = NewBlockClient(c.config)
 	c.Contract = NewContractClient(c.config)
 	c.Snapshot = NewSnapshotClient(c.config)
 	c.SyncTask = NewSyncTaskClient(c.config)
@@ -87,6 +91,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
+		Block:    NewBlockClient(cfg),
 		Contract: NewContractClient(cfg),
 		Snapshot: NewSnapshotClient(cfg),
 		SyncTask: NewSyncTaskClient(cfg),
@@ -111,6 +116,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:      ctx,
 		config:   cfg,
+		Block:    NewBlockClient(cfg),
 		Contract: NewContractClient(cfg),
 		Snapshot: NewSnapshotClient(cfg),
 		SyncTask: NewSyncTaskClient(cfg),
@@ -122,7 +128,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Contract.
+//		Block.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -144,11 +150,103 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Block.Use(hooks...)
 	c.Contract.Use(hooks...)
 	c.Snapshot.Use(hooks...)
 	c.SyncTask.Use(hooks...)
 	c.Token.Use(hooks...)
 	c.Transfer.Use(hooks...)
+}
+
+// BlockClient is a client for the Block schema.
+type BlockClient struct {
+	config
+}
+
+// NewBlockClient returns a client for the Block from the given config.
+func NewBlockClient(c config) *BlockClient {
+	return &BlockClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `block.Hooks(f(g(h())))`.
+func (c *BlockClient) Use(hooks ...Hook) {
+	c.hooks.Block = append(c.hooks.Block, hooks...)
+}
+
+// Create returns a builder for creating a Block entity.
+func (c *BlockClient) Create() *BlockCreate {
+	mutation := newBlockMutation(c.config, OpCreate)
+	return &BlockCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Block entities.
+func (c *BlockClient) CreateBulk(builders ...*BlockCreate) *BlockCreateBulk {
+	return &BlockCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Block.
+func (c *BlockClient) Update() *BlockUpdate {
+	mutation := newBlockMutation(c.config, OpUpdate)
+	return &BlockUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BlockClient) UpdateOne(b *Block) *BlockUpdateOne {
+	mutation := newBlockMutation(c.config, OpUpdateOne, withBlock(b))
+	return &BlockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BlockClient) UpdateOneID(id uuid.UUID) *BlockUpdateOne {
+	mutation := newBlockMutation(c.config, OpUpdateOne, withBlockID(id))
+	return &BlockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Block.
+func (c *BlockClient) Delete() *BlockDelete {
+	mutation := newBlockMutation(c.config, OpDelete)
+	return &BlockDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BlockClient) DeleteOne(b *Block) *BlockDeleteOne {
+	return c.DeleteOneID(b.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *BlockClient) DeleteOneID(id uuid.UUID) *BlockDeleteOne {
+	builder := c.Delete().Where(block.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BlockDeleteOne{builder}
+}
+
+// Query returns a query builder for Block.
+func (c *BlockClient) Query() *BlockQuery {
+	return &BlockQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Block entity by its id.
+func (c *BlockClient) Get(ctx context.Context, id uuid.UUID) (*Block, error) {
+	return c.Query().Where(block.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BlockClient) GetX(ctx context.Context, id uuid.UUID) *Block {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BlockClient) Hooks() []Hook {
+	hooks := c.hooks.Block
+	return append(hooks[:len(hooks):len(hooks)], block.Hooks[:]...)
 }
 
 // ContractClient is a client for the Contract schema.

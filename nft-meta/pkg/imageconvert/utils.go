@@ -143,7 +143,7 @@ func takeInVectorTask() {
 		if err != nil {
 			logger.Sugar().Error(err)
 		}
-	}, func(retryNum int) {})
+	}, func(retryNum int) bool { return true })
 	if err != nil {
 		logger.Sugar().Error(err)
 	}

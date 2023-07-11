@@ -8,7 +8,6 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	cteth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
@@ -28,8 +27,6 @@ const (
 // eventHash represents an event keccak256 hash
 type eventHash string
 type TokenTransfer struct {
-	ChainType   basetype.ChainType
-	ChainID     string
 	Contract    string
 	TokenType   basetype.TokenType
 	TokenID     string
@@ -39,7 +36,6 @@ type TokenTransfer struct {
 	BlockNumber uint64
 	TxHash      string
 	BlockHash   string
-	TxTime      uint32
 }
 
 var (
@@ -47,7 +43,7 @@ var (
 )
 
 //nolint:gocritic
-func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
+func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 	result := make([]*TokenTransfer, 0)
 	for _, pLog := range pLogs {
 		switch {
@@ -60,8 +56,6 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			result = append(result, &TokenTransfer{
 				From:        pLog.Topics[1].Hex(),
 				To:          pLog.Topics[2].Hex(),
-				ChainType:   basetype.ChainType_Ethereum,
-				ChainID:     *cteth.CurrentChainID,
 				Contract:    pLog.Address.Hex(),
 				TokenID:     pLog.Topics[3].Big().String(),
 				BlockNumber: pLog.BlockNumber,
@@ -92,7 +86,6 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			result = append(result, &TokenTransfer{
 				From:        pLog.Topics[2].Hex(),
 				To:          pLog.Topics[3].Hex(),
-				ChainType:   basetype.ChainType_Ethereum,
 				Contract:    pLog.Address.Hex(),
 				TokenID:     id.String(),
 				Amount:      value.Uint64(),
@@ -126,7 +119,6 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 				result = append(result, &TokenTransfer{
 					From:        pLog.Topics[2].Hex(),
 					To:          pLog.Topics[3].Hex(),
-					ChainType:   basetype.ChainType_Ethereum,
 					Contract:    pLog.Address.Hex(),
 					TokenID:     ids[j].String(),
 					Amount:      values[j].Uint64(),
@@ -141,14 +133,14 @@ func logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 	return result, nil
 }
 
-func TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*TokenTransfer, error) {
+func (e *eClients) TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*TokenTransfer, error) {
 	topics := [][]common.Hash{{
 		common.HexToHash(string(transferEventHash)),
 		common.HexToHash(string(transferSingleEventHash)),
 		common.HexToHash(string(transferBatchEventHash)),
 	}}
 
-	logs, err := cteth.FilterLogs(ctx, ethereum.FilterQuery{
+	logs, err := e.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock),
 		ToBlock:   big.NewInt(toBlock),
 		Topics:    topics,
@@ -157,7 +149,7 @@ func TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*TokenTransf
 		return nil, err
 	}
 
-	return logsToTransfer(logs)
+	return e.logsToTransfer(logs)
 }
 
 type Token struct {

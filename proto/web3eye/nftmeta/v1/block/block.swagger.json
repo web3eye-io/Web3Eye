@@ -26,7 +26,7 @@
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
-        "BlockID": {
+        "ChainID": {
           "type": "string"
         },
         "BlockNumber": {
@@ -36,7 +36,7 @@
         "BlockHash": {
           "type": "string"
         },
-        "Time": {
+        "BlockTime": {
           "type": "string",
           "format": "int64"
         }
@@ -51,7 +51,7 @@
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
-        "BlockID": {
+        "ChainID": {
           "type": "string"
         },
         "BlockNumber": {
@@ -61,7 +61,7 @@
         "BlockHash": {
           "type": "string"
         },
-        "Time": {
+        "BlockTime": {
           "type": "string",
           "format": "int64"
         }
@@ -76,7 +76,7 @@
         "ChainType": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "BlockID": {
+        "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "BlockNumber": {
@@ -85,7 +85,7 @@
         "BlockHash": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "Time": {
+        "BlockTime": {
           "$ref": "#/definitions/web3eyeInt64Val"
         },
         "IDs": {

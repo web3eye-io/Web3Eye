@@ -108,7 +108,7 @@ func NewCTConsumer(topic string) (*CTConsumer, error) {
 	return &CTConsumer{topic: topic, consumer: c, start: false}, nil
 }
 
-func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(retryNum int)) error {
+func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(retryNum int) (exit bool)) error {
 	if ctC.start {
 		return fmt.Errorf("cannot start to consume,please stop current consumer")
 	}
@@ -127,7 +127,10 @@ func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(
 			ev, err := ctC.consumer.ReadMessage(ReadMSGTimeout)
 			if err != nil {
 				retryNum++
-				retryHandle(retryNum)
+				exit := retryHandle(retryNum)
+				if exit {
+					return err
+				}
 				// Errors are informational and automatically handled by the consumer
 				continue
 			}

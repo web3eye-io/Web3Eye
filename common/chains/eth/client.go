@@ -2,12 +2,12 @@ package eth
 
 import (
 	"context"
+	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/Web3Eye/block-etl/pkg/endpoints"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (
@@ -22,18 +22,12 @@ var (
 	CurrentChainID *string
 )
 
-type EClientI interface {
-	GetNode(ctx context.Context, endpointmgr *endpoints.Manager) (*ethclient.Client, error)
-	WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error
+type eClients struct {
+	endpoints []string
 }
 
-type eClients struct{}
-
-func (eClients eClients) GetNode(ctx context.Context, endpointmgr *endpoints.Manager) (*ethclient.Client, error) {
-	endpoint, err := endpointmgr.Peek()
-	if err != nil {
-		return nil, err
-	}
+func (eClients eClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
+	endpoint := eClients.endpoints[rand.Intn(len(eClients.endpoints))]
 
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
@@ -77,17 +71,16 @@ func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Co
 		client      *ethclient.Client
 	)
 
-	endpointmgr, err := endpoints.NewManager(config.GetConfig().ETH.Wallets)
 	if err != nil {
 		return err
 	}
 
-	for i := 0; i < utils.MinInt(MaxRetries, endpointmgr.Len()); i++ {
+	for i := 0; i < utils.MinInt(MaxRetries, len(eClients.endpoints)); i++ {
 		if i > 0 {
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, err = eClients.GetNode(ctx, endpointmgr)
+		client, err = eClients.GetNode(ctx)
 
 		if err != nil {
 			continue
@@ -107,6 +100,9 @@ func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Co
 	return err
 }
 
-func Client() EClientI {
-	return &eClients{}
+func Client(endpoints []string) (*eClients, error) {
+	if len(endpoints) == 0 {
+		return nil, errors.New("endpoints has no item")
+	}
+	return &eClients{endpoints: endpoints}, nil
 }

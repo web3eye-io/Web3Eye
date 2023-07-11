@@ -25,28 +25,28 @@ service Manager {
 message BlockReq {
   optional string ID = 10;
   optional chain.ChainType ChainType = 20;
-  optional string BlockID = 30;
+  optional string ChainID = 30;
   optional uint64 BlockNumber = 40;
   optional string BlockHash = 50;
-  optional int64 Time = 60;
+  optional int64 BlockTime = 60;
 }
 
 message Block {
   string ID = 10;
   chain.ChainType ChainType = 20;
-  string BlockID = 30;
+  string ChainID = 30;
   uint64 BlockNumber = 40;
   string BlockHash = 50;
-  int64 Time = 60;
+  int64 BlockTime = 60;
 }
 
 message Conds {
   web3eye.StringVal ID = 10;
   web3eye.StringVal ChainType = 20;
-  web3eye.StringVal BlockID = 30;
+  web3eye.StringVal ChainID = 30;
   web3eye.Uint64Val BlockNumber = 40;
   web3eye.StringVal BlockHash = 50;
-  web3eye.Int64Val Time = 60;
+  web3eye.Int64Val BlockTime = 60;
   web3eye.StringSliceVal IDs = 160;
 }
 

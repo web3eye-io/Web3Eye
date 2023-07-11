@@ -9,6 +9,19 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 )
 
+// The BlockFunc type is an adapter to allow the use of ordinary
+// function as Block mutator.
+type BlockFunc func(context.Context, *ent.BlockMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BlockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.BlockMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BlockMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ContractFunc type is an adapter to allow the use of ordinary
 // function as Contract mutator.
 type ContractFunc func(context.Context, *ent.ContractMutation) (ent.Value, error)
