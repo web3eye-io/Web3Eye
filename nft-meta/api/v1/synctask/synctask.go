@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/common/utils"
@@ -128,7 +127,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}
 
 	syncEnd := info.End
-	safeEnd := eth.GetCurrentConfirmedHeight(ctx)
+	safeEnd := uint64(17667572)
 	if syncEnd == 0 || syncEnd > safeEnd {
 		syncEnd = safeEnd
 	}
