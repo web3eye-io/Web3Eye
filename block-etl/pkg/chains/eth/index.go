@@ -192,7 +192,7 @@ func (e *EthIndexer) addTask(topic string, outBlockNum chan uint64) error {
 			return false
 		},
 	)
-	return fmt.Errorf("sssss:%v", err)
+	return err
 }
 
 func (e *EthIndexer) indexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {

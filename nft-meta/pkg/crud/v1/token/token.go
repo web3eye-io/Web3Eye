@@ -2,6 +2,7 @@ package token
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -17,6 +18,10 @@ import (
 func Create(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	var info *ent.Token
 	var err error
+
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.Token.Create(), in)

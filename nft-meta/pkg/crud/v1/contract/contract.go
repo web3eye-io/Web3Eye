@@ -2,6 +2,7 @@ package contract
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -18,6 +19,10 @@ func Create(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	var info *ent.Contract
 	var err error
 
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
+
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.Contract.Create(), in)
 		info, err = c.Save(_ctx)
@@ -30,7 +35,7 @@ func Create(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, nil
 }
 
-//nolint
+// nolint
 func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -99,7 +104,7 @@ func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, 
 	return rows, nil
 }
 
-//nolint
+// nolint
 func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	var err error
 	var info *ent.Contract
@@ -177,7 +182,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
 	return info, nil
 }
 
-//nolint
+// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, error) {
 	stm := cli.Contract.Query()
 	if conds == nil {

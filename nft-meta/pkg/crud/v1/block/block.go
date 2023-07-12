@@ -2,6 +2,7 @@ package block
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -17,7 +18,9 @@ import (
 func Create(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 	var info *ent.Block
 	var err error
-
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.Block.Create(), in)
 		info, err = c.Save(_ctx)

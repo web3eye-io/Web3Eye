@@ -129,7 +129,7 @@ func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(
 				retryNum++
 				exit := retryHandle(retryNum)
 				if exit {
-					return fmt.Errorf("ccc:%v", err)
+					return filterErr(err)
 				}
 				// Errors are informational and automatically handled by the consumer
 				continue
@@ -140,6 +140,13 @@ func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(
 	}
 
 	return ctC.consumer.Close()
+}
+
+func filterErr(err error) error {
+	if strings.Contains(err.Error(), "Timed out") {
+		return nil
+	}
+	return err
 }
 
 func (ctC *CTConsumer) Close() {

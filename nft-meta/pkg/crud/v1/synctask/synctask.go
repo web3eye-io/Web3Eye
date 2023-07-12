@@ -2,6 +2,7 @@ package synctask
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -17,6 +18,10 @@ import (
 func Create(ctx context.Context, in *npool.SyncTaskReq) (*ent.SyncTask, error) {
 	var info *ent.SyncTask
 	var err error
+
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		c := CreateSet(cli.SyncTask.Create(), in)
@@ -158,7 +163,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.SyncTask, error) {
 	return info, nil
 }
 
-//nolint
+// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SyncTaskQuery, error) {
 	stm := cli.SyncTask.Query()
 	if conds == nil {
