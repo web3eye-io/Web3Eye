@@ -15,12 +15,14 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/common/utils"
+	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
 	tokenNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
 	transferNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/transfer"
 	ctMessage "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	blockProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 	contractProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
@@ -77,9 +79,11 @@ type EthIndexer struct {
 	updateTime    int64
 }
 
-func NewIndexer() *EthIndexer {
+func NewIndexer(endpoints []string, chainID string) *EthIndexer {
 	return &EthIndexer{
 		ChainType:     basetype.ChainType_Ethereum,
+		Endpoints:     endpoints,
+		ChainID:       chainID,
 		taskChan:      make(chan uint64),
 		taskMap:       make(map[string]struct{}),
 		currentHeight: 0,
@@ -88,13 +92,16 @@ func NewIndexer() *EthIndexer {
 }
 
 func (e *EthIndexer) StartIndex(ctx context.Context) {
-	blocknumChan := make(chan uint64)
-	go e.IndexTasks(ctx, blocknumChan)
-	go e.indexTransfer(ctx)
-
+	taskBlockNum := make(chan uint64)
+	indexBlockNum := make(chan uint64)
+	go e.IndexTasks(ctx, taskBlockNum)
+	go e.indexBlock(ctx, taskBlockNum, indexBlockNum)
+	for v := range indexBlockNum {
+		fmt.Println(v)
+	}
 }
 
-func (e *EthIndexer) IndexTasks(ctx context.Context, outChan chan uint64) {
+func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 	logger.Sugar().Info("start to index task for ethereum")
 
 	conds := &synctask.Conds{
@@ -115,7 +122,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outChan chan uint64) {
 		logger.Sugar().Error(err)
 	}
 	for _, v := range resp.GetInfos() {
-		err = e.addTask(v.Topic, outChan)
+		err = e.addTask(v.Topic, outBlockNum)
 		if err != nil {
 			logger.Sugar().Error(err)
 			continue
@@ -130,7 +137,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outChan chan uint64) {
 			logger.Sugar().Error(err)
 		}
 		for _, v := range resp.GetInfos() {
-			err = e.addTask(v.Topic, outChan)
+			err = e.addTask(v.Topic, outBlockNum)
 			if err != nil {
 				logger.Sugar().Error(err)
 				continue
@@ -140,9 +147,10 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outChan chan uint64) {
 	}
 }
 
-func (e *EthIndexer) addTask(topic string, outChan chan uint64) error {
+func (e *EthIndexer) addTask(topic string, outBlockNum chan uint64) error {
 	pLock.Lock()
 	defer pLock.Unlock()
+
 	if _, ok := e.taskMap[topic]; ok {
 		return nil
 	}
@@ -156,7 +164,6 @@ func (e *EthIndexer) addTask(topic string, outChan chan uint64) error {
 		logger.Sugar().Error(err)
 		return err
 	}
-	defer consumer.Close()
 
 	err = consumer.Consume(
 		func(m *kafka.Message) {
@@ -165,8 +172,9 @@ func (e *EthIndexer) addTask(topic string, outChan chan uint64) error {
 				logger.Sugar().Error(err)
 				return
 			}
+			fmt.Println("first out:", num)
 
-			outChan <- num
+			outBlockNum <- num
 			if num%uint64(LogIntervalHeight) == 0 {
 				logger.Sugar().Infof("start sync %v height", num)
 			}
@@ -184,11 +192,28 @@ func (e *EthIndexer) addTask(topic string, outChan chan uint64) error {
 			return false
 		},
 	)
-	return err
+	return fmt.Errorf("sssss:%v", err)
 }
 
-func (e *EthIndexer) indexBlock(ctx context.Context) {
-
+func (e *EthIndexer) indexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {
+	for blockNum := range inBlockNum {
+		cli, err := eth.Client(e.Endpoints)
+		if err != nil {
+			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+			continue
+		}
+		block, err := cli.BlockByNumber(ctx, blockNum)
+		if err != nil {
+			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+			continue
+		}
+		_, err = blockNMCli.CreateBlock(ctx, &blockProto.CreateBlockRequest{})
+		if err != nil {
+			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+			continue
+		}
+		outBlockNum <- block.Number().Uint64()
+	}
 }
 
 func (e *EthIndexer) indexTransfer(ctx context.Context) {

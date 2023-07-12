@@ -17,7 +17,7 @@ import (
 
 const (
 	FlushTimeMS         = 15000
-	ReadMSGTimeout      = time.Second
+	ReadMSGTimeout      = time.Second * 3
 	DefaultPartitionNum = 6
 )
 
@@ -129,7 +129,7 @@ func (ctC *CTConsumer) Consume(msgHandle func(*kafka.Message), retryHandle func(
 				retryNum++
 				exit := retryHandle(retryNum)
 				if exit {
-					return err
+					return fmt.Errorf("ccc:%v", err)
 				}
 				// Errors are informational and automatically handled by the consumer
 				continue

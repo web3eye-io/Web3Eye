@@ -101,6 +101,16 @@ func (e eClients) tokenURI(
 	return "", nil
 }
 
+func (e eClients) BlockByNumber(ctx context.Context, blockNum uint64) (*types.Block, error) {
+	var block *types.Block
+	var err error
+	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+		block, err = c.BlockByNumber(ctx, big.NewInt(int64(blockNum)))
+		return false, err
+	})
+	return block, err
+}
+
 type ContractCreator struct {
 	From        common.Address
 	BlockNumber uint64
