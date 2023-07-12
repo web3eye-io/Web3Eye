@@ -52,7 +52,7 @@ func Unlock(lockKey, lockID string) error {
 }
 
 // Lock without lockID
-func TryPubLock(key string, expire time.Duration) error {
+func TryPubLock(key string, expire time.Duration) (bool, error) {
 	cli := GetClient()
 
 	ctx, cancel := context.WithTimeout(context.Background(), DefaultLockTime)
@@ -60,16 +60,7 @@ func TryPubLock(key string, expire time.Duration) error {
 
 	resp := cli.SetNX(ctx, key, true, expire)
 	locked, err := resp.Result()
-	err = ErrFilter(err)
-	if err != nil {
-		return xerrors.Errorf("fail lock: %v", err)
-	}
-
-	if !locked {
-		return xerrors.Errorf("fail lock")
-	}
-
-	return nil
+	return locked, ErrFilter(err)
 }
 
 func UnPubLock(lockKey string) error {
