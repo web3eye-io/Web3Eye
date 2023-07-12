@@ -610,6 +610,21 @@
         }
       }
     },
+    "synctaskTriggerSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        },
+        "BlockNums": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uint64"
+          }
+        }
+      }
+    },
     "synctaskUpdateSyncTaskRequest": {
       "type": "object",
       "properties": {

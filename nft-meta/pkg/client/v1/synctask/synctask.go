@@ -44,7 +44,7 @@ func CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (resp 
 	return resp, err
 }
 
-func TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (resp *npool.GetSyncTaskResponse, err error) {
+func TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (resp *npool.TriggerSyncTaskResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.TriggerSyncTask(ctx, in)
 		return resp, err

@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 )
 
@@ -31,6 +32,35 @@ func Create(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 	}
 
 	return info, nil
+}
+
+func Upsert(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
+	conds := &npool.Conds{
+		ChainType: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.GetChainType().String(),
+		},
+		ChainID: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.GetChainID(),
+		},
+		BlockNumber: &web3eye.Uint64Val{
+			Op:    "eq",
+			Value: in.GetBlockNumber(),
+		},
+	}
+	rows, total, err := Rows(ctx, conds, 0, 1)
+	if err != nil {
+		return nil, err
+	}
+
+	if total != 0 {
+		id := rows[0].ID.String()
+		in.ID = &id
+		return Update(ctx, in)
+	}
+
+	return Create(ctx, in)
 }
 
 //nolint:gocyclo

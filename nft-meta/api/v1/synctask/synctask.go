@@ -8,7 +8,6 @@ import (
 
 	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
@@ -24,7 +23,7 @@ import (
 )
 
 const (
-	MaxPutTaskNumOnce = 500
+	MaxPutTaskNumOnce = 10
 	ReportInterval    = 100
 	RedisLockTimeout  = time.Second * 10
 )
@@ -79,7 +78,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 }
 
 //nolint:gocyclo
-func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.GetSyncTaskResponse, error) {
+func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
 	// query synctask
 	conds := npool.Conds{
 		Topic: &web3eye.StringVal{
@@ -90,7 +89,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	info, err := crud.RowOnly(ctx, &conds)
 	if err != nil {
 		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	// lock
@@ -98,7 +97,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.GetSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
+		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
 	}
 
 	defer func() {
@@ -110,7 +109,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 
 	// check state
 	if info.SyncState != cttype.SyncState_Start.String() {
-		return &npool.GetSyncTaskResponse{
+		return &npool.TriggerSyncTaskResponse{
 			Info: converter.Ent2Grpc(info),
 		}, nil
 	}
@@ -121,13 +120,13 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
 		if err != nil {
 			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-			return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 		}
-		return &npool.GetSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
+		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
 	}
 
 	syncEnd := info.End
-	safeEnd := uint64(17667572)
+	safeEnd := uint64(18667572)
 	if syncEnd == 0 || syncEnd > safeEnd {
 		syncEnd = safeEnd
 	}
@@ -138,34 +137,21 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		info.Current = syncEnd
 	}
 
-	p, err := ctkafka.NewCTProducer(in.Topic)
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
+	nums := []uint64{}
 	for ; lastNum < info.Current; lastNum++ {
-		b, err := utils.Uint642Bytes(lastNum)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
-		err = p.Produce(b, b)
-		if err != nil {
-			info.Current = lastNum
-			logger.Sugar().Error(err)
-			break
-		}
+		nums = append(nums, lastNum)
 	}
 
 	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
 
 	if err != nil {
 		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.GetSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return &npool.GetSyncTaskResponse{
-		Info: converter.Ent2Grpc(info),
+	return &npool.TriggerSyncTaskResponse{
+		Info:      converter.Ent2Grpc(info),
+		BlockNums: nums,
 	}, nil
 }
 

@@ -44,6 +44,14 @@ func CreateBlock(ctx context.Context, in *npool.CreateBlockRequest) (resp *npool
 	return resp, err
 }
 
+func UpsertBlock(ctx context.Context, in *npool.UpsertBlockRequest) (resp *npool.UpsertBlockResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertBlock(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func CreateBlocks(ctx context.Context, in *npool.CreateBlocksRequest) (resp *npool.CreateBlocksResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.CreateBlocks(ctx, in)

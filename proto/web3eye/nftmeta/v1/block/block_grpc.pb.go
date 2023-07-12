@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ManagerClient interface {
 	CreateBlock(ctx context.Context, in *CreateBlockRequest, opts ...grpc.CallOption) (*CreateBlockResponse, error)
 	CreateBlocks(ctx context.Context, in *CreateBlocksRequest, opts ...grpc.CallOption) (*CreateBlocksResponse, error)
+	UpsertBlock(ctx context.Context, in *UpsertBlockRequest, opts ...grpc.CallOption) (*UpsertBlockResponse, error)
 	UpdateBlock(ctx context.Context, in *UpdateBlockRequest, opts ...grpc.CallOption) (*UpdateBlockResponse, error)
 	GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error)
 	GetBlockOnly(ctx context.Context, in *GetBlockOnlyRequest, opts ...grpc.CallOption) (*GetBlockOnlyResponse, error)
@@ -54,6 +55,15 @@ func (c *managerClient) CreateBlock(ctx context.Context, in *CreateBlockRequest,
 func (c *managerClient) CreateBlocks(ctx context.Context, in *CreateBlocksRequest, opts ...grpc.CallOption) (*CreateBlocksResponse, error) {
 	out := new(CreateBlocksResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.block.Manager/CreateBlocks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpsertBlock(ctx context.Context, in *UpsertBlockRequest, opts ...grpc.CallOption) (*UpsertBlockResponse, error) {
+	out := new(UpsertBlockResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.block.Manager/UpsertBlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +148,7 @@ func (c *managerClient) DeleteBlock(ctx context.Context, in *DeleteBlockRequest,
 type ManagerServer interface {
 	CreateBlock(context.Context, *CreateBlockRequest) (*CreateBlockResponse, error)
 	CreateBlocks(context.Context, *CreateBlocksRequest) (*CreateBlocksResponse, error)
+	UpsertBlock(context.Context, *UpsertBlockRequest) (*UpsertBlockResponse, error)
 	UpdateBlock(context.Context, *UpdateBlockRequest) (*UpdateBlockResponse, error)
 	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
 	GetBlockOnly(context.Context, *GetBlockOnlyRequest) (*GetBlockOnlyResponse, error)
@@ -158,6 +169,9 @@ func (UnimplementedManagerServer) CreateBlock(context.Context, *CreateBlockReque
 }
 func (UnimplementedManagerServer) CreateBlocks(context.Context, *CreateBlocksRequest) (*CreateBlocksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBlocks not implemented")
+}
+func (UnimplementedManagerServer) UpsertBlock(context.Context, *UpsertBlockRequest) (*UpsertBlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertBlock not implemented")
 }
 func (UnimplementedManagerServer) UpdateBlock(context.Context, *UpdateBlockRequest) (*UpdateBlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBlock not implemented")
@@ -228,6 +242,24 @@ func _Manager_CreateBlocks_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateBlocks(ctx, req.(*CreateBlocksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpsertBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertBlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertBlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.block.Manager/UpsertBlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertBlock(ctx, req.(*UpsertBlockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -390,6 +422,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateBlocks",
 			Handler:    _Manager_CreateBlocks_Handler,
+		},
+		{
+			MethodName: "UpsertBlock",
+			Handler:    _Manager_UpsertBlock_Handler,
 		},
 		{
 			MethodName: "UpdateBlock",

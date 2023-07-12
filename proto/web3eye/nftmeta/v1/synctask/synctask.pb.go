@@ -530,6 +530,61 @@ func (x *TriggerSyncTaskRequest) GetTopic() string {
 	return ""
 }
 
+type TriggerSyncTaskResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Info      *SyncTask `protobuf:"bytes,10,opt,name=Info,proto3" json:"Info,omitempty"`
+	BlockNums []uint64  `protobuf:"varint,20,rep,packed,name=BlockNums,proto3" json:"BlockNums,omitempty"`
+}
+
+func (x *TriggerSyncTaskResponse) Reset() {
+	*x = TriggerSyncTaskResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TriggerSyncTaskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TriggerSyncTaskResponse) ProtoMessage() {}
+
+func (x *TriggerSyncTaskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TriggerSyncTaskResponse.ProtoReflect.Descriptor instead.
+func (*TriggerSyncTaskResponse) Descriptor() ([]byte, []int) {
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TriggerSyncTaskResponse) GetInfo() *SyncTask {
+	if x != nil {
+		return x.Info
+	}
+	return nil
+}
+
+func (x *TriggerSyncTaskResponse) GetBlockNums() []uint64 {
+	if x != nil {
+		return x.BlockNums
+	}
+	return nil
+}
+
 type GetSyncTaskRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -541,7 +596,7 @@ type GetSyncTaskRequest struct {
 func (x *GetSyncTaskRequest) Reset() {
 	*x = GetSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -554,7 +609,7 @@ func (x *GetSyncTaskRequest) String() string {
 func (*GetSyncTaskRequest) ProtoMessage() {}
 
 func (x *GetSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -567,7 +622,7 @@ func (x *GetSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{6}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetSyncTaskRequest) GetID() string {
@@ -588,7 +643,7 @@ type GetSyncTaskResponse struct {
 func (x *GetSyncTaskResponse) Reset() {
 	*x = GetSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -601,7 +656,7 @@ func (x *GetSyncTaskResponse) String() string {
 func (*GetSyncTaskResponse) ProtoMessage() {}
 
 func (x *GetSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -614,7 +669,7 @@ func (x *GetSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{7}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetSyncTaskResponse) GetInfo() *SyncTask {
@@ -637,7 +692,7 @@ type GetSyncTasksRequest struct {
 func (x *GetSyncTasksRequest) Reset() {
 	*x = GetSyncTasksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -650,7 +705,7 @@ func (x *GetSyncTasksRequest) String() string {
 func (*GetSyncTasksRequest) ProtoMessage() {}
 
 func (x *GetSyncTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -663,7 +718,7 @@ func (x *GetSyncTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTasksRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTasksRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{8}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetSyncTasksRequest) GetConds() *Conds {
@@ -699,7 +754,7 @@ type GetSyncTasksResponse struct {
 func (x *GetSyncTasksResponse) Reset() {
 	*x = GetSyncTasksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -712,7 +767,7 @@ func (x *GetSyncTasksResponse) String() string {
 func (*GetSyncTasksResponse) ProtoMessage() {}
 
 func (x *GetSyncTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +780,7 @@ func (x *GetSyncTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTasksResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTasksResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{9}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetSyncTasksResponse) GetInfos() []*SyncTask {
@@ -753,7 +808,7 @@ type GetSyncTaskOnlyRequest struct {
 func (x *GetSyncTaskOnlyRequest) Reset() {
 	*x = GetSyncTaskOnlyRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -766,7 +821,7 @@ func (x *GetSyncTaskOnlyRequest) String() string {
 func (*GetSyncTaskOnlyRequest) ProtoMessage() {}
 
 func (x *GetSyncTaskOnlyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -779,7 +834,7 @@ func (x *GetSyncTaskOnlyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskOnlyRequest.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskOnlyRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{10}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetSyncTaskOnlyRequest) GetConds() *Conds {
@@ -800,7 +855,7 @@ type GetSyncTaskOnlyResponse struct {
 func (x *GetSyncTaskOnlyResponse) Reset() {
 	*x = GetSyncTaskOnlyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -813,7 +868,7 @@ func (x *GetSyncTaskOnlyResponse) String() string {
 func (*GetSyncTaskOnlyResponse) ProtoMessage() {}
 
 func (x *GetSyncTaskOnlyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -826,7 +881,7 @@ func (x *GetSyncTaskOnlyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskOnlyResponse.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskOnlyResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{11}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSyncTaskOnlyResponse) GetInfo() *SyncTask {
@@ -847,7 +902,7 @@ type UpdateSyncTaskRequest struct {
 func (x *UpdateSyncTaskRequest) Reset() {
 	*x = UpdateSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -860,7 +915,7 @@ func (x *UpdateSyncTaskRequest) String() string {
 func (*UpdateSyncTaskRequest) ProtoMessage() {}
 
 func (x *UpdateSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -873,7 +928,7 @@ func (x *UpdateSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{12}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateSyncTaskRequest) GetInfo() *SyncTaskReq {
@@ -894,7 +949,7 @@ type UpdateSyncTaskResponse struct {
 func (x *UpdateSyncTaskResponse) Reset() {
 	*x = UpdateSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -907,7 +962,7 @@ func (x *UpdateSyncTaskResponse) String() string {
 func (*UpdateSyncTaskResponse) ProtoMessage() {}
 
 func (x *UpdateSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -920,7 +975,7 @@ func (x *UpdateSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{13}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateSyncTaskResponse) GetInfo() *SyncTask {
@@ -941,7 +996,7 @@ type ExistSyncTaskRequest struct {
 func (x *ExistSyncTaskRequest) Reset() {
 	*x = ExistSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -954,7 +1009,7 @@ func (x *ExistSyncTaskRequest) String() string {
 func (*ExistSyncTaskRequest) ProtoMessage() {}
 
 func (x *ExistSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -967,7 +1022,7 @@ func (x *ExistSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{14}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ExistSyncTaskRequest) GetID() string {
@@ -988,7 +1043,7 @@ type ExistSyncTaskResponse struct {
 func (x *ExistSyncTaskResponse) Reset() {
 	*x = ExistSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1001,7 +1056,7 @@ func (x *ExistSyncTaskResponse) String() string {
 func (*ExistSyncTaskResponse) ProtoMessage() {}
 
 func (x *ExistSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1014,7 +1069,7 @@ func (x *ExistSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{15}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ExistSyncTaskResponse) GetExist() bool {
@@ -1035,7 +1090,7 @@ type ExistSyncTaskCondsRequest struct {
 func (x *ExistSyncTaskCondsRequest) Reset() {
 	*x = ExistSyncTaskCondsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1048,7 +1103,7 @@ func (x *ExistSyncTaskCondsRequest) String() string {
 func (*ExistSyncTaskCondsRequest) ProtoMessage() {}
 
 func (x *ExistSyncTaskCondsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1061,7 +1116,7 @@ func (x *ExistSyncTaskCondsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskCondsRequest.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskCondsRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{16}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ExistSyncTaskCondsRequest) GetConds() *Conds {
@@ -1082,7 +1137,7 @@ type ExistSyncTaskCondsResponse struct {
 func (x *ExistSyncTaskCondsResponse) Reset() {
 	*x = ExistSyncTaskCondsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1095,7 +1150,7 @@ func (x *ExistSyncTaskCondsResponse) String() string {
 func (*ExistSyncTaskCondsResponse) ProtoMessage() {}
 
 func (x *ExistSyncTaskCondsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1108,7 +1163,7 @@ func (x *ExistSyncTaskCondsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExistSyncTaskCondsResponse.ProtoReflect.Descriptor instead.
 func (*ExistSyncTaskCondsResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{17}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ExistSyncTaskCondsResponse) GetExist() bool {
@@ -1129,7 +1184,7 @@ type CountSyncTasksRequest struct {
 func (x *CountSyncTasksRequest) Reset() {
 	*x = CountSyncTasksRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1142,7 +1197,7 @@ func (x *CountSyncTasksRequest) String() string {
 func (*CountSyncTasksRequest) ProtoMessage() {}
 
 func (x *CountSyncTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1155,7 +1210,7 @@ func (x *CountSyncTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountSyncTasksRequest.ProtoReflect.Descriptor instead.
 func (*CountSyncTasksRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{18}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CountSyncTasksRequest) GetConds() *Conds {
@@ -1176,7 +1231,7 @@ type CountSyncTasksResponse struct {
 func (x *CountSyncTasksResponse) Reset() {
 	*x = CountSyncTasksResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1189,7 +1244,7 @@ func (x *CountSyncTasksResponse) String() string {
 func (*CountSyncTasksResponse) ProtoMessage() {}
 
 func (x *CountSyncTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1202,7 +1257,7 @@ func (x *CountSyncTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountSyncTasksResponse.ProtoReflect.Descriptor instead.
 func (*CountSyncTasksResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{19}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CountSyncTasksResponse) GetInfo() uint32 {
@@ -1223,7 +1278,7 @@ type DeleteSyncTaskRequest struct {
 func (x *DeleteSyncTaskRequest) Reset() {
 	*x = DeleteSyncTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1236,7 +1291,7 @@ func (x *DeleteSyncTaskRequest) String() string {
 func (*DeleteSyncTaskRequest) ProtoMessage() {}
 
 func (x *DeleteSyncTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1249,7 +1304,7 @@ func (x *DeleteSyncTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSyncTaskRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSyncTaskRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{20}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteSyncTaskRequest) GetID() string {
@@ -1270,7 +1325,7 @@ type DeleteSyncTaskResponse struct {
 func (x *DeleteSyncTaskResponse) Reset() {
 	*x = DeleteSyncTaskResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
+		mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1283,7 +1338,7 @@ func (x *DeleteSyncTaskResponse) String() string {
 func (*DeleteSyncTaskResponse) ProtoMessage() {}
 
 func (x *DeleteSyncTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21]
+	mi := &file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1296,7 +1351,7 @@ func (x *DeleteSyncTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSyncTaskResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSyncTaskResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{21}
+	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteSyncTaskResponse) GetInfo() *SyncTask {
@@ -1412,91 +1467,98 @@ var file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc = []byte{
 	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x2e, 0x0a, 0x16, 0x54,
 	0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x70, 0x69, 0x63, 0x18, 0x0a,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x70, 0x69, 0x63, 0x22, 0x24, 0x0a, 0x12, 0x47,
-	0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49,
-	0x44, 0x22, 0x48, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
-	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
-	0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e,
-	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x75, 0x0a, 0x13, 0x47,
-	0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x30, 0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x1a, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73,
-	0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43,
-	0x6f, 0x6e, 0x64, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x4f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x14,
-	0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x4f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x12, 0x14, 0x0a, 0x05,
-	0x4c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x1e, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x4c, 0x69, 0x6d,
-	0x69, 0x74, 0x22, 0x61, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
-	0x6b, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33, 0x0a, 0x05, 0x49, 0x6e,
-	0x66, 0x6f, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d,
-	0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e,
-	0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x05, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x12,
-	0x14, 0x0a, 0x05, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x14, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05,
-	0x54, 0x6f, 0x74, 0x61, 0x6c, 0x22, 0x4a, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63,
-	0x54, 0x61, 0x73, 0x6b, 0x4f, 0x6e, 0x6c, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x30, 0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
-	0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63,
-	0x74, 0x61, 0x73, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64,
-	0x73, 0x22, 0x4c, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
-	0x4f, 0x6e, 0x6c, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04,
-	0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74,
-	0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b,
-	0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22,
-	0x4d, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
-	0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x34, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
-	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
-	0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e,
-	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x4b,
-	0x0a, 0x16, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
-	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
-	0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e,
-	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x26, 0x0a, 0x14, 0x45,
-	0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x02, 0x49, 0x44, 0x22, 0x2d, 0x0a, 0x15, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63,
-	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05,
-	0x45, 0x78, 0x69, 0x73, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69,
-	0x73, 0x74, 0x22, 0x4d, 0x0a, 0x19, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54,
-	0x61, 0x73, 0x6b, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x30, 0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
-	0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63,
-	0x74, 0x61, 0x73, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64,
-	0x73, 0x22, 0x32, 0x0a, 0x1a, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61,
-	0x73, 0x6b, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x14, 0x0a, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05,
-	0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x49, 0x0a, 0x15, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x79,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x70, 0x69, 0x63, 0x22, 0x6a, 0x0a, 0x17, 0x54,
+	0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76,
+	0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54,
+	0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1c, 0x0a, 0x09, 0x42, 0x6c, 0x6f,
+	0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x73, 0x18, 0x14, 0x20, 0x03, 0x28, 0x04, 0x52, 0x09, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x73, 0x22, 0x24, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x53, 0x79,
+	0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a,
+	0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x22, 0x48, 0x0a,
+	0x13, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e,
+	0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x75, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x53, 0x79,
 	0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30,
 	0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
 	0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74,
 	0x61, 0x73, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73,
-	0x22, 0x2c, 0x0a, 0x16, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
-	0x6b, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x49, 0x6e,
-	0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x27,
-	0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x22, 0x4b, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e,
-	0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04,
-	0x49, 0x6e, 0x66, 0x6f, 0x32, 0xde, 0x0a, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72,
-	0x12, 0x89, 0x01, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54,
-	0x61, 0x73, 0x6b, 0x12, 0x2a, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31,
-	0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
-	0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x2b, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e,
+	0x12, 0x16, 0x0a, 0x06, 0x4f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x14, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x06, 0x4f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x4c, 0x69, 0x6d, 0x69,
+	0x74, 0x18, 0x1e, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x22, 0x61,
+	0x0a, 0x14, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33, 0x0a, 0x05, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x18,
+	0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e,
+	0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63,
+	0x54, 0x61, 0x73, 0x6b, 0x52, 0x05, 0x49, 0x6e, 0x66, 0x6f, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x54,
+	0x6f, 0x74, 0x61, 0x6c, 0x18, 0x14, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x54, 0x6f, 0x74, 0x61,
+	0x6c, 0x22, 0x4a, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
+	0x4f, 0x6e, 0x6c, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x05, 0x43,
+	0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6e, 0x66, 0x74,
+	0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b,
+	0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x4c, 0x0a,
+	0x17, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x4f, 0x6e, 0x6c, 0x79,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
+	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
+	0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e,
+	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x4d, 0x0a, 0x15, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x34, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x20, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e,
+	0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x65, 0x71, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x4b, 0x0a, 0x16, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e,
+	0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x26, 0x0a, 0x14, 0x45, 0x78, 0x69, 0x73, 0x74,
+	0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x49, 0x44, 0x22,
+	0x2d, 0x0a, 0x15, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x78, 0x69, 0x73,
+	0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x4d,
+	0x0a, 0x19, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x43,
+	0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x05, 0x43,
+	0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6e, 0x66, 0x74,
+	0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b,
+	0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x32, 0x0a,
+	0x1a, 0x45, 0x78, 0x69, 0x73, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x43, 0x6f,
+	0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45,
+	0x78, 0x69, 0x73, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73,
+	0x74, 0x22, 0x49, 0x0a, 0x15, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61,
+	0x73, 0x6b, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x05, 0x43, 0x6f,
+	0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x6e, 0x66, 0x74, 0x6d,
+	0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e,
+	0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x2c, 0x0a, 0x16,
+	0x43, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x73, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x27, 0x0a, 0x15, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x02, 0x49, 0x44, 0x22, 0x4b, 0x0a, 0x16, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x53, 0x79, 0x6e,
+	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a,
+	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6e, 0x66,
+	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73,
+	0x6b, 0x2e, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f,
+	0x32, 0xe2, 0x0a, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x12, 0x89, 0x01, 0x0a,
+	0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x12,
+	0x2a, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e,
 	0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63,
-	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1e, 0x82, 0xd3,
-	0xe4, 0x93, 0x02, 0x18, 0x22, 0x13, 0x2f, 0x76, 0x31, 0x2f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65,
-	0x2f, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x3a, 0x01, 0x2a, 0x12, 0x6a, 0x0a, 0x0f,
-	0x54, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x12,
-	0x2b, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e,
-	0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x54, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e,
-	0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x28, 0x2e, 0x6e,
-	0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61,
-	0x73, 0x6b, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
+	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x6e, 0x66,
+	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73,
+	0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1e, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x18,
+	0x22, 0x13, 0x2f, 0x76, 0x31, 0x2f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x2f, 0x73, 0x79, 0x6e,
+	0x63, 0x74, 0x61, 0x73, 0x6b, 0x3a, 0x01, 0x2a, 0x12, 0x6e, 0x0a, 0x0f, 0x54, 0x72, 0x69, 0x67,
+	0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x2b, 0x2e, 0x6e, 0x66,
+	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73,
+	0x6b, 0x2e, 0x54, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65,
+	0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x54,
+	0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x89, 0x01, 0x0a, 0x0e, 0x55, 0x70, 0x64,
 	0x61, 0x74, 0x65, 0x53, 0x79, 0x6e, 0x63, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x2a, 0x2e, 0x6e, 0x66,
 	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x73, 0x79, 0x6e, 0x63, 0x74, 0x61, 0x73,
@@ -1586,7 +1648,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescGZIP() []byte {
 	return file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDescData
 }
 
-var file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_web3eye_nftmeta_v1_synctask_synctask_proto_goTypes = []interface{}{
 	(*SyncTaskReq)(nil),                // 0: nftmeta.v1.synctask.SyncTaskReq
 	(*SyncTask)(nil),                   // 1: nftmeta.v1.synctask.SyncTask
@@ -1594,81 +1656,83 @@ var file_web3eye_nftmeta_v1_synctask_synctask_proto_goTypes = []interface{}{
 	(*CreateSyncTaskRequest)(nil),      // 3: nftmeta.v1.synctask.CreateSyncTaskRequest
 	(*CreateSyncTaskResponse)(nil),     // 4: nftmeta.v1.synctask.CreateSyncTaskResponse
 	(*TriggerSyncTaskRequest)(nil),     // 5: nftmeta.v1.synctask.TriggerSyncTaskRequest
-	(*GetSyncTaskRequest)(nil),         // 6: nftmeta.v1.synctask.GetSyncTaskRequest
-	(*GetSyncTaskResponse)(nil),        // 7: nftmeta.v1.synctask.GetSyncTaskResponse
-	(*GetSyncTasksRequest)(nil),        // 8: nftmeta.v1.synctask.GetSyncTasksRequest
-	(*GetSyncTasksResponse)(nil),       // 9: nftmeta.v1.synctask.GetSyncTasksResponse
-	(*GetSyncTaskOnlyRequest)(nil),     // 10: nftmeta.v1.synctask.GetSyncTaskOnlyRequest
-	(*GetSyncTaskOnlyResponse)(nil),    // 11: nftmeta.v1.synctask.GetSyncTaskOnlyResponse
-	(*UpdateSyncTaskRequest)(nil),      // 12: nftmeta.v1.synctask.UpdateSyncTaskRequest
-	(*UpdateSyncTaskResponse)(nil),     // 13: nftmeta.v1.synctask.UpdateSyncTaskResponse
-	(*ExistSyncTaskRequest)(nil),       // 14: nftmeta.v1.synctask.ExistSyncTaskRequest
-	(*ExistSyncTaskResponse)(nil),      // 15: nftmeta.v1.synctask.ExistSyncTaskResponse
-	(*ExistSyncTaskCondsRequest)(nil),  // 16: nftmeta.v1.synctask.ExistSyncTaskCondsRequest
-	(*ExistSyncTaskCondsResponse)(nil), // 17: nftmeta.v1.synctask.ExistSyncTaskCondsResponse
-	(*CountSyncTasksRequest)(nil),      // 18: nftmeta.v1.synctask.CountSyncTasksRequest
-	(*CountSyncTasksResponse)(nil),     // 19: nftmeta.v1.synctask.CountSyncTasksResponse
-	(*DeleteSyncTaskRequest)(nil),      // 20: nftmeta.v1.synctask.DeleteSyncTaskRequest
-	(*DeleteSyncTaskResponse)(nil),     // 21: nftmeta.v1.synctask.DeleteSyncTaskResponse
-	(v1.ChainType)(0),                  // 22: chain.ChainType
-	(cttype.SyncState)(0),              // 23: cttype.SyncState
-	(*web3eye.StringVal)(nil),          // 24: web3eye.StringVal
-	(*web3eye.Uint64Val)(nil),          // 25: web3eye.Uint64Val
-	(*web3eye.StringSliceVal)(nil),     // 26: web3eye.StringSliceVal
+	(*TriggerSyncTaskResponse)(nil),    // 6: nftmeta.v1.synctask.TriggerSyncTaskResponse
+	(*GetSyncTaskRequest)(nil),         // 7: nftmeta.v1.synctask.GetSyncTaskRequest
+	(*GetSyncTaskResponse)(nil),        // 8: nftmeta.v1.synctask.GetSyncTaskResponse
+	(*GetSyncTasksRequest)(nil),        // 9: nftmeta.v1.synctask.GetSyncTasksRequest
+	(*GetSyncTasksResponse)(nil),       // 10: nftmeta.v1.synctask.GetSyncTasksResponse
+	(*GetSyncTaskOnlyRequest)(nil),     // 11: nftmeta.v1.synctask.GetSyncTaskOnlyRequest
+	(*GetSyncTaskOnlyResponse)(nil),    // 12: nftmeta.v1.synctask.GetSyncTaskOnlyResponse
+	(*UpdateSyncTaskRequest)(nil),      // 13: nftmeta.v1.synctask.UpdateSyncTaskRequest
+	(*UpdateSyncTaskResponse)(nil),     // 14: nftmeta.v1.synctask.UpdateSyncTaskResponse
+	(*ExistSyncTaskRequest)(nil),       // 15: nftmeta.v1.synctask.ExistSyncTaskRequest
+	(*ExistSyncTaskResponse)(nil),      // 16: nftmeta.v1.synctask.ExistSyncTaskResponse
+	(*ExistSyncTaskCondsRequest)(nil),  // 17: nftmeta.v1.synctask.ExistSyncTaskCondsRequest
+	(*ExistSyncTaskCondsResponse)(nil), // 18: nftmeta.v1.synctask.ExistSyncTaskCondsResponse
+	(*CountSyncTasksRequest)(nil),      // 19: nftmeta.v1.synctask.CountSyncTasksRequest
+	(*CountSyncTasksResponse)(nil),     // 20: nftmeta.v1.synctask.CountSyncTasksResponse
+	(*DeleteSyncTaskRequest)(nil),      // 21: nftmeta.v1.synctask.DeleteSyncTaskRequest
+	(*DeleteSyncTaskResponse)(nil),     // 22: nftmeta.v1.synctask.DeleteSyncTaskResponse
+	(v1.ChainType)(0),                  // 23: chain.ChainType
+	(cttype.SyncState)(0),              // 24: cttype.SyncState
+	(*web3eye.StringVal)(nil),          // 25: web3eye.StringVal
+	(*web3eye.Uint64Val)(nil),          // 26: web3eye.Uint64Val
+	(*web3eye.StringSliceVal)(nil),     // 27: web3eye.StringSliceVal
 }
 var file_web3eye_nftmeta_v1_synctask_synctask_proto_depIdxs = []int32{
-	22, // 0: nftmeta.v1.synctask.SyncTaskReq.ChainType:type_name -> chain.ChainType
-	23, // 1: nftmeta.v1.synctask.SyncTaskReq.SyncState:type_name -> cttype.SyncState
-	22, // 2: nftmeta.v1.synctask.SyncTask.ChainType:type_name -> chain.ChainType
-	23, // 3: nftmeta.v1.synctask.SyncTask.SyncState:type_name -> cttype.SyncState
-	24, // 4: nftmeta.v1.synctask.Conds.ID:type_name -> web3eye.StringVal
-	24, // 5: nftmeta.v1.synctask.Conds.ChainType:type_name -> web3eye.StringVal
-	24, // 6: nftmeta.v1.synctask.Conds.ChainID:type_name -> web3eye.StringVal
-	25, // 7: nftmeta.v1.synctask.Conds.Start:type_name -> web3eye.Uint64Val
-	25, // 8: nftmeta.v1.synctask.Conds.End:type_name -> web3eye.Uint64Val
-	25, // 9: nftmeta.v1.synctask.Conds.Current:type_name -> web3eye.Uint64Val
-	24, // 10: nftmeta.v1.synctask.Conds.Topic:type_name -> web3eye.StringVal
-	24, // 11: nftmeta.v1.synctask.Conds.Description:type_name -> web3eye.StringVal
-	24, // 12: nftmeta.v1.synctask.Conds.SyncState:type_name -> web3eye.StringVal
-	24, // 13: nftmeta.v1.synctask.Conds.Remark:type_name -> web3eye.StringVal
-	26, // 14: nftmeta.v1.synctask.Conds.IDs:type_name -> web3eye.StringSliceVal
+	23, // 0: nftmeta.v1.synctask.SyncTaskReq.ChainType:type_name -> chain.ChainType
+	24, // 1: nftmeta.v1.synctask.SyncTaskReq.SyncState:type_name -> cttype.SyncState
+	23, // 2: nftmeta.v1.synctask.SyncTask.ChainType:type_name -> chain.ChainType
+	24, // 3: nftmeta.v1.synctask.SyncTask.SyncState:type_name -> cttype.SyncState
+	25, // 4: nftmeta.v1.synctask.Conds.ID:type_name -> web3eye.StringVal
+	25, // 5: nftmeta.v1.synctask.Conds.ChainType:type_name -> web3eye.StringVal
+	25, // 6: nftmeta.v1.synctask.Conds.ChainID:type_name -> web3eye.StringVal
+	26, // 7: nftmeta.v1.synctask.Conds.Start:type_name -> web3eye.Uint64Val
+	26, // 8: nftmeta.v1.synctask.Conds.End:type_name -> web3eye.Uint64Val
+	26, // 9: nftmeta.v1.synctask.Conds.Current:type_name -> web3eye.Uint64Val
+	25, // 10: nftmeta.v1.synctask.Conds.Topic:type_name -> web3eye.StringVal
+	25, // 11: nftmeta.v1.synctask.Conds.Description:type_name -> web3eye.StringVal
+	25, // 12: nftmeta.v1.synctask.Conds.SyncState:type_name -> web3eye.StringVal
+	25, // 13: nftmeta.v1.synctask.Conds.Remark:type_name -> web3eye.StringVal
+	27, // 14: nftmeta.v1.synctask.Conds.IDs:type_name -> web3eye.StringSliceVal
 	0,  // 15: nftmeta.v1.synctask.CreateSyncTaskRequest.Info:type_name -> nftmeta.v1.synctask.SyncTaskReq
 	1,  // 16: nftmeta.v1.synctask.CreateSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
-	1,  // 17: nftmeta.v1.synctask.GetSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
-	2,  // 18: nftmeta.v1.synctask.GetSyncTasksRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
-	1,  // 19: nftmeta.v1.synctask.GetSyncTasksResponse.Infos:type_name -> nftmeta.v1.synctask.SyncTask
-	2,  // 20: nftmeta.v1.synctask.GetSyncTaskOnlyRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
-	1,  // 21: nftmeta.v1.synctask.GetSyncTaskOnlyResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
-	0,  // 22: nftmeta.v1.synctask.UpdateSyncTaskRequest.Info:type_name -> nftmeta.v1.synctask.SyncTaskReq
-	1,  // 23: nftmeta.v1.synctask.UpdateSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
-	2,  // 24: nftmeta.v1.synctask.ExistSyncTaskCondsRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
-	2,  // 25: nftmeta.v1.synctask.CountSyncTasksRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
-	1,  // 26: nftmeta.v1.synctask.DeleteSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
-	3,  // 27: nftmeta.v1.synctask.Manager.CreateSyncTask:input_type -> nftmeta.v1.synctask.CreateSyncTaskRequest
-	5,  // 28: nftmeta.v1.synctask.Manager.TriggerSyncTask:input_type -> nftmeta.v1.synctask.TriggerSyncTaskRequest
-	12, // 29: nftmeta.v1.synctask.Manager.UpdateSyncTask:input_type -> nftmeta.v1.synctask.UpdateSyncTaskRequest
-	6,  // 30: nftmeta.v1.synctask.Manager.GetSyncTask:input_type -> nftmeta.v1.synctask.GetSyncTaskRequest
-	10, // 31: nftmeta.v1.synctask.Manager.GetSyncTaskOnly:input_type -> nftmeta.v1.synctask.GetSyncTaskOnlyRequest
-	8,  // 32: nftmeta.v1.synctask.Manager.GetSyncTasks:input_type -> nftmeta.v1.synctask.GetSyncTasksRequest
-	14, // 33: nftmeta.v1.synctask.Manager.ExistSyncTask:input_type -> nftmeta.v1.synctask.ExistSyncTaskRequest
-	16, // 34: nftmeta.v1.synctask.Manager.ExistSyncTaskConds:input_type -> nftmeta.v1.synctask.ExistSyncTaskCondsRequest
-	18, // 35: nftmeta.v1.synctask.Manager.CountSyncTasks:input_type -> nftmeta.v1.synctask.CountSyncTasksRequest
-	20, // 36: nftmeta.v1.synctask.Manager.DeleteSyncTask:input_type -> nftmeta.v1.synctask.DeleteSyncTaskRequest
-	4,  // 37: nftmeta.v1.synctask.Manager.CreateSyncTask:output_type -> nftmeta.v1.synctask.CreateSyncTaskResponse
-	7,  // 38: nftmeta.v1.synctask.Manager.TriggerSyncTask:output_type -> nftmeta.v1.synctask.GetSyncTaskResponse
-	13, // 39: nftmeta.v1.synctask.Manager.UpdateSyncTask:output_type -> nftmeta.v1.synctask.UpdateSyncTaskResponse
-	7,  // 40: nftmeta.v1.synctask.Manager.GetSyncTask:output_type -> nftmeta.v1.synctask.GetSyncTaskResponse
-	11, // 41: nftmeta.v1.synctask.Manager.GetSyncTaskOnly:output_type -> nftmeta.v1.synctask.GetSyncTaskOnlyResponse
-	9,  // 42: nftmeta.v1.synctask.Manager.GetSyncTasks:output_type -> nftmeta.v1.synctask.GetSyncTasksResponse
-	15, // 43: nftmeta.v1.synctask.Manager.ExistSyncTask:output_type -> nftmeta.v1.synctask.ExistSyncTaskResponse
-	17, // 44: nftmeta.v1.synctask.Manager.ExistSyncTaskConds:output_type -> nftmeta.v1.synctask.ExistSyncTaskCondsResponse
-	19, // 45: nftmeta.v1.synctask.Manager.CountSyncTasks:output_type -> nftmeta.v1.synctask.CountSyncTasksResponse
-	21, // 46: nftmeta.v1.synctask.Manager.DeleteSyncTask:output_type -> nftmeta.v1.synctask.DeleteSyncTaskResponse
-	37, // [37:47] is the sub-list for method output_type
-	27, // [27:37] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	1,  // 17: nftmeta.v1.synctask.TriggerSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
+	1,  // 18: nftmeta.v1.synctask.GetSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
+	2,  // 19: nftmeta.v1.synctask.GetSyncTasksRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
+	1,  // 20: nftmeta.v1.synctask.GetSyncTasksResponse.Infos:type_name -> nftmeta.v1.synctask.SyncTask
+	2,  // 21: nftmeta.v1.synctask.GetSyncTaskOnlyRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
+	1,  // 22: nftmeta.v1.synctask.GetSyncTaskOnlyResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
+	0,  // 23: nftmeta.v1.synctask.UpdateSyncTaskRequest.Info:type_name -> nftmeta.v1.synctask.SyncTaskReq
+	1,  // 24: nftmeta.v1.synctask.UpdateSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
+	2,  // 25: nftmeta.v1.synctask.ExistSyncTaskCondsRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
+	2,  // 26: nftmeta.v1.synctask.CountSyncTasksRequest.Conds:type_name -> nftmeta.v1.synctask.Conds
+	1,  // 27: nftmeta.v1.synctask.DeleteSyncTaskResponse.Info:type_name -> nftmeta.v1.synctask.SyncTask
+	3,  // 28: nftmeta.v1.synctask.Manager.CreateSyncTask:input_type -> nftmeta.v1.synctask.CreateSyncTaskRequest
+	5,  // 29: nftmeta.v1.synctask.Manager.TriggerSyncTask:input_type -> nftmeta.v1.synctask.TriggerSyncTaskRequest
+	13, // 30: nftmeta.v1.synctask.Manager.UpdateSyncTask:input_type -> nftmeta.v1.synctask.UpdateSyncTaskRequest
+	7,  // 31: nftmeta.v1.synctask.Manager.GetSyncTask:input_type -> nftmeta.v1.synctask.GetSyncTaskRequest
+	11, // 32: nftmeta.v1.synctask.Manager.GetSyncTaskOnly:input_type -> nftmeta.v1.synctask.GetSyncTaskOnlyRequest
+	9,  // 33: nftmeta.v1.synctask.Manager.GetSyncTasks:input_type -> nftmeta.v1.synctask.GetSyncTasksRequest
+	15, // 34: nftmeta.v1.synctask.Manager.ExistSyncTask:input_type -> nftmeta.v1.synctask.ExistSyncTaskRequest
+	17, // 35: nftmeta.v1.synctask.Manager.ExistSyncTaskConds:input_type -> nftmeta.v1.synctask.ExistSyncTaskCondsRequest
+	19, // 36: nftmeta.v1.synctask.Manager.CountSyncTasks:input_type -> nftmeta.v1.synctask.CountSyncTasksRequest
+	21, // 37: nftmeta.v1.synctask.Manager.DeleteSyncTask:input_type -> nftmeta.v1.synctask.DeleteSyncTaskRequest
+	4,  // 38: nftmeta.v1.synctask.Manager.CreateSyncTask:output_type -> nftmeta.v1.synctask.CreateSyncTaskResponse
+	6,  // 39: nftmeta.v1.synctask.Manager.TriggerSyncTask:output_type -> nftmeta.v1.synctask.TriggerSyncTaskResponse
+	14, // 40: nftmeta.v1.synctask.Manager.UpdateSyncTask:output_type -> nftmeta.v1.synctask.UpdateSyncTaskResponse
+	8,  // 41: nftmeta.v1.synctask.Manager.GetSyncTask:output_type -> nftmeta.v1.synctask.GetSyncTaskResponse
+	12, // 42: nftmeta.v1.synctask.Manager.GetSyncTaskOnly:output_type -> nftmeta.v1.synctask.GetSyncTaskOnlyResponse
+	10, // 43: nftmeta.v1.synctask.Manager.GetSyncTasks:output_type -> nftmeta.v1.synctask.GetSyncTasksResponse
+	16, // 44: nftmeta.v1.synctask.Manager.ExistSyncTask:output_type -> nftmeta.v1.synctask.ExistSyncTaskResponse
+	18, // 45: nftmeta.v1.synctask.Manager.ExistSyncTaskConds:output_type -> nftmeta.v1.synctask.ExistSyncTaskCondsResponse
+	20, // 46: nftmeta.v1.synctask.Manager.CountSyncTasks:output_type -> nftmeta.v1.synctask.CountSyncTasksResponse
+	22, // 47: nftmeta.v1.synctask.Manager.DeleteSyncTask:output_type -> nftmeta.v1.synctask.DeleteSyncTaskResponse
+	38, // [38:48] is the sub-list for method output_type
+	28, // [28:38] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_web3eye_nftmeta_v1_synctask_synctask_proto_init() }
@@ -1750,7 +1814,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTaskRequest); i {
+			switch v := v.(*TriggerSyncTaskResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1762,7 +1826,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTaskResponse); i {
+			switch v := v.(*GetSyncTaskRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1774,7 +1838,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTasksRequest); i {
+			switch v := v.(*GetSyncTaskResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1786,7 +1850,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTasksResponse); i {
+			switch v := v.(*GetSyncTasksRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1798,7 +1862,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTaskOnlyRequest); i {
+			switch v := v.(*GetSyncTasksResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1810,7 +1874,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetSyncTaskOnlyResponse); i {
+			switch v := v.(*GetSyncTaskOnlyRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1822,7 +1886,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateSyncTaskRequest); i {
+			switch v := v.(*GetSyncTaskOnlyResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1834,7 +1898,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateSyncTaskResponse); i {
+			switch v := v.(*UpdateSyncTaskRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1846,7 +1910,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExistSyncTaskRequest); i {
+			switch v := v.(*UpdateSyncTaskResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1858,7 +1922,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExistSyncTaskResponse); i {
+			switch v := v.(*ExistSyncTaskRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1870,7 +1934,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExistSyncTaskCondsRequest); i {
+			switch v := v.(*ExistSyncTaskResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1882,7 +1946,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExistSyncTaskCondsResponse); i {
+			switch v := v.(*ExistSyncTaskCondsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1894,7 +1958,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountSyncTasksRequest); i {
+			switch v := v.(*ExistSyncTaskCondsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1906,7 +1970,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountSyncTasksResponse); i {
+			switch v := v.(*CountSyncTasksRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1918,7 +1982,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteSyncTaskRequest); i {
+			switch v := v.(*CountSyncTasksResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1930,6 +1994,18 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteSyncTaskRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_web3eye_nftmeta_v1_synctask_synctask_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteSyncTaskResponse); i {
 			case 0:
 				return &v.state
@@ -1949,7 +2025,7 @@ func file_web3eye_nftmeta_v1_synctask_synctask_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_web3eye_nftmeta_v1_synctask_synctask_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   22,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

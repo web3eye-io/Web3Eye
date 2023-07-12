@@ -184,6 +184,14 @@
         }
       }
     },
+    "blockUpsertBlockResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/blockBlock"
+        }
+      }
+    },
     "chainChainType": {
       "type": "string",
       "enum": [

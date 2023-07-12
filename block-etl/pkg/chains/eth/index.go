@@ -8,13 +8,10 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
-	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
@@ -95,7 +92,7 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	taskBlockNum := make(chan uint64)
 	indexBlockNum := make(chan uint64)
 	go e.IndexTasks(ctx, taskBlockNum)
-	go e.indexBlock(ctx, taskBlockNum, indexBlockNum)
+	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
 	for v := range indexBlockNum {
 		fmt.Println(v)
 	}
@@ -157,45 +154,19 @@ func (e *EthIndexer) addTask(topic string, outBlockNum chan uint64) error {
 	e.taskMap[topic] = struct{}{}
 	defer delete(e.taskMap, topic)
 
-	logger.Sugar().Infof("start to consumer task topic: %v", topic)
-
-	consumer, err := ctkafka.NewCTConsumer(topic)
+	resp, err := synctaskNMCli.TriggerSyncTask(context.Background(), &synctask.TriggerSyncTaskRequest{Topic: topic})
 	if err != nil {
-		logger.Sugar().Error(err)
 		return err
 	}
 
-	err = consumer.Consume(
-		func(m *kafka.Message) {
-			num, err := utils.Bytes2Uint64(m.Value)
-			if err != nil {
-				logger.Sugar().Error(err)
-				return
-			}
-			fmt.Println("first out:", num)
+	for _, v := range resp.BlockNums {
+		outBlockNum <- v
+	}
 
-			outBlockNum <- num
-			if num%uint64(LogIntervalHeight) == 0 {
-				logger.Sugar().Infof("start sync %v height", num)
-			}
-		},
-		func(retryNum int) bool {
-			if retryNum > MaxRetriesThenTriggerTask && retryNum < MaxRetriesThenStopConsume {
-				_, err := synctaskNMCli.TriggerSyncTask(context.Background(), &synctask.TriggerSyncTaskRequest{Topic: topic})
-				if err != nil {
-					logger.Sugar().Error(err)
-				}
-			} else if retryNum >= MaxRetriesThenStopConsume {
-				logger.Sugar().Warnf("cannot consume topic %v,retry %v times", topic, MaxRetriesThenStopConsume)
-				return true
-			}
-			return false
-		},
-	)
-	return err
+	return nil
 }
 
-func (e *EthIndexer) indexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {
+func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {
 	for blockNum := range inBlockNum {
 		cli, err := eth.Client(e.Endpoints)
 		if err != nil {
@@ -207,7 +178,18 @@ func (e *EthIndexer) indexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 			continue
 		}
-		_, err = blockNMCli.CreateBlock(ctx, &blockProto.CreateBlockRequest{})
+		number := block.Number().Uint64()
+		blockHash := block.Hash().String()
+		blockTime := int64(block.Time())
+		_, err = blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
+			Info: &blockProto.BlockReq{
+				ChainType:   basetype.ChainType_Ethereum.Enum(),
+				ChainID:     &e.ChainID,
+				BlockNumber: &number,
+				BlockHash:   &blockHash,
+				BlockTime:   &blockTime,
+			},
+		})
 		if err != nil {
 			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 			continue
@@ -216,71 +198,49 @@ func (e *EthIndexer) indexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 	}
 }
 
-func (e *EthIndexer) indexTransfer(ctx context.Context) {
-	for i := 0; i < MaxDealBlockNum; i++ {
-		wg.Add(1)
-		go func() {
-			for num := range e.taskChan {
-				transfers, err := e.parseTransfers(ctx, int64(num))
-				if err != nil {
-					logger.Sugar().Errorf("failed parse transfers for block number: %v,err: %v", num, err)
-				}
-
-				err = e.transferToDB(ctx, transfers)
-				if err != nil {
-					logger.Sugar().Errorf("failed store transfers to db for block number: %v,err: %v", num, err)
-				}
-			}
-			wg.Done()
-		}()
-	}
-}
-
-func (e *EthIndexer) parseTransfers(ctx context.Context, blockNum int64) ([]*eth.TokenTransfer, error) {
-	cli, err := eth.Client(e.Endpoints)
-	if err != nil {
-		return nil, err
-	}
-	transfers, err := cli.TransferLogs(ctx, blockNum, blockNum)
-	return transfers, err
-}
-
-func (e *EthIndexer) transferToDB(ctx context.Context, transfers []*eth.TokenTransfer) error {
-	tt := make([]*transferProto.TransferReq, len(transfers))
-	for i := range transfers {
-		tokenType := string(transfers[i].TokenType)
-		tt[i] = &transferProto.TransferReq{
-			ChainType:   &e.ChainType,
-			ChainID:     &e.ChainID,
-			Contract:    &transfers[i].Contract,
-			TokenType:   &tokenType,
-			TokenID:     &transfers[i].TokenID,
-			From:        &transfers[i].From,
-			To:          &transfers[i].To,
-			Amount:      &transfers[i].Amount,
-			BlockNumber: &transfers[i].BlockNumber,
-			TxHash:      &transfers[i].TxHash,
-			BlockHash:   &transfers[i].BlockHash,
+func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, outTransfers chan []*eth.TokenTransfer) {
+	for num := range inBlockNum {
+		cli, err := eth.Client(e.Endpoints)
+		if err != nil {
+			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+			continue
 		}
-	}
-
-	if len(tt) == 0 {
-		return nil
-	}
-
-	for i := 0; i < Retries; i++ {
-		_, err := transferNMCli.UpsertTransfers(ctx, &transferProto.UpsertTransfersRequest{Infos: tt})
-		if err != nil && containErr(err.Error()) {
-			logger.Sugar().Errorf("will retry for creating transfer record failed, %v", err)
+		transfers, err := cli.TransferLogs(ctx, int64(num), int64(num))
+		if err != nil {
+			logger.Sugar().Errorf("failed to get transfer logs, err: %v, block: %v", err, num)
+			continue
+		}
+		fmt.Println(len(transfers))
+		if len(transfers) == 0 {
 			continue
 		}
 
-		if err != nil {
-			return fmt.Errorf("create transfer record failed, %v", err)
+		infos := make([]*transferProto.TransferReq, len(transfers))
+		for i := range transfers {
+			tokenType := string(transfers[i].TokenType)
+			infos[i] = &transferProto.TransferReq{
+				ChainType:   &e.ChainType,
+				ChainID:     &e.ChainID,
+				Contract:    &transfers[i].Contract,
+				TokenType:   &tokenType,
+				TokenID:     &transfers[i].TokenID,
+				From:        &transfers[i].From,
+				To:          &transfers[i].To,
+				Amount:      &transfers[i].Amount,
+				BlockNumber: &transfers[i].BlockNumber,
+				TxHash:      &transfers[i].TxHash,
+				BlockHash:   &transfers[i].BlockHash,
+			}
 		}
-		break
+
+		_, err = transferNMCli.UpsertTransfers(ctx, &transferProto.UpsertTransfersRequest{Infos: infos})
+		if err != nil {
+			logger.Sugar().Errorf("failed store transfers to db for block number: %v,err: %v", num, err)
+			continue
+		}
+
+		outTransfers <- transfers
 	}
-	return nil
 }
 
 func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*eth.TokenTransfer) {
@@ -345,7 +305,7 @@ func (e *EthIndexer) tokenInfoToDB(ctx context.Context, transfers []*eth.TokenTr
 			_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
 				Info: &tokenProto.TokenReq{
 					ChainType:   &e.ChainType,
-					ChainID:     eth.CurrentChainID,
+					ChainID:     &e.ChainID,
 					Contract:    &transfer.Contract,
 					TokenType:   &transfer.TokenType,
 					TokenID:     &transfer.TokenID,
@@ -428,7 +388,7 @@ func (e *EthIndexer) contractToDB(ctx context.Context, transfer *eth.TokenTransf
 		_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
 			Info: &contractProto.ContractReq{
 				ChainType: &e.ChainType,
-				ChainID:   eth.CurrentChainID,
+				ChainID:   &e.ChainID,
 				Address:   &transfer.Contract,
 				Name:      &contractMeta.Name,
 				Symbol:    &contractMeta.Symbol,

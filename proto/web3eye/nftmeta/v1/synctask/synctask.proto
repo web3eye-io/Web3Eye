@@ -15,7 +15,7 @@ service Manager {
       body : "*"
     };
   }
-  rpc TriggerSyncTask(TriggerSyncTaskRequest) returns (GetSyncTaskResponse) {}
+  rpc TriggerSyncTask(TriggerSyncTaskRequest) returns (TriggerSyncTaskResponse) {}
   rpc UpdateSyncTask(UpdateSyncTaskRequest) returns (UpdateSyncTaskResponse) {
     option (google.api.http) = {
       post : "/v1/update/synctask"
@@ -113,6 +113,11 @@ message CreateSyncTaskRequest { SyncTaskReq Info = 10; }
 message CreateSyncTaskResponse { SyncTask Info = 10; }
 
 message TriggerSyncTaskRequest { string Topic = 10; }
+message TriggerSyncTaskResponse { 
+  SyncTask Info = 10;
+  repeated uint64 BlockNums  =20;
+ }
+
 message GetSyncTaskRequest { string ID = 10; }
 
 message GetSyncTaskResponse { SyncTask Info = 10; }

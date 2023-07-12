@@ -89,6 +89,25 @@ type CTConsumer struct {
 	start    bool
 }
 
+func NewCTConsumerT(topic string, clientID string) (*CTConsumer, error) {
+	conf := KafkaConfig()
+	conf["group.id"] = "default"
+	conf["enable.auto.commit"] = "true"
+	conf["auto.offset.reset"] = "earliest"
+	conf["client.id"] = clientID
+
+	c, err := kafka.NewConsumer(&conf)
+
+	if err != nil {
+		return nil, err
+	}
+	err = c.SubscribeTopics([]string{topic}, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &CTConsumer{topic: topic, consumer: c, start: false}, nil
+}
+
 func NewCTConsumer(topic string) (*CTConsumer, error) {
 	conf := KafkaConfig()
 	conf["group.id"] = "default"

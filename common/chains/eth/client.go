@@ -17,11 +17,6 @@ const (
 	dialTimeout      = 3 * time.Second
 )
 
-var (
-	// TODO:should check the chainID of erver endpoints,if them is not equal,panic
-	CurrentChainID *string
-)
-
 type eClients struct {
 	endpoints []string
 }
@@ -35,15 +30,6 @@ func (eClients eClients) GetNode(ctx context.Context) (*ethclient.Client, error)
 	cli, err := ethclient.DialContext(ctx, endpoint)
 	if err != nil {
 		return nil, err
-	}
-
-	if CurrentChainID == nil {
-		_chainID, err := cli.ChainID(ctx)
-		if err != nil {
-			return nil, err
-		}
-		chainID := _chainID.String()
-		CurrentChainID = &chainID
 	}
 
 	// sync check is to many,so will be canceled

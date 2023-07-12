@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	CreateSyncTask(ctx context.Context, in *CreateSyncTaskRequest, opts ...grpc.CallOption) (*CreateSyncTaskResponse, error)
-	TriggerSyncTask(ctx context.Context, in *TriggerSyncTaskRequest, opts ...grpc.CallOption) (*GetSyncTaskResponse, error)
+	TriggerSyncTask(ctx context.Context, in *TriggerSyncTaskRequest, opts ...grpc.CallOption) (*TriggerSyncTaskResponse, error)
 	UpdateSyncTask(ctx context.Context, in *UpdateSyncTaskRequest, opts ...grpc.CallOption) (*UpdateSyncTaskResponse, error)
 	GetSyncTask(ctx context.Context, in *GetSyncTaskRequest, opts ...grpc.CallOption) (*GetSyncTaskResponse, error)
 	GetSyncTaskOnly(ctx context.Context, in *GetSyncTaskOnlyRequest, opts ...grpc.CallOption) (*GetSyncTaskOnlyResponse, error)
@@ -51,8 +51,8 @@ func (c *managerClient) CreateSyncTask(ctx context.Context, in *CreateSyncTaskRe
 	return out, nil
 }
 
-func (c *managerClient) TriggerSyncTask(ctx context.Context, in *TriggerSyncTaskRequest, opts ...grpc.CallOption) (*GetSyncTaskResponse, error) {
-	out := new(GetSyncTaskResponse)
+func (c *managerClient) TriggerSyncTask(ctx context.Context, in *TriggerSyncTaskRequest, opts ...grpc.CallOption) (*TriggerSyncTaskResponse, error) {
+	out := new(TriggerSyncTaskResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.synctask.Manager/TriggerSyncTask", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (c *managerClient) DeleteSyncTask(ctx context.Context, in *DeleteSyncTaskRe
 // for forward compatibility
 type ManagerServer interface {
 	CreateSyncTask(context.Context, *CreateSyncTaskRequest) (*CreateSyncTaskResponse, error)
-	TriggerSyncTask(context.Context, *TriggerSyncTaskRequest) (*GetSyncTaskResponse, error)
+	TriggerSyncTask(context.Context, *TriggerSyncTaskRequest) (*TriggerSyncTaskResponse, error)
 	UpdateSyncTask(context.Context, *UpdateSyncTaskRequest) (*UpdateSyncTaskResponse, error)
 	GetSyncTask(context.Context, *GetSyncTaskRequest) (*GetSyncTaskResponse, error)
 	GetSyncTaskOnly(context.Context, *GetSyncTaskOnlyRequest) (*GetSyncTaskOnlyResponse, error)
@@ -156,7 +156,7 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) CreateSyncTask(context.Context, *CreateSyncTaskRequest) (*CreateSyncTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSyncTask not implemented")
 }
-func (UnimplementedManagerServer) TriggerSyncTask(context.Context, *TriggerSyncTaskRequest) (*GetSyncTaskResponse, error) {
+func (UnimplementedManagerServer) TriggerSyncTask(context.Context, *TriggerSyncTaskRequest) (*TriggerSyncTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TriggerSyncTask not implemented")
 }
 func (UnimplementedManagerServer) UpdateSyncTask(context.Context, *UpdateSyncTaskRequest) (*UpdateSyncTaskResponse, error) {

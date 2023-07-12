@@ -8,8 +8,8 @@ import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc CreateBlock(CreateBlockRequest) returns (CreateBlockResponse) {}
-  rpc CreateBlocks(CreateBlocksRequest)
-      returns (CreateBlocksResponse) {}
+  rpc CreateBlocks(CreateBlocksRequest) returns (CreateBlocksResponse) {}
+  rpc UpsertBlock(UpsertBlockRequest) returns (UpsertBlockResponse) {}
   rpc UpdateBlock(UpdateBlockRequest) returns (UpdateBlockResponse) {}
   rpc GetBlock(GetBlockRequest) returns (GetBlockResponse) {}
   rpc GetBlockOnly(GetBlockOnlyRequest)
@@ -53,6 +53,10 @@ message Conds {
 message CreateBlockRequest { BlockReq Info = 10; }
 
 message CreateBlockResponse { Block Info = 10; }
+
+message UpsertBlockRequest { BlockReq Info = 10; }
+
+message UpsertBlockResponse { Block Info = 10; }
 
 message CreateBlocksRequest { repeated BlockReq Infos = 10; }
 
