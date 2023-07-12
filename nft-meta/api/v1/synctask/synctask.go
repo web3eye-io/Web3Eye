@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/synctask"
@@ -58,11 +57,6 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 		*_info.End,
 		*_info.ID)
 	_info.Topic = &topic
-
-	if err := ctkafka.CreateTopic(ctx, *_info.Topic); err != nil {
-		logger.Sugar().Errorw("CreateSyncTask", "error", err)
-		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-	}
 
 	info, err := crud.Create(ctx, _info)
 	if err != nil {
