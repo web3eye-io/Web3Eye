@@ -112,11 +112,15 @@ message CreateSyncTaskRequest { SyncTaskReq Info = 10; }
 
 message CreateSyncTaskResponse { SyncTask Info = 10; }
 
-message TriggerSyncTaskRequest { string Topic = 10; }
+message TriggerSyncTaskRequest { 
+  string Topic = 10;
+  uint64 CurrentBlockNum = 20;
+}
+
 message TriggerSyncTaskResponse { 
   SyncTask Info = 10;
-  repeated uint64 BlockNums  =20;
- }
+  repeated uint64 BlockNums = 20;
+}
 
 message GetSyncTaskRequest { string ID = 10; }
 

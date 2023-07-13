@@ -7,9 +7,7 @@ import (
 	"math/big"
 	"strings"
 	"sync"
-	"time"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -40,7 +38,7 @@ func (e eClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([
 	return logs, err
 }
 
-func (e eClients) CurrentBlockHeight(ctx context.Context) (uint64, error) {
+func (e eClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	var num uint64
 
 	var err error
@@ -226,34 +224,4 @@ func (e eClients) getERC721Metadata(ctx context.Context, ethClient *ethclient.Cl
 func (e eClients) ReplaceID(tokenURI, id string) string {
 	_id := fmt.Sprintf("%064s", id)
 	return strings.TrimSpace(strings.ReplaceAll(tokenURI, "{id}", _id))
-}
-
-type confirmedBlockNum struct {
-	updateTime      int64
-	confirmedHeight uint64
-}
-
-var c = &confirmedBlockNum{}
-
-func (e eClients) GetCurrentConfirmedHeight(ctx context.Context) uint64 {
-	lock.Lock()
-	defer lock.Unlock()
-
-	if c.updateTime > time.Now().Unix() {
-		return c.confirmedHeight
-	}
-
-	num, err := e.CurrentBlockHeight(ctx)
-	if err != nil {
-		logger.Sugar().Errorf("get block height failed, %v", err)
-		return c.confirmedHeight
-	}
-
-	if num > safeBlockNum {
-		c.confirmedHeight = num - safeBlockNum
-	}
-
-	c.updateTime = time.Now().Add(time.Minute).Unix()
-
-	return c.confirmedHeight
 }

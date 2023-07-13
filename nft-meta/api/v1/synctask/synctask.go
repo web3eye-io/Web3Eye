@@ -120,7 +120,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}
 
 	syncEnd := info.End
-	safeEnd := uint64(18667572)
+	safeEnd := in.CurrentBlockNum
 	if syncEnd == 0 || syncEnd > safeEnd {
 		syncEnd = safeEnd
 	}

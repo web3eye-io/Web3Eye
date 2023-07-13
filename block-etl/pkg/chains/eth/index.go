@@ -3,7 +3,6 @@ package eth
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -27,28 +26,11 @@ import (
 )
 
 const (
-	Retries                   = 3
-	MaxDealBlockNum           = 5
-	LogIntervalHeight         = 10
-	MaxRetriesThenTriggerTask = 5
-	MaxRetriesThenStopConsume = 10
-	CheckTopicInterval        = time.Second * 10
-	// confirmedBlockNum      = 5
+	CheckTopicInterval     = time.Second * 10
+	FindContractCreator    = false
 	redisExpireDefaultTime = time.Second * 10
-	// redisExpireDefaultTime = time.Minute * 5
-	maxTokenURILen = 256
-	maxTopicNum    = 5
-)
-
-var (
-	connectTimeout = "context deadline exceeded"
-	retryErrs      = []string{connectTimeout}
-)
-
-var (
-	// manage process order
-	pLock = &sync.Mutex{}
-	wg    = &sync.WaitGroup{}
+	maxTopicNum            = 5
+	updateBlockNumInterval = time.Minute
 )
 
 var GetEndpointChainID = func(ctx context.Context, endpoint string) (string, error) {
@@ -66,28 +48,24 @@ var GetEndpointChainID = func(ctx context.Context, endpoint string) (string, err
 }
 
 type EthIndexer struct {
-	Endpoints     []string
-	ChainID       string
-	ChainType     basetype.ChainType
-	taskChan      chan uint64
-	taskMap       map[string]struct{}
-	currentHeight uint64
-	updateTime    int64
+	Endpoints       []string
+	ChainID         string
+	ChainType       basetype.ChainType
+	CurrentBlockNum uint64
 }
 
 func NewIndexer(endpoints []string, chainID string) *EthIndexer {
 	return &EthIndexer{
-		ChainType:     basetype.ChainType_Ethereum,
-		Endpoints:     endpoints,
-		ChainID:       chainID,
-		taskChan:      make(chan uint64),
-		taskMap:       make(map[string]struct{}),
-		currentHeight: 0,
-		updateTime:    0,
+		ChainType:       basetype.ChainType_Ethereum,
+		Endpoints:       endpoints,
+		ChainID:         chainID,
+		CurrentBlockNum: 0,
 	}
 }
 
 func (e *EthIndexer) StartIndex(ctx context.Context) {
+	go e.GetCurrentBlockNum(ctx, updateBlockNumInterval)
+
 	taskBlockNum := make(chan uint64)
 	indexBlockNum := make(chan uint64)
 	outTransfers := make(chan []*eth.TokenTransfer)
@@ -96,7 +74,7 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
 	go e.IndexTransfer(ctx, indexBlockNum, outTransfers)
 	go e.IndexToken(ctx, outTransfers, outTransfer)
-	go e.IndexContract(ctx, outTransfer)
+	go e.IndexContract(ctx, outTransfer, FindContractCreator)
 }
 
 func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
@@ -133,6 +111,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 
 func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {
 	for blockNum := range inBlockNum {
+		fmt.Println("IndexBlock in:", blockNum)
 		cli, err := eth.Client(e.Endpoints)
 		if err != nil {
 			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
@@ -159,12 +138,16 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 			continue
 		}
+
 		outBlockNum <- block.Number().Uint64()
+		fmt.Println("IndexBlock out:", blockNum)
 	}
 }
 
 func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, outTransfers chan []*eth.TokenTransfer) {
 	for num := range inBlockNum {
+		fmt.Println("IndexTransfer in:", num)
+
 		cli, err := eth.Client(e.Endpoints)
 		if err != nil {
 			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
@@ -204,11 +187,14 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 		}
 
 		outTransfers <- transfers
+		fmt.Println("IndexTransfer out:", num, "-", len(transfers))
 	}
 }
 
 func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.TokenTransfer, outTransfer chan *eth.TokenTransfer) {
 	for transfers := range inTransfers {
+		fmt.Println("IndexToken in:", transfers[0].BlockNumber, "-", len(transfers))
+
 		for _, transfer := range transfers {
 			identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
 			locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
@@ -217,7 +203,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.Tok
 				continue
 			}
 
-			if locked {
+			if !locked {
 				continue
 			}
 
@@ -256,6 +242,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.Tok
 
 			tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 			if err != nil {
+				logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 				remark = err.Error()
 			}
 
@@ -287,13 +274,15 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.Tok
 				continue
 			}
 			outTransfer <- transfer
+			fmt.Println("IndexToken out:", transfer.BlockNumber, "-", transfer.Contract, "-", transfer.TokenID)
 		}
 	}
-
 }
 
-func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.TokenTransfer) {
+func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.TokenTransfer, findContractCreator bool) {
 	for transfer := range inTransfer {
+		fmt.Println("IndexContract in:", transfer.BlockNumber, "-", transfer.Contract, "-", transfer.TokenID)
+
 		identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
@@ -301,7 +290,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.Tok
 			continue
 		}
 
-		if locked {
+		if !locked {
 			continue
 		}
 
@@ -338,21 +327,24 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.Tok
 
 		contractMeta, err := cli.GetERC721Metadata(ctx, transfer.Contract)
 		if err != nil {
+			logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
 			contractMeta = &eth.ERC721Metadata{}
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
+		creator := &eth.ContractCreator{}
 		// stop get info for creator
-		// creator, err := cteth.GetContractCreator(ctx, transfer.Contract)
-		// if err != nil {
-		// 	creator = &cteth.ContractCreator{}
-		// 	remark = err.Error()
-		// }
+		if findContractCreator {
+			creator, err = cli.GetContractCreator(ctx, transfer.Contract)
+			if err != nil {
+				remark = err.Error()
+			}
+		}
 
-		// from := creator.From.String()
-		// txHash := creator.TxHash.Hex()
-		// blockNum := creator.BlockNumber
-		// txTime := uint32(creator.TxTime)
+		from := creator.From.String()
+		txHash := creator.TxHash.Hex()
+		blockNum := creator.BlockNumber
+		txTime := uint32(creator.TxTime)
 		resp, err := contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
 			Info: &contractProto.ContractReq{
 				ChainType: &e.ChainType,
@@ -360,17 +352,38 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.Tok
 				Address:   &transfer.Contract,
 				Name:      &contractMeta.Name,
 				Symbol:    &contractMeta.Symbol,
-				// Creator:   &from,
-				// BlockNum:  &blockNum,
-				// TxHash:    &txHash,
-				// TxTime:    &txTime,
-				Remark: &remark,
+				Creator:   &from,
+				BlockNum:  &blockNum,
+				TxHash:    &txHash,
+				TxTime:    &txTime,
+				Remark:    &remark,
 			},
 		})
 		if err != nil {
 			logger.Sugar().Errorf("create contract record failed, %v", err)
+			continue
 		}
 		fmt.Println(resp.Info.Address, resp.Info.Symbol)
+		fmt.Println("IndexContract out:", transfer.BlockNumber, "-", transfer.Contract)
+	}
+}
+
+func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
+	for {
+		cli, err := eth.Client(e.Endpoints)
+		if err != nil {
+			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+			continue
+		}
+		blockNum, err := cli.CurrentBlockNum(ctx)
+		if err != nil {
+			logger.Sugar().Errorf("failed to get current block number: %v", err)
+			continue
+		}
+
+		e.CurrentBlockNum = blockNum
+		logger.Sugar().Infof("success get current block number: %v", blockNum)
+		<-time.NewTicker(updateInterval).C
 	}
 
 }
