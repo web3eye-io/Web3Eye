@@ -13,6 +13,7 @@ import (
 
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -31,6 +32,8 @@ type Client struct {
 	Block *BlockClient
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
+	// Endpoint is the client for interacting with the Endpoint builders.
+	Endpoint *EndpointClient
 	// Snapshot is the client for interacting with the Snapshot builders.
 	Snapshot *SnapshotClient
 	// SyncTask is the client for interacting with the SyncTask builders.
@@ -54,6 +57,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Block = NewBlockClient(c.config)
 	c.Contract = NewContractClient(c.config)
+	c.Endpoint = NewEndpointClient(c.config)
 	c.Snapshot = NewSnapshotClient(c.config)
 	c.SyncTask = NewSyncTaskClient(c.config)
 	c.Token = NewTokenClient(c.config)
@@ -93,6 +97,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:   cfg,
 		Block:    NewBlockClient(cfg),
 		Contract: NewContractClient(cfg),
+		Endpoint: NewEndpointClient(cfg),
 		Snapshot: NewSnapshotClient(cfg),
 		SyncTask: NewSyncTaskClient(cfg),
 		Token:    NewTokenClient(cfg),
@@ -118,6 +123,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:   cfg,
 		Block:    NewBlockClient(cfg),
 		Contract: NewContractClient(cfg),
+		Endpoint: NewEndpointClient(cfg),
 		Snapshot: NewSnapshotClient(cfg),
 		SyncTask: NewSyncTaskClient(cfg),
 		Token:    NewTokenClient(cfg),
@@ -152,6 +158,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Block.Use(hooks...)
 	c.Contract.Use(hooks...)
+	c.Endpoint.Use(hooks...)
 	c.Snapshot.Use(hooks...)
 	c.SyncTask.Use(hooks...)
 	c.Token.Use(hooks...)
@@ -338,6 +345,97 @@ func (c *ContractClient) GetX(ctx context.Context, id uuid.UUID) *Contract {
 func (c *ContractClient) Hooks() []Hook {
 	hooks := c.hooks.Contract
 	return append(hooks[:len(hooks):len(hooks)], contract.Hooks[:]...)
+}
+
+// EndpointClient is a client for the Endpoint schema.
+type EndpointClient struct {
+	config
+}
+
+// NewEndpointClient returns a client for the Endpoint from the given config.
+func NewEndpointClient(c config) *EndpointClient {
+	return &EndpointClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `endpoint.Hooks(f(g(h())))`.
+func (c *EndpointClient) Use(hooks ...Hook) {
+	c.hooks.Endpoint = append(c.hooks.Endpoint, hooks...)
+}
+
+// Create returns a builder for creating a Endpoint entity.
+func (c *EndpointClient) Create() *EndpointCreate {
+	mutation := newEndpointMutation(c.config, OpCreate)
+	return &EndpointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Endpoint entities.
+func (c *EndpointClient) CreateBulk(builders ...*EndpointCreate) *EndpointCreateBulk {
+	return &EndpointCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Endpoint.
+func (c *EndpointClient) Update() *EndpointUpdate {
+	mutation := newEndpointMutation(c.config, OpUpdate)
+	return &EndpointUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EndpointClient) UpdateOne(e *Endpoint) *EndpointUpdateOne {
+	mutation := newEndpointMutation(c.config, OpUpdateOne, withEndpoint(e))
+	return &EndpointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EndpointClient) UpdateOneID(id uuid.UUID) *EndpointUpdateOne {
+	mutation := newEndpointMutation(c.config, OpUpdateOne, withEndpointID(id))
+	return &EndpointUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Endpoint.
+func (c *EndpointClient) Delete() *EndpointDelete {
+	mutation := newEndpointMutation(c.config, OpDelete)
+	return &EndpointDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EndpointClient) DeleteOne(e *Endpoint) *EndpointDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *EndpointClient) DeleteOneID(id uuid.UUID) *EndpointDeleteOne {
+	builder := c.Delete().Where(endpoint.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EndpointDeleteOne{builder}
+}
+
+// Query returns a query builder for Endpoint.
+func (c *EndpointClient) Query() *EndpointQuery {
+	return &EndpointQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Endpoint entity by its id.
+func (c *EndpointClient) Get(ctx context.Context, id uuid.UUID) (*Endpoint, error) {
+	return c.Query().Where(endpoint.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EndpointClient) GetX(ctx context.Context, id uuid.UUID) *Endpoint {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EndpointClient) Hooks() []Hook {
+	hooks := c.hooks.Endpoint
+	return append(hooks[:len(hooks):len(hooks)], endpoint.Hooks[:]...)
 }
 
 // SnapshotClient is a client for the Snapshot schema.

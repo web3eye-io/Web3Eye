@@ -35,6 +35,19 @@ func (f ContractFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The EndpointFunc type is an adapter to allow the use of ordinary
+// function as Endpoint mutator.
+type EndpointFunc func(context.Context, *ent.EndpointMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EndpointFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EndpointMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EndpointMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The SnapshotFunc type is an adapter to allow the use of ordinary
 // function as Snapshot mutator.
 type SnapshotFunc func(context.Context, *ent.SnapshotMutation) (ent.Value, error)

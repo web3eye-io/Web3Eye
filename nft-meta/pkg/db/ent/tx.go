@@ -18,6 +18,8 @@ type Tx struct {
 	Block *BlockClient
 	// Contract is the client for interacting with the Contract builders.
 	Contract *ContractClient
+	// Endpoint is the client for interacting with the Endpoint builders.
+	Endpoint *EndpointClient
 	// Snapshot is the client for interacting with the Snapshot builders.
 	Snapshot *SnapshotClient
 	// SyncTask is the client for interacting with the SyncTask builders.
@@ -163,6 +165,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Block = NewBlockClient(tx.config)
 	tx.Contract = NewContractClient(tx.config)
+	tx.Endpoint = NewEndpointClient(tx.config)
 	tx.Snapshot = NewSnapshotClient(tx.config)
 	tx.SyncTask = NewSyncTaskClient(tx.config)
 	tx.Token = NewTokenClient(tx.config)

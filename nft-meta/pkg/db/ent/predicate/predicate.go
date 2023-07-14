@@ -12,6 +12,9 @@ type Block func(*sql.Selector)
 // Contract is the predicate function for contract builders.
 type Contract func(*sql.Selector)
 
+// Endpoint is the predicate function for endpoint builders.
+type Endpoint func(*sql.Selector)
+
 // Snapshot is the predicate function for snapshot builders.
 type Snapshot func(*sql.Selector)
 

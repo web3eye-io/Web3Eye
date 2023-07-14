@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/schema"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
@@ -86,6 +87,38 @@ func init() {
 	contractDescID := contractFields[0].Descriptor()
 	// contract.DefaultID holds the default value on creation for the id field.
 	contract.DefaultID = contractDescID.Default.(func() uuid.UUID)
+	endpointMixin := schema.Endpoint{}.Mixin()
+	endpoint.Policy = privacy.NewPolicies(endpointMixin[0], schema.Endpoint{})
+	endpoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := endpoint.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	endpointMixinFields0 := endpointMixin[0].Fields()
+	_ = endpointMixinFields0
+	endpointFields := schema.Endpoint{}.Fields()
+	_ = endpointFields
+	// endpointDescCreatedAt is the schema descriptor for created_at field.
+	endpointDescCreatedAt := endpointMixinFields0[0].Descriptor()
+	// endpoint.DefaultCreatedAt holds the default value on creation for the created_at field.
+	endpoint.DefaultCreatedAt = endpointDescCreatedAt.Default.(func() uint32)
+	// endpointDescUpdatedAt is the schema descriptor for updated_at field.
+	endpointDescUpdatedAt := endpointMixinFields0[1].Descriptor()
+	// endpoint.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	endpoint.DefaultUpdatedAt = endpointDescUpdatedAt.Default.(func() uint32)
+	// endpoint.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	endpoint.UpdateDefaultUpdatedAt = endpointDescUpdatedAt.UpdateDefault.(func() uint32)
+	// endpointDescDeletedAt is the schema descriptor for deleted_at field.
+	endpointDescDeletedAt := endpointMixinFields0[2].Descriptor()
+	// endpoint.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	endpoint.DefaultDeletedAt = endpointDescDeletedAt.Default.(func() uint32)
+	// endpointDescID is the schema descriptor for id field.
+	endpointDescID := endpointFields[0].Descriptor()
+	// endpoint.DefaultID holds the default value on creation for the id field.
+	endpoint.DefaultID = endpointDescID.Default.(func() uuid.UUID)
 	snapshotMixin := schema.Snapshot{}.Mixin()
 	snapshot.Policy = privacy.NewPolicies(snapshotMixin[0], schema.Snapshot{})
 	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {

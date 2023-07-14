@@ -67,6 +67,23 @@ var (
 			},
 		},
 	}
+	// EndpointsColumns holds the columns for the "endpoints" table.
+	EndpointsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "chain_type", Type: field.TypeString},
+		{Name: "chain_id", Type: field.TypeString, Nullable: true},
+		{Name: "address", Type: field.TypeString},
+		{Name: "state", Type: field.TypeString, Nullable: true},
+	}
+	// EndpointsTable holds the schema information for the "endpoints" table.
+	EndpointsTable = &schema.Table{
+		Name:       "endpoints",
+		Columns:    EndpointsColumns,
+		PrimaryKey: []*schema.Column{EndpointsColumns[0]},
+	}
 	// SnapshotsColumns holds the columns for the "snapshots" table.
 	SnapshotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -195,6 +212,7 @@ var (
 	Tables = []*schema.Table{
 		BlocksTable,
 		ContractsTable,
+		EndpointsTable,
 		SnapshotsTable,
 		SyncTasksTable,
 		TokensTable,

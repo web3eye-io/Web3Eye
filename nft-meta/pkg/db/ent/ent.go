@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -38,6 +39,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		block.Table:    block.ValidColumn,
 		contract.Table: contract.ValidColumn,
+		endpoint.Table: endpoint.ValidColumn,
 		snapshot.Table: snapshot.ValidColumn,
 		synctask.Table: synctask.ValidColumn,
 		token.Table:    token.ValidColumn,

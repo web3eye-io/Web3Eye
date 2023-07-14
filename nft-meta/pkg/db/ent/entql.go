@@ -5,6 +5,7 @@ package ent
 import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -18,7 +19,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 6)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   block.Table,
@@ -72,6 +73,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   endpoint.Table,
+			Columns: endpoint.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: endpoint.FieldID,
+			},
+		},
+		Type: "Endpoint",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			endpoint.FieldCreatedAt: {Type: field.TypeUint32, Column: endpoint.FieldCreatedAt},
+			endpoint.FieldUpdatedAt: {Type: field.TypeUint32, Column: endpoint.FieldUpdatedAt},
+			endpoint.FieldDeletedAt: {Type: field.TypeUint32, Column: endpoint.FieldDeletedAt},
+			endpoint.FieldChainType: {Type: field.TypeString, Column: endpoint.FieldChainType},
+			endpoint.FieldChainID:   {Type: field.TypeString, Column: endpoint.FieldChainID},
+			endpoint.FieldAddress:   {Type: field.TypeString, Column: endpoint.FieldAddress},
+			endpoint.FieldState:     {Type: field.TypeString, Column: endpoint.FieldState},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -91,7 +112,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			snapshot.FieldBackupState:   {Type: field.TypeString, Column: snapshot.FieldBackupState},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
@@ -116,7 +137,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldRemark:      {Type: field.TypeString, Column: synctask.FieldRemark},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   token.Table,
 			Columns: token.Columns,
@@ -149,7 +170,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldImageSnapshotID: {Type: field.TypeString, Column: token.FieldImageSnapshotID},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
@@ -393,6 +414,81 @@ func (f *ContractFilter) WhereRemark(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (eq *EndpointQuery) addPredicate(pred func(s *sql.Selector)) {
+	eq.predicates = append(eq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EndpointQuery builder.
+func (eq *EndpointQuery) Filter() *EndpointFilter {
+	return &EndpointFilter{config: eq.config, predicateAdder: eq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EndpointMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EndpointMutation builder.
+func (m *EndpointMutation) Filter() *EndpointFilter {
+	return &EndpointFilter{config: m.config, predicateAdder: m}
+}
+
+// EndpointFilter provides a generic filtering capability at runtime for EndpointQuery.
+type EndpointFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EndpointFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *EndpointFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(endpoint.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *EndpointFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(endpoint.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *EndpointFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(endpoint.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *EndpointFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(endpoint.FieldDeletedAt))
+}
+
+// WhereChainType applies the entql string predicate on the chain_type field.
+func (f *EndpointFilter) WhereChainType(p entql.StringP) {
+	f.Where(p.Field(endpoint.FieldChainType))
+}
+
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *EndpointFilter) WhereChainID(p entql.StringP) {
+	f.Where(p.Field(endpoint.FieldChainID))
+}
+
+// WhereAddress applies the entql string predicate on the address field.
+func (f *EndpointFilter) WhereAddress(p entql.StringP) {
+	f.Where(p.Field(endpoint.FieldAddress))
+}
+
+// WhereState applies the entql string predicate on the state field.
+func (f *EndpointFilter) WhereState(p entql.StringP) {
+	f.Where(p.Field(endpoint.FieldState))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (sq *SnapshotQuery) addPredicate(pred func(s *sql.Selector)) {
 	sq.predicates = append(sq.predicates, pred)
 }
@@ -421,7 +517,7 @@ type SnapshotFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SnapshotFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -501,7 +597,7 @@ type SyncTaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SyncTaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -601,7 +697,7 @@ type TokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -741,7 +837,7 @@ type TransferFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransferFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

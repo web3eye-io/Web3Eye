@@ -198,6 +198,30 @@ func (f ContractMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ContractMutation", m)
 }
 
+// The EndpointQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EndpointQueryRuleFunc func(context.Context, *ent.EndpointQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EndpointQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EndpointQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EndpointQuery", q)
+}
+
+// The EndpointMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EndpointMutationRuleFunc func(context.Context, *ent.EndpointMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EndpointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EndpointMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EndpointMutation", m)
+}
+
 // The SnapshotQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SnapshotQueryRuleFunc func(context.Context, *ent.SnapshotQuery) error
@@ -333,6 +357,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ContractQuery:
 		return q.Filter(), nil
+	case *ent.EndpointQuery:
+		return q.Filter(), nil
 	case *ent.SnapshotQuery:
 		return q.Filter(), nil
 	case *ent.SyncTaskQuery:
@@ -351,6 +377,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.BlockMutation:
 		return m.Filter(), nil
 	case *ent.ContractMutation:
+		return m.Filter(), nil
+	case *ent.EndpointMutation:
 		return m.Filter(), nil
 	case *ent.SnapshotMutation:
 		return m.Filter(), nil

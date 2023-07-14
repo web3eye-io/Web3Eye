@@ -1,0 +1,245 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/endpoint/endpoint.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "cttypeEndpointState": {
+      "type": "string",
+      "enum": [
+        "EndpointDefault",
+        "EndpointAvaliable",
+        "EndpointUnstable",
+        "EndpointError"
+      ],
+      "default": "EndpointDefault"
+    },
+    "endpointConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Address": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "State": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "endpointCountEndpointsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "endpointCreateEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "endpointCreateEndpointsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpointEndpoint"
+          }
+        }
+      }
+    },
+    "endpointDeleteEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "endpointEndpoint": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        }
+      }
+    },
+    "endpointEndpointReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        }
+      }
+    },
+    "endpointExistEndpointCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "endpointExistEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "endpointGetEndpointOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "endpointGetEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "endpointGetEndpointsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpointEndpoint"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "endpointUpdateEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

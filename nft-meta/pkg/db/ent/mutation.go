@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
@@ -31,6 +32,7 @@ const (
 	// Node types.
 	TypeBlock    = "Block"
 	TypeContract = "Contract"
+	TypeEndpoint = "Endpoint"
 	TypeSnapshot = "Snapshot"
 	TypeSyncTask = "SyncTask"
 	TypeToken    = "Token"
@@ -2423,6 +2425,790 @@ func (m *ContractMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ContractMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Contract edge %s", name)
+}
+
+// EndpointMutation represents an operation that mutates the Endpoint nodes in the graph.
+type EndpointMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	chain_type    *string
+	chain_id      *string
+	address       *string
+	state         *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Endpoint, error)
+	predicates    []predicate.Endpoint
+}
+
+var _ ent.Mutation = (*EndpointMutation)(nil)
+
+// endpointOption allows management of the mutation configuration using functional options.
+type endpointOption func(*EndpointMutation)
+
+// newEndpointMutation creates new mutation for the Endpoint entity.
+func newEndpointMutation(c config, op Op, opts ...endpointOption) *EndpointMutation {
+	m := &EndpointMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEndpoint,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEndpointID sets the ID field of the mutation.
+func withEndpointID(id uuid.UUID) endpointOption {
+	return func(m *EndpointMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Endpoint
+		)
+		m.oldValue = func(ctx context.Context) (*Endpoint, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Endpoint.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEndpoint sets the old Endpoint of the mutation.
+func withEndpoint(node *Endpoint) endpointOption {
+	return func(m *EndpointMutation) {
+		m.oldValue = func(context.Context) (*Endpoint, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EndpointMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EndpointMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Endpoint entities.
+func (m *EndpointMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EndpointMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *EndpointMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Endpoint.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EndpointMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EndpointMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *EndpointMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *EndpointMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EndpointMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EndpointMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EndpointMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *EndpointMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *EndpointMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EndpointMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *EndpointMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *EndpointMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *EndpointMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *EndpointMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *EndpointMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetChainType sets the "chain_type" field.
+func (m *EndpointMutation) SetChainType(s string) {
+	m.chain_type = &s
+}
+
+// ChainType returns the value of the "chain_type" field in the mutation.
+func (m *EndpointMutation) ChainType() (r string, exists bool) {
+	v := m.chain_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChainType returns the old "chain_type" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldChainType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChainType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChainType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChainType: %w", err)
+	}
+	return oldValue.ChainType, nil
+}
+
+// ResetChainType resets all changes to the "chain_type" field.
+func (m *EndpointMutation) ResetChainType() {
+	m.chain_type = nil
+}
+
+// SetChainID sets the "chain_id" field.
+func (m *EndpointMutation) SetChainID(s string) {
+	m.chain_id = &s
+}
+
+// ChainID returns the value of the "chain_id" field in the mutation.
+func (m *EndpointMutation) ChainID() (r string, exists bool) {
+	v := m.chain_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChainID returns the old "chain_id" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldChainID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChainID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChainID: %w", err)
+	}
+	return oldValue.ChainID, nil
+}
+
+// ClearChainID clears the value of the "chain_id" field.
+func (m *EndpointMutation) ClearChainID() {
+	m.chain_id = nil
+	m.clearedFields[endpoint.FieldChainID] = struct{}{}
+}
+
+// ChainIDCleared returns if the "chain_id" field was cleared in this mutation.
+func (m *EndpointMutation) ChainIDCleared() bool {
+	_, ok := m.clearedFields[endpoint.FieldChainID]
+	return ok
+}
+
+// ResetChainID resets all changes to the "chain_id" field.
+func (m *EndpointMutation) ResetChainID() {
+	m.chain_id = nil
+	delete(m.clearedFields, endpoint.FieldChainID)
+}
+
+// SetAddress sets the "address" field.
+func (m *EndpointMutation) SetAddress(s string) {
+	m.address = &s
+}
+
+// Address returns the value of the "address" field in the mutation.
+func (m *EndpointMutation) Address() (r string, exists bool) {
+	v := m.address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddress returns the old "address" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldAddress(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddress: %w", err)
+	}
+	return oldValue.Address, nil
+}
+
+// ResetAddress resets all changes to the "address" field.
+func (m *EndpointMutation) ResetAddress() {
+	m.address = nil
+}
+
+// SetState sets the "state" field.
+func (m *EndpointMutation) SetState(s string) {
+	m.state = &s
+}
+
+// State returns the value of the "state" field in the mutation.
+func (m *EndpointMutation) State() (r string, exists bool) {
+	v := m.state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldState returns the old "state" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldState: %w", err)
+	}
+	return oldValue.State, nil
+}
+
+// ClearState clears the value of the "state" field.
+func (m *EndpointMutation) ClearState() {
+	m.state = nil
+	m.clearedFields[endpoint.FieldState] = struct{}{}
+}
+
+// StateCleared returns if the "state" field was cleared in this mutation.
+func (m *EndpointMutation) StateCleared() bool {
+	_, ok := m.clearedFields[endpoint.FieldState]
+	return ok
+}
+
+// ResetState resets all changes to the "state" field.
+func (m *EndpointMutation) ResetState() {
+	m.state = nil
+	delete(m.clearedFields, endpoint.FieldState)
+}
+
+// Where appends a list predicates to the EndpointMutation builder.
+func (m *EndpointMutation) Where(ps ...predicate.Endpoint) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *EndpointMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Endpoint).
+func (m *EndpointMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EndpointMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, endpoint.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, endpoint.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, endpoint.FieldDeletedAt)
+	}
+	if m.chain_type != nil {
+		fields = append(fields, endpoint.FieldChainType)
+	}
+	if m.chain_id != nil {
+		fields = append(fields, endpoint.FieldChainID)
+	}
+	if m.address != nil {
+		fields = append(fields, endpoint.FieldAddress)
+	}
+	if m.state != nil {
+		fields = append(fields, endpoint.FieldState)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EndpointMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		return m.CreatedAt()
+	case endpoint.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case endpoint.FieldDeletedAt:
+		return m.DeletedAt()
+	case endpoint.FieldChainType:
+		return m.ChainType()
+	case endpoint.FieldChainID:
+		return m.ChainID()
+	case endpoint.FieldAddress:
+		return m.Address()
+	case endpoint.FieldState:
+		return m.State()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EndpointMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case endpoint.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case endpoint.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case endpoint.FieldChainType:
+		return m.OldChainType(ctx)
+	case endpoint.FieldChainID:
+		return m.OldChainID(ctx)
+	case endpoint.FieldAddress:
+		return m.OldAddress(ctx)
+	case endpoint.FieldState:
+		return m.OldState(ctx)
+	}
+	return nil, fmt.Errorf("unknown Endpoint field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EndpointMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case endpoint.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case endpoint.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case endpoint.FieldChainType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChainType(v)
+		return nil
+	case endpoint.FieldChainID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChainID(v)
+		return nil
+	case endpoint.FieldAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddress(v)
+		return nil
+	case endpoint.FieldState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetState(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Endpoint field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EndpointMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, endpoint.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, endpoint.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, endpoint.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EndpointMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case endpoint.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case endpoint.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EndpointMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case endpoint.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case endpoint.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Endpoint numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EndpointMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(endpoint.FieldChainID) {
+		fields = append(fields, endpoint.FieldChainID)
+	}
+	if m.FieldCleared(endpoint.FieldState) {
+		fields = append(fields, endpoint.FieldState)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EndpointMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EndpointMutation) ClearField(name string) error {
+	switch name {
+	case endpoint.FieldChainID:
+		m.ClearChainID()
+		return nil
+	case endpoint.FieldState:
+		m.ClearState()
+		return nil
+	}
+	return fmt.Errorf("unknown Endpoint nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EndpointMutation) ResetField(name string) error {
+	switch name {
+	case endpoint.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case endpoint.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case endpoint.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case endpoint.FieldChainType:
+		m.ResetChainType()
+		return nil
+	case endpoint.FieldChainID:
+		m.ResetChainID()
+		return nil
+	case endpoint.FieldAddress:
+		m.ResetAddress()
+		return nil
+	case endpoint.FieldState:
+		m.ResetState()
+		return nil
+	}
+	return fmt.Errorf("unknown Endpoint field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EndpointMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EndpointMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EndpointMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EndpointMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EndpointMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EndpointMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EndpointMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Endpoint unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EndpointMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Endpoint edge %s", name)
 }
 
 // SnapshotMutation represents an operation that mutates the Snapshot nodes in the graph.

@@ -11,3 +11,10 @@ enum SyncState {
   Finish = 40;
   Failed = 50;
 }
+
+enum EndpointState {
+  EndpointDefault = 0;
+  EndpointAvaliable = 10;
+  EndpointUnstable = 20;
+  EndpointError = 40;
+}

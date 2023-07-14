@@ -5,6 +5,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
+	common_eth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	"golang.org/x/net/context"
 )
@@ -12,6 +13,8 @@ import (
 type GetEndpointChainID func(ctx context.Context, endpoint string) (ChainID string, err error)
 
 type Index interface {
+	StartIndex(ctx context.Context)
+	StopIndex()
 }
 
 type indexMGR struct {
@@ -37,7 +40,7 @@ func init() {
 		EndpointChainIDHandlers: make(map[basetype.ChainType]GetEndpointChainID),
 	}
 
-	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = eth.GetEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
 }
 
 func GetIndexMGR() *indexMGR {
