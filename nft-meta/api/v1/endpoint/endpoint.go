@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 
 	"github.com/google/uuid"
@@ -19,6 +20,8 @@ import (
 func (s *Server) CreateEndpoint(ctx context.Context, in *npool.CreateEndpointRequest) (*npool.CreateEndpointResponse, error) {
 	var err error
 
+	in.GetInfo().ChainID = nil
+	in.GetInfo().State = cttype.EndpointState_EndpointDefault.Enum()
 	info, err := crud.Create(ctx, in.GetInfo())
 	if err != nil {
 		logger.Sugar().Errorw("CreateEndpoint", "error", err)
@@ -65,6 +68,31 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *npool.UpdateEndpointReq
 
 	return &npool.UpdateEndpointResponse{
 		Info: converter.Ent2Grpc(info),
+	}, nil
+}
+
+func (s *Server) UpdateEndpoints(ctx context.Context, in *npool.UpdateEndpointsRequest) (*npool.UpdateEndpointsResponse, error) {
+	failedInfos := []*npool.FailedInfo{}
+	for _, v := range in.GetInfos() {
+		if _, err := uuid.Parse(v.GetID()); err != nil {
+			failedInfos = append(failedInfos, &npool.FailedInfo{
+				ID:  *v.ID,
+				MSG: err.Error(),
+			})
+			continue
+		}
+
+		_, err := crud.Update(ctx, v)
+		if err != nil {
+			failedInfos = append(failedInfos, &npool.FailedInfo{
+				ID:  *v.ID,
+				MSG: err.Error(),
+			})
+		}
+	}
+
+	return &npool.UpdateEndpointsResponse{
+		Infos: failedInfos,
 	}, nil
 }
 

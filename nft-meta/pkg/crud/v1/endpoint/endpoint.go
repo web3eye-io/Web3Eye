@@ -82,19 +82,8 @@ func Update(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
 	}
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		u := cli.Endpoint.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.Address != nil {
-			u.SetAddress(in.GetAddress())
-		}
-		if in.State != nil {
-			u.SetState(in.GetState().String())
-		}
-		info, err = u.Save(_ctx)
+		u = UpdateSet(u, in)
+		info, err = u.Save(ctx)
 		return err
 	})
 	if err != nil {
@@ -104,15 +93,21 @@ func Update(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
 	return info, nil
 }
 
-// func UpdateSet(u *ent.EndpointUpdateOne, in *npool.EndpointReq) *ent.EndpointUpdateOne {
-// 	if in.VectorID != nil {
-// 		u.SetVectorID(in.GetVectorID())
-// 	}
-// 	if in.Remark != nil {
-// 		u.SetRemark(in.GetRemark())
-// 	}
-// 	return u
-// }
+func UpdateSet(u *ent.EndpointUpdateOne, in *npool.EndpointReq) *ent.EndpointUpdateOne {
+	if in.ChainType != nil {
+		u.SetChainType(in.GetChainType().String())
+	}
+	if in.ChainID != nil {
+		u.SetChainID(in.GetChainID())
+	}
+	if in.Address != nil {
+		u.SetAddress(in.GetAddress())
+	}
+	if in.State != nil {
+		u.SetState(in.GetState().String())
+	}
+	return u
+}
 
 func Row(ctx context.Context, id uuid.UUID) (*ent.Endpoint, error) {
 	var info *ent.Endpoint

@@ -12,6 +12,7 @@ service Manager {
   rpc CreateEndpoint(CreateEndpointRequest) returns (CreateEndpointResponse) {}
   rpc CreateEndpoints(CreateEndpointsRequest) returns (CreateEndpointsResponse) {}
   rpc UpdateEndpoint(UpdateEndpointRequest) returns (UpdateEndpointResponse) {}
+  rpc UpdateEndpoints(UpdateEndpointsRequest) returns (UpdateEndpointsResponse) {}
   rpc GetEndpoint(GetEndpointRequest) returns (GetEndpointResponse) {}
   rpc GetEndpointOnly(GetEndpointOnlyRequest)
       returns (GetEndpointOnlyResponse) {}
@@ -71,6 +72,11 @@ message GetEndpointsResponse {
   uint32 Total = 20;
 }
 
+message FailedInfo {
+  string ID  = 10;
+  string MSG  = 20;
+}
+
 message GetEndpointOnlyRequest { Conds Conds = 10; }
 
 message GetEndpointOnlyResponse { Endpoint Info = 10; }
@@ -78,6 +84,10 @@ message GetEndpointOnlyResponse { Endpoint Info = 10; }
 message UpdateEndpointRequest { EndpointReq Info = 10; }
 
 message UpdateEndpointResponse { Endpoint Info = 10; }
+
+message UpdateEndpointsRequest { repeated EndpointReq Infos = 10; }
+
+message UpdateEndpointsResponse { repeated FailedInfo Infos = 10; }
 
 message ExistEndpointRequest { string ID = 10; }
 

@@ -15,7 +15,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
-	contract_1 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -33,7 +33,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Manager_GetContractAndTokens_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq contract_1.GetContractAndTokensReq
+	var protoReq contract.GetContractAndTokensReq
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -50,7 +50,7 @@ func request_Manager_GetContractAndTokens_0(ctx context.Context, marshaler runti
 }
 
 func local_request_Manager_GetContractAndTokens_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq contract_1.GetContractAndTokensReq
+	var protoReq contract.GetContractAndTokensReq
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

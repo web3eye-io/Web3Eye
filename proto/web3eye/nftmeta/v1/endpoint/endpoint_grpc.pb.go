@@ -25,6 +25,7 @@ type ManagerClient interface {
 	CreateEndpoint(ctx context.Context, in *CreateEndpointRequest, opts ...grpc.CallOption) (*CreateEndpointResponse, error)
 	CreateEndpoints(ctx context.Context, in *CreateEndpointsRequest, opts ...grpc.CallOption) (*CreateEndpointsResponse, error)
 	UpdateEndpoint(ctx context.Context, in *UpdateEndpointRequest, opts ...grpc.CallOption) (*UpdateEndpointResponse, error)
+	UpdateEndpoints(ctx context.Context, in *UpdateEndpointsRequest, opts ...grpc.CallOption) (*UpdateEndpointsResponse, error)
 	GetEndpoint(ctx context.Context, in *GetEndpointRequest, opts ...grpc.CallOption) (*GetEndpointResponse, error)
 	GetEndpointOnly(ctx context.Context, in *GetEndpointOnlyRequest, opts ...grpc.CallOption) (*GetEndpointOnlyResponse, error)
 	GetEndpoints(ctx context.Context, in *GetEndpointsRequest, opts ...grpc.CallOption) (*GetEndpointsResponse, error)
@@ -63,6 +64,15 @@ func (c *managerClient) CreateEndpoints(ctx context.Context, in *CreateEndpoints
 func (c *managerClient) UpdateEndpoint(ctx context.Context, in *UpdateEndpointRequest, opts ...grpc.CallOption) (*UpdateEndpointResponse, error) {
 	out := new(UpdateEndpointResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.endpoint.Manager/UpdateEndpoint", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpdateEndpoints(ctx context.Context, in *UpdateEndpointsRequest, opts ...grpc.CallOption) (*UpdateEndpointsResponse, error) {
+	out := new(UpdateEndpointsResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.endpoint.Manager/UpdateEndpoints", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,6 +149,7 @@ type ManagerServer interface {
 	CreateEndpoint(context.Context, *CreateEndpointRequest) (*CreateEndpointResponse, error)
 	CreateEndpoints(context.Context, *CreateEndpointsRequest) (*CreateEndpointsResponse, error)
 	UpdateEndpoint(context.Context, *UpdateEndpointRequest) (*UpdateEndpointResponse, error)
+	UpdateEndpoints(context.Context, *UpdateEndpointsRequest) (*UpdateEndpointsResponse, error)
 	GetEndpoint(context.Context, *GetEndpointRequest) (*GetEndpointResponse, error)
 	GetEndpointOnly(context.Context, *GetEndpointOnlyRequest) (*GetEndpointOnlyResponse, error)
 	GetEndpoints(context.Context, *GetEndpointsRequest) (*GetEndpointsResponse, error)
@@ -161,6 +172,9 @@ func (UnimplementedManagerServer) CreateEndpoints(context.Context, *CreateEndpoi
 }
 func (UnimplementedManagerServer) UpdateEndpoint(context.Context, *UpdateEndpointRequest) (*UpdateEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEndpoint not implemented")
+}
+func (UnimplementedManagerServer) UpdateEndpoints(context.Context, *UpdateEndpointsRequest) (*UpdateEndpointsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEndpoints not implemented")
 }
 func (UnimplementedManagerServer) GetEndpoint(context.Context, *GetEndpointRequest) (*GetEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEndpoint not implemented")
@@ -246,6 +260,24 @@ func _Manager_UpdateEndpoint_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).UpdateEndpoint(ctx, req.(*UpdateEndpointRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpdateEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEndpointsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpdateEndpoints(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.endpoint.Manager/UpdateEndpoints",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpdateEndpoints(ctx, req.(*UpdateEndpointsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -394,6 +426,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateEndpoint",
 			Handler:    _Manager_UpdateEndpoint_Handler,
+		},
+		{
+			MethodName: "UpdateEndpoints",
+			Handler:    _Manager_UpdateEndpoints_Handler,
 		},
 		{
 			MethodName: "GetEndpoint",

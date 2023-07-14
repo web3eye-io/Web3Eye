@@ -5,8 +5,13 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
+	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
+
 	common_eth "github.com/web3eye-io/Web3Eye/common/chains/eth"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 	"golang.org/x/net/context"
 )
 
@@ -48,13 +53,10 @@ func GetIndexMGR() *indexMGR {
 }
 
 func (pmgr *indexMGR) StartRunning(ctx context.Context) {
-	eInfos := []EndpointInfo{
-		{
-			ChainType: basetype.ChainType_Ethereum,
-			Endpoint:  "https://mainnet.infura.io/v3/03719c03f3bb46dda13decd1e58537f0",
-		},
+	resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{})
+	if err != nil {
+		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
 	}
-
 	for _, info := range eInfos {
 		if _, ok := pmgr.EndpointChainIDHandlers[info.ChainType]; !ok {
 			logger.Sugar().Errorf("have not support chain type: %v", info.ChainType.String())
@@ -64,6 +66,43 @@ func (pmgr *indexMGR) StartRunning(ctx context.Context) {
 			logger.Sugar().Errorf("cannot get chainID for chainType: %v,endpoint: %v,err: %v", info.ChainType.String(), info.Endpoint, err)
 		}
 		info.chainID = chainID
+	}
+}
+
+func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
+	conds := &endpoint.Conds{
+		State: &web3eye.StringVal{
+			Op:    "eq",
+			Value: cttype.EndpointState_EndpointDefault.String(),
+		},
+	}
+
+	resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	if err != nil {
+		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
+		return
+	}
+
+	infos := resp.GetInfos()
+	for _, info := range infos {
+		handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
+		if !ok {
+			logger.Sugar().Warnf("have not handler for chain type: %v", info.ChainType)
+		}
+
+		chainID, err := handler(ctx, info.Address)
+		if err != nil {
+			info.State = cttype.EndpointState_EndpointError
+			continue
+		}
+		info.ChainID = chainID
+		info.State = cttype.EndpointState_EndpointAvaliable
+	}
+
+	resp, err := endpointNMCli.UpdateEndpoint(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	if err != nil {
+		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
+		return
 	}
 }
 

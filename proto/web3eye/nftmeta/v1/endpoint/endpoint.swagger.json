@@ -150,6 +150,17 @@
         }
       }
     },
+    "endpointFailedInfo": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "MSG": {
+          "type": "string"
+        }
+      }
+    },
     "endpointGetEndpointOnlyResponse": {
       "type": "object",
       "properties": {
@@ -186,6 +197,17 @@
       "properties": {
         "Info": {
           "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "endpointUpdateEndpointsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpointFailedInfo"
+          }
         }
       }
     },
