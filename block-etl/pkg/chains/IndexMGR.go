@@ -53,20 +53,20 @@ func GetIndexMGR() *indexMGR {
 }
 
 func (pmgr *indexMGR) StartRunning(ctx context.Context) {
-	resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{})
-	if err != nil {
-		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
-	}
-	for _, info := range eInfos {
-		if _, ok := pmgr.EndpointChainIDHandlers[info.ChainType]; !ok {
-			logger.Sugar().Errorf("have not support chain type: %v", info.ChainType.String())
-		}
-		chainID, err := pmgr.EndpointChainIDHandlers[info.ChainType](ctx, info.Endpoint)
-		if err != nil {
-			logger.Sugar().Errorf("cannot get chainID for chainType: %v,endpoint: %v,err: %v", info.ChainType.String(), info.Endpoint, err)
-		}
-		info.chainID = chainID
-	}
+	// resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{})
+	// if err != nil {
+	// 	logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
+	// }
+	// for _, info := range eInfos {
+	// 	if _, ok := pmgr.EndpointChainIDHandlers[info.ChainType]; !ok {
+	// 		logger.Sugar().Errorf("have not support chain type: %v", info.ChainType.String())
+	// 	}
+	// 	chainID, err := pmgr.EndpointChainIDHandlers[info.ChainType](ctx, info.Endpoint)
+	// 	if err != nil {
+	// 		logger.Sugar().Errorf("cannot get chainID for chainType: %v,endpoint: %v,err: %v", info.ChainType.String(), info.Endpoint, err)
+	// 	}
+	// 	info.chainID = chainID
+	// }
 }
 
 func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
@@ -77,13 +77,14 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 		},
 	}
 
-	resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
 	if err != nil {
 		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
 		return
 	}
 
-	infos := resp.GetInfos()
+	infos := getEResp.GetInfos()
+	updateInfos := []*endpoint.EndpointReq{}
 	for _, info := range infos {
 		handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
 		if !ok {
@@ -97,12 +98,27 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 		}
 		info.ChainID = chainID
 		info.State = cttype.EndpointState_EndpointAvaliable
+
+		updateInfos = append(updateInfos, &endpoint.EndpointReq{
+			ID:        &info.ID,
+			ChainType: &info.ChainType,
+			ChainID:   &info.ChainID,
+			Address:   &info.Address,
+			State:     &info.State,
+		})
 	}
 
-	resp, err := endpointNMCli.UpdateEndpoint(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	updateEResp, err := endpointNMCli.UpdateEndpoints(ctx, &endpoint.UpdateEndpointsRequest{
+		Infos: updateInfos,
+	})
 	if err != nil {
-		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
+		logger.Sugar().Errorf("update endpoints to nft-meta failed, err: %v", err)
 		return
+	}
+	if len(updateInfos) != 0 {
+		for _, v := range updateEResp.Infos {
+			logger.Sugar().Errorf("update endpoint %v failed, err: %v", v.ID, v.MSG)
+		}
 	}
 }
 

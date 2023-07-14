@@ -60,6 +60,14 @@ func UpdateEndpoint(ctx context.Context, in *npool.UpdateEndpointRequest) (resp 
 	return resp, err
 }
 
+func UpdateEndpoints(ctx context.Context, in *npool.UpdateEndpointsRequest) (resp *npool.UpdateEndpointsResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateEndpoints(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func GetEndpoint(ctx context.Context, in *npool.GetEndpointRequest) (resp *npool.GetEndpointResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetEndpoint(ctx, in)
