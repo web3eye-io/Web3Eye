@@ -26,6 +26,8 @@ const (
 	FieldAddress = "address"
 	// FieldState holds the string denoting the state field in the database.
 	FieldState = "state"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
 	// Table holds the table name of the endpoint in the database.
 	Table = "endpoints"
 )
@@ -40,6 +42,7 @@ var Columns = []string{
 	FieldChainID,
 	FieldAddress,
 	FieldState,
+	FieldRemark,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

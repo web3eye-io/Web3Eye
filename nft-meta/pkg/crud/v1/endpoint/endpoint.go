@@ -50,6 +50,9 @@ func CreateSet(c *ent.EndpointCreate, in *npool.EndpointReq) *ent.EndpointCreate
 	if in.State != nil {
 		c.SetState(in.GetState().String())
 	}
+	if in.Remark != nil {
+		c.SetRemark(in.GetRemark())
+	}
 	return c
 }
 
@@ -105,6 +108,9 @@ func UpdateSet(u *ent.EndpointUpdateOne, in *npool.EndpointReq) *ent.EndpointUpd
 	}
 	if in.State != nil {
 		u.SetState(in.GetState().String())
+	}
+	if in.Remark != nil {
+		u.SetRemark(in.GetRemark())
 	}
 	return u
 }
@@ -184,7 +190,14 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.EndpointQuery, err
 			return nil, fmt.Errorf("invalid endpoint field")
 		}
 	}
-
+	if conds.Remark != nil {
+		switch conds.GetRemark().GetOp() {
+		case cruder.EQ:
+			stm.Where(endpoint.Remark(conds.GetRemark().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid endpoint field")
+		}
+	}
 	return stm, nil
 }
 

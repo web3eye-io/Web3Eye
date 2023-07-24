@@ -30,6 +30,8 @@ type Endpoint struct {
 	Address string `json:"address,omitempty"`
 	// State holds the value of the "state" field.
 	State string `json:"state,omitempty"`
+	// Remark holds the value of the "remark" field.
+	Remark string `json:"remark,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,7 +41,7 @@ func (*Endpoint) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case endpoint.FieldCreatedAt, endpoint.FieldUpdatedAt, endpoint.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case endpoint.FieldChainType, endpoint.FieldChainID, endpoint.FieldAddress, endpoint.FieldState:
+		case endpoint.FieldChainType, endpoint.FieldChainID, endpoint.FieldAddress, endpoint.FieldState, endpoint.FieldRemark:
 			values[i] = new(sql.NullString)
 		case endpoint.FieldID:
 			values[i] = new(uuid.UUID)
@@ -106,6 +108,12 @@ func (e *Endpoint) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				e.State = value.String
 			}
+		case endpoint.FieldRemark:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
+			} else if value.Valid {
+				e.Remark = value.String
+			}
 		}
 	}
 	return nil
@@ -154,6 +162,9 @@ func (e *Endpoint) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("state=")
 	builder.WriteString(e.State)
+	builder.WriteString(", ")
+	builder.WriteString("remark=")
+	builder.WriteString(e.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }

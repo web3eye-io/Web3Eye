@@ -105,6 +105,20 @@ func (ec *EndpointCreate) SetNillableState(s *string) *EndpointCreate {
 	return ec
 }
 
+// SetRemark sets the "remark" field.
+func (ec *EndpointCreate) SetRemark(s string) *EndpointCreate {
+	ec.mutation.SetRemark(s)
+	return ec
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (ec *EndpointCreate) SetNillableRemark(s *string) *EndpointCreate {
+	if s != nil {
+		ec.SetRemark(*s)
+	}
+	return ec
+}
+
 // SetID sets the "id" field.
 func (ec *EndpointCreate) SetID(u uuid.UUID) *EndpointCreate {
 	ec.mutation.SetID(u)
@@ -339,6 +353,14 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 		})
 		_node.State = value
 	}
+	if value, ok := ec.mutation.Remark(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: endpoint.FieldRemark,
+		})
+		_node.Remark = value
+	}
 	return _node, _spec
 }
 
@@ -502,6 +524,24 @@ func (u *EndpointUpsert) UpdateState() *EndpointUpsert {
 // ClearState clears the value of the "state" field.
 func (u *EndpointUpsert) ClearState() *EndpointUpsert {
 	u.SetNull(endpoint.FieldState)
+	return u
+}
+
+// SetRemark sets the "remark" field.
+func (u *EndpointUpsert) SetRemark(v string) *EndpointUpsert {
+	u.Set(endpoint.FieldRemark, v)
+	return u
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *EndpointUpsert) UpdateRemark() *EndpointUpsert {
+	u.SetExcluded(endpoint.FieldRemark)
+	return u
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (u *EndpointUpsert) ClearRemark() *EndpointUpsert {
+	u.SetNull(endpoint.FieldRemark)
 	return u
 }
 
@@ -683,6 +723,27 @@ func (u *EndpointUpsertOne) UpdateState() *EndpointUpsertOne {
 func (u *EndpointUpsertOne) ClearState() *EndpointUpsertOne {
 	return u.Update(func(s *EndpointUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *EndpointUpsertOne) SetRemark(v string) *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *EndpointUpsertOne) UpdateRemark() *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateRemark()
+	})
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (u *EndpointUpsertOne) ClearRemark() *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.ClearRemark()
 	})
 }
 
@@ -1028,6 +1089,27 @@ func (u *EndpointUpsertBulk) UpdateState() *EndpointUpsertBulk {
 func (u *EndpointUpsertBulk) ClearState() *EndpointUpsertBulk {
 	return u.Update(func(s *EndpointUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *EndpointUpsertBulk) SetRemark(v string) *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *EndpointUpsertBulk) UpdateRemark() *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateRemark()
+	})
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (u *EndpointUpsertBulk) ClearRemark() *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.ClearRemark()
 	})
 }
 

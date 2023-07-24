@@ -18,6 +18,7 @@ func Ent2Grpc(row *ent.Endpoint) *npool.Endpoint {
 		ChainID:   row.ChainID,
 		Address:   row.Address,
 		State:     cttype.EndpointState(cttype.EndpointState_value[row.State]),
+		Remark:    row.Remark,
 	}
 }
 

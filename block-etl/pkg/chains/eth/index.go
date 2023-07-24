@@ -38,12 +38,12 @@ type EthIndexer struct {
 	ChainType       basetype.ChainType
 	ChainID         string
 	CurrentBlockNum uint64
+	onIndex         bool
 	cancel          *context.CancelFunc
 }
 
-func NewIndexer(endpoints []string, chainID string) *EthIndexer {
+func NewIndexer(chainID string) *EthIndexer {
 	return &EthIndexer{
-		Endpoints:       endpoints,
 		BadEndpoints:    make(map[string]error),
 		ChainType:       basetype.ChainType_Ethereum,
 		ChainID:         chainID,
@@ -61,11 +61,20 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	indexBlockNum := make(chan uint64)
 	outTransfers := make(chan []*eth.TokenTransfer)
 	outTransfer := make(chan *eth.TokenTransfer)
+	e.onIndex = true
 	go e.IndexTasks(ctx, taskBlockNum)
 	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
 	go e.IndexTransfer(ctx, indexBlockNum, outTransfers)
 	go e.IndexToken(ctx, outTransfers, outTransfer)
 	go e.IndexContract(ctx, outTransfer, FindContractCreator)
+}
+
+func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
+	e.Endpoints = endpoints
+}
+
+func (e *EthIndexer) IsOnIndex() bool {
+	return e.onIndex
 }
 
 func (e *EthIndexer) StopIndex() {
@@ -75,6 +84,7 @@ func (e *EthIndexer) StopIndex() {
 		e.cancel = nil
 		e.BadEndpoints = nil
 		e.Endpoints = nil
+		e.onIndex = false
 	}
 }
 
@@ -98,7 +108,7 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 				logger.Sugar().Error(err)
 			}
 			for _, v := range resp.GetInfos() {
-				resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic})
+				resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic, CurrentBlockNum: e.CurrentBlockNum})
 				if err != nil {
 					logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				}
@@ -387,20 +397,23 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.Tok
 
 func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
 	for {
-		cli, err := eth.Client(e.Endpoints)
-		if err != nil {
-			logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-			continue
-		}
-		blockNum, err := cli.CurrentBlockNum(ctx)
-		if err != nil {
-			e.checkErr(ctx, err)
-			logger.Sugar().Errorf("failed to get current block number: %v", err)
-			continue
-		}
+		func() {
+			cli, err := eth.Client(e.Endpoints)
+			if err != nil {
+				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				return
+			}
 
-		e.CurrentBlockNum = blockNum
-		logger.Sugar().Infof("success get current block number: %v", blockNum)
+			blockNum, err := cli.CurrentBlockNum(ctx)
+			if err != nil {
+				e.checkErr(ctx, err)
+				logger.Sugar().Errorf("failed to get current block number: %v", err)
+				return
+			}
+
+			e.CurrentBlockNum = blockNum
+			logger.Sugar().Infof("success get current block number: %v", blockNum)
+		}()
 
 		select {
 		case <-time.NewTicker(updateInterval).C:

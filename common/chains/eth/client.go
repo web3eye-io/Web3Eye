@@ -23,7 +23,6 @@ type eClients struct {
 
 func (eClients eClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
 	endpoint := eClients.endpoints[rand.Intn(len(eClients.endpoints))]
-
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
 

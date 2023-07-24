@@ -2443,6 +2443,7 @@ type EndpointMutation struct {
 	chain_id      *string
 	address       *string
 	state         *string
+	remark        *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Endpoint, error)
@@ -2891,6 +2892,55 @@ func (m *EndpointMutation) ResetState() {
 	delete(m.clearedFields, endpoint.FieldState)
 }
 
+// SetRemark sets the "remark" field.
+func (m *EndpointMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *EndpointMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldRemark(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *EndpointMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[endpoint.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *EndpointMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[endpoint.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *EndpointMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, endpoint.FieldRemark)
+}
+
 // Where appends a list predicates to the EndpointMutation builder.
 func (m *EndpointMutation) Where(ps ...predicate.Endpoint) {
 	m.predicates = append(m.predicates, ps...)
@@ -2910,7 +2960,7 @@ func (m *EndpointMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EndpointMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, endpoint.FieldCreatedAt)
 	}
@@ -2931,6 +2981,9 @@ func (m *EndpointMutation) Fields() []string {
 	}
 	if m.state != nil {
 		fields = append(fields, endpoint.FieldState)
+	}
+	if m.remark != nil {
+		fields = append(fields, endpoint.FieldRemark)
 	}
 	return fields
 }
@@ -2954,6 +3007,8 @@ func (m *EndpointMutation) Field(name string) (ent.Value, bool) {
 		return m.Address()
 	case endpoint.FieldState:
 		return m.State()
+	case endpoint.FieldRemark:
+		return m.Remark()
 	}
 	return nil, false
 }
@@ -2977,6 +3032,8 @@ func (m *EndpointMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldAddress(ctx)
 	case endpoint.FieldState:
 		return m.OldState(ctx)
+	case endpoint.FieldRemark:
+		return m.OldRemark(ctx)
 	}
 	return nil, fmt.Errorf("unknown Endpoint field %s", name)
 }
@@ -3034,6 +3091,13 @@ func (m *EndpointMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetState(v)
+		return nil
+	case endpoint.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Endpoint field %s", name)
@@ -3110,6 +3174,9 @@ func (m *EndpointMutation) ClearedFields() []string {
 	if m.FieldCleared(endpoint.FieldState) {
 		fields = append(fields, endpoint.FieldState)
 	}
+	if m.FieldCleared(endpoint.FieldRemark) {
+		fields = append(fields, endpoint.FieldRemark)
+	}
 	return fields
 }
 
@@ -3129,6 +3196,9 @@ func (m *EndpointMutation) ClearField(name string) error {
 		return nil
 	case endpoint.FieldState:
 		m.ClearState()
+		return nil
+	case endpoint.FieldRemark:
+		m.ClearRemark()
 		return nil
 	}
 	return fmt.Errorf("unknown Endpoint nullable field %s", name)
@@ -3158,6 +3228,9 @@ func (m *EndpointMutation) ResetField(name string) error {
 		return nil
 	case endpoint.FieldState:
 		m.ResetState()
+		return nil
+	case endpoint.FieldRemark:
+		m.ResetRemark()
 		return nil
 	}
 	return fmt.Errorf("unknown Endpoint field %s", name)

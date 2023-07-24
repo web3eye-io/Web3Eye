@@ -30,6 +30,7 @@ message EndpointReq {
   optional string ChainID = 30;
   optional string Address = 40;
   optional cttype.EndpointState State = 50;
+  optional string Remark = 60;
 }
 
 message Endpoint {
@@ -38,6 +39,7 @@ message Endpoint {
   string ChainID = 30;
   string Address = 40;
   cttype.EndpointState State = 50;
+  string Remark = 60;
 }
 
 message Conds {
@@ -46,6 +48,7 @@ message Conds {
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Address = 40;
   web3eye.StringVal State = 50;
+  web3eye.StringVal Remark = 60;
   web3eye.StringSliceVal IDs = 160;
 }
 

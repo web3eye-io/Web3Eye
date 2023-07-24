@@ -16,9 +16,12 @@ import (
 )
 
 type GetEndpointChainID func(ctx context.Context, endpoint string) (ChainID string, err error)
+type NewIndexer func(chainID string) *Index
 
 type Index interface {
 	StartIndex(ctx context.Context)
+	IsOnIndex() bool
+	UpdateEndpoints(endpoints []string)
 	StopIndex()
 }
 
@@ -26,12 +29,7 @@ type indexMGR struct {
 	UpdateInterval          time.Duration
 	EndpointChainIDHandlers map[basetype.ChainType]GetEndpointChainID
 	Indexs                  map[basetype.ChainType]map[string]Index
-}
-
-type EndpointInfo struct {
-	ChainType basetype.ChainType
-	Endpoint  string
-	chainID   string
+	endpointGroups          map[basetype.ChainType]map[string][]string
 }
 
 var (
@@ -42,9 +40,12 @@ var (
 func init() {
 	pMGR = &indexMGR{
 		UpdateInterval:          UpdateInterval,
+		Indexs:                  make(map[basetype.ChainType]map[string]Index),
 		EndpointChainIDHandlers: make(map[basetype.ChainType]GetEndpointChainID),
+		endpointGroups:          make(map[basetype.ChainType]map[string][]string),
 	}
 
+	// 应该改用注册的方式
 	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
 }
 
@@ -52,21 +53,12 @@ func GetIndexMGR() *indexMGR {
 	return pMGR
 }
 
-func (pmgr *indexMGR) StartRunning(ctx context.Context) {
-	// resp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{})
-	// if err != nil {
-	// 	logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
-	// }
-	// for _, info := range eInfos {
-	// 	if _, ok := pmgr.EndpointChainIDHandlers[info.ChainType]; !ok {
-	// 		logger.Sugar().Errorf("have not support chain type: %v", info.ChainType.String())
-	// 	}
-	// 	chainID, err := pmgr.EndpointChainIDHandlers[info.ChainType](ctx, info.Endpoint)
-	// 	if err != nil {
-	// 		logger.Sugar().Errorf("cannot get chainID for chainType: %v,endpoint: %v,err: %v", info.ChainType.String(), info.Endpoint, err)
-	// 	}
-	// 	info.chainID = chainID
-	// }
+func (pmgr *indexMGR) Run(ctx context.Context) {
+	for {
+		pmgr.checkNewEndpoints(ctx)
+		pmgr.checkAvaliableEndpoints(ctx)
+		<-time.NewTicker(UpdateInterval).C
+	}
 }
 
 func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
@@ -122,12 +114,68 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	}
 }
 
-func (pmgr *indexMGR) AddEndpoint(info EndpointInfo) {
-	if _, ok := pmgr.Indexs[info.ChainType]; !ok {
-		pmgr.Indexs[info.ChainType] = make(map[string]Index)
+func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
+	conds := &endpoint.Conds{
+		State: &web3eye.StringVal{
+			Op:    "eq",
+			Value: cttype.EndpointState_EndpointAvaliable.String(),
+		},
 	}
 
-	if _, ok := pmgr.Indexs[info.ChainType][info.chainID]; !ok {
-		pmgr.Indexs[info.ChainType][info.chainID] = &eth.EthIndexer{}
+	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	if err != nil {
+		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
+		return
+	}
+
+	endpointGroups := make(map[basetype.ChainType]map[string][]string)
+
+	infos := getEResp.GetInfos()
+	for _, info := range infos {
+		if _, ok := endpointGroups[info.ChainType]; !ok {
+			endpointGroups[info.ChainType] = make(map[string][]string)
+		}
+		if _, ok := endpointGroups[info.ChainType][info.ChainID]; !ok {
+			endpointGroups[info.ChainType][info.ChainID] = []string{}
+		}
+		endpointGroups[info.ChainType][info.ChainID] = append(endpointGroups[info.ChainType][info.ChainID], info.Address)
+	}
+
+	// check if have no endpoints,will be stop
+	for chainType, v := range pmgr.endpointGroups {
+		for chainID := range v {
+			if _, ok := endpointGroups[chainType][chainID]; !ok {
+				pmgr.Indexs[chainType][chainID].StopIndex()
+			}
+		}
+	}
+
+	// update endpoints for ever indexer
+	pmgr.endpointGroups = endpointGroups
+	for chainType, v := range pmgr.endpointGroups {
+		for chainID, endpoints := range v {
+			pmgr.updateEndpoints(ctx, chainType, chainID, endpoints)
+		}
+	}
+}
+
+func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.ChainType, chainID string, endpoints []string) {
+	if _, ok := pmgr.Indexs[chanType]; !ok {
+		pmgr.Indexs[chanType] = make(map[string]Index)
+	}
+
+	if _, ok := pmgr.Indexs[chanType][chainID]; !ok {
+		switch chanType {
+		case basetype.ChainType_Ethereum:
+			pmgr.Indexs[chanType][chainID] = eth.NewIndexer(chainID)
+		default:
+			logger.Sugar().Warnf("have no chainType: %v chainID: %v indexer type,will skip", chanType, chainID)
+			return
+		}
+	}
+
+	pmgr.Indexs[chanType][chainID].UpdateEndpoints(endpoints)
+	if !pmgr.Indexs[chanType][chainID].IsOnIndex() {
+		pmgr.Indexs[chanType][chainID].StartIndex(ctx)
 	}
 }

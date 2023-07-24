@@ -97,18 +97,18 @@ def QueueDealImageURL2Vector():
                     logging.error(e)
                     continue
 
-                file_s3_key = os.path.basename(image_path)
-                # put the file to s3
-                ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
-                if ok:
-                    logging.info(f"put the file {file_s3_key} to s3")
-                    report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
+                # file_s3_key = os.path.basename(image_path)
+                # # put the file to s3
+                # ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
+                # if ok:
+                #     logging.info(f"put the file {file_s3_key} to s3")
+                #     report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
 
-                os.remove(path=image_path)
+                # os.remove(path=image_path)
 
-                vectorInfo.success = True
-                producer.produce(pTopic, json.dumps(
-                    vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
+                # vectorInfo.success = True
+                # producer.produce(pTopic, json.dumps(
+                #     vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
 
     except KeyboardInterrupt:
         pass

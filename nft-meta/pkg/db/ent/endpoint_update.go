@@ -135,6 +135,26 @@ func (eu *EndpointUpdate) ClearState() *EndpointUpdate {
 	return eu
 }
 
+// SetRemark sets the "remark" field.
+func (eu *EndpointUpdate) SetRemark(s string) *EndpointUpdate {
+	eu.mutation.SetRemark(s)
+	return eu
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (eu *EndpointUpdate) SetNillableRemark(s *string) *EndpointUpdate {
+	if s != nil {
+		eu.SetRemark(*s)
+	}
+	return eu
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (eu *EndpointUpdate) ClearRemark() *EndpointUpdate {
+	eu.mutation.ClearRemark()
+	return eu
+}
+
 // Mutation returns the EndpointMutation object of the builder.
 func (eu *EndpointUpdate) Mutation() *EndpointMutation {
 	return eu.mutation
@@ -315,6 +335,19 @@ func (eu *EndpointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: endpoint.FieldState,
 		})
 	}
+	if value, ok := eu.mutation.Remark(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: endpoint.FieldRemark,
+		})
+	}
+	if eu.mutation.RemarkCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: endpoint.FieldRemark,
+		})
+	}
 	_spec.Modifiers = eu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -440,6 +473,26 @@ func (euo *EndpointUpdateOne) SetNillableState(s *string) *EndpointUpdateOne {
 // ClearState clears the value of the "state" field.
 func (euo *EndpointUpdateOne) ClearState() *EndpointUpdateOne {
 	euo.mutation.ClearState()
+	return euo
+}
+
+// SetRemark sets the "remark" field.
+func (euo *EndpointUpdateOne) SetRemark(s string) *EndpointUpdateOne {
+	euo.mutation.SetRemark(s)
+	return euo
+}
+
+// SetNillableRemark sets the "remark" field if the given value is not nil.
+func (euo *EndpointUpdateOne) SetNillableRemark(s *string) *EndpointUpdateOne {
+	if s != nil {
+		euo.SetRemark(*s)
+	}
+	return euo
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (euo *EndpointUpdateOne) ClearRemark() *EndpointUpdateOne {
+	euo.mutation.ClearRemark()
 	return euo
 }
 
@@ -651,6 +704,19 @@ func (euo *EndpointUpdateOne) sqlSave(ctx context.Context) (_node *Endpoint, err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: endpoint.FieldState,
+		})
+	}
+	if value, ok := euo.mutation.Remark(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: endpoint.FieldRemark,
+		})
+	}
+	if euo.mutation.RemarkCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: endpoint.FieldRemark,
 		})
 	}
 	_spec.Modifiers = euo.modifiers

@@ -77,6 +77,7 @@ var (
 		{Name: "chain_id", Type: field.TypeString, Nullable: true},
 		{Name: "address", Type: field.TypeString},
 		{Name: "state", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true},
 	}
 	// EndpointsTable holds the schema information for the "endpoints" table.
 	EndpointsTable = &schema.Table{

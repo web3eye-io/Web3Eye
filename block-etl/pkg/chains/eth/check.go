@@ -17,9 +17,9 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	updateInfos := []*endpoint.EndpointReq{}
 	// extract wrong endpoints
 	for _, v := range e.Endpoints {
-		_, err := eth.GetEndpointChainID(ctx, v)
-		if err != nil {
-			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, err)
+		_, checkErr := eth.GetEndpointChainID(ctx, v)
+		if checkErr != nil {
+			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, checkErr)
 			conds := &endpoint.Conds{
 				ChainType: &web3eye.StringVal{
 					Op:    "eq",
@@ -36,12 +36,14 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 				continue
 			}
 			for _, info := range getEResp.GetInfos() {
+				remark := checkErr.Error()
 				updateInfos = append(updateInfos, &endpoint.EndpointReq{
 					ID:        &info.ID,
 					ChainType: &info.ChainType,
 					ChainID:   &info.ChainID,
 					Address:   &info.Address,
 					State:     cttype.EndpointState_EndpointError.Enum(),
+					Remark:    &remark,
 				})
 			}
 		}
@@ -66,17 +68,24 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 }
 
 func (e *EthIndexer) checkErr(ctx context.Context, err error) (retry bool) {
-	if strings.Contains(err.Error(), "context deadline exceeded") {
-		return true
-	}
-	// TODO:should check the real err
-	if strings.Contains(err.Error(), "limit exceeded") {
-		e.CheckEndpointAndDeal(ctx)
-		if len(e.Endpoints) == 0 {
-			e.StopIndex()
-			return false
+	retryErrs := []string{"context deadline exceeded"}
+	for _, v := range retryErrs {
+		if strings.Contains(err.Error(), v) {
+			return true
 		}
-		return true
 	}
+
+	stopErrs := []string{"401 Unauthorized", "429"}
+	for _, v := range stopErrs {
+		if strings.Contains(err.Error(), v) {
+			e.CheckEndpointAndDeal(ctx)
+			if len(e.Endpoints) == 0 {
+				e.StopIndex()
+				return false
+			}
+			return true
+		}
+	}
+
 	return false
 }

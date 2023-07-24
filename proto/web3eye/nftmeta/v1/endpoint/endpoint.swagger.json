@@ -53,6 +53,9 @@
         "State": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
         "IDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         }
@@ -111,6 +114,9 @@
         },
         "State": {
           "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
         }
       }
     },
@@ -131,6 +137,9 @@
         },
         "State": {
           "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
         }
       }
     },
