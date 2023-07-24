@@ -59,6 +59,7 @@ NFT-Meta主要维护四个表：
 4 **SyncTasks**  同步任务
 
 NFT-Meta提供GRPC和HTTP两种协议的API接口，GRPC主要提供给对内的微服务模块，HTTP对外提供服务；向量数据主要存在Milvus中，关系型数据主要存在MySql中。Milvus与MySql中的数据依靠Milvus提供的ID关联。  
+
 Milvus中结构为：
 
 {  
