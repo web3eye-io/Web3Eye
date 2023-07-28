@@ -3,16 +3,27 @@ syntax = "proto3";
 package nftmeta.v1.token;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token";
+import "google/api/annotations.proto";
 import "web3eye/web3eye.proto";
 import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse) {}
   rpc CreateTokens(CreateTokensRequest) returns (CreateTokensResponse) {}
-  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {}
+  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {
+    option (google.api.http) = {
+      post : "/v1/update/token"
+      body : "*"
+    };
+  }
   rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {}
   rpc GetTokenOnly(GetTokenOnlyRequest) returns (GetTokenOnlyResponse) {}
-  rpc GetTokens(GetTokensRequest) returns (GetTokensResponse) {}
+  rpc GetTokens(GetTokensRequest) returns (GetTokensResponse) {
+    option (google.api.http) = {
+      post : "/v1/get/tokens"
+      body : "*"
+    };
+  }
   rpc ExistToken(ExistTokenRequest) returns (ExistTokenResponse) {}
   rpc ExistTokenConds(ExistTokenCondsRequest)
       returns (ExistTokenCondsResponse) {}

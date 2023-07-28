@@ -12,12 +12,9 @@ import (
 	"net/http"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/web3eye-io/Web3Eye/common/ctkafka"
 	"github.com/web3eye-io/Web3Eye/config"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
-	"github.com/google/uuid"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -25,8 +22,6 @@ import (
 
 var (
 	ICServer = config.GetConfig().ImageConverter.Address
-	producer *ctkafka.CTProducer
-	consumer *ctkafka.CTConsumer
 )
 
 type Img2VectorResp struct {
@@ -41,29 +36,6 @@ type VectorInfo struct {
 	Vector  []float32 `json:"vector"`
 	Msg     string    `json:"msg"`
 	Success bool      `json:"success"`
-}
-
-func init() {
-	err := ctkafka.CreateTopic(context.Background(), config.GetConfig().ImageConverter.TaskInputTopic)
-	if err != nil {
-		panic(err)
-	}
-	err = ctkafka.CreateTopic(context.Background(), config.GetConfig().ImageConverter.TaskOutputTopic)
-	if err != nil {
-		panic(err)
-	}
-	producer, err = ctkafka.NewCTProducer(config.GetConfig().ImageConverter.TaskInputTopic)
-	if err != nil {
-		panic(err)
-	}
-	consumer, err = ctkafka.NewCTConsumer(config.GetConfig().ImageConverter.TaskOutputTopic)
-	if err != nil {
-		panic(err)
-	}
-
-	go func() {
-		takeInVectorTask()
-	}()
 }
 
 func ImgURLConvertVector(imgURL string) ([]float32, error) {
@@ -109,44 +81,6 @@ func ImgURLConvertVector(imgURL string) ([]float32, error) {
 	}
 
 	return resp.Vector, nil
-}
-
-func QueueDealVector(info *ent.Token) error {
-	err := producer.Produce([]byte(info.ID.String()), []byte(info.ImageURL))
-	if err != nil {
-		err = HTTPDealVector(context.Background(), info)
-	}
-	return err
-}
-
-func takeInVectorTask() {
-	err := consumer.Consume(func(m *kafka.Message) {
-		vectorInfo := &VectorInfo{}
-		err := json.Unmarshal(m.Value, vectorInfo)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-
-		infoID, err := uuid.Parse(vectorInfo.ID)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-		// query record and check it`s vector_state
-		info, err := crud.Row(context.Background(), infoID)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-		err = storeToDBAndMilvus(context.Background(), info, vectorInfo.Vector)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
-	}, func(retryNum int) bool { return true })
-	if err != nil {
-		logger.Sugar().Error(err)
-	}
 }
 
 func HTTPDealVector(ctx context.Context, info *ent.Token) error {

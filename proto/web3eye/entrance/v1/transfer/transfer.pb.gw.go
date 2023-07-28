@@ -16,7 +16,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
-	transfer_1 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
+	transfer_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -102,7 +102,7 @@ func local_request_Manager_GetTransferOnly_0(ctx context.Context, marshaler runt
 }
 
 func request_Manager_GetTransfers_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq transfer_1.GetTransfersRequest
+	var protoReq transfer_0.GetTransfersRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -119,7 +119,7 @@ func request_Manager_GetTransfers_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_GetTransfers_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq transfer_1.GetTransfersRequest
+	var protoReq transfer_0.GetTransfersRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -136,7 +136,7 @@ func local_request_Manager_GetTransfers_0(ctx context.Context, marshaler runtime
 }
 
 func request_Manager_CountTransfers_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq transfer_1.CountTransfersRequest
+	var protoReq transfer_0.CountTransfersRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -153,7 +153,7 @@ func request_Manager_CountTransfers_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Manager_CountTransfers_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq transfer_1.CountTransfersRequest
+	var protoReq transfer_0.CountTransfersRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

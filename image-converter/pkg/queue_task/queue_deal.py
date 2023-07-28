@@ -65,62 +65,50 @@ def QueueDealImageURL2Vector():
     # Poll for new messages from Kafka and print them.
     try:
         while True:
-            msg = consumer.poll(60.0)
             vectorInfo = VectorInfo(success=False)
-            logging.info("get msg",msg.value().decode('utf-8'), msg.key().decode('utf-8'))
-            vectorInfo.url = msg.value().decode('utf-8')
-            vectorInfo.id = msg.key().decode('utf-8')
+            vectorInfo.url = "" 
+            vectorInfo.id = ""
 
             if vectorInfo.url == "":
                 continue
     
-            # when have no data,producer flush
-            if msg is None:
-                continue
-            elif msg.error():
-                logging.error("ERROR: %s".format(msg.error()))
-            else:
-                try:
-                    image_path, ok = imggetter.DownloadUrlImg(vectorInfo.url)
-                    if not ok:
-                        vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
-                        logging.warning(vectorInfo.msg)
-                        vectorInfo.success = False
-                        producer.produce(pTopic, json.dumps(
-                            vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-                        continue
-
-                    imgcheck.CheckImg(path=image_path)
-                    vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
-
-                    file_s3_key = os.path.basename(image_path)
-                    # put the file to s3
-                    ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
-                    if ok:
-                        logging.info(f"put the file {file_s3_key} to s3")
-                        report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
-
-                    os.remove(path=image_path)
-
-                    vectorInfo.success = True
+            try:
+                image_path, ok = imggetter.DownloadUrlImg(vectorInfo.url)
+                if not ok:
+                    vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
+                    logging.warning(vectorInfo.msg)
+                    vectorInfo.success = False
                     producer.produce(pTopic, json.dumps(
                         vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-                except Exception as e:
-                    logging.error(e)
                     continue
 
-                # file_s3_key = os.path.basename(image_path)
-                # # put the file to s3
-                # ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
-                # if ok:
-                #     logging.info(f"put the file {file_s3_key} to s3")
-                #     report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
+                imgcheck.CheckImg(path=image_path)
+                vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
 
-                # os.remove(path=image_path)
+                file_s3_key = os.path.basename(image_path)
+                # put the file to s3
 
-                # vectorInfo.success = True
-                # producer.produce(pTopic, json.dumps(
-                #     vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
+                os.remove(path=image_path)
+
+                vectorInfo.success = True
+                producer.produce(pTopic, json.dumps(
+                    vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
+            except Exception as e:
+                logging.error(e)
+                continue
+
+            # file_s3_key = os.path.basename(image_path)
+            # # put the file to s3
+            # ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
+            # if ok:
+            #     logging.info(f"put the file {file_s3_key} to s3")
+            #     report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
+
+            # os.remove(path=image_path)
+
+            # vectorInfo.success = True
+            # producer.produce(pTopic, json.dumps(
+            #     vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
 
     except KeyboardInterrupt:
         pass
@@ -142,4 +130,19 @@ def report_file_to_gen_car(id:str,file_s3_key)-> bool:
             )
         return True
     except:
-        return False    
+        return False
+
+def get_waiting_tokens()-> list:
+    try:
+        http = urllib3.PoolManager()
+        data = json.dumps({"Conds":{"VectorState":{"Op":"eq","Value":"Waiting"}}}).encode()
+        config.nft_meta_ip="127.0.0.1"
+        resp=http.request(
+            method="POST",
+            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
+            body=data
+            ).data
+        return json.loads(resp)["Infos"]
+    except Exception as e:
+        logging.error(e)
+        return []

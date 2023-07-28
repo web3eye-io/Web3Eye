@@ -38,6 +38,9 @@ minio_token_image_bucket=Config().config["minio_token_image_bucket"]
 gen_car_ip=Config().config["gen_car_ip"]
 gen_car_http_port=Config().config["gen_car_http_port"]
 
+nft_meta_ip=Config().config["nft_meta_ip"]
+nft_meta_http_port=Config().config["nft_meta_http_port"]
+
 
 # use demo
 # Config().config["mysql_ip"]

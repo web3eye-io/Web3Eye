@@ -6,7 +6,6 @@ import (
 
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,13 +25,6 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	go func() {
-		err = imageconvert.QueueDealVector(info)
-		if err != nil {
-			logger.Sugar().Error(err)
-		}
-	}()
-
 	return &npool.CreateTokenResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
@@ -51,15 +43,6 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 		logger.Sugar().Errorw("CreateTokens", "error", err)
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
 	}
-
-	go func() {
-		for i := 0; i < len(rows); i++ {
-			err = imageconvert.QueueDealVector(rows[i])
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-		}
-	}()
 
 	return &npool.CreateTokensResponse{
 		Infos: converter.Ent2GrpcMany(rows),
