@@ -8,6 +8,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
@@ -26,25 +27,14 @@ const (
 
 // eventHash represents an event keccak256 hash
 type eventHash string
-type TokenTransfer struct {
-	Contract    string
-	TokenType   basetype.TokenType
-	TokenID     string
-	From        string
-	To          string
-	Amount      uint64
-	BlockNumber uint64
-	TxHash      string
-	BlockHash   string
-}
 
 var (
 	erc1155ABI, _ = contracts.IERC1155MetaData.GetAbi()
 )
 
 //nolint:gocritic
-func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
-	result := make([]*TokenTransfer, 0)
+func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
+	result := make([]*chains.TokenTransfer, 0)
 	for _, pLog := range pLogs {
 		switch {
 		case strings.EqualFold(pLog.Topics[0].Hex(), string(transferEventHash)):
@@ -53,7 +43,7 @@ func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 				continue
 			}
 
-			result = append(result, &TokenTransfer{
+			result = append(result, &chains.TokenTransfer{
 				From:        pLog.Topics[1].Hex(),
 				To:          pLog.Topics[2].Hex(),
 				Contract:    pLog.Address.Hex(),
@@ -83,7 +73,7 @@ func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			if !ok {
 				panic("Failed to unpack TransferSingle event, value not found")
 			}
-			result = append(result, &TokenTransfer{
+			result = append(result, &chains.TokenTransfer{
 				From:        pLog.Topics[2].Hex(),
 				To:          pLog.Topics[3].Hex(),
 				Contract:    pLog.Address.Hex(),
@@ -116,7 +106,7 @@ func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 			}
 
 			for j := 0; j < len(ids); j++ {
-				result = append(result, &TokenTransfer{
+				result = append(result, &chains.TokenTransfer{
 					From:        pLog.Topics[2].Hex(),
 					To:          pLog.Topics[3].Hex(),
 					Contract:    pLog.Address.Hex(),
@@ -133,14 +123,14 @@ func (e *eClients) logsToTransfer(pLogs []types.Log) ([]*TokenTransfer, error) {
 	return result, nil
 }
 
-func (e *eClients) TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*TokenTransfer, error) {
+func (ethCli *ethClients) TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*chains.TokenTransfer, error) {
 	topics := [][]common.Hash{{
 		common.HexToHash(string(transferEventHash)),
 		common.HexToHash(string(transferSingleEventHash)),
 		common.HexToHash(string(transferBatchEventHash)),
 	}}
 
-	logs, err := e.FilterLogs(ctx, ethereum.FilterQuery{
+	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock),
 		ToBlock:   big.NewInt(toBlock),
 		Topics:    topics,
@@ -149,17 +139,5 @@ func (e *eClients) TransferLogs(ctx context.Context, fromBlock, toBlock int64) (
 		return nil, err
 	}
 
-	return e.logsToTransfer(logs)
-}
-
-type Token struct {
-	ChainType basetype.ChainType
-	ChainID   int32
-	Contract  string
-	TokenType basetype.TokenType
-	TokenID   string
-	TokenURI  string
-	Owner     string
-	MediaURL  string
-	MediaType string
+	return LogsToTransfer(logs)
 }

@@ -17,12 +17,12 @@ const (
 	dialTimeout      = 3 * time.Second
 )
 
-type eClients struct {
+type ethClients struct {
 	endpoints []string
 }
 
-func (eClients eClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
-	endpoint := eClients.endpoints[rand.Intn(len(eClients.endpoints))]
+func (ethCli ethClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
+	endpoint := ethCli.endpoints[rand.Intn(len(ethCli.endpoints))]
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
 
@@ -34,7 +34,7 @@ func (eClients eClients) GetNode(ctx context.Context) (*ethclient.Client, error)
 	return cli, nil
 }
 
-func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
+func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
 	var (
 		apiErr, err error
 		retry       bool
@@ -45,12 +45,12 @@ func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Co
 		return err
 	}
 
-	for i := 0; i < utils.MinInt(MaxRetries, len(eClients.endpoints)); i++ {
+	for i := 0; i < utils.MinInt(MaxRetries, len(ethCli.endpoints)); i++ {
 		if i > 0 {
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, err = eClients.GetNode(ctx)
+		client, err = ethCli.GetNode(ctx)
 
 		if err != nil {
 			continue
@@ -70,9 +70,9 @@ func (eClients *eClients) WithClient(ctx context.Context, fn func(ctx context.Co
 	return err
 }
 
-func Client(endpoints []string) (*eClients, error) {
+func Client(endpoints []string) (*ethClients, error) {
 	if len(endpoints) == 0 {
 		return nil, errors.New("endpoints has no item")
 	}
-	return &eClients{endpoints: endpoints}, nil
+	return &ethClients{endpoints: endpoints}, nil
 }

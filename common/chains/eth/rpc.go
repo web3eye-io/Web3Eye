@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math/big"
 	"strings"
-	"sync"
 
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -17,17 +16,11 @@ import (
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
 
-const safeBlockNum = 6
-
-var (
-	lock = &sync.Mutex{}
-)
-
-func (e eClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
+func (ethCli ethClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
 	logs := []types.Log{}
 
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		logs, err = c.FilterLogs(ctx, query)
 		if err != nil {
 			return false, err
@@ -38,11 +31,11 @@ func (e eClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([
 	return logs, err
 }
 
-func (e eClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
+func (ethCli ethClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	var num uint64
 
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		num, err = c.BlockNumber(ctx)
 		if err != nil {
 			return false, err
@@ -53,7 +46,7 @@ func (e eClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	return num, err
 }
 
-func (e eClients) TokenURI(ctx context.Context, tokenType basetype.TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
+func (e ethClients) TokenURI(ctx context.Context, tokenType basetype.TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
 
 	var uri string
 	var err error
@@ -65,7 +58,7 @@ func (e eClients) TokenURI(ctx context.Context, tokenType basetype.TokenType, co
 	return uri, err
 }
 
-func (e eClients) tokenURI(
+func (ethCli ethClients) tokenURI(
 	ethClient *ethclient.Client,
 	tokenType basetype.TokenType, contractAddr,
 	tokenID string,
@@ -99,10 +92,10 @@ func (e eClients) tokenURI(
 	return "", nil
 }
 
-func (e eClients) BlockByNumber(ctx context.Context, blockNum uint64) (*types.Block, error) {
+func (ethCli ethClients) BlockByNumber(ctx context.Context, blockNum uint64) (*types.Block, error) {
 	var block *types.Block
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		block, err = c.BlockByNumber(ctx, big.NewInt(int64(blockNum)))
 		return false, err
 	})
@@ -116,18 +109,18 @@ type ContractCreator struct {
 	TxTime      uint64
 }
 
-func (e eClients) GetContractCreator(ctx context.Context, contractAddr string) (*ContractCreator, error) {
+func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr string) (*ContractCreator, error) {
 
 	var creator *ContractCreator
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
-		creator, err = e.getContractCreator(ctx, c, contractAddr)
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+		creator, err = ethCli.getContractCreator(ctx, c, contractAddr)
 		return false, err
 	})
 	return creator, err
 }
 
-func (e eClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*ContractCreator, error) {
+func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*ContractCreator, error) {
 	rHeight, err := ethClient.BlockNumber(ctx)
 	if err != nil {
 		return nil, err
@@ -186,18 +179,17 @@ type ERC721Metadata struct {
 	Symbol string
 }
 
-func (e eClients) GetERC721Metadata(ctx context.Context, contractAddr string) (*ERC721Metadata, error) {
-
+func (ethCli ethClients) GetERC721Metadata(ctx context.Context, contractAddr string) (*ERC721Metadata, error) {
 	var info *ERC721Metadata
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
-		info, err = e.getERC721Metadata(ctx, c, contractAddr)
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+		info, err = ethCli.getERC721Metadata(ctx, c, contractAddr)
 		return false, err
 	})
 	return info, err
 }
 
-func (e eClients) getERC721Metadata(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*ERC721Metadata, error) {
+func (ethCli ethClients) getERC721Metadata(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*ERC721Metadata, error) {
 	contract := common.HexToAddress(contractAddr)
 	instance, err := contracts.NewIERC721MetadataCaller(contract, ethClient)
 	if err != nil {
@@ -221,7 +213,7 @@ func (e eClients) getERC721Metadata(ctx context.Context, ethClient *ethclient.Cl
 }
 
 // ReplaceID replaces the token's ID with the given ID
-func (e eClients) ReplaceID(tokenURI, id string) string {
+func (ethCli ethClients) ReplaceID(tokenURI, id string) string {
 	_id := fmt.Sprintf("%064s", id)
 	return strings.TrimSpace(strings.ReplaceAll(tokenURI, "{id}", _id))
 }

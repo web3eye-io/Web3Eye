@@ -13,13 +13,14 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 )
 
+// check endpoints and update it`s state on db
 func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	updateInfos := []*endpoint.EndpointReq{}
 	// extract wrong endpoints
 	for _, v := range e.Endpoints {
-		_, checkErr := eth.GetEndpointChainID(ctx, v)
-		if checkErr != nil {
-			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, checkErr)
+		_, inspectErr := eth.GetEndpointChainID(ctx, v)
+		if inspectErr != nil {
+			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, inspectErr)
 			conds := &endpoint.Conds{
 				ChainType: &web3eye.StringVal{
 					Op:    "eq",
@@ -36,7 +37,7 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 				continue
 			}
 			for _, info := range getEResp.GetInfos() {
-				remark := checkErr.Error()
+				remark := inspectErr.Error()
 				updateInfos = append(updateInfos, &endpoint.EndpointReq{
 					ID:        &info.ID,
 					ChainType: &info.ChainType,
@@ -67,6 +68,7 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	}
 }
 
+// check if endpoints should be stoped by the err
 func (e *EthIndexer) checkErr(ctx context.Context, err error) (retry bool) {
 	retryErrs := []string{"context deadline exceeded"}
 	for _, v := range retryErrs {

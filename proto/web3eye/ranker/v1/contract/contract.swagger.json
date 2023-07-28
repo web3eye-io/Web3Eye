@@ -21,7 +21,8 @@
       "type": "string",
       "enum": [
         "ChainUnkonwn",
-        "Ethereum"
+        "Ethereum",
+        "Solana"
       ],
       "default": "ChainUnkonwn"
     },
@@ -31,6 +32,7 @@
         "TokenUnkonwn",
         "ERC721",
         "ERC1155",
+        "Metaplex",
         "NoURI"
       ],
       "default": "TokenUnkonwn"

@@ -11,6 +11,7 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/portto/solana-go-sdk/common"
 	"github.com/portto/solana-go-sdk/program/metaplex/tokenmeta"
+	"github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
@@ -19,12 +20,23 @@ func init() {
 }
 
 func main() {
+	cli, err := sol.Client([]string{"https://distinguished-floral-mountain.solana-mainnet.discover.quiknode.pro/c641daff8873a3f24f2f4c90aae89373707c2886/"})
+	fmt.Println(err)
+	height, err := cli.GetBlockHeight(context.Background())
+	fmt.Println(height, err)
+	block, err := cli.GetBlock(context.Background(), 190483842)
+	fmt.Println(len(block.Transactions))
+	fmt.Println(len(block.Signatures))
+	fmt.Println(block.Blockhash)
+	// transfers := sol.GetNFTTransfers(block)
+	// fmt.Println(utils.PrettyStruct(transfers))
+
 	// doSomeThing()
 	// sigchan := make(chan os.Signal, 1)
 	// signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 	// <-sigchan
 	// os.Exit(1)
-	TestSDK()
+	// TestSDK()
 }
 
 func doSomeThing() {
@@ -40,6 +52,9 @@ func doSomeThing() {
 
 	maxSupportedTransactionVersion := uint64(0)
 	rewards := false
+
+	out, err := cli.GetGenesisHash(context.Background())
+	out.String()
 	block, err := cli.GetBlockWithOpts(context.Background(), 207205793, &rpc.GetBlockOpts{
 		MaxSupportedTransactionVersion: &maxSupportedTransactionVersion,
 		Rewards:                        &rewards,
@@ -112,10 +127,6 @@ func GetNftTransfers(info *rpc.TransactionMeta, filterErrTX bool) {
 
 	fmt.Println("utils.PrettyStruct(nftTransfers)")
 	fmt.Println(utils.PrettyStruct(nftTransfers))
-}
-
-func GetTokenMeta(mint string) {
-
 }
 
 func TestSDK() {

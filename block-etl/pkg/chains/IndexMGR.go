@@ -61,6 +61,7 @@ func (pmgr *indexMGR) Run(ctx context.Context) {
 	}
 }
 
+// check for the newly created endpoints
 func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.StringVal{
@@ -114,6 +115,7 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	}
 }
 
+// check erver chantype-chainid avaliable endpoints and update it to indexer
 func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.StringVal{
@@ -159,6 +161,7 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	}
 }
 
+// update to indexer
 func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.ChainType, chainID string, endpoints []string) {
 	if _, ok := pmgr.Indexs[chanType]; !ok {
 		pmgr.Indexs[chanType] = make(map[string]Index)

@@ -62,6 +62,8 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	outTransfers := make(chan []*eth.TokenTransfer)
 	outTransfer := make(chan *eth.TokenTransfer)
 	e.onIndex = true
+
+	// TODO: can be muilti goroutine
 	go e.IndexTasks(ctx, taskBlockNum)
 	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
 	go e.IndexTransfer(ctx, indexBlockNum, outTransfers)
@@ -93,6 +95,10 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 	conds := &synctask.Conds{
 		ChainType: &ctMessage.StringVal{
 			Value: e.ChainType.String(),
+			Op:    "eq",
+		},
+		ChainID: &ctMessage.StringVal{
+			Value: e.ChainID,
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{

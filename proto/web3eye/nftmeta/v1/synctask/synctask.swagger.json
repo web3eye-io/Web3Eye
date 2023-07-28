@@ -310,7 +310,8 @@
       "type": "string",
       "enum": [
         "ChainUnkonwn",
-        "Ethereum"
+        "Ethereum",
+        "Solana"
       ],
       "default": "ChainUnkonwn"
     },
