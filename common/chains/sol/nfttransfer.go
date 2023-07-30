@@ -19,8 +19,8 @@ type NFTTokenTransfer struct {
 	TokenID string
 }
 
-func GetNftTransfersFromTX(info rpc.TransactionWithMeta, filterErrTX bool) []*NFTTokenTransfer {
-	if filterErrTX && info.Meta.Err != nil {
+func GetNftTransfersFromTX(info *rpc.TransactionMeta, filterErrTX bool) []*NFTTokenTransfer {
+	if filterErrTX && info.Err != nil {
 		return nil
 	}
 
@@ -28,13 +28,13 @@ func GetNftTransfersFromTX(info rpc.TransactionWithMeta, filterErrTX bool) []*NF
 	postNftTransfers := []rpc.TokenBalance{}
 	nftTransfers := []*NFTTokenTransfer{}
 
-	for _, v := range info.Meta.PreTokenBalances {
+	for _, v := range info.PreTokenBalances {
 		if v.UiTokenAmount.Amount == "1" && v.UiTokenAmount.Decimals == 0 {
 			preNftTransfers = append(preNftTransfers, v)
 		}
 	}
 
-	for _, v := range info.Meta.PostTokenBalances {
+	for _, v := range info.PostTokenBalances {
 		if v.UiTokenAmount.Amount == "1" && v.UiTokenAmount.Decimals == 0 {
 			postNftTransfers = append(postNftTransfers, v)
 		}
@@ -42,38 +42,50 @@ func GetNftTransfersFromTX(info rpc.TransactionWithMeta, filterErrTX bool) []*NF
 
 	for _, v1 := range postNftTransfers {
 		from := "0"
-		to := v1.Mint.String()
-		tokenID := v1.Owner.String()
+		to := v1.Owner.String()
+		tokenID := v1.Mint.String()
 		for _, v2 := range preNftTransfers {
 			if v1.Mint == v2.Mint {
 				from = v2.Owner.String()
 				continue
 			}
 		}
-
+		if from == to {
+			continue
+		}
 		nftTransfers = append(nftTransfers, &NFTTokenTransfer{
 			From:    from,
 			To:      to,
 			TokenID: tokenID,
 		})
 	}
+
 	return nftTransfers
 }
 
 func GetNFTTransfers(block *rpc.GetBlockResult) []*chains.TokenTransfer {
 	nftTransfers := []*chains.TokenTransfer{}
-	for i, tx := range block.Transactions {
-		_nftTransfers := GetNftTransfersFromTX(tx, true)
+	for _, txWithMeta := range block.Transactions {
+		signature := ""
+		tx, err := txWithMeta.GetTransaction()
+		if err == nil && len(tx.Signatures) > 0 {
+			// The signature that can be found is the first in the signature list of the tx
+			signature = tx.Signatures[0].String()
+		}
+
+		_nftTransfers := GetNftTransfersFromTX(txWithMeta.Meta, true)
+
 		for _, transfer := range _nftTransfers {
 			nftTransfers = append(nftTransfers,
 				&chains.TokenTransfer{
-					TokenType:   basetype.TokenType_Metaplex,
-					TokenID:     transfer.TokenID,
-					From:        transfer.From,
-					To:          transfer.To,
-					Amount:      1,
-					BlockNumber: tx.Slot,
-					TxHash:      block.Signatures[i].String(),
+					TokenType: basetype.TokenType_Metaplex,
+					TokenID:   transfer.TokenID,
+					From:      transfer.From,
+					To:        transfer.To,
+					Amount:    1,
+					// cannot get the tx`s blocknum
+					BlockNumber: block.ParentSlot + 1,
+					TxHash:      signature,
 					BlockHash:   block.Blockhash.String(),
 				})
 		}

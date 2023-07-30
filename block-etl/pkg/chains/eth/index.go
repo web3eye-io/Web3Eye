@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
@@ -59,8 +60,8 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 
 	taskBlockNum := make(chan uint64)
 	indexBlockNum := make(chan uint64)
-	outTransfers := make(chan []*eth.TokenTransfer)
-	outTransfer := make(chan *eth.TokenTransfer)
+	outTransfers := make(chan []*chains.TokenTransfer)
+	outTransfer := make(chan *chains.TokenTransfer)
 	e.onIndex = true
 
 	// TODO: can be muilti goroutine
@@ -168,7 +169,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 	}
 }
 
-func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, outTransfers chan []*eth.TokenTransfer) {
+func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, outTransfers chan []*chains.TokenTransfer) {
 	for {
 		select {
 		case num := <-inBlockNum:
@@ -218,7 +219,7 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 	}
 }
 
-func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.TokenTransfer, outTransfer chan *eth.TokenTransfer) {
+func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.TokenTransfer, outTransfer chan *chains.TokenTransfer) {
 	for {
 		select {
 		case transfers := <-inTransfers:
@@ -309,7 +310,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*eth.Tok
 	}
 }
 
-func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *eth.TokenTransfer, findContractCreator bool) {
+func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.TokenTransfer, findContractCreator bool) {
 	for {
 		select {
 		case transfer := <-inTransfer:

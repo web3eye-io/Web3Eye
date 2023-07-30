@@ -5,7 +5,6 @@ import os
 import uuid
 import urllib3
 import logging
-from confluent_kafka import Consumer, Producer
 from pkg.model.resnet50 import Resnet50
 from pkg.utils import imggetter
 from pkg.utils import imgcheck
@@ -44,79 +43,38 @@ class VectorInfoEncoder(json.JSONEncoder):
 
 
 def QueueDealImageURL2Vector():
-    # Parse the command line.
-    cConfig = {'bootstrap.servers': 'kafka-headless:9092',
-               'group.id': 'python_default',
-               'auto.offset.reset': 'earliest',
-               'client.id': uuid.uuid4()}
-    pConfig = {'bootstrap.servers': 'kafka-headless:9092'}
+    while True:
+        try:
+            # get tasks
+            infos=get_waiting_tokens(10)
+            for info in infos:
+                try:
+                    # init info
+                    vectorInfo = VectorInfo(success=False)
+                    vectorInfo.url = info["TokenURI"] 
+                    vectorInfo.id = info["ID"]
 
-    # Create Consumer instance
-    consumer = Consumer(cConfig)
-    producer = Producer(pConfig)
-    pTopic = "image-converter-output"
-    cTopic = "image-converter-input"
+                    if vectorInfo.url != "":
+                        image_path, ok = imggetter.DownloadUrlImg(vectorInfo.url)
+                        if not ok:
+                            vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
+                            logging.warning(vectorInfo.msg)
+                            vectorInfo.success = False
+                            continue
 
-    def reset_offset(consumer, partitions):
-        consumer.assign(partitions)
+                        imgcheck.CheckImg(path=image_path)
+                        vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
 
-    consumer.subscribe([cTopic], on_assign=reset_offset)
+                        os.remove(path=image_path)
+                        vectorInfo.success = True
+                except Exception as e:
+                    vectorInfo.msg=e
+                finally:
+                    update_token_vstate(vectorInfo.id,vectorInfo.success,vectorInfo.msg)
 
-    # Poll for new messages from Kafka and print them.
-    try:
-        while True:
-            vectorInfo = VectorInfo(success=False)
-            vectorInfo.url = "" 
-            vectorInfo.id = ""
-
-            if vectorInfo.url == "":
-                continue
-    
-            try:
-                image_path, ok = imggetter.DownloadUrlImg(vectorInfo.url)
-                if not ok:
-                    vectorInfo.msg = "url format cannot parse,url: " + vectorInfo.url
-                    logging.warning(vectorInfo.msg)
-                    vectorInfo.success = False
-                    producer.produce(pTopic, json.dumps(
-                        vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-                    continue
-
-                imgcheck.CheckImg(path=image_path)
-                vectorInfo.vector = Resnet50().resnet50_extract_feat(img_path=image_path)
-
-                file_s3_key = os.path.basename(image_path)
-                # put the file to s3
-
-                os.remove(path=image_path)
-
-                vectorInfo.success = True
-                producer.produce(pTopic, json.dumps(
-                    vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-            except Exception as e:
-                logging.error(e)
-                continue
-
-            # file_s3_key = os.path.basename(image_path)
-            # # put the file to s3
-            # ok=oss.OSS().put_object_retries(file_path=image_path,key=file_s3_key,bucket=config.minio_token_image_bucket,retries=3)
-            # if ok:
-            #     logging.info(f"put the file {file_s3_key} to s3")
-            #     report_file_to_gen_car(id=vectorInfo.id,file_s3_key=file_s3_key)
-
-            # os.remove(path=image_path)
-
-            # vectorInfo.success = True
-            # producer.produce(pTopic, json.dumps(
-            #     vectorInfo, cls=VectorInfoEncoder), vectorInfo.id)
-
-    except KeyboardInterrupt:
-        pass
-    finally:
-        # Leave group and commit final offsets
-        consumer.close()
-        producer.poll(10000)
-        producer.flush()
+        except Exception as e:
+            logging.error("parse nft-token image url failed,",e)
+       
 
 def report_file_to_gen_car(id:str,file_s3_key)-> bool:
     try:
@@ -132,10 +90,10 @@ def report_file_to_gen_car(id:str,file_s3_key)-> bool:
     except:
         return False
 
-def get_waiting_tokens()-> list:
+def get_waiting_tokens(limit:int)-> list:
     try:
         http = urllib3.PoolManager()
-        data = json.dumps({"Conds":{"VectorState":{"Op":"eq","Value":"Waiting"}}}).encode()
+        data = json.dumps({"Conds":{"VectorState":{"Op":"eq","Value":"Waiting"}},"Limit":limit}).encode()
         config.nft_meta_ip="127.0.0.1"
         resp=http.request(
             method="POST",
@@ -146,3 +104,21 @@ def get_waiting_tokens()-> list:
     except Exception as e:
         logging.error(e)
         return []
+    
+def update_token_vstate(ID:str,vstate:bool,msg:str)-> any:
+    vector_state="Success"
+    if not vstate:
+        vector_state="Failed"
+    try:
+        http = urllib3.PoolManager()
+        data = json.dumps({"Info":{"ID":ID,"VectorState":vector_state,"Remark":msg}}).encode()
+        config.nft_meta_ip="127.0.0.1"
+        resp=http.request(
+            method="POST",
+            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/update/token",
+            body=data
+            ).data
+        return json.loads(resp)["Info"]
+    except Exception as e:
+        logging.error(e)
+        return 

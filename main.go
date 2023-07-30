@@ -22,15 +22,35 @@ func init() {
 func main() {
 	cli, err := sol.Client([]string{"https://distinguished-floral-mountain.solana-mainnet.discover.quiknode.pro/c641daff8873a3f24f2f4c90aae89373707c2886/"})
 	fmt.Println(err)
-	height, err := cli.GetBlockHeight(context.Background())
-	fmt.Println(height, err)
-	block, err := cli.GetBlock(context.Background(), 190483842)
-	fmt.Println(len(block.Transactions))
-	fmt.Println(len(block.Signatures))
-	fmt.Println(block.Blockhash)
-	// transfers := sol.GetNFTTransfers(block)
-	// fmt.Println(utils.PrettyStruct(transfers))
+	// height, err := cli.GetSlotHeight(context.Background())
 
+	// fmt.Println(height, err)
+	// for i := uint64(191733440); i < 191733450; i++ {
+	// 	block, err := cli.GetBlock(context.Background(), i)
+	// 	fmt.Println(err)
+
+	// 	transfers := sol.GetNFTTransfers(block)
+	// 	for _, v := range transfers {
+	// 		info, err := cli.GetMetadata(context.Background(), v.TokenID)
+	// 		fmt.Println(err)
+	// 		if info.Collection != nil {
+	// 			fmt.Println(utils.PrettyStruct(info))
+	// 		}
+
+	// 	}
+	// }
+
+	info, err := cli.GetMetadata(context.TODO(), "54ZnA77u7j6niHEyyD9ZZ6QAkqjCqKY4k6iPT82wxgJ8")
+	fmt.Println(err)
+	fmt.Println(utils.PrettyStruct(info))
+	// cli := rpc.New("https://distinguished-floral-mountain.solana-mainnet.discover.quiknode.pro/c641daff8873a3f24f2f4c90aae89373707c2886/")
+	// fmt.Println(cli.GetSlot(context.Background(), rpc.CommitmentFinalized))
+	// fmt.Println(cli.GetSlot(context.Background(), rpc.CommitmentConfirmed))
+	// txSig, err := solana.SignatureFromBase58("649pFzJcpsvdGnMA4ZTGnP3FsuxkX8Aee53M26P47txi9XcRvphKopEMKnMhZD3bu66q4Rgc5qSF6mjC4zfTb9VX")
+	// fmt.Println(err)
+	// tx, err := cli.GetTX(context.Background(), txSig)
+	// fmt.Println(utils.PrettyStruct(tx))
+	// fmt.Println(utils.PrettyStruct(sol.GetNftTransfersFromTX(tx.Meta, true)))
 	// doSomeThing()
 	// sigchan := make(chan os.Signal, 1)
 	// signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
