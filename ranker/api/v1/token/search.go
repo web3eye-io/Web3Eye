@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -120,9 +119,7 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 
 func (pt *PageBone) MarshalBinary() (data []byte, err error) {
 	data, err = json.Marshal(pt)
-	fmt.Println(utils.PrettyStruct(pt))
 	return data, err
-	// return json.Marshal(pt)
 }
 
 func (pt *PageBone) UnmarshalBinary(data []byte) error {
@@ -197,7 +194,6 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			contractRecord[v.Contract] = len(result) - 1
 		}
 	}
-
 	// count transfers and
 	for _, v := range result {
 		conds = &nftmetanpool.Conds{
@@ -215,13 +211,17 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			},
 		}
 
-		tokens, num, err := crud.Rows(ctx, conds, 0, ShowSiblinsNum)
+		// query ShowSiblinsNum+1 records,because likely to query the v-self
+		tokens, num, err := crud.Rows(ctx, conds, 0, ShowSiblinsNum+1)
 		if err != nil {
 			return nil, err
 		}
 		v.SiblingsNum = uint32(num)
 
 		for _, token := range tokens {
+			if v.GetID() == token.ID.String() {
+				continue
+			}
 			v.SiblingTokens = append(v.SiblingTokens, &rankernpool.SiblingToken{
 				ID:           token.ID.String(),
 				TokenID:      token.TokenID,
