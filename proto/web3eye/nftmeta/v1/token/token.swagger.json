@@ -48,14 +48,14 @@
         ]
       }
     },
-    "/v1/update/token": {
+    "/v1/update/image/vector": {
       "post": {
-        "operationId": "Manager_UpdateToken",
+        "operationId": "Manager_UpdateImageVector",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/tokenUpdateTokenResponse"
+              "$ref": "#/definitions/tokenUpdateImageVectorResponse"
             }
           },
           "default": {
@@ -71,7 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/tokenUpdateTokenRequest"
+              "$ref": "#/definitions/tokenUpdateImageVectorRequest"
             }
           }
         ],
@@ -426,11 +426,29 @@
         }
       }
     },
-    "tokenUpdateTokenRequest": {
+    "tokenUpdateImageVectorRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "tokenUpdateImageVectorResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/tokenTokenReq"
+          "$ref": "#/definitions/tokenToken"
         }
       }
     },

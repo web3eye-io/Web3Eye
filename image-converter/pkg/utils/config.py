@@ -35,10 +35,10 @@ minio_access_key=Config().config["minio_access_key"]
 minio_secret_key=Config().config["minio_secret_key"]
 minio_token_image_bucket=Config().config["minio_token_image_bucket"]
 
-gen_car_ip=Config().config["gen_car_ip"]
+gen_car_domain=Config().config["gen_car_domain"]
 gen_car_http_port=Config().config["gen_car_http_port"]
 
-nft_meta_ip=Config().config["nft_meta_ip"]
+nft_meta_domain=Config().config["nft_meta_domain"]
 nft_meta_http_port=Config().config["nft_meta_http_port"]
 
 

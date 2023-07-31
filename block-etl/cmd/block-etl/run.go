@@ -8,6 +8,7 @@ import (
 	"time"
 
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains"
 	"github.com/web3eye-io/Web3Eye/config"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -30,6 +31,9 @@ var runCmd = &cli.Command{
 	Action: func(c *cli.Context) error {
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+		indexMGR := chains.GetIndexMGR()
+		go indexMGR.Run(c.Context)
 
 		<-sigchan
 		os.Exit(1)

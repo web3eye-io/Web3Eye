@@ -38,6 +38,7 @@ type VectorInfo struct {
 	Success bool      `json:"success"`
 }
 
+// TODO:will be rewrite
 func ImgURLConvertVector(imgURL string) ([]float32, error) {
 	icURL := fmt.Sprintf("%v/img2vector/url", ICServer)
 	method := "POST"
@@ -83,6 +84,7 @@ func ImgURLConvertVector(imgURL string) ([]float32, error) {
 	return resp.Vector, nil
 }
 
+// TODO:will be rewrite
 func HTTPDealVector(ctx context.Context, info *ent.Token) error {
 	if info.VectorState != npool.ConvertState_Waiting.String() {
 		return errors.New("vector state is not waiting")
@@ -113,6 +115,7 @@ func HTTPDealVector(ctx context.Context, info *ent.Token) error {
 	return err
 }
 
+// TODO:will be rewrite
 func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) (err error) {
 	if len(vector) != 0 {
 		milvusmgr := milvusdb.NewNFTConllectionMGR()
@@ -141,6 +144,7 @@ func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) 
 	return
 }
 
+// TODO:will be rewrite
 // converte http request with image file to vector
 func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	// get file info

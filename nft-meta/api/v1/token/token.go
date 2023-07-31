@@ -3,9 +3,12 @@ package token
 
 import (
 	"context"
+	"fmt"
 
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -64,6 +67,60 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 	}
 
 	return &npool.UpdateTokenResponse{
+		Info: converter.Ent2Grpc(info),
+	}, nil
+}
+
+func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVectorRequest) (*npool.UpdateImageVectorResponse, error) {
+	var err error
+
+	id := in.GetID()
+	vID := int64(0)
+	vState := npool.ConvertState_Failed
+	remark := in.GetRemark()
+	if _, err := uuid.Parse(id); err != nil {
+		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	row, err := crud.Row(ctx, uuid.MustParse(id))
+	if err != nil {
+		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if len(in.Vector) > 0 {
+		milvusmgr := milvusdb.NewNFTConllectionMGR()
+
+		if row.VectorID > 0 {
+			err := milvusmgr.Delete(ctx, []int64{row.VectorID})
+			if err != nil {
+				remark = fmt.Sprintf("%v,%v", remark, err)
+			}
+		}
+
+		ids, err := milvusmgr.Create(ctx, [][milvusdb.VectorDim]float32{imageconvert.ToArrayVector(in.Vector)})
+		if err == nil {
+			vState = npool.ConvertState_Success
+			vID = ids[0]
+		} else {
+			remark = fmt.Sprintf("%v,%v", remark, err)
+		}
+	}
+
+	info, err := crud.Update(ctx, &npool.TokenReq{
+		ID:          &id,
+		VectorID:    &vID,
+		VectorState: &vState,
+		Remark:      &remark,
+	})
+
+	if err != nil {
+		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpdateImageVectorResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }

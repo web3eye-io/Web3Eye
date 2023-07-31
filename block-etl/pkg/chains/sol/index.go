@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/portto/solana-go-sdk/program/metaplex/tokenmeta"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
+	"github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
@@ -134,25 +136,24 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 	for {
 		select {
 		case blockNum := <-inBlockNum:
-			cli, err := eth.Client(e.Endpoints)
+			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				continue
 			}
-			block, err := cli.BlockByNumber(ctx, blockNum)
+			block, err := cli.GetBlock(ctx, blockNum)
 			if err != nil {
 				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				continue
 			}
-			number := block.Number().Uint64()
-			blockHash := block.Hash().String()
-			blockTime := int64(block.Time())
+			blockHash := block.Blockhash.String()
+			blockTime := block.BlockTime.Time().Unix()
 			_, err = blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 				Info: &blockProto.BlockReq{
 					ChainType:   &e.ChainType,
 					ChainID:     &e.ChainID,
-					BlockNumber: &number,
+					BlockNumber: &blockNum,
 					BlockHash:   &blockHash,
 					BlockTime:   &blockTime,
 				},
@@ -162,7 +163,7 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 				continue
 			}
 
-			outBlockNum <- block.Number().Uint64()
+			outBlockNum <- blockNum
 		case <-ctx.Done():
 			return
 		}
@@ -173,17 +174,19 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 	for {
 		select {
 		case num := <-inBlockNum:
-			cli, err := eth.Client(e.Endpoints)
+			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				continue
 			}
-			transfers, err := cli.TransferLogs(ctx, int64(num), int64(num))
+			block, err := cli.GetBlock(ctx, num)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("failed to get transfer logs, err: %v, block: %v", err, num)
+				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				continue
 			}
+
+			transfers := sol.GetNFTTransfers(block)
 			if len(transfers) == 0 {
 				continue
 			}
@@ -262,20 +265,20 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 					continue
 				}
 
-				cli, err := eth.Client(e.Endpoints)
+				cli, err := sol.Client(e.Endpoints)
 				if err != nil {
 					logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 					continue
 				}
 
-				tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
+				metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 				if err != nil {
 					e.checkErr(ctx, err)
-					logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
+					logger.Sugar().Warnf("cannot get metadata,err: %v", err)
 					remark = err.Error()
 				}
 
-				tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
+				tokenURIInfo, err := token.GetTokenURIInfo(ctx, metadata.Data.Uri)
 				if err != nil {
 					tokenURIInfo = &token.TokenURIInfo{}
 				}
@@ -287,12 +290,12 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 						Contract:    &transfer.Contract,
 						TokenType:   &transfer.TokenType,
 						TokenID:     &transfer.TokenID,
-						URI:         &tokenURI,
+						URI:         &metadata.Data.Uri,
 						URIType:     (*string)(&tokenURIInfo.URIType),
 						ImageURL:    &tokenURIInfo.ImageURL,
 						VideoURL:    &tokenURIInfo.VideoURL,
-						Name:        &tokenURIInfo.Name,
-						Description: &tokenURIInfo.Description,
+						Name:        &metadata.Data.Name,
+						Description: &metadata.Data.Symbol,
 						VectorState: tokenProto.ConvertState_Waiting.Enum(),
 						Remark:      &remark,
 					},
@@ -302,7 +305,9 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 					logger.Sugar().Errorf("create token record failed, %v", err)
 					continue
 				}
-				outTransfer <- transfer
+				if transfer.Contract != "" {
+					outTransfer <- transfer
+				}
 			}
 		case <-ctx.Done():
 			return
@@ -350,29 +355,30 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 			}
 
 			remark := ""
-			cli, err := eth.Client(e.Endpoints)
+			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				continue
 			}
 
-			contractMeta, err := cli.GetERC721Metadata(ctx, transfer.Contract)
+			contractMeta, err := cli.GetMetadata(ctx, transfer.Contract)
 			if err != nil {
 				e.checkErr(ctx, err)
 				logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
-				contractMeta = &eth.ERC721Metadata{}
+				contractMeta = &tokenmeta.Metadata{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			}
 
 			creator := &eth.ContractCreator{}
-			// stop get info for creator
-			if findContractCreator {
-				creator, err = cli.GetContractCreator(ctx, transfer.Contract)
-				if err != nil {
-					e.checkErr(ctx, err)
-					remark = err.Error()
-				}
-			}
+			// // stop get info for creator
+			// if findContractCreator {
+			// 	contractMeta.
+			// 	creator, err = cli.GetContractCreator(ctx, transfer.Contract)
+			// 	if err != nil {
+			// 		e.checkErr(ctx, err)
+			// 		remark = err.Error()
+			// 	}
+			// }
 
 			from := creator.From.String()
 			txHash := creator.TxHash.Hex()
@@ -383,8 +389,8 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 					ChainType: &e.ChainType,
 					ChainID:   &e.ChainID,
 					Address:   &transfer.Contract,
-					Name:      &contractMeta.Name,
-					Symbol:    &contractMeta.Symbol,
+					Name:      &contractMeta.Data.Name,
+					Symbol:    &contractMeta.Data.Symbol,
 					Creator:   &from,
 					BlockNum:  &blockNum,
 					TxHash:    &txHash,
@@ -405,13 +411,13 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 func (e *SolIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
 	for {
 		func() {
-			cli, err := eth.Client(e.Endpoints)
+			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				return
 			}
 
-			blockNum, err := cli.CurrentBlockNum(ctx)
+			blockNum, err := cli.GetSlotHeight(ctx)
 			if err != nil {
 				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("failed to get current block number: %v", err)

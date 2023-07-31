@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/web3eye-io/Web3Eye/common/chains/eth"
+	"github.com/web3eye-io/Web3Eye/common/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
@@ -18,7 +18,7 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	updateInfos := []*endpoint.EndpointReq{}
 	// extract wrong endpoints
 	for _, v := range e.Endpoints {
-		_, inspectErr := eth.GetEndpointChainID(ctx, v)
+		_, inspectErr := sol.GetEndpointChainID(ctx, v)
 		if inspectErr != nil {
 			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, inspectErr)
 			conds := &endpoint.Conds{

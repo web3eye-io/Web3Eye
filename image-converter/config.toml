@@ -1,7 +1,7 @@
 version="0.0.1"
 
 [nft-meta]
-ip="nft-meta"
+domain="nft-meta"
 http-port=30100
 grpc-port=30101
 log-file="/var/log/nft-meta.log"
@@ -9,49 +9,57 @@ collection-name="nft_info_images"
 description="this collection for nft-meta"
 
 [block-etl]
-ip="block-etl"
+domain="block-etl"
 http-port=30110
 grpc-port=30111
 log-file="/var/log/block-etl.log"
 
 [cloud-proxy]
-ip="cloud-proxy"
+domain="cloud-proxy"
 http-port=30120
 grpc-port=30121
 log-file="/var/log/cloud-proxy.log"
 
 [gateway]
-ip="gateway"
+domain="gateway"
 http-port=30130
 grpc-port=30131
 log-file="/var/log/gateway.log"
 
 [ranker]
-ip="ranker"
+domain="ranker"
 http-port=30140
 grpc-port=30141
 log-file="/var/log/ranker.log"
 
 [entrance]
-ip="entrance"
+domain="entrance"
 http-port=30150
 grpc-port=30151
 log-file="/var/log/entrance.log"
 
 [dealer]
-ip="dealer"
-ipfs-repo="/home/test/.ipfs"
-orbit-repo="/home/test/.orbit"
+domain="dealer"
+ipfs-repo="/root/.ipfs"
+orbit-repo="/root/.orbit"
 http-port=30160
 grpc-port=30161
 log-file="/var/log/dealer.log"
 
 [gen-car]
-ip="gen-car"
+domain="gen-car"
 http-port=30170
 grpc-port=30171
 data-dir="/tmp/gencar_data"
 log-file="/var/log/gen-car.log"
+
+[retriever]
+domain="retriever"
+ipfs-repo="/home/test/.ipfs-retr"
+orbit-repo="/home/test/.orbit"
+http-port=30180
+grpc-port=30181
+log-file="/var/log/retriever.log"
 
 [image-converter]
 address="http://image-converter:8080"
@@ -59,7 +67,7 @@ task-input-topic="image-converter-input"
 task-output-topic="image-converter-output"
 
 [mysql]
-ip="mysql-headless"
+domain="mysql"
 port=3306
 user="root"
 password="QARo5aA6zO"

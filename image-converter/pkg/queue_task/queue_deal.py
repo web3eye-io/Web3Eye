@@ -74,7 +74,7 @@ def QueueDealImageURL2Vector():
                 except Exception as e:
                     vectorInfo.msg=e
                 finally:
-                    update_token_vstate(vectorInfo.id,vectorInfo.success,vectorInfo.msg)
+                    update_token_vstate(vectorInfo.id,vectorInfo.success,vectorInfo.vector,vectorInfo.msg)
 
         except Exception as e:
             logging.error("parse nft-token image url failed,",e)
@@ -84,10 +84,9 @@ def QueueDealImageURL2Vector():
 def report_file_to_gen_car(id:str,file_s3_key)-> bool:
     try:
         data = json.dumps({'ID':id,"S3Key":file_s3_key}).encode()
-        logging.info(config.gen_car_ip)
         http.request(
             method="POST",
-            url=f"http://{config.gen_car_ip}:{config.gen_car_http_port}/v1/report/file",
+            url=f"http://{config.gen_car_domain}:{config.gen_car_http_port}/v1/report/file",
             body=data
             )
         return True
@@ -99,7 +98,7 @@ def get_waiting_tokens(limit:int)-> list:
         data = json.dumps({"Conds":{"VectorState":{"Op":"eq","Value":"Waiting"}},"Limit":limit}).encode()
         resp=http.request(
             method="POST",
-            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
+            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/get/tokens",
             body=data
             )
         
@@ -108,19 +107,19 @@ def get_waiting_tokens(limit:int)-> list:
         logging.error(e)
         return []
     
-def update_token_vstate(ID:str,vstate:bool,msg:str)-> any:
+def update_token_vstate(id:str,vstate:bool,vector:[],msg:str)-> any:
     vector_state="Success"
     if not vstate:
+        vector=[]
         vector_state="Failed"
     try:
-        data = json.dumps({"Info":{"ID":ID,"VectorState":vector_state,"Remark":f"{msg}"}}).encode()
-        data = json.dumps({}).encode()
+        data = json.dumps({"ID":id,"Vector":vector,"VectorState":vector_state,"Remark":f"{msg}"}).encode()
         resp=http.request(
             method="POST",
-            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
+            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/image/vector",
             body=data
             )
-
+        print(json.loads(resp.data))
         return json.loads(resp.data)["Info"]
     except Exception as e:
         logging.error(e)
