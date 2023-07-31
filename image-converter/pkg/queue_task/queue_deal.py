@@ -84,10 +84,9 @@ def QueueDealImageURL2Vector():
 def report_file_to_gen_car(id:str,file_s3_key)-> bool:
     try:
         data = json.dumps({'ID':id,"S3Key":file_s3_key}).encode()
-        logging.info(config.gen_car_ip)
         http.request(
             method="POST",
-            url=f"http://{config.gen_car_ip}:{config.gen_car_http_port}/v1/report/file",
+            url=f"http://{config.gen_car_domain}:{config.gen_car_http_port}/v1/report/file",
             body=data
             )
         return True
@@ -99,7 +98,7 @@ def get_waiting_tokens(limit:int)-> list:
         data = json.dumps({"Conds":{"VectorState":{"Op":"eq","Value":"Waiting"}},"Limit":limit}).encode()
         resp=http.request(
             method="POST",
-            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
+            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/get/tokens",
             body=data
             )
         
@@ -117,7 +116,7 @@ def update_token_vstate(ID:str,vstate:bool,msg:str)-> any:
         data = json.dumps({}).encode()
         resp=http.request(
             method="POST",
-            url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
+            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/token",
             body=data
             )
 
