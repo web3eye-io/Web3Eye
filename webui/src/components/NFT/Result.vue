@@ -104,7 +104,7 @@
                     <span class='label'>TokenID:</span>
                     <span class='value'> {{ nft.TokenID }}</span>
                   </div>
-                <div>
+                  <div>
                     <span class='label'>Link:</span>
                     <span class='value'> {{nft.ImageURL}}</span>
                   </div>
@@ -120,13 +120,15 @@
       <h5>目标交易历史</h5>
     </div> -->
   </div>
+  <Card />
 </template>
 <script lang='ts' setup>
 import { useNFTMetaStore } from 'src/localstore/nft';
 import { NFTMeta, ImageState } from 'src/localstore/nft/types';
 import { useRetrieveStore } from 'src/teststore/retrieve';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 
+const Card = defineAsyncComponent(() => import('src/components/NFT/Card.vue'))
 const splitterModel = ref(40)
 
 const nft = useNFTMetaStore()
