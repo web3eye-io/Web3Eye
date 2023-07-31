@@ -107,19 +107,17 @@ def get_waiting_tokens(limit:int)-> list:
         logging.error(e)
         return []
     
-def update_token_vstate(ID:str,vstate:bool,msg:str)-> any:
+def update_token_vstate(id:str,vstate:bool,msg:str)-> any:
     vector_state="Success"
     if not vstate:
         vector_state="Failed"
     try:
-        data = json.dumps({"Info":{"ID":ID,"VectorState":vector_state,"Remark":f"{msg}"}}).encode()
-        data = json.dumps({}).encode()
+        data = json.dumps({"Info":{"ID":id,"VectorState":vector_state,"Remark":f"{msg}"}}).encode()
         resp=http.request(
             method="POST",
             url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/token",
             body=data
             )
-
         return json.loads(resp.data)["Info"]
     except Exception as e:
         logging.error(e)
