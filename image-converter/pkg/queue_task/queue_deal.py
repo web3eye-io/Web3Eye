@@ -101,9 +101,9 @@ def get_waiting_tokens(limit:int)-> list:
             method="POST",
             url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
             body=data
-            ).data
+            )
         
-        return json.loads(resp)["Infos"]
+        return json.loads(resp.data)["Infos"]
     except Exception as e:
         logging.error(e)
         return []
