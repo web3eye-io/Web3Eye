@@ -113,12 +113,8 @@ def update_token_vstate(ID:str,vstate:bool,msg:str)-> any:
     if not vstate:
         vector_state="Failed"
     try:
-        print(msg)
-        print(vector_state)
-        print(ID)
         data = json.dumps({"Info":{"ID":ID,"VectorState":vector_state,"Remark":f"{msg}"}}).encode()
         data = json.dumps({}).encode()
-        print(1)
         resp=http.request(
             method="POST",
             url=f"http://{config.nft_meta_ip}:{config.nft_meta_http_port}/v1/get/tokens",
