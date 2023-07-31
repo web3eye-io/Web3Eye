@@ -60,6 +60,14 @@ func UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) (resp *npool
 	return resp, err
 }
 
+func UpdateImageVector(ctx context.Context, in *npool.UpdateImageVectorRequest) (resp *npool.UpdateImageVectorResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpdateImageVector(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func GetToken(ctx context.Context, in *npool.GetTokenRequest) (resp *npool.GetTokenResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetToken(ctx, in)

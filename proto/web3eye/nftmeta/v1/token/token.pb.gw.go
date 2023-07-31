@@ -31,8 +31,8 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_Manager_UpdateToken_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateTokenRequest
+func request_Manager_UpdateImageVector_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateImageVectorRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -43,13 +43,13 @@ func request_Manager_UpdateToken_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.UpdateToken(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UpdateImageVector(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Manager_UpdateToken_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateTokenRequest
+func local_request_Manager_UpdateImageVector_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateImageVectorRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -60,7 +60,7 @@ func local_request_Manager_UpdateToken_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.UpdateToken(ctx, &protoReq)
+	msg, err := server.UpdateImageVector(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -105,18 +105,18 @@ func local_request_Manager_GetTokens_0(ctx context.Context, marshaler runtime.Ma
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterManagerHandlerFromEndpoint instead.
 func RegisterManagerHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ManagerServer) error {
 
-	mux.Handle("POST", pattern_Manager_UpdateToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Manager_UpdateImageVector_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nftmeta.v1.token.Manager/UpdateToken", runtime.WithHTTPPathPattern("/v1/update/token"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nftmeta.v1.token.Manager/UpdateImageVector", runtime.WithHTTPPathPattern("/v1/update/image/vector"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Manager_UpdateToken_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Manager_UpdateImageVector_0(rctx, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
@@ -124,7 +124,7 @@ func RegisterManagerHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 			return
 		}
 
-		forward_Manager_UpdateToken_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Manager_UpdateImageVector_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -192,23 +192,23 @@ func RegisterManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 // "ManagerClient" to call the correct interceptors.
 func RegisterManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ManagerClient) error {
 
-	mux.Handle("POST", pattern_Manager_UpdateToken_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Manager_UpdateImageVector_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nftmeta.v1.token.Manager/UpdateToken", runtime.WithHTTPPathPattern("/v1/update/token"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nftmeta.v1.token.Manager/UpdateImageVector", runtime.WithHTTPPathPattern("/v1/update/image/vector"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Manager_UpdateToken_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Manager_UpdateImageVector_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Manager_UpdateToken_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Manager_UpdateImageVector_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -236,13 +236,13 @@ func RegisterManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 }
 
 var (
-	pattern_Manager_UpdateToken_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "update", "token"}, ""))
+	pattern_Manager_UpdateImageVector_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "update", "image", "vector"}, ""))
 
 	pattern_Manager_GetTokens_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "get", "tokens"}, ""))
 )
 
 var (
-	forward_Manager_UpdateToken_0 = runtime.ForwardResponseMessage
+	forward_Manager_UpdateImageVector_0 = runtime.ForwardResponseMessage
 
 	forward_Manager_GetTokens_0 = runtime.ForwardResponseMessage
 )

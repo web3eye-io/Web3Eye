@@ -25,6 +25,7 @@ type ManagerClient interface {
 	CreateToken(ctx context.Context, in *CreateTokenRequest, opts ...grpc.CallOption) (*CreateTokenResponse, error)
 	CreateTokens(ctx context.Context, in *CreateTokensRequest, opts ...grpc.CallOption) (*CreateTokensResponse, error)
 	UpdateToken(ctx context.Context, in *UpdateTokenRequest, opts ...grpc.CallOption) (*UpdateTokenResponse, error)
+	UpdateImageVector(ctx context.Context, in *UpdateImageVectorRequest, opts ...grpc.CallOption) (*UpdateImageVectorResponse, error)
 	GetToken(ctx context.Context, in *GetTokenRequest, opts ...grpc.CallOption) (*GetTokenResponse, error)
 	GetTokenOnly(ctx context.Context, in *GetTokenOnlyRequest, opts ...grpc.CallOption) (*GetTokenOnlyResponse, error)
 	GetTokens(ctx context.Context, in *GetTokensRequest, opts ...grpc.CallOption) (*GetTokensResponse, error)
@@ -63,6 +64,15 @@ func (c *managerClient) CreateTokens(ctx context.Context, in *CreateTokensReques
 func (c *managerClient) UpdateToken(ctx context.Context, in *UpdateTokenRequest, opts ...grpc.CallOption) (*UpdateTokenResponse, error) {
 	out := new(UpdateTokenResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.token.Manager/UpdateToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpdateImageVector(ctx context.Context, in *UpdateImageVectorRequest, opts ...grpc.CallOption) (*UpdateImageVectorResponse, error) {
+	out := new(UpdateImageVectorResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.token.Manager/UpdateImageVector", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,6 +149,7 @@ type ManagerServer interface {
 	CreateToken(context.Context, *CreateTokenRequest) (*CreateTokenResponse, error)
 	CreateTokens(context.Context, *CreateTokensRequest) (*CreateTokensResponse, error)
 	UpdateToken(context.Context, *UpdateTokenRequest) (*UpdateTokenResponse, error)
+	UpdateImageVector(context.Context, *UpdateImageVectorRequest) (*UpdateImageVectorResponse, error)
 	GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error)
 	GetTokenOnly(context.Context, *GetTokenOnlyRequest) (*GetTokenOnlyResponse, error)
 	GetTokens(context.Context, *GetTokensRequest) (*GetTokensResponse, error)
@@ -161,6 +172,9 @@ func (UnimplementedManagerServer) CreateTokens(context.Context, *CreateTokensReq
 }
 func (UnimplementedManagerServer) UpdateToken(context.Context, *UpdateTokenRequest) (*UpdateTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateToken not implemented")
+}
+func (UnimplementedManagerServer) UpdateImageVector(context.Context, *UpdateImageVectorRequest) (*UpdateImageVectorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateImageVector not implemented")
 }
 func (UnimplementedManagerServer) GetToken(context.Context, *GetTokenRequest) (*GetTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetToken not implemented")
@@ -246,6 +260,24 @@ func _Manager_UpdateToken_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).UpdateToken(ctx, req.(*UpdateTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpdateImageVector_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateImageVectorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpdateImageVector(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.token.Manager/UpdateImageVector",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpdateImageVector(ctx, req.(*UpdateImageVectorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -394,6 +426,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateToken",
 			Handler:    _Manager_UpdateToken_Handler,
+		},
+		{
+			MethodName: "UpdateImageVector",
+			Handler:    _Manager_UpdateImageVector_Handler,
 		},
 		{
 			MethodName: "GetToken",

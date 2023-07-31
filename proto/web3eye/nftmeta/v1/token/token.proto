@@ -10,9 +10,10 @@ import "web3eye/basetype/v1/chain.proto";
 service Manager {
   rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse) {}
   rpc CreateTokens(CreateTokensRequest) returns (CreateTokensResponse) {}
-  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {
+  rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {}
+  rpc UpdateImageVector(UpdateImageVectorRequest) returns (UpdateImageVectorResponse) {
     option (google.api.http) = {
-      post : "/v1/update/token"
+      post : "/v1/update/image/vector"
       body : "*"
     };
   }
@@ -136,6 +137,14 @@ message GetTokenOnlyResponse { Token Info = 10; }
 message UpdateTokenRequest { TokenReq Info = 10; }
 
 message UpdateTokenResponse { Token Info = 10; }
+
+message UpdateImageVectorRequest { 
+  string ID = 10;
+  repeated float Vector = 20;
+  string Remark = 30;
+}
+
+message UpdateImageVectorResponse { Token Info = 10; }
 
 message ExistTokenRequest { string ID = 10; }
 
