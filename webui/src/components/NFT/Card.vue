@@ -47,7 +47,7 @@
     border-radius: 4px
     .left
     .content
-        padding: 0 20px 10px 20px
+        padding: 0 15px 10px 15px
         .line-top
             padding: 10px 0
             .distance,.block1
