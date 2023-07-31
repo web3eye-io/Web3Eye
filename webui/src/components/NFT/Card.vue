@@ -1,11 +1,7 @@
 <template>
   <div class="row container">
     <div class="col-2 left">
-        <q-img
-          src="https://picsum.photos/500/300"
-          height="100%"
-          fit="fill"
-        />
+      <q-img src="https://picsum.photos/500/300" height="100%" fit="fill" />
     </div>
     <div class="col">
       <div class="content">
@@ -20,7 +16,6 @@
         <div class="contract">
           <span>Contract: 0xe525FAE3fC6fBB23Af05E54Ff413613A6573CFf2</span>
         </div>
-       
       </div>
       <div class="transfer-container"></div>
     </div>
@@ -31,8 +26,8 @@
           <span class="net">@mainnet</span>
         </div>
         <div class="right-bottom self-end">
-            <span>ERC-721</span> 
-            <span></span>2021/09/6 23:56
+          <span>ERC-721</span>
+          <span></span>2021/09/6 23:56
         </div>
       </div>
     </div>
@@ -45,7 +40,6 @@
     height: 230px
     border: 1px solid #DDDDDD
     border-radius: 4px
-    .left
     .content
         padding: 0 15px 10px 15px
         .line-top
@@ -55,7 +49,7 @@
             .block1
                 padding-left: 15px
         .clone
-            padding: 10px 0 
+            padding: 10px 0
 .right
     height: 100%
     .right-top, .right-bottom
