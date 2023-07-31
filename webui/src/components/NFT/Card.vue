@@ -3,8 +3,8 @@
     <div class="col-2 left">
       <q-img src="https://picsum.photos/500/300" height="100%" fit="fill" />
     </div>
-    <div class="col">
-      <div class="content">
+    <div class="col flex column center">
+      <div class="content col">
         <div class="line-top">
           <span class="distance">Distance: 0.12</span>
           <span class="block1">Block: 19180569</span>
@@ -17,7 +17,23 @@
           <span>Contract: 0xe525FAE3fC6fBB23Af05E54Ff413613A6573CFf2</span>
         </div>
       </div>
-      <div class="transfer-container"></div>
+      <div class="transfers col flex">
+        <div class="col-9 flex">
+          <q-img 
+            v-for="index in [1,2,3,4]" 
+            :key="index" 
+            src="https://picsum.photos/500/300" 
+            height="100%" 
+            width="120px"
+            class="transfer-img"
+            fit="fill" 
+          />
+        </div>
+        <div class="col-1 self-center">
+          ... have 21 items transfer
+        </div>
+        <!-- <CardSmall /> -->
+      </div>
     </div>
     <div class="col-2">
       <div class="right column justify-between">
@@ -33,6 +49,8 @@
     </div>
   </div>
 </template>
+<script lang="ts" setup>
+</script>
 <style lang="sass" scoped>
 .container
   width: 80%
@@ -40,10 +58,12 @@
   height: 230px
   border: 1px solid #DDDDDD
   border-radius: 4px
+  .center
+    padding: 10px 10px
+  .transfer-img
+    margin-right: 10px
   .content
-    padding: 0 15px 10px 15px
     .line-top
-      padding: 10px 0
       .distance,.block1
         font-weight: bolder
         .block1
