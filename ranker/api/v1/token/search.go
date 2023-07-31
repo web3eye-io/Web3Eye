@@ -65,7 +65,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		start := i * in.Limit
 		end := (i + 1) * in.Limit
 		if end > totalTokens {
-			end = totalTokens - 1
+			end = totalTokens
 		}
 		pBone := &PageBone{
 			TokenBones:  ToTokenBones(infos[start:end]),
