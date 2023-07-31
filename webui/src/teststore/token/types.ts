@@ -1,4 +1,4 @@
-import { ChainType, TokenType } from "../basetypes/const"
+import { ChainType, TokenType } from '../basetypes/const'
 import { BaseRequest } from '../local'
 
 export enum TokenConvertState {

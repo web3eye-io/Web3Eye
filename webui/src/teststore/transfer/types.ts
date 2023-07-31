@@ -1,5 +1,5 @@
-import { ChainType } from "../basetypes/const"
-import { BaseRequest } from "../local"
+import { ChainType } from '../basetypes/const'
+import { BaseRequest } from '../local'
 
 export interface Transfer {
   ID: string
