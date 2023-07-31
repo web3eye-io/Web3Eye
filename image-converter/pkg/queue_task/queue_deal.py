@@ -74,7 +74,7 @@ def QueueDealImageURL2Vector():
                 except Exception as e:
                     vectorInfo.msg=e
                 finally:
-                    update_token_vstate(vectorInfo.id,vectorInfo.success,vectorInfo.msg)
+                    update_token_vstate(vectorInfo.id,vectorInfo.success,vectorInfo.vector,vectorInfo.msg)
 
         except Exception as e:
             logging.error("parse nft-token image url failed,",e)
@@ -116,9 +116,10 @@ def update_token_vstate(id:str,vstate:bool,vector:[],msg:str)-> any:
         data = json.dumps({"ID":id,"Vector":vector,"VectorState":vector_state,"Remark":f"{msg}"}).encode()
         resp=http.request(
             method="POST",
-            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/token",
+            url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/image/vector",
             body=data
             )
+        print(json.loads(resp.data))
         return json.loads(resp.data)["Info"]
     except Exception as e:
         logging.error(e)
