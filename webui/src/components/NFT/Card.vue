@@ -35,27 +35,27 @@
 </template>
 <style lang="sass" scoped>
 .container
-    width: 80%
-    margin:  0 auto
-    height: 230px
-    border: 1px solid #DDDDDD
-    border-radius: 4px
-    .content
-        padding: 0 15px 10px 15px
-        .line-top
-            padding: 10px 0
-            .distance,.block1
-                font-weight: bolder
-            .block1
-                padding-left: 15px
-        .clone
-            padding: 10px 0
+  width: 80%
+  margin:  0 auto
+  height: 230px
+  border: 1px solid #DDDDDD
+  border-radius: 4px
+  .content
+    padding: 0 15px 10px 15px
+    .line-top
+      padding: 10px 0
+      .distance,.block1
+        font-weight: bolder
+        .block1
+          padding-left: 15px
+      .clone
+        padding: 10px 0
 .right
     height: 100%
     .right-top, .right-bottom
-        padding: 10px 10px 10px 0
+      padding: 10px 10px 10px 0
     .right-top
-        .name
-            font-weight: 700px
-            color: #7D7D7D
+      .name
+        font-weight: 700px
+        color: #7D7D7D
 </style>
