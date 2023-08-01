@@ -8,9 +8,9 @@
         <div class="content col">
           <div class="line-top">
             <span class="distance">Distance: {{ token.Distance }}</span>
-            <span class="block1">Block: {{ token.VectorID }}</span>
+            <span class="block1">Block: {{ token.SiblingsNum }}</span>
           </div>
-          <div class="clone">
+          <div class="name">
             <span>{{ token.Name }}</span>
           </div>
           <div class="total-transfers">{{token.SiblingTokens?.length}} transfers</div>
@@ -30,7 +30,7 @@
       <div class="col-2">
         <div class="right column justify-between">
           <div class="right-top self-end">
-            <span class="name">Ethereum</span>
+            <span class="name">{{ token.ChainType }}</span>
             <span class="net">@mainnet</span>
           </div>
           <div class="right-bottom self-end">
@@ -74,7 +74,7 @@ const tokens = computed(() => {
           font-weight: bolder
         .block1
           padding-left: 15px
-        .clone
+        .name
           padding: 10px 0
     .transfers div
       margin-right: 5px
