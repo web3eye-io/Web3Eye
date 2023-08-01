@@ -2,13 +2,6 @@
   <div id="transfer">
     <div class="row justify-center q-pa-md">
       <div class="left col-4">
-        <!-- <q-img
-          src="https://picsum.photos/500/300"
-          height="100%"
-          width="100%"
-          class="transfer-img rounded-borders"
-          fit="fill"
-        /> -->
         <MyImage :url="token.ImageURL" :height="'100%'" :width="'100%'" />
       </div>
       <div class="right flex column col">

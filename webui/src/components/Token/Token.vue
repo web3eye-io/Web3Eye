@@ -71,7 +71,7 @@ const target = ref({} as SearchToken)
 const transfer = useTransferStore()
 const targetTransfers = ref([] as Array<Transfer>)
 
-const showing = ref(true)
+const showing = ref(false)
 
 watch(target.value, () => {
   if (!target.value) return
