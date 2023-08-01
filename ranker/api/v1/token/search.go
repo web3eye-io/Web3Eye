@@ -8,6 +8,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
@@ -41,14 +42,19 @@ type PageBone struct {
 }
 
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
+	start := time.Now()
+	defer logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
+
 	// search from milvus
 	scores, err := SerachFromMilvus(ctx, in.Vector)
 	if err != nil {
+		logger.Sugar().Errorf("search from milvus failed, %v", err)
 		return nil, err
 	}
 
 	infos, err := QueryAndCollectTokens(ctx, scores)
 	if err != nil {
+		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return nil, err
 	}
 
@@ -76,6 +82,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 
 		err = ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pBone.Page), pBone, StorageExpr)
 		if err != nil {
+			logger.Sugar().Errorf("put the search pageBone failed, %v", err)
 			return nil, err
 		}
 	}
