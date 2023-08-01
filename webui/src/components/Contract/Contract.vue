@@ -6,7 +6,7 @@
           src="https://picsum.photos/500/300"
           height="100%"
           width="90%"
-          class="transfer-img"
+          class="transfer-img rounded-borders"
           fit="fill"
         />
       </div>
@@ -28,6 +28,7 @@
             src="https://picsum.photos/500/300"
             height="180px"
             width="180px"
+            class="rounded-borders"
             fit="fill"
           />
           <div class="content">
