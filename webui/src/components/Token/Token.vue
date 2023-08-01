@@ -43,6 +43,11 @@
       </div>
     </div>
   </div>
+  <q-dialog v-model="showing" id="transfer-card">
+    <q-card style="width: 860px;">
+      <TransferCard :transfers="targetTransfers" :token="target"  />
+    </q-card>
+  </q-dialog>
 </template>
 <script lang="ts" setup>
 import { useTokenStore } from 'src/teststore/token';
@@ -52,6 +57,7 @@ import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, ref, watch } from 'vue';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
+const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -61,7 +67,11 @@ const tokens = computed(() => {
 })
 
 const target = ref({} as SearchToken)
+
 const transfer = useTransferStore()
+const targetTransfers = ref([] as Array<Transfer>)
+
+const showing = ref(true)
 
 watch(target.value, () => {
   if (!target.value) return
@@ -81,10 +91,13 @@ const getTransfers = (offset: number, limit: number) => {
     Message: {}
   }, (error:boolean, rows: Transfer[]) => {
     if (error || rows.length <= 0) {
-      getTransfers(offset, offset + limit)
+      targetTransfers.value = rows
+      return
     }
+    getTransfers(offset, offset + limit)
   })
 }
+
 
 </script>
 <style lang="sass" scoped>
@@ -117,4 +130,9 @@ const getTransfers = (offset: number, limit: number) => {
           .name
             font-weight: 700px
             color: #7D7D7D
+
+@media (min-width: 600px)
+.q-dialog__inner--minimized > div
+  max-width: 100%
+
 </style>
