@@ -163,7 +163,6 @@ func GetIPFSData(ctx context.Context, path string) ([]byte, error) {
 		return nil, ErrHTTP{Status: resp.StatusCode, URL: url}
 	}
 	defer resp.Body.Close()
-
 	buf := &bytes.Buffer{}
 	if _, err := io.CopyN(buf, resp.Body, maxRespBodySize); err != nil {
 		if err != io.EOF {

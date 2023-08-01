@@ -103,7 +103,7 @@ func (m TokenMetadata) MarshallJSON() ([]byte, error) {
 func TokenURIType(uri string) URIType {
 	asString := strings.TrimSpace(uri)
 	switch {
-	case strings.HasPrefix(asString, "ipfs"),
+	case strings.HasPrefix(asString, "ipfs://"),
 		strings.HasPrefix(asString, "Qm"):
 		return URITypeIPFS
 	case strings.HasPrefix(asString, "ar://"),
@@ -271,6 +271,7 @@ func GetMetadataFromURI(ctx context.Context, turi string) (TokenMetadata, error)
 }
 
 // DecodeMetadataFromURI calls URI and decodes the data into a metadata map
+//
 //nolint:gocyclo
 func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata) error {
 	asString := turi

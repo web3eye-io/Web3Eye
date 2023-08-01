@@ -119,7 +119,6 @@ def update_token_vstate(id:str,vstate:bool,vector:[],msg:str)-> any:
             url=f"http://{config.nft_meta_domain}:{config.nft_meta_http_port}/v1/update/image/vector",
             body=data
             )
-        print(json.loads(resp.data))
         return json.loads(resp.data)["Info"]
     except Exception as e:
         logging.error(e)
