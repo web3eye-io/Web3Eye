@@ -99,7 +99,7 @@ const onUploaded = (info: {
   const response = JSON.parse(info.xhr.response as string) as GetTokensResponse
   token.setToken(response.Infos)
   void router.push({
-    path: '/result'
+    path: '/token'
   })
   uploading.value = false
 }

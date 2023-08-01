@@ -18,12 +18,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/result',
+    path: '/token',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { 
         path: '', 
-        component: () => import('components/NFT/Result.vue'), 
+        component: () => import('components/Token/Token.vue'), 
         meta: {
           DisplayToolbarSearchBox: false 
         } 

@@ -46,7 +46,7 @@
 import { useTokenStore } from 'src/teststore/token';
 import { computed, defineAsyncComponent } from 'vue';
 
-const MyImage = defineAsyncComponent(() => import('src/components/NFT/Image.vue'))
+const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
 const token = useTokenStore()
 const tokens = computed(() => {

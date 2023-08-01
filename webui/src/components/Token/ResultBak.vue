@@ -1,21 +1,21 @@
-<template>
+<!--<template>
   <div class='nft-container'>
     <q-splitter v-model='splitterModel'>
       <template v-slot:before>
-        <!-- left -->
+        <!~~ left ~~>
         <div class='q-pa-md'>
           <div class='q-col-gutter-md row items-start'>
             <div class='col-12'>
               <q-img :src='currentImg'>
-                <!-- <div class='absolute-bottom text-subtitle1 text-center'>
+                <!~~ <div class='absolute-bottom text-subtitle1 text-center'>
                   Distance: 0
-                </div> -->
+                </div> ~~>
               </q-img>
             </div>
           </div>
           <div class='content-container column'>
-            <!-- <h5>目标标题</h5> -->
-            <!-- <div>
+            <!~~ <h5>目标标题</h5> ~~>
+            <!~~ <div>
               <span class='label'>首发时间:</span>
               <span class='value'> XXXX-XX-XX</span>
             </div>
@@ -42,19 +42,19 @@
             <div>
               <span class='label'>稀缺度:</span>
               <span class='value'> 1%</span>
-            </div> -->
+            </div> ~~>
           </div>
         </div>
       </template>
       <template v-slot:after>
-        <!-- right -->
+        <!~~ right ~~>
         <div class='q-pa-md'>
           <q-timeline color='secondary' v-for='nft in nfts' :key='nft.ID'>
             <q-timeline-entry subtitle='February 22, 1986'>
               <div class="row">
                 <div class='col-md-2'>
                   <div v-if='getImageState(nft) === ImageState.Normal'>
-                    <!-- for svg display -->
+                    <!~~ for svg display ~~>
                     <q-icon
                       v-if='nft?.ImageURL?.startsWith("img")'
                       size='300px' 
@@ -116,9 +116,9 @@
       </div>
       </template>
     </q-splitter>
-    <!-- <div class="transaction">
+    <!~~ <div class="transaction">
       <h5>目标交易历史</h5>
-    </div> -->
+    </div> ~~>
   </div>
   <Card />
 </template>
@@ -258,45 +258,45 @@ const startRetrieve = (row: NFTMeta) => {
   })
 }
 
-// const raws = ref([{
-//     ID:'fc735773-fe95-4130-828e-88a0c6c08739',
-//     ChainType:'Ethereum',
-//     ChainID:'5',
-//     Contract:'0x41cc069871054C1EfB4Aa40aF12f673eA2b6a1fC',
-//     TokenID:'12000071',
-//     URI:'https://token.staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
-//     URIType:'http',
-//     ImageURL:'https://media-proxy-staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/1200007111.png',
-//     VideoURL:'https://generator-staging-goerli.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
-//     Description:'e.',
-//     Name:'THIS ART IS ILLEGAL! #71',
-//     VectorState: 40,
-//     VectorID: '442184147106664837',
-//     Distance: 1.0636201,
-//     IPFSImageURL: 'url',
-//     ImageSnapshotID: 'ImageSnapshotID',
-//     Loading: false,
-//   },
-//   {
-//     ID:'1d74f859-7860-453e-a3cd-72b33f8600c2',
-//     ChainType:'Ethereum',
-//     ChainID:'5',
-//     Contract:'0x41cc069871054C1EfB4Aa40aF12f673eA2b6a1fC',
-//     TokenID:'12000071',
-//     URI:'https://token.staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
-//     URIType:'http',
-//     ImageURL:'https://media-proxy-staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/1200007.png',
-//     VideoURL:'https://generator-staging-goerli.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
-//     Description:'e.',
-//     Name:'THIS ART IS ILLEGAL! #71',
-//     VectorState: 40,
-//     VectorID: '442184147106664837',
-//     Distance: 1.0636201,
-//     IPFSImageURL: 'url',
-//     ImageSnapshotID: 'ImageSnapshotID',
-//     Loading: false,
-//   }
-// ] as Array<NFTMeta>)
+const raws = ref([{
+    ID:'fc735773-fe95-4130-828e-88a0c6c08739',
+    ChainType:'Ethereum',
+    ChainID:'5',
+    Contract:'0x41cc069871054C1EfB4Aa40aF12f673eA2b6a1fC',
+    TokenID:'12000071',
+    URI:'https://token.staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
+    URIType:'http',
+    ImageURL:'https://media-proxy-staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/1200007111.png',
+    VideoURL:'https://generator-staging-goerli.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
+    Description:'e.',
+    Name:'THIS ART IS ILLEGAL! #71',
+    VectorState: 40,
+    VectorID: '442184147106664837',
+    Distance: 1.0636201,
+    IPFSImageURL: 'url',
+    ImageSnapshotID: 'ImageSnapshotID',
+    Loading: false,
+  },
+  {
+    ID:'1d74f859-7860-453e-a3cd-72b33f8600c2',
+    ChainType:'Ethereum',
+    ChainID:'5',
+    Contract:'0x41cc069871054C1EfB4Aa40aF12f673eA2b6a1fC',
+    TokenID:'12000071',
+    URI:'https://token.staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
+    URIType:'http',
+    ImageURL:'https://media-proxy-staging.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/1200007.png',
+    VideoURL:'https://generator-staging-goerli.artblocks.io/0x41cc069871054c1efb4aa40af12f673ea2b6a1fc/12000071',
+    Description:'e.',
+    Name:'THIS ART IS ILLEGAL! #71',
+    VectorState: 40,
+    VectorID: '442184147106664837',
+    Distance: 1.0636201,
+    IPFSImageURL: 'url',
+    ImageSnapshotID: 'ImageSnapshotID',
+    Loading: false,
+  }
+] as Array<NFTMeta>)
 
 watch(nfts, () => {
   if(nfts.value?.length > 0) {
@@ -324,4 +324,4 @@ onMounted(() => {
   .content-container div
     height: 30px
     line-height: 30px           
-</style>
+</style>-->
