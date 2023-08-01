@@ -6,7 +6,7 @@
           src="https://picsum.photos/500/300"
           height="100%"
           width="100%"
-          class="transfer-img"
+          class="transfer-img rounded-borders"
           fit="fill"
         />
       </div>
