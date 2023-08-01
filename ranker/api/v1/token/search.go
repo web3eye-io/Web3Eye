@@ -8,6 +8,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
@@ -41,6 +42,9 @@ type PageBone struct {
 }
 
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
+	start := time.Now()
+	defer logger.Sugar().Infof("take %v to finish search", time.Now().Sub(start))
+
 	// search from milvus
 	scores, err := SerachFromMilvus(ctx, in.Vector)
 	if err != nil {
