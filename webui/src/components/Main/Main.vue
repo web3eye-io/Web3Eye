@@ -58,12 +58,12 @@
 </template>
 
 <script setup lang='ts'>
-import { useNFTMetaStore } from 'src/localstore/nft';
-import { UploadResponse } from 'src/localstore/nft/types';
 import { computed, ref } from 'vue'
 import InputOption from 'src/components/Main/InputOption.vue'
 import logo from '../../assets/logo/logo.png'
 import { useRouter } from 'vue-router'
+import { useTokenStore } from 'src/teststore/token';
+import { GetTokensResponse } from 'src/teststore/token/types';
 
 const curOption = ref('File')
 const isText = computed(() => curOption.value === 'Text')
@@ -85,7 +85,7 @@ const onAdded = (files: readonly any[]) => {
 
 const router = useRouter()
 
-const nft = useNFTMetaStore()
+const token = useTokenStore()
 const onUploaded = (info: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     files: readonly any[];
@@ -94,12 +94,12 @@ const onUploaded = (info: {
   const reader = new FileReader()
   reader.readAsDataURL(info.files[0] as Blob)
   reader.onload = function() {
-    nft.NTFMetas.Current = window.URL.createObjectURL(info.files[0] as Blob)
+    token.SearchTokens.Current = window.URL.createObjectURL(info.files[0] as Blob)
 	}
-  const response = JSON.parse(info.xhr.response as string) as UploadResponse
-  nft.setNftMeta(response.Infos)
+  const response = JSON.parse(info.xhr.response as string) as GetTokensResponse
+  token.setToken(response.Infos)
   void router.push({
-    path: '/result'
+    path: '/token'
   })
   uploading.value = false
 }

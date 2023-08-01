@@ -18,12 +18,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/result',
+    path: '/token',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { 
         path: '', 
-        component: () => import('components/NFT/Result.vue'), 
+        component: () => import('components/Token/Token.vue'), 
         meta: {
           DisplayToolbarSearchBox: false 
         } 
@@ -40,6 +40,22 @@ const routes: RouteRecordRaw[] = [
       { 
         path: '', 
         component: () => import('components/Transfer/Transfer.vue'), 
+        meta: {
+          DisplayToolbarSearchBox: false 
+        } 
+      },
+      // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
+      // { path: 'transaction', component: () => import('pages/Transaction.vue'), meta: { DisplayToolbarSearchBox: true } },
+      // { path: 'deck', component: () => import('pages/Deck.vue'), meta: { DisplayToolbarSearchBox: true } }
+    ],
+  },
+  {
+    path: '/contract',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('components/Contract/Contract.vue'), 
         meta: {
           DisplayToolbarSearchBox: false 
         } 
