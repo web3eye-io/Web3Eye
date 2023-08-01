@@ -10,7 +10,7 @@
       class='icontainer input-padding'
       rounded
       outlined
-      v-model="search"
+      v-model="contract"
       @keyup.enter='handleEnter'
       placeholder="input text here"
     >
@@ -64,15 +64,29 @@ import logo from '../../assets/logo/logo.png'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { GetTokensResponse } from 'src/teststore/token/types';
+import { useContractStore } from 'src/teststore/contract';
 
 const curOption = ref('File')
 const isText = computed(() => curOption.value === 'Text')
 
-const search = ref('')
-const handleEnter = () => {
-  console.log('enter......')
-}
+const contract = ref('')
+const _contract = useContractStore()
 
+const handleEnter = () => {
+  console.log('enter......', contract)
+  getContractAndTokens(0, 100)
+}
+const getContractAndTokens = (offset: number, limit: number) => {
+  _contract.getContractAndTokens({
+    Contract: contract.value,
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error: boolean) => {
+    if (error) return
+    void router.push('/contract')
+  })
+}
 const fileName = ref('')
 const uploading = ref(false)
 
