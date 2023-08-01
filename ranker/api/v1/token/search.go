@@ -42,6 +42,7 @@ type PageBone struct {
 }
 
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
+	logger.Sugar().Info("start search")
 	start := time.Now()
 	defer logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
 
