@@ -1,7 +1,7 @@
 <template>
   <div class="row container">
     <div class="col-2 left">
-      <q-img src="https://picsum.photos/500/300" height="100%" fit="fill" />
+      <q-img src="https://picsum.photos/500/300" height="100%" fit="fill" class="rounded-borders" />
     </div>
     <div class="col flex column center">
       <div class="content col">
@@ -25,7 +25,7 @@
             src="https://picsum.photos/500/300" 
             height="100%" 
             width="120px"
-            class="transfer-img"
+            class="transfer-img rounded-borders"
             fit="fill" 
           />
         </div>
@@ -53,7 +53,7 @@
 </script>
 <style lang="sass" scoped>
 .container
-  width: 80%
+  width: 60%
   margin:  0 auto
   height: 230px
   border: 1px solid #DDDDDD

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { NFTMeta } from './types'
 
-export const useNFTMetaStore = defineStore('local-nft', {
+export const useNFTMetaStore = defineStore('local-token', {
   state: () => ({
     NTFMetas: {
       NTFMetas: [] as Array<NFTMeta>,

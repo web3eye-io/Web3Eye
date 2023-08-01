@@ -3,14 +3,21 @@ import { doActionWithError } from '../action'
 import { API } from './const'
 import { GetTokensRequest, GetTokensResponse, SearchToken } from './types' 
 
-export const useTokenStore = defineStore('Token', {
+export const useTokenStore = defineStore('token', {
   state: () => ({
     SearchTokens: {
-        SearchTokens: [] as Array<SearchToken>,
-        Total: 0,
+      SearchTokens: [] as Array<SearchToken>,
+      Total: 0,
+      Current: ''
     }
   }),
-  getters: {},
+  getters: {
+    setToken () {
+      return (rows: Array<SearchToken>) => {
+        this.SearchTokens.SearchTokens = rows
+      }
+    }
+  },
   actions: {
     getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[]) => void) {
       doActionWithError<GetTokensRequest, GetTokensResponse>(
