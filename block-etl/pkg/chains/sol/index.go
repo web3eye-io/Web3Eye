@@ -94,7 +94,7 @@ func (e *SolIndexer) StopIndex() {
 }
 
 func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
-	logger.Sugar().Info("start to index task for ethereum")
+	logger.Sugar().Info("start to index task for solana")
 	conds := &synctask.Conds{
 		ChainType: &ctMessage.StringVal{
 			Value: e.ChainType.String(),
@@ -138,13 +138,13 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 		case blockNum := <-inBlockNum:
 			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 			block, err := cli.GetBlock(ctx, blockNum)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 			blockHash := block.Blockhash.String()
@@ -159,7 +159,7 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum cha
 				},
 			})
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 
@@ -176,13 +176,13 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 		case num := <-inBlockNum:
 			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 			block, err := cli.GetBlock(ctx, num)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 
@@ -267,7 +267,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 
 				cli, err := sol.Client(e.Endpoints)
 				if err != nil {
-					logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+					logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 					continue
 				}
 
@@ -357,7 +357,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 			remark := ""
 			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				continue
 			}
 
@@ -413,7 +413,7 @@ func (e *SolIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 		func() {
 			cli, err := sol.Client(e.Endpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 				return
 			}
 
