@@ -12,7 +12,7 @@ export enum TokenConvertState {
   
 export interface SearchToken {
     ID: string
-    ChainType: string
+    ChainType: ChainType
     ChainID: string
     Contract: string
     TokenType: string

@@ -13,7 +13,9 @@
           <div class="name">
             <span>{{ token.Name }}</span>
           </div>
-          <div class="total-transfers">{{token.SiblingTokens?.length}} transfers</div>
+          <div class="total-transfers">
+            <a href="#/transfer" @click="target = {...token }">{{token.SiblingTokens?.length}} transfers</a>
+          </div>
           <div class="contract">
             <span>Contract: {{ token.Contract }}</span>
           </div>
@@ -44,7 +46,10 @@
 </template>
 <script lang="ts" setup>
 import { useTokenStore } from 'src/teststore/token';
-import { computed, defineAsyncComponent } from 'vue';
+import { SearchToken } from 'src/teststore/token/types';
+import { useTransferStore } from 'src/teststore/transfer';
+import { Transfer } from 'src/teststore/transfer/types';
+import { computed, defineAsyncComponent, ref, watch } from 'vue';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
@@ -54,6 +59,32 @@ const tokens = computed(() => {
   rows.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
   return rows
 })
+
+const target = ref({} as SearchToken)
+const transfer = useTransferStore()
+
+watch(target.value, () => {
+  if (!target.value) return
+  if (!transfer.exist(target.value?.ID)) {
+    getTransfers(0, 100)
+  }
+})
+
+const getTransfers = (offset: number, limit: number) => {
+  transfer.getTransfers({
+    ChainType: target.value.ChainType,
+    ChainID: target.value.ChainID,
+    Contract: target.value.Contract,
+    TokenID: target.value.TokenID,
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error:boolean, rows: Transfer[]) => {
+    if (error || rows.length <= 0) {
+      getTransfers(offset, offset + limit)
+    }
+  })
+}
 
 </script>
 <style lang="sass" scoped>

@@ -10,7 +10,19 @@ export const useTransferStore = defineStore('Transfer', {
       Total: 0,
     }
   }),
-  getters: {},
+  getters: {
+    getOne () {
+      return (id: string) => {
+        return this.Transfers.Transfers.find((el) => el.ID === id)
+      }
+    },
+    exist () {
+      return (id: string) => {
+        const index = this.Transfers.Transfers.findIndex((el) => el.ID === id)
+        return index > -1 ? false : true
+      }
+    }
+  },
   actions: {
     getTransfers (req: GetTransfersRequest, done: (error: boolean, rows: Transfer[]) => void) {
       doActionWithError<GetTransfersRequest, GetTransfersResponse>(
