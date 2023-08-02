@@ -2,39 +2,27 @@
   <div id="contract">
     <div class="row justify-center q-pa-md">
       <div class="left col-3 self-end">
-        <q-img
-          src="https://picsum.photos/500/300"
-          height="100%"
-          width="90%"
-          class="transfer-img rounded-borders"
-          fit="fill"
-        />
+        <MyImage :url="current.ProfileURL" :height="'100%'" :width="'90%'" />
       </div>
       <div class="right flex column col">
-        <div class="header">#1562</div>
+        <div class="header">{{ current.Name }}</div>
         <div class="title">Milady 12</div>
         <div class="contract">
           <span>Contract</span>
-          <span>0x8eF4459129029Db6a90a021762247dDe75899074</span>
+          <span>{{current.Address}}</span>
         </div>
-        <div class="chain">Ethereum @ Goerli</div>
+        <div class="chain">{{current.Name}} @ {{current.Creator}}</div>
       </div>
     </div>
     <div class="contracts q-pa-md">
       <h5>Tokens</h5>
       <div class="inner row">
-        <div class="box column" v-for="index in [1,23,4,5,6,7,8,9,10]" :key="index">
-          <q-img
-            src="https://picsum.photos/500/300"
-            height="180px"
-            width="180px"
-            class="rounded-borders"
-            fit="fill"
-          />
+        <div class="box column" v-for="token in tokens" :key="token.ID">
+          <MyImage :url="current.ProfileURL" :height="'180px'" :width="'180px'" />
           <div class="content">
             <div class="line row justify-between">
-              <span class="title">#756241...</span>
-              <span class="fee">4.75</span>
+              <span class="title">{{token.TokenID}}.</span>
+              <span class="fee">{{token.ImageSnapshotID}}</span>
             </div>
             <div class="super row justify-between">
               <span>CloneX Super</span>
@@ -46,7 +34,16 @@
     </div>
   </div>
 </template>
+<script lang="ts" setup>
+import { useContractStore } from 'src/teststore/contract'
+import { computed, defineAsyncComponent } from 'vue';
 
+const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
+
+const contract = useContractStore()
+const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const current = computed(() => contract.Contract)
+</script>
 <style lang="sass" scoped>
 #contract
   width: 60%

@@ -1,7 +1,7 @@
 import { ChainType, TokenType } from '../basetypes/const'
 import { BaseRequest } from '../local'
 
-export enum TokenConvertState {
+export enum ConvertState {
     Default = 'Default',
     Waiting = 'Waiting',
     Processing = 'Processing',
@@ -12,7 +12,7 @@ export enum TokenConvertState {
   
 export interface SearchToken {
     ID: string
-    ChainType: string
+    ChainType: ChainType
     ChainID: string
     Contract: string
     TokenType: string
@@ -24,7 +24,7 @@ export interface SearchToken {
     VideoURL: string
     Description: string
     Name: string
-    VectorState: TokenConvertState
+    VectorState: ConvertState
     VectorID: string
     Remark: string
     IPFSImageURL: string
@@ -55,7 +55,7 @@ export interface Token {
     VideoURL: string
     Description: string
     Name: string
-    VectorState: TokenConvertState
+    VectorState: ConvertState
     VectorID: string
     Remark: string
     IPFSImageURL: string

@@ -8,12 +8,14 @@
         <div class="content col">
           <div class="line-top">
             <span class="distance">Distance: {{ token.Distance }}</span>
-            <span class="block1">Block: {{ token.VectorID }}</span>
+            <span class="block1">Block: {{ token.SiblingsNum }}</span>
           </div>
-          <div class="clone">
+          <div class="name">
             <span>{{ token.Name }}</span>
           </div>
-          <div class="total-transfers">{{token.SiblingTokens?.length}} transfers</div>
+          <div class="total-transfers">
+            <a href="#/transfer" @click="target = {...token }">{{token.SiblingTokens?.length}} transfers</a>
+          </div>
           <div class="contract">
             <span>Contract: {{ token.Contract }}</span>
           </div>
@@ -30,7 +32,7 @@
       <div class="col-2">
         <div class="right column justify-between">
           <div class="right-top self-end">
-            <span class="name">Ethereum</span>
+            <span class="name">{{ token.ChainType }}</span>
             <span class="net">@mainnet</span>
           </div>
           <div class="right-bottom self-end">
@@ -41,12 +43,21 @@
       </div>
     </div>
   </div>
+  <q-dialog v-model="showing" id="transfer-card">
+    <q-card style="width: 860px;">
+      <TransferCard :transfers="targetTransfers" :token="target"  />
+    </q-card>
+  </q-dialog>
 </template>
 <script lang="ts" setup>
 import { useTokenStore } from 'src/teststore/token';
-import { computed, defineAsyncComponent } from 'vue';
+import { SearchToken } from 'src/teststore/token/types';
+import { useTransferStore } from 'src/teststore/transfer';
+import { Transfer } from 'src/teststore/transfer/types';
+import { computed, defineAsyncComponent, ref, watch } from 'vue';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
+const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -54,6 +65,39 @@ const tokens = computed(() => {
   rows.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
   return rows
 })
+
+const target = ref({} as SearchToken)
+
+const transfer = useTransferStore()
+const targetTransfers = ref([] as Array<Transfer>)
+
+const showing = ref(false)
+
+watch(target.value, () => {
+  if (!target.value) return
+  if (!transfer.exist(target.value?.ID)) {
+    getTransfers(0, 100)
+  }
+})
+
+const getTransfers = (offset: number, limit: number) => {
+  transfer.getTransfers({
+    ChainType: target.value.ChainType,
+    ChainID: target.value.ChainID,
+    Contract: target.value.Contract,
+    TokenID: target.value.TokenID,
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error:boolean, rows: Transfer[]) => {
+    if (error || rows.length <= 0) {
+      targetTransfers.value = rows
+      return
+    }
+    getTransfers(offset, offset + limit)
+  })
+}
+
 
 </script>
 <style lang="sass" scoped>
@@ -74,7 +118,7 @@ const tokens = computed(() => {
           font-weight: bolder
         .block1
           padding-left: 15px
-        .clone
+        .name
           padding: 10px 0
     .transfers div
       margin-right: 5px
@@ -86,4 +130,9 @@ const tokens = computed(() => {
           .name
             font-weight: 700px
             color: #7D7D7D
+
+@media (min-width: 600px)
+.q-dialog__inner--minimized > div
+  max-width: 100%
+
 </style>
