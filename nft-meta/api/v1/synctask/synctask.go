@@ -91,7 +91,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
+		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, err
 	}
 
 	defer func() {
@@ -120,9 +120,8 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}
 
 	syncEnd := info.End
-	safeEnd := in.CurrentBlockNum
-	if syncEnd == 0 || syncEnd > safeEnd {
-		syncEnd = safeEnd
+	if syncEnd == 0 || syncEnd > in.CurrentBlockNum {
+		syncEnd = in.CurrentBlockNum
 	}
 
 	lastNum := info.Current

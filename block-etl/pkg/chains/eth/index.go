@@ -10,6 +10,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
@@ -114,8 +115,12 @@ func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 			if err != nil {
 				logger.Sugar().Error(err)
 			}
+
 			for _, v := range resp.GetInfos() {
+				fmt.Println(utils.PrettyStruct(e.CurrentBlockNum))
 				resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic, CurrentBlockNum: e.CurrentBlockNum})
+				fmt.Println(utils.PrettyStruct(resp))
+
 				if err != nil {
 					logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				}

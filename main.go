@@ -1,14 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
-	"github.com/web3eye-io/Web3Eye/common/utils"
+	"github.com/web3eye-io/Web3Eye/common/ctredis"
 )
 
 func main() {
@@ -16,11 +15,14 @@ func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	uri := "https://ipfs.walken.io/ipfs/QmaBnkkD8KmMLzZuoXG4KrRDeoJBqWSqhYkCHLGev5HmD6"
-	tokenURI, err := token.GetTokenURIInfo(context.Background(), uri)
-	fmt.Println(err)
-	fmt.Println(utils.PrettyStruct(tokenURI))
-	fmt.Println(token.TokenURIType(uri))
+	fmt.Println(ctredis.TryLock("sssss", time.Second))
+	// go func() {
+	// 	mgr := milvusdb.NewNFTConllectionMGR()
+	// 	out, err := mgr.Search(context.Background(), [][2048]float32{imageconvert.ToArrayVector([]float32{1, 1})}, 100)
+	// 	fmt.Println(utils.PrettyStruct(out))
+	// 	fmt.Println(err)
+	// }()
+
 	<-sigchan
 	os.Exit(1)
 }

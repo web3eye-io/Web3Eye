@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v9"
 	"github.com/web3eye-io/Web3Eye/config"
 )
 
