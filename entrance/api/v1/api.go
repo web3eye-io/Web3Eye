@@ -22,6 +22,7 @@ func Register(server grpc.ServiceRegistrar) {
 	npool.RegisterManagerServer(server, &Server{})
 	snapshot.Register(server)
 	retriever.Register(server)
+	contract.Register(server)
 	transfer.Register(server)
 	token.Register(server)
 }
