@@ -32,6 +32,7 @@ export interface SearchToken {
     SiblingTokens: SiblingToken[]
     SiblingsNum: number
     Distance: number
+    TransfersNum: number
 }
 
 export interface SiblingToken {

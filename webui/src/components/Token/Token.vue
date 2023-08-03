@@ -14,13 +14,13 @@
         <div class="content col">
           <div class="line-top">
             <span class="distance">Distance: {{ token.Distance }}</span>
-            <span class="block1">Block: {{ token.SiblingsNum }}</span>
+            <!-- <span class="block1">Block: {{ token.SiblingsNum }}</span> -->
           </div>
           <div class="name">
             <span>{{ token.Name }}</span>
           </div>
           <div class="total-transfers">
-            <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token.SiblingTokens?.length}} transfers</a>
+            <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token?.TransfersNum}} transfers</a>
           </div>
           <div class="contract">
             <a href="#" @click.prevent @click="onContractClick(token)">
@@ -40,12 +40,16 @@
       <div class="col-2">
         <div class="right column justify-between">
           <div class="right-top self-end">
-            <span class="name">{{ token.ChainType }}</span>
+            <span class="name">
+              <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" style="padding-bottom: 3px;" />
+              <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" style="padding-bottom: 2px;" />
+              {{ token.ChainType }}
+            </span>
             <span class="net">@mainnet</span>
           </div>
           <div class="right-bottom self-end">
-            <span>ERC-721</span>
-            <span></span>2021/09/6 23:56
+            <span>{{token.TokenType}}</span>
+            <span>  ChainID-{{token.ChainID}}</span>
           </div>
         </div>
       </div>
@@ -59,12 +63,12 @@
 </template>
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, ref, watch } from 'vue';
+import { ChainType } from 'src/teststore/basetypes/const';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
@@ -114,23 +118,13 @@ const getTransfers = (offset: number, limit: number) => {
 
 const router = useRouter()
 
-const contract = useContractStore()
-const getContract = () => {
-  contract.getContractAndTokens({
-    Contract: target.value?.Contract,
-    Offset: 0, 
-    Limit: 100,
-    Message: {}
-  }, (error: boolean) => {
-    if (!error) {
-      void router.push('/contract')
+const onContractClick = (token: SearchToken) => {
+  void router.push({
+    path: '/contract',
+    query: {
+      contract: token.Contract
     }
   })
-}
-
-const onContractClick = (token: SearchToken) => {
-  target.value = { ...token }
-  getContract()
 }
 </script>
 <style lang="sass" scoped>
