@@ -8,7 +8,7 @@
     <h5>Result</h5>
     <div class="row box" v-for="token in tokens" :key="token.ID">
       <div class="col-2 left">
-        <MyImage :url="token.ImageURL" :height="'230px'" />
+        <MyImage :url="token.ImageURL" :height="'230px'" :title="token.TokenID" />
       </div>
       <div class="col flex column center">
         <div class="content col">
@@ -30,7 +30,7 @@
         </div>
         <div class="transfers col flex">
           <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
-            <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'"/>
+            <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'" :title="item.TokenID" />
           </div>
           <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
             ...
@@ -58,6 +58,7 @@
   </q-dialog>
 </template>
 <script lang="ts" setup>
+import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
@@ -111,6 +112,8 @@ const getTransfers = (offset: number, limit: number) => {
   })
 }
 
+const router = useRouter()
+
 const contract = useContractStore()
 const getContract = () => {
   contract.getContractAndTokens({
@@ -118,8 +121,10 @@ const getContract = () => {
     Offset: 0, 
     Limit: 100,
     Message: {}
-  }, () => {
-    // TODO
+  }, (error: boolean) => {
+    if (!error) {
+      void router.push('/contract')
+    }
   })
 }
 

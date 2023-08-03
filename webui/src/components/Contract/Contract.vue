@@ -18,15 +18,15 @@
       <h5>Tokens</h5>
       <div class="inner row">
         <div class="box column" v-for="token in tokens" :key="token.ID">
-          <MyImage :url="current.ProfileURL" :height="'180px'" :width="'180px'" />
+          <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
           <div class="content">
             <div class="line row justify-between">
               <span class="title">{{token.TokenID}}.</span>
               <span class="fee">{{token.ImageSnapshotID}}</span>
             </div>
             <div class="super row justify-between">
-              <span>CloneX Super</span>
-              <span>27</span>
+              <span>{{token.Name}}</span>
+              <!-- <span>{{token.TokenID}}</span> -->
             </div>
           </div>
         </div>

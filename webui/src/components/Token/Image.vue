@@ -12,7 +12,11 @@
     :width="width" 
     fit="fill" 
     class="rounded-borders"
-  />
+  >
+    <div class="absolute-bottom-left text-subtitle2">
+      #{{title}}
+    </div>
+  </q-img>
 </template>
 
 <script lang="ts" setup>
@@ -22,12 +26,14 @@ interface Props {
   url: string;
   height?: string
   width?: string
+  title?: string
 }
 
 const props = defineProps<Props>()
 const url = toRef(props, 'url')
 const height = toRef(props, 'height')
 const width = toRef(props, 'width')
+const title = toRef(props, 'title')
 
 enum ImageType {
   ICON = 'ICON',
@@ -52,3 +58,8 @@ const imageUrl = computed(() => {
 })
 
 </script>
+<style lang="sass" scoped>
+.q-img__content > div
+  padding: 2px
+  background: none
+</style>
