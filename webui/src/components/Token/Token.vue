@@ -67,7 +67,7 @@ import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { ChainType } from 'src/teststore/basetypes/const';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
@@ -126,6 +126,23 @@ const onContractClick = (token: SearchToken) => {
     }
   })
 }
+const getTokens = (page: number) => {
+  token.getTokens({
+    StorageKey: token.SearchTokens.StorageKey,
+    Page: page,
+    Message: {}
+  }, (error:boolean) => {
+    if (error || page >= token.SearchTokens.TotalPages) return
+    page += 1
+    getTokens(page)
+  })
+}
+
+onMounted(() => {
+  if (token.SearchTokens.SearchTokens.length < token.SearchTokens.Total) {
+    getTokens(2)
+  }
+})
 </script>
 <style lang="sass" scoped>
 #token

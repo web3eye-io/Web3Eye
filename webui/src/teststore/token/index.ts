@@ -8,7 +8,9 @@ export const useTokenStore = defineStore('token', {
     SearchTokens: {
       SearchTokens: [] as Array<SearchToken>,
       Total: 0,
-      Current: ''
+      Current: '',
+      StorageKey: '',
+      TotalPages: 0
     }
   }),
   getters: {
@@ -25,8 +27,7 @@ export const useTokenStore = defineStore('token', {
         req,
         req.Message,
         (resp: GetTokensResponse): void => {
-          this.SearchTokens.SearchTokens = resp.Infos
-          this.SearchTokens.Total = resp.TotalTokens
+          this.SearchTokens.SearchTokens.push(...resp.Infos)
           done(false, resp.Infos)
         }, () => {
           done(true, [])
