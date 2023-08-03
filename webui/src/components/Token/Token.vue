@@ -1,8 +1,14 @@
 <template>
   <div id="token">
+    <div class="top row">
+      <div class="col-2">
+        <MyImage :url="token?.SearchTokens?.Current" :height="'230px'" />
+      </div>
+    </div>
+    <h5>Result</h5>
     <div class="row box" v-for="token in tokens" :key="token.ID">
       <div class="col-2 left">
-        <MyImage :url="token.ImageURL" :height="'100%'" />
+        <MyImage :url="token.ImageURL" :height="'230px'" :title="token.TokenID" />
       </div>
       <div class="col flex column center">
         <div class="content col">
@@ -14,18 +20,20 @@
             <span>{{ token.Name }}</span>
           </div>
           <div class="total-transfers">
-            <a href="#/transfer" @click="target = {...token }">{{token.SiblingTokens?.length}} transfers</a>
+            <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token.SiblingTokens?.length}} transfers</a>
           </div>
           <div class="contract">
-            <span>Contract: {{ token.Contract }}</span>
+            <a href="#" @click.prevent @click="onContractClick(token)">
+              <span>Contract: {{ token.Contract }}</span>
+            </a>
           </div>
         </div>
         <div class="transfers col flex">
           <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
-            <MyImage :url="item.ImageURL" :height="'100%'" :width="'120px'"/>
+            <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'" :title="item.TokenID" />
           </div>
-          <div class="col-1 self-center">
-            ... have {{token.SiblingTokens?.length}} items transfer
+          <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
+            ...
           </div>
         </div>
       </div>
@@ -50,6 +58,8 @@
   </q-dialog>
 </template>
 <script lang="ts" setup>
+import { useRouter } from 'vue-router'
+import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
@@ -72,10 +82,14 @@ const transfer = useTransferStore()
 const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
+const onTransferClick = (token: SearchToken) => {
+  target.value = {...token}
+  showing.value = true
+}
 
-watch(target.value, () => {
+watch(() => target.value?.ID, () => {
   if (!target.value) return
-  if (!transfer.exist(target.value?.ID)) {
+  if (!transfer.getTransferByToken(target.value?.ChainID, target?.value?.ChainType, target.value?.Contract, target.value?.TokenID)) {
     getTransfers(0, 100)
   }
 })
@@ -90,7 +104,7 @@ const getTransfers = (offset: number, limit: number) => {
     Limit: limit,
     Message: {}
   }, (error:boolean, rows: Transfer[]) => {
-    if (error || rows.length <= 0) {
+    if (error || rows.length < limit) {
       targetTransfers.value = rows
       return
     }
@@ -98,13 +112,34 @@ const getTransfers = (offset: number, limit: number) => {
   })
 }
 
+const router = useRouter()
 
+const contract = useContractStore()
+const getContract = () => {
+  contract.getContractAndTokens({
+    Contract: target.value?.Contract,
+    Offset: 0, 
+    Limit: 100,
+    Message: {}
+  }, (error: boolean) => {
+    if (!error) {
+      void router.push('/contract')
+    }
+  })
+}
+
+const onContractClick = (token: SearchToken) => {
+  target.value = { ...token }
+  getContract()
+}
 </script>
 <style lang="sass" scoped>
 #token
   width: 60%
   margin:  0 auto
   padding-top: 30px
+  .top
+    padding-bottom: 20px
   .box
     height: 230px
     border: 1px solid #f4eeee

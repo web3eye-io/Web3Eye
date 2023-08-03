@@ -10,11 +10,11 @@
         <div class="description">
           {{token.Description}}
         </div>
-        <div class="url">
+        <div class="url" v-if="token?.ImageURL?.length > 0">
           <span>ImageURL</span>
           <span>{{token.ImageURL}}</span>
         </div>
-        <div class="ipfs">
+        <div class="ipfs" v-if="token?.IPFSImageURL?.length > 0">
           <span>IPFS-URL</span>
           <span>{{token.IPFSImageURL}}</span>
         </div>
@@ -22,7 +22,7 @@
           <span>Contract</span>
           <span>{{ token.Contract }}</span>
         </div>
-        <div class="chain">{{token.ChainType}} @ Goerli</div>
+        <div class="chain">{{token.ChainType}}</div>
       </div>
     </div>
     <div class="transfer-table">
@@ -31,7 +31,7 @@
         <q-table
           row-key="Block" 
           flat bordered
-          :columns="columns"
+          :columns="(columns as any)"
           :rows="transfers"
         />
       </div>
@@ -62,26 +62,31 @@ const columns = computed(() => [
   {
     name: 'Block',
     label: 'BLOCK',
+    align: 'center',
     field: (row: Transfer) => row.BlockNumber
   },
   {
     name: 'Time',
     label: 'Time',
+    align: 'center',
     field: (row: Transfer) => row.TxTime
   },
   {
     name: 'Value',
     label: 'Value',
+    align: 'center',
     field: (row: Transfer) => row.Amount
   },
   {
     name: 'From',
     label: 'From',
+    align: 'center',
     field: (row: Transfer) => row.From
   },
   {
     name: 'To',
     label: 'To',
+    align: 'center',
     field: (row: Transfer) => row.To
   },
 ])
