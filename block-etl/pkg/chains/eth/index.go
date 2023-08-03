@@ -277,12 +277,13 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 				if err != nil {
 					e.checkErr(ctx, err)
 					logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
-					remark = err.Error()
+					remark = fmt.Sprintf("%v,%v", remark, err)
 				}
 
 				tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
 				if err != nil {
 					tokenURIInfo = &token.TokenURIInfo{}
+					remark = fmt.Sprintf("%v,%v", remark, err)
 				}
 
 				_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{

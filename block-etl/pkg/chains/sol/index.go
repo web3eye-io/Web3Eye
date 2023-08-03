@@ -274,13 +274,18 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 				metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 				if err != nil {
 					e.checkErr(ctx, err)
-					logger.Sugar().Warnf("cannot get metadata,err: %v", err)
-					remark = err.Error()
+					logger.Sugar().Warnf("cannot get metadata,err: %v, tokenID: %v", err, transfer.TokenID)
+					remark = fmt.Sprintf("%v,%v", remark, err)
 				}
 
-				tokenURIInfo, err := token.GetTokenURIInfo(ctx, metadata.Data.Uri)
-				if err != nil {
-					tokenURIInfo = &token.TokenURIInfo{}
+				tokenURIInfo := &token.TokenURIInfo{}
+				if metadata != nil {
+					tokenURIInfo, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
+					if err != nil {
+						tokenURIInfo = &token.TokenURIInfo{}
+						remark = fmt.Sprintf("%v,%v", remark, err)
+
+					}
 				}
 
 				_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
