@@ -81,5 +81,5 @@ export interface GetTokensResponse {
     Page: number
     TotalPages: number
     TotalTokens: number
-    PageLimit: number
+    Limit: number
 }

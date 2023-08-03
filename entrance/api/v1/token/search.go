@@ -32,7 +32,7 @@ import (
 const (
 	MaxUploadFileSize = 1 << 10 << 10 << 3
 	UploadFileFeild   = "UploadFile"
-	PageLimitFeild    = "PageLimit"
+	LimitFeild        = "Limit"
 )
 
 type Img2VectorResp struct {
@@ -72,11 +72,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	_pageLimit := r.FormValue(PageLimitFeild)
-	pageLimit, err := strconv.ParseUint(_pageLimit, 10, 32)
+	_limit := r.FormValue(LimitFeild)
+	limit, err := strconv.ParseUint(_limit, 10, 32)
 
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("failed to parse feild PageLimit %v, %v", _pageLimit, err)
+		respBody["msg"] = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -106,7 +106,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	token.UseCloudProxyCC()
 	resp, err := token.Search(context.Background(), &rankerproto.SearchTokenRequest{
 		Vector: vector,
-		Limit:  uint32(pageLimit),
+		Limit:  uint32(limit),
 	})
 	if err != nil {
 		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
@@ -123,7 +123,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	respBody["StorageKey"] = resp.StorageKey
 	respBody["TotalPages"] = resp.TotalPages
 	respBody["TotalTokens"] = resp.TotalTokens
-	respBody["PageLimit"] = resp.PageLimit
+	respBody["Limit"] = resp.Limit
 }
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct

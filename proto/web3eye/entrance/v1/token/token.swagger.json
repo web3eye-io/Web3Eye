@@ -194,7 +194,7 @@
           "type": "integer",
           "format": "int64"
         },
-        "PageLimit": {
+        "Limit": {
           "type": "integer",
           "format": "int64"
         }

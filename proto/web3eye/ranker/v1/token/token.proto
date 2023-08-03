@@ -62,7 +62,7 @@ message SearchResponse {
   uint32 Page = 30;
   uint32 TotalPages = 40;
   uint32 TotalTokens = 50;
-  uint32 PageLimit = 60;
+  uint32 Limit = 60;
 }
 
 

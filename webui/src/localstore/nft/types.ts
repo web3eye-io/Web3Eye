@@ -35,5 +35,5 @@ export interface UploadResponse {
   StorageKey : string
   TotalPages: number
   TotalTokens: number
-  PageLimit: number
+  Limit: number
 }

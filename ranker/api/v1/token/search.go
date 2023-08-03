@@ -38,7 +38,7 @@ type PageBone struct {
 	Page        uint32
 	TotalPages  uint32
 	TotalTokens uint32
-	PageLimit   uint32
+	Limit       uint32
 }
 
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
@@ -79,7 +79,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 			Page:        uint32(i + 1),
 			TotalPages:  totalPages,
 			TotalTokens: totalTokens,
-			PageLimit:   in.Limit,
+			Limit:       in.Limit,
 		}
 
 		err = ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pBone.Page), pBone, StorageExpr)
@@ -101,7 +101,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		Page:        1,
 		TotalPages:  totalPages,
 		TotalTokens: totalTokens,
-		PageLimit:   in.Limit,
+		Limit:       in.Limit,
 	}, nil
 }
 
@@ -123,7 +123,7 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 		Page:        pBone.Page,
 		TotalPages:  pBone.TotalPages,
 		TotalTokens: pBone.TotalTokens,
-		PageLimit:   pBone.PageLimit,
+		Limit:       pBone.Limit,
 	}, nil
 }
 

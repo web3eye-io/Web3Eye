@@ -5,9 +5,11 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
 
 	common_eth "github.com/web3eye-io/Web3Eye/common/chains/eth"
+	common_sol "github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
@@ -45,8 +47,9 @@ func init() {
 		endpointGroups:          make(map[basetype.ChainType]map[string][]string),
 	}
 
-	// 应该改用注册的方式
+	// TODO:should be registed
 	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.GetEndpointChainID
 }
 
 func GetIndexMGR() *indexMGR {
@@ -171,6 +174,8 @@ func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.Cha
 		switch chanType {
 		case basetype.ChainType_Ethereum:
 			pmgr.Indexs[chanType][chainID] = eth.NewIndexer(chainID)
+		case basetype.ChainType_Solana:
+			pmgr.Indexs[chanType][chainID] = sol.NewIndexer(chainID)
 		default:
 			logger.Sugar().Warnf("have no chainType: %v chainID: %v indexer type,will skip", chanType, chainID)
 			return
