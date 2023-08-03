@@ -2,7 +2,7 @@
   <div id="transfer">
     <div class="row justify-center q-pa-md">
       <div class="left col-4">
-        <MyImage :url="token.ImageURL" :height="'100%'" :width="'100%'" />
+        <MyImage :url="token.ImageURL" :height="'230px'" :width="'100%'" />
       </div>
       <div class="right flex column col">
         <div class="header">{{token.Name}}</div>

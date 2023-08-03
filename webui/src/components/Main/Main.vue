@@ -25,7 +25,7 @@
       color='white'
       :square='false'
       field-name='UploadFile'
-      :form-fields='[{name: "Limit", value: "10"}]'
+      :form-fields='[{name: "Limit", value: "20"}]'
       auto-upload
       flat
       accept=".jpg, image/*"
@@ -112,6 +112,9 @@ const onUploaded = (info: {
 	}
   const response = JSON.parse(info.xhr.response as string) as GetTokensResponse
   token.setToken(response.Infos)
+  token.SearchTokens.Total = response.TotalTokens
+  token.SearchTokens.StorageKey = response.StorageKey
+  token.SearchTokens.TotalPages = response.TotalPages
   void router.push({
     path: '/token'
   })
