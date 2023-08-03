@@ -1,5 +1,11 @@
 <template>
   <div id="token">
+    <div class="top row">
+      <div class="col-2">
+        <MyImage :url="token?.SearchTokens?.Current" :height="'230px'" />
+      </div>
+    </div>
+    <h5>Result</h5>
     <div class="row box" v-for="token in tokens" :key="token.ID">
       <div class="col-2 left">
         <MyImage :url="token.ImageURL" :height="'230px'" />
@@ -17,7 +23,9 @@
             <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token.SiblingTokens?.length}} transfers</a>
           </div>
           <div class="contract">
-            <span>Contract: {{ token.Contract }}</span>
+            <a href="#" @click.prevent @click="onContractClick(token)">
+              <span>Contract: {{ token.Contract }}</span>
+            </a>
           </div>
         </div>
         <div class="transfers col flex">
@@ -50,6 +58,7 @@
   </q-dialog>
 </template>
 <script lang="ts" setup>
+import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
@@ -102,13 +111,30 @@ const getTransfers = (offset: number, limit: number) => {
   })
 }
 
+const contract = useContractStore()
+const getContract = () => {
+  contract.getContractAndTokens({
+    Contract: target.value?.Contract,
+    Offset: 0, 
+    Limit: 100,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
 
+const onContractClick = (token: SearchToken) => {
+  target.value = { ...token }
+  getContract()
+}
 </script>
 <style lang="sass" scoped>
 #token
   width: 60%
   margin:  0 auto
   padding-top: 30px
+  .top
+    padding-bottom: 20px
   .box
     height: 230px
     border: 1px solid #f4eeee
