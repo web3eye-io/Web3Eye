@@ -17,6 +17,7 @@ func Ent2Grpc(row *ent.Token) *ranker_npool.SearchToken {
 		ChainID:         row.ChainID,
 		Contract:        row.Contract,
 		TokenID:         row.TokenID,
+		TokenType:       row.TokenType,
 		Owner:           row.Owner,
 		URI:             row.URI,
 		URIType:         row.URIType,

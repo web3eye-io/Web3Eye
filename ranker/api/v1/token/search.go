@@ -12,10 +12,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
+	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 	val "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	transfernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	rankernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	converter "github.com/web3eye-io/Web3Eye/ranker/pkg/converter/v1/token"
 )
@@ -27,10 +29,11 @@ const (
 )
 
 type SearchTokenBone struct {
-	ID          string
-	SiblingIDs  []string
-	SiblingsNum uint32
-	Distance    float32
+	ID            string
+	SiblingIDs    []string
+	SiblingsNum   uint32
+	Distance      float32
+	TranserferNum int32
 }
 
 type PageBone struct {
@@ -204,21 +207,12 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			contractRecord[v.Contract] = len(result) - 1
 		}
 	}
-	// count transfers and
+	// full the siblinsTokens
 	for _, v := range result {
 		conds = &nftmetanpool.Conds{
-			ChainType: &val.StringVal{
-				Op:    "eq",
-				Value: v.ChainType,
-			},
-			ChainID: &val.StringVal{
-				Op:    "eq",
-				Value: v.ChainID,
-			},
-			Contract: &val.StringVal{
-				Op:    "eq",
-				Value: v.Contract,
-			},
+			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType},
+			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
+			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
 		}
 
 		// query ShowSiblinsNum+1 records,because likely to query the v-self
@@ -246,6 +240,20 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 			v.SiblingTokens = v.SiblingTokens[:ShowSiblinsNum]
 		}
 	}
+
+	// get token transfersNum
+	for _, v := range result {
+		conds := &transfernpool.Conds{
+			Contract: &val.StringVal{Op: "eq", Value: v.GetContract()},
+			TokenID:  &val.StringVal{Op: "eq", Value: v.TokenID},
+		}
+
+		num, err := transfercrud.Count(ctx, conds)
+		if err == nil {
+			v.TransfersNum = int32(num)
+		}
+	}
+
 	return result, nil
 }
 
@@ -270,9 +278,10 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 	bones := make([]*SearchTokenBone, len(infos))
 	for i, v := range infos {
 		bones[i] = &SearchTokenBone{
-			ID:          v.ID,
-			SiblingsNum: v.SiblingsNum,
-			Distance:    v.Distance,
+			ID:            v.ID,
+			SiblingsNum:   v.SiblingsNum,
+			Distance:      v.Distance,
+			TranserferNum: v.TransfersNum,
 		}
 		siblingIDs := make([]string, len(v.SiblingTokens))
 		for i, token := range v.SiblingTokens {
@@ -303,6 +312,7 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 		tokens[i] = converter.Ent2Grpc(rows[0])
 		tokens[i].Distance = v.Distance
 		tokens[i].SiblingsNum = v.SiblingsNum
+		tokens[i].TransfersNum = v.TranserferNum
 		tokens[i].SiblingTokens = make([]*rankernpool.SiblingToken, len(rows)-1)
 
 		for j := 1; j < len(rows); j++ {

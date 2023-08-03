@@ -259,6 +259,10 @@
         "ImageSnapshotID": {
           "type": "string"
         },
+        "TransfersNum": {
+          "type": "integer",
+          "format": "int32"
+        },
         "SiblingTokens": {
           "type": "array",
           "items": {
