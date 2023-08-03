@@ -1,5 +1,6 @@
 <template>
   <div id="token">
+    <h5>Target</h5>
     <div class="top row">
       <div class="col-2">
         <MyImage :url="token?.SearchTokens?.Current" :height="'230px'" />
@@ -20,10 +21,10 @@
             <span>{{ token.Name }}</span>
           </div>
           <div class="total-transfers">
-            <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token?.TransfersNum}} transfers</a>
+            <a href="#" @click.prevent @click="onTransferClick(token)" style="color: black;">{{token?.TransfersNum}} transfers</a>
           </div>
           <div class="contract">
-            <a href="#" @click.prevent @click="onContractClick(token)">
+            <a href="#" @click.prevent @click="onContractClick(token)" style="color: black;">
               <span>Contract: {{ token.Contract }}</span>
             </a>
           </div>
@@ -49,7 +50,7 @@
           </div>
           <div class="right-bottom self-end">
             <span>{{token.TokenType}}</span>
-            <span>  ChainID-{{token.ChainID}}</span>
+            <!-- <span>  ChainID-{{token.ChainID}}</span> -->
           </div>
         </div>
       </div>
@@ -176,7 +177,6 @@ onMounted(() => {
           .name
             font-weight: 700px
             color: #7D7D7D
-
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%

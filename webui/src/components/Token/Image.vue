@@ -11,10 +11,9 @@
     :height="height" 
     :width="width" 
     fit="fill" 
-    class="rounded-borders"
   >
     <div class="absolute-bottom-left text-subtitle2" v-if="title">
-      #{{title}}
+      {{title}}
     </div>
   </q-img>
 </template>
