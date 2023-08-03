@@ -157,7 +157,7 @@
         "Contract": {
           "$ref": "#/definitions/contractContract"
         },
-        "Toknes": {
+        "Tokens": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/contractShotToken"

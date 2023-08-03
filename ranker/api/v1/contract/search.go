@@ -65,7 +65,7 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 
 	return &rankernpool.GetContractAndTokensResp{
 		Contract:    nftmetaconverter.Ent2Grpc(contract),
-		Toknes:      shotTokens,
+		Tokens:      shotTokens,
 		TotalTokens: uint32(total),
 	}, nil
 }
