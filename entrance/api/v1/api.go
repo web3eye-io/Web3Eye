@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 
+	"github.com/web3eye-io/Web3Eye/entrance/api/v1/contract"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/retriever"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/snapshot"
 	"github.com/web3eye-io/Web3Eye/entrance/api/v1/token"
@@ -36,6 +37,9 @@ func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOpt
 		return err
 	}
 	if err := transfer.RegisterGateway(mux, endpoint, opts); err != nil {
+		return err
+	}
+	if err := contract.RegisterGateway(mux, endpoint, opts); err != nil {
 		return err
 	}
 	if err := token.RegisterGateway(mux, endpoint, opts); err != nil {
