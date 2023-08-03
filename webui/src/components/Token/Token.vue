@@ -2,7 +2,7 @@
   <div id="token">
     <div class="row box" v-for="token in tokens" :key="token.ID">
       <div class="col-2 left">
-        <MyImage :url="token.ImageURL" :height="'100%'" />
+        <MyImage :url="token.ImageURL" :height="'230px'" />
       </div>
       <div class="col flex column center">
         <div class="content col">
@@ -14,7 +14,7 @@
             <span>{{ token.Name }}</span>
           </div>
           <div class="total-transfers">
-            <a href="#/transfer" @click="target = {...token }">{{token.SiblingTokens?.length}} transfers</a>
+            <a href="#" @click.prevent @click="onTransferClick(token)" v-if="token?.SiblingTokens?.length > 0">{{token.SiblingTokens?.length}} transfers</a>
           </div>
           <div class="contract">
             <span>Contract: {{ token.Contract }}</span>
@@ -22,10 +22,10 @@
         </div>
         <div class="transfers col flex">
           <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
-            <MyImage :url="item.ImageURL" :height="'100%'" :width="'120px'"/>
+            <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'"/>
           </div>
-          <div class="col-1 self-center">
-            ... have {{token.SiblingTokens?.length}} items transfer
+          <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
+            ...
           </div>
         </div>
       </div>
@@ -72,10 +72,14 @@ const transfer = useTransferStore()
 const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
+const onTransferClick = (token: SearchToken) => {
+  target.value = {...token}
+  showing.value = true
+}
 
-watch(target.value, () => {
+watch(() => target.value?.ID, () => {
   if (!target.value) return
-  if (!transfer.exist(target.value?.ID)) {
+  if (!transfer.getTransferByToken(target.value?.ChainID, target?.value?.ChainType, target.value?.Contract, target.value?.TokenID)) {
     getTransfers(0, 100)
   }
 })
@@ -90,7 +94,7 @@ const getTransfers = (offset: number, limit: number) => {
     Limit: limit,
     Message: {}
   }, (error:boolean, rows: Transfer[]) => {
-    if (error || rows.length <= 0) {
+    if (error || rows.length < limit) {
       targetTransfers.value = rows
       return
     }

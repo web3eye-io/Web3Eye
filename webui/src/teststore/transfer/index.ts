@@ -21,6 +21,14 @@ export const useTransferStore = defineStore('Transfer', {
         const index = this.Transfers.Transfers.findIndex((el) => el.ID === id)
         return index > -1 ? false : true
       }
+    },
+    getTransferByToken() {
+      return (chainID: string, chainType: string, contract: string, tokenID:string) => {
+        const index = this.Transfers.Transfers.findIndex((el) => el.ID === chainID && el.ChainType === chainType && 
+          el.Contract === contract && el.TokenID === tokenID
+        )
+        return index === -1 ? false : true
+      }
     }
   },
   actions: {
