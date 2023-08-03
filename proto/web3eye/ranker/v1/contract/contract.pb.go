@@ -210,7 +210,7 @@ type GetContractAndTokensResp struct {
 	unknownFields protoimpl.UnknownFields
 
 	Contract    *contract.Contract `protobuf:"bytes,10,opt,name=Contract,proto3" json:"Contract,omitempty"`
-	Toknes      []*ShotToken       `protobuf:"bytes,20,rep,name=Toknes,proto3" json:"Toknes,omitempty"`
+	Tokens      []*ShotToken       `protobuf:"bytes,20,rep,name=Tokens,proto3" json:"Tokens,omitempty"`
 	TotalTokens uint32             `protobuf:"varint,30,opt,name=TotalTokens,proto3" json:"TotalTokens,omitempty"`
 }
 
@@ -253,9 +253,9 @@ func (x *GetContractAndTokensResp) GetContract() *contract.Contract {
 	return nil
 }
 
-func (x *GetContractAndTokensResp) GetToknes() []*ShotToken {
+func (x *GetContractAndTokensResp) GetTokens() []*ShotToken {
 	if x != nil {
-		return x.Toknes
+		return x.Tokens
 	}
 	return nil
 }
@@ -392,7 +392,7 @@ var file_web3eye_ranker_v1_contract_contract_proto_depIdxs = []int32{
 	3,  // 0: ranker.v1.contract.ShotToken.ChainType:type_name -> chain.ChainType
 	4,  // 1: ranker.v1.contract.ShotToken.TokenType:type_name -> chain.TokenType
 	5,  // 2: ranker.v1.contract.GetContractAndTokensResp.Contract:type_name -> nftmeta.v1.contract.Contract
-	1,  // 3: ranker.v1.contract.GetContractAndTokensResp.Toknes:type_name -> ranker.v1.contract.ShotToken
+	1,  // 3: ranker.v1.contract.GetContractAndTokensResp.Tokens:type_name -> ranker.v1.contract.ShotToken
 	6,  // 4: ranker.v1.contract.Manager.GetContract:input_type -> nftmeta.v1.contract.GetContractRequest
 	7,  // 5: ranker.v1.contract.Manager.GetContractOnly:input_type -> nftmeta.v1.contract.GetContractOnlyRequest
 	8,  // 6: ranker.v1.contract.Manager.GetContracts:input_type -> nftmeta.v1.contract.GetContractsRequest
