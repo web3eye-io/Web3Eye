@@ -17,3 +17,10 @@ enum TokenType{
     Metaplex = 30;
     NoURI = 40;
 }
+
+
+enum UrlType{
+    UrlTypeUnkonwn = 0;
+    ImageUrl = 10;
+    VedieoUrl = 20;
+}

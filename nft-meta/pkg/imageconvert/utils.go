@@ -21,7 +21,10 @@ import (
 )
 
 var (
-	ICServer = config.GetConfig().ImageConverter.Address
+	ICServer = fmt.Sprintf("%v:%v",
+		config.GetConfig().Converter.Domain,
+		config.GetConfig().Converter.HTTPPort,
+	)
 )
 
 type Img2VectorResp struct {

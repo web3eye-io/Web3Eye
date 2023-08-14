@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car image-converter dealer webui
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car dealer
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car converter dealer webui
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car converter dealer
 
 ##@ init project
 init:

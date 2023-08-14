@@ -1,6 +1,5 @@
 import towhee
 
-
 class Resnet50:
     """
     Say something about the ExampleCalass...

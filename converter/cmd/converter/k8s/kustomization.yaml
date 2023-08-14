@@ -1,0 +1,3 @@
+resources:
+  - 01-converter.viper.yaml
+  - 02-converter.yaml

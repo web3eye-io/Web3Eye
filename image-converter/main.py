@@ -12,7 +12,7 @@ import os
 def img2ventor():
     upload = request.files.get('upload')
     name, ext = os.path.splitext(upload.filename)
-    if ext not in ('.png', '.jpg', '.jpeg'):
+    if ext not in ('.png', '.jpg', '.jpeg'): 
         return vectorResp(msg='File extension not allowed.')
 
     image_path = "./img/"+str(uuid4())+ext

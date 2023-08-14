@@ -14,24 +14,24 @@ import (
 var ConfigFS string
 
 type Config struct {
-	Version        string         `toml:"version" env:"version"`
-	NFTMeta        NFTMeta        `toml:"nft-meta" env:"nft_meta"`
-	BlockETL       BlockETL       `toml:"block-etl" env:"block_etl"`
-	CloudProxy     CloudProxy     `toml:"cloud-proxy" env:"cloud_proxy"`
-	Gateway        Gateway        `toml:"gateway" env:"gateway"`
-	Ranker         Ranker         `toml:"ranker" env:"ranker"`
-	Entrance       Entrance       `toml:"entrance" env:"entrance"`
-	GenCar         GenCar         `toml:"gen-car" env:"gen_car"`
-	Dealer         Dealer         `toml:"dealer" env:"dealer"`
-	Retriever      Retriever      `toml:"retriever" env:"retriever"`
-	ImageConverter IamgeConverter `toml:"image-converter" env:"image_converter"`
-	ETH            ETH            `toml:"eth" env:"eth"`
-	IPFS           IPFS           `toml:"ipfs" env:"ipfs"`
-	MySQL          MySQL          `toml:"mysql" env:"mysql"`
-	Kafka          Kafka          `toml:"kafka" env:"kafka"`
-	Redis          Redis          `toml:"redis" env:"redis"`
-	Milvus         Milvus         `toml:"milvus" env:"milvus"`
-	Minio          Minio          `toml:"minio" env:"minio"`
+	Version    string     `toml:"version" env:"version"`
+	NFTMeta    NFTMeta    `toml:"nft-meta" env:"nft_meta"`
+	BlockETL   BlockETL   `toml:"block-etl" env:"block_etl"`
+	CloudProxy CloudProxy `toml:"cloud-proxy" env:"cloud_proxy"`
+	Gateway    Gateway    `toml:"gateway" env:"gateway"`
+	Ranker     Ranker     `toml:"ranker" env:"ranker"`
+	Entrance   Entrance   `toml:"entrance" env:"entrance"`
+	GenCar     GenCar     `toml:"gen-car" env:"gen_car"`
+	Dealer     Dealer     `toml:"dealer" env:"dealer"`
+	Retriever  Retriever  `toml:"retriever" env:"retriever"`
+	Converter  Converter  `toml:"converter" env:"converter"`
+	ETH        ETH        `toml:"eth" env:"eth"`
+	IPFS       IPFS       `toml:"ipfs" env:"ipfs"`
+	MySQL      MySQL      `toml:"mysql" env:"mysql"`
+	Kafka      Kafka      `toml:"kafka" env:"kafka"`
+	Redis      Redis      `toml:"redis" env:"redis"`
+	Milvus     Milvus     `toml:"milvus" env:"milvus"`
+	Minio      Minio      `toml:"minio" env:"minio"`
 }
 
 type NFTMeta struct {
@@ -104,10 +104,13 @@ type Retriever struct {
 	LogFile   string `toml:"log-file" env:"log_file"`
 }
 
-type IamgeConverter struct {
-	Address         string `toml:"address" env:"address"`
-	TaskInputTopic  string `toml:"task-input-topic" env:"task_input_topic"`
-	TaskOutputTopic string `toml:"task-output-topic" env:"task_output_topic"`
+type Converter struct {
+	Domain   string `toml:"domain" env:"domain"`
+	HTTPPort int    `toml:"http-port" env:"http_port"`
+	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile  string `toml:"log-file" env:"log_file"`
+	DataDir  string `toml:"data-dir" env:"data_dir"`
+	PyDir    string `toml:"py-dir" env:"py_dir"`
 }
 type MySQL struct {
 	Domain   string `toml:"domain" env:"domain"`

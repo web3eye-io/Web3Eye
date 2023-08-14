@@ -61,10 +61,13 @@ http-port=30180
 grpc-port=30181
 log-file="/var/log/retriever.log"
 
-[image-converter]
-address="http://image-converter:8080"
-task-input-topic="image-converter-input"
-task-output-topic="image-converter-output"
+[converter]
+domain="converter"
+http-port=30190
+grpc-port=30191
+data-dir="/tmp/converter_data"
+py-dir="/code/py"
+log-file="/var/log/gen-car.log"
 
 [mysql]
 domain="mysql"
