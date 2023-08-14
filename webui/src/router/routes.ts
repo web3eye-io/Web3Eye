@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
         path: '', 
         component: () => import('components/Token/Token.vue'), 
         meta: {
-          DisplayToolbarSearchBox: false 
+          DisplayToolbarSearchBox: true 
         } 
       },
       // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
         path: '', 
         component: () => import('components/Transfer/Transfer.vue'), 
         meta: {
-          DisplayToolbarSearchBox: false 
+          DisplayToolbarSearchBox: true 
         } 
       },
       // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
@@ -57,7 +57,7 @@ const routes: RouteRecordRaw[] = [
         path: '', 
         component: () => import('components/Contract/Contract.vue'), 
         meta: {
-          DisplayToolbarSearchBox: false 
+          DisplayToolbarSearchBox: true 
         } 
       },
       // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
