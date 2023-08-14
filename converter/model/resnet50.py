@@ -42,6 +42,7 @@ class Resnet50(object):
         outputs = self.ort_sess.run(None,{"input":img_tensor.numpy()})
         features=torch.FloatTensor(outputs[0])
         features = F.normalize(features,dim=1)
+        print(features)
         return features.tolist()[0]
 
 

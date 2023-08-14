@@ -18,8 +18,7 @@ var modelRestartRetries = 3
 func Run() {
 	for i := 0; i < modelRestartRetries; i++ {
 		pyDir := config.GetConfig().Converter.PyDir
-		modelStartFile := fmt.Sprintf("%vmodel/main.py", pyDir)
-		fmt.Println(modelStartFile)
+		modelStartFile := fmt.Sprintf("%v/main.py", pyDir)
 
 		cmd := exec.Command("python3", modelStartFile)
 		err := cmd.Start()

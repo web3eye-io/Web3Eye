@@ -13,28 +13,51 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	ArUrlHead        = "ar://"
+	ArUrlHttpGateway = "https://arweave.net"
+	IPFSUrlHead      = "ipfs://"
+	IPFSHttpGateway  = "https://ipfs.io/ipfs"
+	HTTPUrlHead      = "http://"
+	HTTPSUrlHead     = "https://"
+	Base64SVGPrefix  = "data:image/svg+xml;base64,"
+)
+
+func GetFileFromURL(url string, dirPath string, fileName string) (path *string, err error) {
+	switch {
+	case strings.HasPrefix(url, ArUrlHead):
+		return DownloadAreaveFile(url, dirPath, fileName)
+	case strings.HasPrefix(url, IPFSUrlHead):
+		return DownloadIPFSFile(url, dirPath, fileName)
+	case strings.HasPrefix(url, Base64SVGPrefix):
+		return Base64SVGToPng(url, dirPath, fileName)
+	default:
+		return DownloadHttpFile(url, dirPath, fileName)
+	}
+}
+
 func DownloadAreaveFile(url string, dirPath string, fileName string) (path *string, err error) {
-	if !strings.HasPrefix(url, "ar://") {
+	if !strings.HasPrefix(url, ArUrlHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
-	noHeadUrl := strings.TrimPrefix(url, "ar://")
-	httpUrl := fmt.Sprintf("%v/%v", "https://arweave.net", noHeadUrl)
+	noHeadUrl := strings.TrimPrefix(url, ArUrlHead)
+	httpUrl := fmt.Sprintf("%v/%v", ArUrlHttpGateway, noHeadUrl)
 	return DownloadHttpFile(httpUrl, dirPath, fileName)
 }
 
 func DownloadIPFSFile(url string, dirPath string, fileName string) (path *string, err error) {
-	if !strings.HasPrefix(url, "ipfs://") {
+	if !strings.HasPrefix(url, IPFSUrlHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
-	noHeadUrl := strings.TrimPrefix(url, "ipfs://")
-	httpUrl := fmt.Sprintf("%v/%v", "https://ipfs.io/ipfs", noHeadUrl)
+	noHeadUrl := strings.TrimPrefix(url, IPFSUrlHead)
+	httpUrl := fmt.Sprintf("%v/%v", IPFSHttpGateway, noHeadUrl)
 	return DownloadHttpFile(httpUrl, dirPath, fileName)
 }
 
 func DownloadHttpFile(url string, dirPath string, fileName string) (path *string, err error) {
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+	if !strings.HasPrefix(url, HTTPUrlHead) && !strings.HasPrefix(url, HTTPSUrlHead) {
 		return nil, errors.New("url format is not http")
 	}
 
@@ -77,13 +100,12 @@ func DownloadHttpFile(url string, dirPath string, fileName string) (path *string
 	return &filePath, err
 }
 
-func Base64ToSVG(base64data string, dirPath string, fileName string) (path *string, err error) {
-	base64prefix := "data:image/svg+xml;base64,"
-	if !strings.HasPrefix(base64data, base64prefix) {
+func Base64SVGToPng(base64data string, dirPath string, fileName string) (path *string, err error) {
+	if !strings.HasPrefix(base64data, Base64SVGPrefix) {
 		return nil, errors.New("url format is not base64 svg")
 	}
 
-	noHeadData := strings.TrimPrefix(base64data, base64prefix)
+	noHeadData := strings.TrimPrefix(base64data, Base64SVGPrefix)
 	rawData, err := base64.StdEncoding.DecodeString(noHeadData)
 	if err != nil {
 		return nil, err

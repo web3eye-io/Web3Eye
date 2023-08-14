@@ -67,7 +67,7 @@ http-port=30190
 grpc-port=30191
 data-dir="/tmp/converter_data"
 py-dir="/code/py"
-log-file="/var/log/gen-car.log"
+log-file="/var/log/converter.log"
 
 [mysql]
 domain="mysql"

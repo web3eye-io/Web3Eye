@@ -1,7 +1,6 @@
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import json
 from resnet50 import Resnet50
-import os
  
 
 host = ('0.0.0.0', 8888)
@@ -27,6 +26,8 @@ class Resquest(BaseHTTPRequestHandler):
         except Exception as e:
             resq_data["Msg"]=repr(e)
         finally:
+            print(resq_data)
+
             self.wfile.write(json.dumps(resq_data).encode())
 
  
