@@ -127,7 +127,7 @@ pipeline {
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'web3eye-git-ssh-private-key', gitToolName: 'git-tool')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'web3eye-git-ssh-private-key', gitToolName: 'git-tool')]) {
           sh 'git push --tag'
         }
       }
