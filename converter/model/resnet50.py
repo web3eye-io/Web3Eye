@@ -1,11 +1,8 @@
 import onnxruntime as ort
 from PIL import Image
-import torchvision.transforms as transforms
-import torch.nn.functional as F
-import torch
 import os
-import aspose.words as aw
-
+import numpy as np
+from numpy import ndarray
 
 class Resnet50(object):
     _instance = None
@@ -13,13 +10,7 @@ class Resnet50(object):
     ort_sess = None
     def __new__(cls, *args, **kw):
         if cls._instance is None:
-            cls.transform=transforms.Compose([
-                transforms.Resize(256),
-                transforms.CenterCrop(256),
-                transforms.ToTensor(),
-                # the result is normalizeed, so the image input don`t normalize
-                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
+            
             current_work_dir = os.path.dirname(__file__)  # 当前文件所在的目录
             onnx_file=os.path.join(current_work_dir,'resnet50_v2.onnx')
             if not os.path.exists(onnx_file):
@@ -31,42 +22,48 @@ class Resnet50(object):
         pass
     
     def toVector(self,img_path)->any:
-        if img_path.endswith("svg"):
-            pngPath=img_path+".png"
-            svg2png(img_path,pngPath)
-            img = Image.open(pngPath).convert('RGB')
-            os.remove(pngPath)
-        else:
-            img = Image.open(img_path).convert('RGB')
-        img_tensor =self.transform(img).unsqueeze(0) # 增加一个 batch 维度
-        outputs = self.ort_sess.run(None,{"input":img_tensor.numpy()})
-        features=torch.FloatTensor(outputs[0])
-        features = F.normalize(features,dim=1)
+        img = Image.open(img_path).convert('RGB')
+
+        img_tensor=preprocess(img)[np.newaxis,:]
+        print(img_tensor)
+        outputs = self.ort_sess.run(None,{"input":img_tensor})
+        
+        # 范数归一化
+        features = outputs[0][0]/np.linalg.norm(outputs[0][0])
         print(features)
-        return features.tolist()[0]
+
+        return features.tolist()
 
 
+def preprocess(image: Image.Image) -> ndarray:
+    w,h=256,256
+    if image.width>image.height:
+        w=h/image.height*image.width
+    elif image.width<image.height:
+        h=w/image.width*image.height
+    resized_image = image.resize((int(w),int(h)))
+    
 
-def svg2png(filePath,pngPath):
-	doc = aw.Document()
-	builder = aw.DocumentBuilder(doc)
-	shape = builder.insert_image(filePath)
+    x0,y0,x1,y1=0,0,w,h
+    if w>h:
+        x0=(w-h)/2
+        x1=w-x0
+    else:
+        y0=(h-w)/2
+        y1=h-y0
+    
+    resized_image = resized_image.crop((int(x0),int(y0),int(x1),int(y1)))
 
-	pageSetup = builder.page_setup
-	pageSetup.page_width = shape.width
-	pageSetup.page_height = shape.height
-	pageSetup.top_margin = 0
-	pageSetup.left_margin = 0
-	pageSetup.bottom_margin = 0
-	pageSetup.right_margin = 0
-
-	doc.save(pngPath)
-
-# resnet50=Resnet50()
-
-# r1= resnet50.toVector("/home/coast/cybertracer/Web3Eye/image-converter-v2/img/22.png")
-# r2= resnet50.toVector("/home/coast/cybertracer/Web3Eye/image-converter-v2/img/22_1.png")
+    resized_image.save("./rrr.png")
+    resized_image_ndarray = np.array(resized_image)
+    transposed_image_ndarray = resized_image_ndarray.transpose((2, 0, 1))
+    transposed_image_ndarrayfloat32 = transposed_image_ndarray.astype(np.float32)
+    transposed_image_ndarrayfloat32 /= 255.0
+    # mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
+    # std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
+    # normalized_image_ndarray = (transposed_image_ndarrayfloat32 - mean) / std
+    # normalized_image_ndarrayfloat32 = normalized_image_ndarray.astype(
+    #     np.float32)
+    return transposed_image_ndarrayfloat32
 
 
-# distance1 = F.pairwise_distance(r1, r2, p=2)
-# print(distance1)

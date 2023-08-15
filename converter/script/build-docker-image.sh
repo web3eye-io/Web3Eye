@@ -65,11 +65,12 @@ fi
 
 output_d=$OUTPUT/.${service_name}.tmp
 config_d=$PROJECT_FOLDER/cmd/$service_name
+py_d=$PROJECT_FOLDER/model
 
 mkdir -p $output_d
 cp $config_d/Dockerfile $output_d
-cp $config_d/*.yaml $output_d || echo "have no yaml files"
 cp $service_source $output_d
+cp -r $py_d $output_d
 cd $output_d
 
 user=$(whoami)
