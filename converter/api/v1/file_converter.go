@@ -28,7 +28,12 @@ type ConverterResp struct {
 
 func init() {
 	mux := servermux.AppServerMux()
-	mux.HandleFunc("/converter/file", ConverterFile)
+	mux.HandleFunc("/v1/converter/file", ConverterFile)
+
+	err := os.Mkdir(config.GetConfig().Converter.DataDir, os.ModeDir)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ConverterFile(w http.ResponseWriter, r *http.Request) {
