@@ -61,13 +61,13 @@ http-port=30180
 grpc-port=30181
 log-file="/var/log/retriever.log"
 
-[converter]
-domain="converter"
+[transform]
+domain="transform"
 http-port=30190
 grpc-port=30191
-data-dir="/tmp/converter_data"
+data-dir="/tmp/transform_data"
 py-dir="/pycode"
-log-file="/var/log/converter.log"
+log-file="/var/log/transform.log"
 
 [mysql]
 domain="mysql"

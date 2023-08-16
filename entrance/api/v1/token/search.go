@@ -151,13 +151,13 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 
 	bodyWriter.Close()
 	ICServer := fmt.Sprintf("%v:%v",
-		config.GetConfig().Converter.Domain,
-		config.GetConfig().Converter.HTTPPort,
+		config.GetConfig().Transform.Domain,
+		config.GetConfig().Transform.HTTPPort,
 	)
 	icURL := fmt.Sprintf("%v/img2vector/file", ICServer)
 	method := "POST"
 
-	// build request for image-converter
+	// build request for converter
 	req, err := http.NewRequestWithContext(r.Context(), method, icURL, body)
 	if err != nil {
 		return nil, err

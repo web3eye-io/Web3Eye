@@ -22,8 +22,8 @@ import (
 
 var (
 	ICServer = fmt.Sprintf("%v:%v",
-		config.GetConfig().Converter.Domain,
-		config.GetConfig().Converter.HTTPPort,
+		config.GetConfig().Transform.Domain,
+		config.GetConfig().Transform.HTTPPort,
 	)
 )
 

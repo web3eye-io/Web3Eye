@@ -232,7 +232,7 @@ whoami-58b8d4f6f6-sh2cc                                           1/1     Runnin
 
 ### 部署项目
 
-依次参数化构建，建议部署顺序：nft-meta、block-etl、image-converter
+依次参数化构建，建议部署顺序：nft-meta、block-etl、converter
 
 构建完成后访问k8s-master-IP:80/api/nft-meta/可访问项目测试页面
 
@@ -271,7 +271,7 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 
 参数说明：
 
-AIMPROJECT指定的项目名根据项目选择：nft-meta、block-etl、image-converter、webui
+AIMPROJECT指定的项目名根据项目选择：nft-meta、block-etl、converter、webui
 
 BRANCH_NAME指定的分支名默认为master，除了prod之外其他可按需指定分支名称
 

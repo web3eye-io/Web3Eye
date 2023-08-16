@@ -24,7 +24,7 @@ type Config struct {
 	GenCar     GenCar     `toml:"gen-car" env:"gen_car"`
 	Dealer     Dealer     `toml:"dealer" env:"dealer"`
 	Retriever  Retriever  `toml:"retriever" env:"retriever"`
-	Converter  Converter  `toml:"converter" env:"converter"`
+	Transform  Transform  `toml:"transform" env:"transform"`
 	ETH        ETH        `toml:"eth" env:"eth"`
 	IPFS       IPFS       `toml:"ipfs" env:"ipfs"`
 	MySQL      MySQL      `toml:"mysql" env:"mysql"`
@@ -104,7 +104,7 @@ type Retriever struct {
 	LogFile   string `toml:"log-file" env:"log_file"`
 }
 
-type Converter struct {
+type Transform struct {
 	Domain   string `toml:"domain" env:"domain"`
 	HTTPPort int    `toml:"http-port" env:"http_port"`
 	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
