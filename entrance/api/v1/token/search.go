@@ -139,7 +139,7 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	// rewrite file to new request-body
 	body := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(body)
-	fileWriter, err := bodyWriter.CreateFormFile("upload", handler.Filename)
+	fileWriter, err := bodyWriter.CreateFormFile(UploadFileFeild, handler.Filename)
 	if err != nil {
 		return nil, err
 	}
