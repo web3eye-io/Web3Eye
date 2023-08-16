@@ -14,6 +14,9 @@ pipeline {
     }
 
     stage('Prepare') {
+      when {
+        expression { DEPLOY_TARGET != 'true' }
+      }
       steps {
         sh 'make deps'
       }
