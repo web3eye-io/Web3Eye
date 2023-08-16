@@ -1,0 +1,3 @@
+resources:
+  - 01-transform.viper.yaml
+  - 02-transform.yaml

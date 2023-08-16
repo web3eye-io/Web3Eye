@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transform
+  namespace: kube-system
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transform
+  template:
+    metadata:
+      labels:
+        app: transform
+    spec:
+      containers:
+        - name: transform
+          image: coastlinesss/transform:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: service-config
+              mountPath: /etc/Transform
+          env:
+            - name: ENV_CLUSTER_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      volumes:
+        - name: service-config
+          configMap:
+            name: transform-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transform
+  namespace: kube-system
+spec:
+  selector:
+    app: transform
+  # clusterIP: None
+  ports:
+    - name: http
+      port: 30190
+      targetPort: 30190
+    - name: grpc
+      port: 30191
+      targetPort: 30191
