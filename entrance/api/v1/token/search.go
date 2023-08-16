@@ -156,9 +156,6 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	)
 	icURL := fmt.Sprintf("http://%v/v1/transform/file", ICServer)
 
-	logger.Sugar().Info(icURL)
-	logger.Sugar().Info(bodyWriter.FormDataContentType())
-	logger.Sugar().Info(r.Header)
 	res, err := http.Post(icURL, bodyWriter.FormDataContentType(), body)
 	if err != nil {
 		return nil, err
