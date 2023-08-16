@@ -84,7 +84,7 @@ func TransformFile(w http.ResponseWriter, r *http.Request) {
 		resp.Msg = errStr
 		return
 	}
-	// defer os.Remove(filePath)
+	defer os.Remove(filePath)
 
 	vector, err := model.ToImageVector(filePath)
 	if err != nil {
