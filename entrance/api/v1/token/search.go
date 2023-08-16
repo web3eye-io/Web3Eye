@@ -154,7 +154,7 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 		config.GetConfig().Transform.Domain,
 		config.GetConfig().Transform.HTTPPort,
 	)
-	icURL := fmt.Sprintf("%v/img2vector/file", ICServer)
+	icURL := fmt.Sprintf("%v/v1/transform/file", ICServer)
 	method := "POST"
 
 	// build request for converter

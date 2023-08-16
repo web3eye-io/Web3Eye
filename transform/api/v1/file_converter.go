@@ -67,7 +67,6 @@ func TransformFile(w http.ResponseWriter, r *http.Request) {
 
 	ext := path.Ext(handler.Filename)
 
-	fmt.Println(ext)
 	// write to file
 	filePath := fmt.Sprintf("%v/%v%v", config.GetConfig().Transform.DataDir, uuid.NewString(), ext)
 	fileContent, err := os.Create(filePath)
