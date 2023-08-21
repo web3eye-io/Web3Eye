@@ -33,7 +33,7 @@ func Run() {
 		if err := autoToTensor(context.Background(), ItemsPreTask); err != nil && index < MaxTCIIndex {
 			index++
 		} else if err == nil && index > 0 {
-			index--
+			index = 0
 		}
 		// TODO:check value of taskCheckInterval, maybe it will overflow
 		taskCheckInterval = TaskCheckInterval << index
