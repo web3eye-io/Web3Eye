@@ -22,6 +22,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 
 	api_v1 "github.com/web3eye-io/Web3Eye/transform/api/v1"
+	"github.com/web3eye-io/Web3Eye/transform/pkg/autototensor"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/model"
 )
 
@@ -46,6 +47,7 @@ var runCmd = &cli.Command{
 		go model.Run()
 		go runGRPCServer(config.GetConfig().Transform.GrpcPort)
 		go runHTTPServer(config.GetConfig().Transform.HTTPPort)
+		go autototensor.Run()
 		<-sigchan
 		os.Exit(1)
 

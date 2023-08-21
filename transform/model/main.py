@@ -26,8 +26,6 @@ class Resquest(BaseHTTPRequestHandler):
         except Exception as e:
             resq_data["Msg"]=repr(e)
         finally:
-            print(resq_data)
-
             self.wfile.write(json.dumps(resq_data).encode())
 
 

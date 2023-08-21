@@ -4,6 +4,7 @@ package token
 import (
 	"context"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -34,6 +35,10 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	cli := npool.NewManagerClient(conn)
 
 	return handler(_ctx, cli)
+}
+
+func LookupHost() (addrs []string, err error) {
+	return net.LookupHost(config.GetConfig().NFTMeta.Domain)
 }
 
 func CreateToken(ctx context.Context, in *npool.CreateTokenRequest) (resp *npool.CreateTokenResponse, err error) {

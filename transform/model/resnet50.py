@@ -24,12 +24,10 @@ class Resnet50(object):
         img = Image.open(img_path).convert('RGB')
 
         img_tensor=preprocess(img)[np.newaxis,:]
-        print(img_tensor)
         outputs = self.ort_sess.run(None,{"input":img_tensor})
         
         # 范数归一化
         features = outputs[0][0]/np.linalg.norm(outputs[0][0])
-        print(features)
 
         return features.tolist()
 
@@ -53,7 +51,6 @@ def preprocess(image: Image.Image) -> ndarray:
     
     resized_image = resized_image.crop((int(x0),int(y0),int(x1),int(y1)))
 
-    resized_image.save("./rrr.png")
     resized_image_ndarray = np.array(resized_image)
     transposed_image_ndarray = resized_image_ndarray.transpose((2, 0, 1))
     transposed_image_ndarrayfloat32 = transposed_image_ndarray.astype(np.float32)
