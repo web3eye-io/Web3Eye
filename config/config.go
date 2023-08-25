@@ -25,10 +25,9 @@ type Config struct {
 	Dealer     Dealer     `toml:"dealer" env:"dealer"`
 	Retriever  Retriever  `toml:"retriever" env:"retriever"`
 	Transform  Transform  `toml:"transform" env:"transform"`
-	ETH        ETH        `toml:"eth" env:"eth"`
 	IPFS       IPFS       `toml:"ipfs" env:"ipfs"`
 	MySQL      MySQL      `toml:"mysql" env:"mysql"`
-	Kafka      Kafka      `toml:"kafka" env:"kafka"`
+	Pulsar     Pulsar     `toml:"pulsar" env:"pulsar"`
 	Redis      Redis      `toml:"redis" env:"redis"`
 	Milvus     Milvus     `toml:"milvus" env:"milvus"`
 	Minio      Minio      `toml:"minio" env:"minio"`
@@ -125,8 +124,11 @@ type Redis struct {
 	Password string `toml:"password" env:"password"`
 }
 
-type Kafka struct {
-	BootstrapServers string `toml:"bootstrap-servers" env:"bootstrap_servers"`
+type Pulsar struct {
+	Domain            string `toml:"domain" env:"domain"`
+	Port              int    `toml:"port" env:"port"`
+	OperationTimeout  uint64 `toml:"operation-timeout" env:"operation_timeout"`
+	ConnectionTimeout uint64 `toml:"connection-timeout" env:"connection_timeout"`
 }
 
 type Milvus struct {
@@ -139,10 +141,6 @@ type Minio struct {
 	SecretKey        string `toml:"secret-key" env:"secret_key"`
 	Region           string `toml:"region" env:"region"`
 	TokenImageBucket string `toml:"token-image-bucket" env:"token_image_bucket"`
-}
-
-type ETH struct {
-	Wallets string `toml:"wallets" env:"wallets"`
 }
 
 type IPFS struct {

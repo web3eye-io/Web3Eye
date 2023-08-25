@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -31,7 +32,7 @@ func init() {
 	mux.HandleFunc("/v1/transform/file", TransformFile)
 
 	err := os.Mkdir(config.GetConfig().Transform.DataDir, os.ModeDir)
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "file exists") {
 		panic(err)
 	}
 }

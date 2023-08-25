@@ -70,7 +70,7 @@ func autoToTensor(ctx context.Context, limit int32) error {
 			filename := uuid.NewString()
 			path, err := filegetter.GetFileFromURL(v.ImageURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
-				logger.Sugar().Errorf("failed to download file form url", err)
+				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
 				return
 			}
@@ -78,7 +78,7 @@ func autoToTensor(ctx context.Context, limit int32) error {
 
 			vector, err = model.ToImageVector(*path)
 			if err != nil {
-				logger.Sugar().Errorf("failed to transform url to vector", err)
+				logger.Sugar().Errorf("failed to transform url to vector, err %v", err)
 				errRecord = err.Error()
 			}
 		}()

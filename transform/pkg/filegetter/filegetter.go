@@ -1,12 +1,15 @@
 package filegetter
 
 import (
+	"bufio"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/canhlinh/svg2png"
@@ -100,37 +103,148 @@ func DownloadHttpFile(url string, dirPath string, fileName string) (path *string
 	return &filePath, err
 }
 
-func Base64SVGToPng(base64data string, dirPath string, fileName string) (path *string, err error) {
+func Base64SVGToPng(base64data, dirPath, fileName string) (pngPath *string, err error) {
+	svgPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "svg")
+	err = Base64SVGToSVG(base64data, svgPath)
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(svgPath)
+
+	_pngPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "png")
+	err = SVGToPng(svgPath, _pngPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &_pngPath, nil
+}
+
+func SVGToPng(svgPath, pngPath string) error {
+	width, height := 256.0, 256.0
+	if w, h, err := ReadSVGSizeByViewBox(svgPath); err == nil {
+		width, height = w, h
+	}
+
+	chrome := svg2png.NewChrome().SetHeight(int(height)).SetWith(int(width))
+	if err := chrome.Screenshoot(svgPath, pngPath); err != nil {
+		logrus.Panic(err)
+	}
+	return nil
+}
+
+func Base64SVGToSVG(base64data string, svgPath string) (err error) {
 	if !strings.HasPrefix(base64data, Base64SVGPrefix) {
-		return nil, errors.New("url format is not base64 svg")
+		return errors.New("url format is not base64 svg")
 	}
 
 	noHeadData := strings.TrimPrefix(base64data, Base64SVGPrefix)
 	rawData, err := base64.StdEncoding.DecodeString(noHeadData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// create file to recive file stream
-	svgPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "svg")
 	out, err := os.Create(svgPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
 	defer out.Close()
-	defer os.Remove(svgPath)
 
 	_, err = out.Write(rawData)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	chrome := svg2png.NewChrome().SetHeight(600).SetWith(600)
-	pngPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "png")
-	if err := chrome.Screenshoot(svgPath, pngPath); err != nil {
-		logrus.Panic(err)
+	return nil
+}
+
+func ReadSVGSizeByViewBox(filePath string) (float64, float64, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return 0, 0, err
+	}
+	defer file.Close()
+
+	reader := bufio.NewReader(file)
+	r, err := regexp.Compile("viewBox=\"([^\"]*)\"")
+	if err != nil {
+		return 0, 0, err
 	}
 
-	return &pngPath, err
+	maxW, maxH := 0.0, 0.0
+	for {
+		lineBytes, _, err := reader.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		if items := r.FindAllString(string(lineBytes), -1); len(items) > 0 {
+			// find all string like 'viewBox="0 0 256.1 256.3"'
+			// then parse it to width and height
+			for _, v := range items {
+				v = strings.Trim(v, "viewBox=")
+				v = strings.Trim(v, "\"")
+				nums := strings.Split(v, " ")
+				if len(nums) < 4 {
+					continue
+				}
+				width, err := strconv.ParseFloat(nums[2], 32)
+				if err != nil {
+					continue
+				}
+				height, err := strconv.ParseFloat(nums[3], 32)
+				if err != nil {
+					continue
+				}
+				if maxW < width {
+					maxW = width
+				}
+				if maxH < height {
+					maxH = height
+				}
+			}
+		}
+	}
+	return maxW, maxH, nil
+}
+
+func ReadSVGSizeByWH(filePath string) (float64, float64, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return 0, 0, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	r, err := regexp.Compile(" width=\"([^\"]*)\"| height=\"([^\"]*)\"")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	maxW, maxH := 0.0, 0.0
+	for scanner.Scan() {
+		if items := r.FindAllString(scanner.Text(), -1); len(items) > 0 {
+			// find all string like 'width="0 0 256.1 256.3"'
+			// then parse it to width and height
+			for _, v := range items {
+				v = strings.ReplaceAll(v, "\"", "")
+				v = strings.TrimSpace(v)
+				width, err := strconv.ParseFloat(strings.TrimPrefix(v, "width="), 32)
+				if err == nil && maxW < width {
+					maxW = width
+				}
+
+				height, err := strconv.ParseFloat(strings.TrimPrefix(v, "height="), 32)
+				if err == nil && maxH < height {
+					maxH = height
+				}
+			}
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return 0, 0, err
+	}
+
+	return maxW, maxH, nil
 }

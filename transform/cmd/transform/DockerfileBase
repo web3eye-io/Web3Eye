@@ -1,0 +1,14 @@
+FROM bitnami/python:3.8
+
+ENV ENV_DATA_DIR=/data \
+    ENV_LOG_DIR=/var/log \
+    ENV_LOG_LEVEL=debug \
+    ENV_ETH_ENDPOINT="" \
+    ENV_INVERSTOR_KEY=""
+RUN mkdir $ENV_DATA_DIR
+
+RUN apt update -y
+RUN apt install -y --no-install-recommends ca-certificates curl
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome-stable_current_amd64.deb
+RUN rm ./google-chrome-stable_current_amd64.deb
