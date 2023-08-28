@@ -6,12 +6,15 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/portto/solana-go-sdk/program/metaplex/tokenmeta"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/chains/sol"
+	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
@@ -109,6 +112,14 @@ func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 			Op:    "eq",
 		},
 	}
+
+	pulsarCli, err := ctpulsar.Client()
+	if err != nil {
+		logger.Sugar().Error(err)
+		panic(err)
+	}
+	defer pulsarCli.Close()
+
 	for {
 		select {
 		case <-time.NewTicker(CheckTopicInterval).C:
@@ -117,14 +128,50 @@ func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 				logger.Sugar().Error(err)
 			}
 			for _, v := range resp.GetInfos() {
-				_, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic, CurrentBlockNum: e.CurrentBlockNum})
-				if err != nil {
-					logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
-				}
-
+				e.indexTask(ctx, nil, v, outBlockNum)
 			}
 		case <-ctx.Done():
 			return
+		}
+	}
+}
+
+func (e *SolIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, task *synctask.SyncTask, outBlockNum chan uint64) {
+	output := make(chan pulsar.ConsumerMessage)
+	consumer, err := pulsarCli.Subscribe(pulsar.ConsumerOptions{
+		Topic:            task.Topic,
+		SubscriptionName: "TaskConsummer",
+		Type:             pulsar.Shared,
+		MessageChannel:   output,
+	})
+	if err != nil {
+		logger.Sugar().Errorf("consummer SyncTask failed ,err: %v", err)
+		return
+	}
+	defer consumer.Close()
+
+	retries := 0
+	maxRetries := 3
+	for {
+		select {
+		case msg := <-output:
+			blockNum, err := utils.Bytes2Uint64(msg.Payload())
+			if err != nil {
+				logger.Sugar().Errorf("consummer SyncTask failed ,err: %v", err)
+				continue
+			}
+			outBlockNum <- blockNum
+			consumer.Ack(msg)
+			retries = 0
+		case <-time.NewTicker(CheckTopicInterval).C:
+			if retries > maxRetries {
+				return
+			}
+			_, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
+			if err != nil {
+				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
+			}
+			retries++
 		}
 	}
 }

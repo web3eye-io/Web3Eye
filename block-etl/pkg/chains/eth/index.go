@@ -149,8 +149,8 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 	}
 	defer consumer.Close()
 
-	tt := 0
-	maxRetries := 5
+	retries := 0
+	maxRetries := 3
 	for {
 		select {
 		case msg := <-output:
@@ -161,15 +161,16 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 			}
 			outBlockNum <- blockNum
 			consumer.Ack(msg)
+			retries = 0
 		case <-time.NewTicker(CheckTopicInterval).C:
-			if tt > maxRetries {
+			if retries > maxRetries {
 				return
 			}
 			_, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 			}
-			tt++
+			retries++
 		}
 	}
 }
