@@ -7,7 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/portto/solana-go-sdk/program/metaplex/tokenmeta"
+	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
@@ -414,7 +414,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 			if err != nil {
 				e.checkErr(ctx, err)
 				logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
-				contractMeta = &tokenmeta.Metadata{}
+				contractMeta = &token_metadata.Metadata{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			}
 

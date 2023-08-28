@@ -10,6 +10,7 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 func main() {
@@ -17,9 +18,9 @@ func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	go produceNonce("test9")
+	// go produceNonce("test9")
 	// time.Sleep(time.Minute)
-	go consumeNonce("test9")
+	go consumeNonce(config.GetConfig().Pulsar.TopicTransformImage)
 
 	<-sigchan
 	os.Exit(1)
@@ -74,11 +75,8 @@ func consumeNonce(topic string) {
 			panic(err)
 		}
 		payload := msg.Payload()
-		vv, err := utils.Bytes2Uint64(payload)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(vv, err)
+		fmt.Println(msg.Key())
+		fmt.Println(string(payload), err)
 		err = consumer.Ack(msg)
 		fmt.Println(err)
 	}

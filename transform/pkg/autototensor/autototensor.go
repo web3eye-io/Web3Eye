@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/config"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	tokenproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/filegetter"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/model"
@@ -46,29 +47,29 @@ func autoToTensor(ctx context.Context, limit int32) error {
 		return err
 	}
 
-	req := &tokenproto.GetTokensRequest{
-		Conds: &tokenproto.Conds{
-			VectorState: &web3eye.StringVal{
-				Op:    "eq",
-				Value: tokenproto.ConvertState_Waiting.String(),
-			},
-		},
-		Limit: limit,
-	}
-
-	resp, err := token.GetTokens(ctx, req)
+	pulsarCli, err := ctpulsar.Client()
 	if err != nil {
-		logger.Sugar().Errorf("failed to get token of converter_waiting nftmeta, err %v", err)
 		return err
 	}
+	defer pulsarCli.Close()
 
-	for _, v := range resp.Infos {
+	output := make(chan pulsar.ConsumerMessage)
+	pulsarCli.Subscribe(pulsar.ConsumerOptions{
+		Topic:            config.GetConfig().Pulsar.TopicTransformImage,
+		SubscriptionName: "TransformImageConsummer",
+		Type:             pulsar.Shared,
+		MessageChannel:   output,
+	})
+
+	for msg := range output {
+		id := msg.Key()
+		imgUrl := string(msg.Message.Payload())
 		errRecord := ""
 		var vector []float32
 
 		func() {
 			filename := uuid.NewString()
-			path, err := filegetter.GetFileFromURL(v.ImageURL, config.GetConfig().Transform.DataDir, filename)
+			path, err := filegetter.GetFileFromURL(imgUrl, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
@@ -84,7 +85,7 @@ func autoToTensor(ctx context.Context, limit int32) error {
 		}()
 
 		_, err := token.UpdateImageVector(ctx, &tokenproto.UpdateImageVectorRequest{
-			ID:     v.ID,
+			ID:     id,
 			Vector: vector,
 			Remark: errRecord,
 		})

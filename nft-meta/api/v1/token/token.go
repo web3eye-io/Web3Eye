@@ -5,6 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
+	"github.com/web3eye-io/Web3Eye/config"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
@@ -19,10 +22,66 @@ import (
 	"github.com/google/uuid"
 )
 
+type PulsarProducer struct {
+	client   pulsar.Client
+	producer pulsar.Producer
+}
+
+var pulsarProducer *PulsarProducer
+
+func getPulsar() (*PulsarProducer, error) {
+	if pulsarProducer != nil {
+		return pulsarProducer, nil
+	}
+	fmt.Println(1)
+	var err error
+	pulsarCli, err := ctpulsar.Client()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(2)
+
+	producer, err := pulsarCli.CreateProducer(pulsar.ProducerOptions{
+		Topic: config.GetConfig().Pulsar.TopicTransformImage,
+	})
+	if err != nil {
+		pulsarCli.Close()
+		return nil, err
+	}
+	fmt.Println(3)
+
+	pulsarProducer = &PulsarProducer{
+		client:   pulsarCli,
+		producer: producer,
+	}
+	return pulsarProducer, nil
+}
+
 func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) (*npool.CreateTokenResponse, error) {
 	var err error
-
-	info, err := crud.Create(ctx, in.GetInfo())
+	inInfo := in.GetInfo()
+	inInfo.VectorState = npool.ConvertState_Waiting.Enum()
+	id := uuid.New().String()
+	inInfo.ID = &id
+	pubErr := func() error {
+		pProducer, err := getPulsar()
+		if err != nil {
+			return err
+		}
+		_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
+			Payload: []byte(*inInfo.ImageURL),
+			Key:     *inInfo.ID,
+		})
+		if err != nil {
+			return err
+		}
+		inInfo.VectorState = npool.ConvertState_Processing.Enum()
+		return nil
+	}()
+	if pubErr != nil {
+		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
+	}
+	info, err := crud.Create(ctx, inInfo)
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "error", err)
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
@@ -40,8 +99,37 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 		logger.Sugar().Errorw("CreateTokens", "error", "Infos is empty")
 		return &npool.CreateTokensResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
+	inInfos := in.GetInfos()
 
-	rows, err := crud.CreateBulk(ctx, in.GetInfos())
+	for i := 0; i < len(inInfos); i++ {
+		inInfos[i].VectorState = npool.ConvertState_Waiting.Enum()
+		id := uuid.New().String()
+		inInfos[i].ID = &id
+	}
+
+	pubErr := func() error {
+		pProducer, err := getPulsar()
+		if err != nil {
+			return err
+		}
+		for i := 0; i < len(inInfos); i++ {
+			_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
+				Payload: []byte(*inInfos[i].ImageURL),
+				Key:     *inInfos[i].ID,
+			})
+			if err != nil {
+				return err
+			}
+			inInfos[i].VectorState = npool.ConvertState_Processing.Enum()
+		}
+		return nil
+	}()
+
+	if pubErr != nil {
+		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
+	}
+
+	rows, err := crud.CreateBulk(ctx, inInfos)
 	if err != nil {
 		logger.Sugar().Errorw("CreateTokens", "error", err)
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())

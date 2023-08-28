@@ -6,7 +6,7 @@ import (
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/program/metaplex/tokenmeta"
+	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
 )
 
 // solana have block and slot,but we use slot repalce to block
@@ -60,9 +60,9 @@ func (solCli solClients) GetTX(ctx context.Context, txSig solana.Signature) (*rp
 	return tx, err
 }
 
-func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*tokenmeta.Metadata, error) {
+func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*token_metadata.Metadata, error) {
 	mintAcc := common.PublicKeyFromString(mint)
-	metadataAccount, err := tokenmeta.GetTokenMetaPubkey(mintAcc)
+	metadataAccount, err := token_metadata.GetTokenMetaPubkey(mintAcc)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +85,6 @@ func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*tokenme
 		return nil, err
 	}
 
-	metadata, err := tokenmeta.MetadataDeserialize(accountInfo.Bytes())
+	metadata, err := token_metadata.MetadataDeserialize(accountInfo.Bytes())
 	return &metadata, err
 }
