@@ -88,6 +88,8 @@ domain="milvus-pulsar-proxy"
 port=6650
 operation-timeout=30
 connection-timeout=30
+topic-sync-task="topic_sync_task"
+topic-transform-image="topic_transform_image"
 
 [minio]
 address="http://web3eye-minio:9000"

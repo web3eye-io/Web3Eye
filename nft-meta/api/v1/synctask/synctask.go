@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
@@ -73,6 +76,109 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 
 //nolint:gocyclo
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
+	// TODO: will be rewrite,too long
+
+	// query synctask
+	conds := npool.Conds{
+		Topic: &web3eye.StringVal{
+			Value: in.Topic,
+			Op:    "eq",
+		},
+	}
+	info, err := crud.RowOnly(ctx, &conds)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	// lock
+	lockKey := "TriggerSyncTask_Lock"
+	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
+	if err != nil {
+		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
+		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, err
+	}
+
+	defer func() {
+		err := ctredis.Unlock(lockKey, lockID)
+		if err != nil {
+			logger.Sugar().Warn("TriggerSyncTask", "warning", err)
+		}
+	}()
+
+	// check state
+	if info.SyncState != cttype.SyncState_Start.String() {
+		return &npool.TriggerSyncTaskResponse{
+			Info: converter.Ent2Grpc(info),
+		}, nil
+	}
+
+	// check sync state
+	if info.End != 0 && info.Current >= info.End {
+		info.SyncState = cttype.SyncState_Finish.String()
+		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
+		if err != nil {
+			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+		}
+		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
+	}
+
+	syncEnd := info.End
+	if syncEnd == 0 || syncEnd > in.CurrentBlockNum {
+		syncEnd = in.CurrentBlockNum
+	}
+
+	lastNum := info.Current
+	info.Current += MaxPutTaskNumOnce
+	if info.Current > syncEnd {
+		info.Current = syncEnd
+	}
+
+	pulsarCli, err := ctpulsar.Client()
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	defer pulsarCli.Close()
+
+	producer, err := pulsarCli.CreateProducer(pulsar.ProducerOptions{
+		Topic: in.Topic,
+	})
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	defer producer.Close()
+
+	for ; lastNum < info.Current; lastNum++ {
+		payload, err := utils.Uint642Bytes(lastNum)
+		if err != nil {
+			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+		}
+
+		_, err = producer.Send(ctx, &pulsar.ProducerMessage{Payload: payload})
+		if err != nil {
+			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+		}
+	}
+
+	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
+
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return &npool.TriggerSyncTaskResponse{
+		Info: converter.Ent2Grpc(info),
+	}, nil
+}
+
+//nolint:gocyclo
+func (s *Server) TriggerSyncTask_v1(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
 	// query synctask
 	conds := npool.Conds{
 		Topic: &web3eye.StringVal{
@@ -143,8 +249,8 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}
 
 	return &npool.TriggerSyncTaskResponse{
-		Info:      converter.Ent2Grpc(info),
-		BlockNums: nums,
+		Info: converter.Ent2Grpc(info),
+		// BlockNums: nums,
 	}, nil
 }
 

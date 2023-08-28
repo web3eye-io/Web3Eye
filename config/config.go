@@ -125,10 +125,12 @@ type Redis struct {
 }
 
 type Pulsar struct {
-	Domain            string `toml:"domain" env:"domain"`
-	Port              int    `toml:"port" env:"port"`
-	OperationTimeout  uint64 `toml:"operation-timeout" env:"operation_timeout"`
-	ConnectionTimeout uint64 `toml:"connection-timeout" env:"connection_timeout"`
+	Domain              string `toml:"domain" env:"domain"`
+	Port                int    `toml:"port" env:"port"`
+	OperationTimeout    uint64 `toml:"operation-timeout" env:"operation_timeout"`
+	ConnectionTimeout   uint64 `toml:"connection-timeout" env:"connection_timeout"`
+	TopicSyncTask       string `toml:"topic-sync-task" env:"topic_sync_task"`
+	TopicTransformImage string `toml:"topic-transform-image" env:"topic_transform_image"`
 }
 
 type Milvus struct {

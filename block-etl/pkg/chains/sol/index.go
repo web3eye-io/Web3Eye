@@ -117,14 +117,11 @@ func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 				logger.Sugar().Error(err)
 			}
 			for _, v := range resp.GetInfos() {
-				resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic, CurrentBlockNum: e.CurrentBlockNum})
+				_, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: v.Topic, CurrentBlockNum: e.CurrentBlockNum})
 				if err != nil {
 					logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				}
 
-				for _, v := range resp.BlockNums {
-					outBlockNum <- v
-				}
 			}
 		case <-ctx.Done():
 			return

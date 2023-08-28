@@ -119,7 +119,6 @@ message TriggerSyncTaskRequest {
 
 message TriggerSyncTaskResponse { 
   SyncTask Info = 10;
-  repeated uint64 BlockNums = 20;
 }
 
 message GetSyncTaskRequest { string ID = 10; }

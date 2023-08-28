@@ -16,7 +16,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.36.0
 	github.com/canhlinh/svg2png v0.0.0-20201124065332-6ba87c82371f
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
-	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/favadi/protoc-go-inject-tag v1.3.0
 	github.com/filecoin-project/go-address v1.1.0
