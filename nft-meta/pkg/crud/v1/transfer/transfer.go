@@ -69,9 +69,9 @@ func Upsert(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 }
 
 func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate {
-	// if in.ID != nil {
-	// 	c.SetID(uuid.New())
-	// }
+	if in.ID != nil {
+		c.SetID(uuid.New())
+	}
 	if in.ChainType != nil {
 		c.SetChainType(in.GetChainType().String())
 	}

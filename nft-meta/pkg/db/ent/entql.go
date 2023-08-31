@@ -6,6 +6,8 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderpair"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -19,7 +21,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 9)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   block.Table,
@@ -94,6 +96,49 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderitem.Table,
+			Columns: orderitem.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: orderitem.FieldID,
+			},
+		},
+		Type: "OrderItem",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderitem.FieldCreatedAt:  {Type: field.TypeUint32, Column: orderitem.FieldCreatedAt},
+			orderitem.FieldUpdatedAt:  {Type: field.TypeUint32, Column: orderitem.FieldUpdatedAt},
+			orderitem.FieldDeletedAt:  {Type: field.TypeUint32, Column: orderitem.FieldDeletedAt},
+			orderitem.FieldContract:   {Type: field.TypeString, Column: orderitem.FieldContract},
+			orderitem.FieldTokenType:  {Type: field.TypeString, Column: orderitem.FieldTokenType},
+			orderitem.FieldTokenID:    {Type: field.TypeString, Column: orderitem.FieldTokenID},
+			orderitem.FieldAmount:     {Type: field.TypeUint64, Column: orderitem.FieldAmount},
+			orderitem.FieldPortionNum: {Type: field.TypeUint32, Column: orderitem.FieldPortionNum},
+			orderitem.FieldRemark:     {Type: field.TypeString, Column: orderitem.FieldRemark},
+		},
+	}
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orderpair.Table,
+			Columns: orderpair.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: orderpair.FieldID,
+			},
+		},
+		Type: "OrderPair",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orderpair.FieldCreatedAt: {Type: field.TypeUint32, Column: orderpair.FieldCreatedAt},
+			orderpair.FieldUpdatedAt: {Type: field.TypeUint32, Column: orderpair.FieldUpdatedAt},
+			orderpair.FieldDeletedAt: {Type: field.TypeUint32, Column: orderpair.FieldDeletedAt},
+			orderpair.FieldTxHash:    {Type: field.TypeString, Column: orderpair.FieldTxHash},
+			orderpair.FieldRecipient: {Type: field.TypeString, Column: orderpair.FieldRecipient},
+			orderpair.FieldTargetID:  {Type: field.TypeString, Column: orderpair.FieldTargetID},
+			orderpair.FieldBarterID:  {Type: field.TypeString, Column: orderpair.FieldBarterID},
+			orderpair.FieldRemark:    {Type: field.TypeString, Column: orderpair.FieldRemark},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -113,7 +158,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			snapshot.FieldBackupState:   {Type: field.TypeString, Column: snapshot.FieldBackupState},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
@@ -138,7 +183,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldRemark:      {Type: field.TypeString, Column: synctask.FieldRemark},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   token.Table,
 			Columns: token.Columns,
@@ -171,7 +216,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldImageSnapshotID: {Type: field.TypeString, Column: token.FieldImageSnapshotID},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
@@ -495,6 +540,171 @@ func (f *EndpointFilter) WhereRemark(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (oiq *OrderItemQuery) addPredicate(pred func(s *sql.Selector)) {
+	oiq.predicates = append(oiq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderItemQuery builder.
+func (oiq *OrderItemQuery) Filter() *OrderItemFilter {
+	return &OrderItemFilter{config: oiq.config, predicateAdder: oiq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderItemMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderItemMutation builder.
+func (m *OrderItemMutation) Filter() *OrderItemFilter {
+	return &OrderItemFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderItemFilter provides a generic filtering capability at runtime for OrderItemQuery.
+type OrderItemFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderItemFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *OrderItemFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(orderitem.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderItemFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderItemFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderItemFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldDeletedAt))
+}
+
+// WhereContract applies the entql string predicate on the contract field.
+func (f *OrderItemFilter) WhereContract(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldContract))
+}
+
+// WhereTokenType applies the entql string predicate on the token_type field.
+func (f *OrderItemFilter) WhereTokenType(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldTokenType))
+}
+
+// WhereTokenID applies the entql string predicate on the token_id field.
+func (f *OrderItemFilter) WhereTokenID(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldTokenID))
+}
+
+// WhereAmount applies the entql uint64 predicate on the amount field.
+func (f *OrderItemFilter) WhereAmount(p entql.Uint64P) {
+	f.Where(p.Field(orderitem.FieldAmount))
+}
+
+// WherePortionNum applies the entql uint32 predicate on the portion_num field.
+func (f *OrderItemFilter) WherePortionNum(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldPortionNum))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *OrderItemFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldRemark))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (opq *OrderPairQuery) addPredicate(pred func(s *sql.Selector)) {
+	opq.predicates = append(opq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderPairQuery builder.
+func (opq *OrderPairQuery) Filter() *OrderPairFilter {
+	return &OrderPairFilter{config: opq.config, predicateAdder: opq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderPairMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderPairMutation builder.
+func (m *OrderPairMutation) Filter() *OrderPairFilter {
+	return &OrderPairFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderPairFilter provides a generic filtering capability at runtime for OrderPairQuery.
+type OrderPairFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderPairFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *OrderPairFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(orderpair.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderPairFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpair.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderPairFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpair.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderPairFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(orderpair.FieldDeletedAt))
+}
+
+// WhereTxHash applies the entql string predicate on the tx_hash field.
+func (f *OrderPairFilter) WhereTxHash(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldTxHash))
+}
+
+// WhereRecipient applies the entql string predicate on the recipient field.
+func (f *OrderPairFilter) WhereRecipient(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldRecipient))
+}
+
+// WhereTargetID applies the entql string predicate on the target_id field.
+func (f *OrderPairFilter) WhereTargetID(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldTargetID))
+}
+
+// WhereBarterID applies the entql string predicate on the barter_id field.
+func (f *OrderPairFilter) WhereBarterID(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldBarterID))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *OrderPairFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldRemark))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (sq *SnapshotQuery) addPredicate(pred func(s *sql.Selector)) {
 	sq.predicates = append(sq.predicates, pred)
 }
@@ -523,7 +733,7 @@ type SnapshotFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SnapshotFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -603,7 +813,7 @@ type SyncTaskFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SyncTaskFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -703,7 +913,7 @@ type TokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -843,7 +1053,7 @@ type TransferFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransferFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

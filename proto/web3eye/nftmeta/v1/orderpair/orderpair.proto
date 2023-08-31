@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package nftmeta.v1.orderpair;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/orderpair";
+import "web3eye/web3eye.proto";
+import "web3eye/basetype/v1/chain.proto";
+
+
+service Manager {
+  rpc CreateOrderPair(CreateOrderPairRequest) returns (CreateOrderPairResponse) {}
+  rpc UpsertOrderPair(UpsertOrderPairRequest) returns (UpsertOrderPairResponse) {}
+  rpc CreateOrderPairs(CreateOrderPairsRequest)
+      returns (CreateOrderPairsResponse) {}
+  rpc UpsertOrderPairs(UpsertOrderPairsRequest)
+      returns (UpsertOrderPairsResponse) {}
+  rpc UpdateOrderPair(UpdateOrderPairRequest) returns (UpdateOrderPairResponse) {}
+  rpc GetOrderPair(GetOrderPairRequest) returns (GetOrderPairResponse) {}
+  rpc GetOrderPairOnly(GetOrderPairOnlyRequest)
+      returns (GetOrderPairOnlyResponse) {}
+  rpc GetOrderPairs(GetOrderPairsRequest) returns (GetOrderPairsResponse) {}
+  rpc ExistOrderPair(ExistOrderPairRequest) returns (ExistOrderPairResponse) {}
+  rpc ExistOrderPairConds(ExistOrderPairCondsRequest)
+      returns (ExistOrderPairCondsResponse) {}
+  rpc CountOrderPairs(CountOrderPairsRequest) returns (CountOrderPairsResponse) {}
+  rpc DeleteOrderPair(DeleteOrderPairRequest) returns (DeleteOrderPairResponse) {}
+}
+
+message OrderPairReq {
+  optional string ID = 10;
+  optional string TxHash = 20;
+  optional string Recipient = 30;
+  optional string TargetID = 40;
+  optional string BarterID = 50;
+  optional string Remark = 60;
+}
+
+message OrderPair {
+  string ID = 10;
+  string TxHash = 20;
+  string Recipient = 30;
+  string TargetID = 40;
+  string BarterID = 50;
+  string Remark = 60;
+}
+
+message Conds {
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal TxHash = 20;
+  web3eye.StringVal Recipient = 30;
+  web3eye.StringVal TargetID = 40;
+  web3eye.StringVal BarterID = 50;
+  web3eye.StringVal Remark = 60;
+  web3eye.StringSliceVal IDs = 150;
+}
+
+message CreateOrderPairRequest { OrderPairReq Info = 10; }
+
+message CreateOrderPairResponse { OrderPair Info = 10; }
+
+message UpsertOrderPairRequest { OrderPairReq Info = 10; }
+
+message UpsertOrderPairResponse { OrderPair Info = 10; }
+
+message CreateOrderPairsRequest { repeated OrderPairReq Infos = 10; }
+message CreateOrderPairsResponse { repeated OrderPair Infos = 10; }
+message UpsertOrderPairsRequest { repeated OrderPairReq Infos = 10; }
+
+message UpsertOrderPairsResponse { }
+
+message GetOrderPairRequest { string ID = 10; }
+
+message GetOrderPairResponse { OrderPair Info = 10; }
+
+message GetOrderPairsRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetOrderPairsResponse {
+  repeated OrderPair Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetOrderPairOnlyRequest { Conds Conds = 10; }
+
+message GetOrderPairOnlyResponse { OrderPair Info = 10; }
+
+message UpdateOrderPairRequest { OrderPairReq Info = 10; }
+
+message UpdateOrderPairResponse { OrderPair Info = 10; }
+
+message ExistOrderPairRequest { string ID = 10; }
+
+message ExistOrderPairResponse { bool Exist = 10; }
+
+message ExistOrderPairCondsRequest { Conds Conds = 10; }
+
+message ExistOrderPairCondsResponse { bool Exist = 10; }
+
+message CountOrderPairsRequest { Conds Conds = 10; }
+
+message CountOrderPairsResponse { uint32 Info = 10; }
+
+message DeleteOrderPairRequest { string ID = 10; }
+
+message DeleteOrderPairResponse { OrderPair Info = 10; }

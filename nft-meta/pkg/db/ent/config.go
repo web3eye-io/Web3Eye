@@ -28,13 +28,15 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
-	Block    []ent.Hook
-	Contract []ent.Hook
-	Endpoint []ent.Hook
-	Snapshot []ent.Hook
-	SyncTask []ent.Hook
-	Token    []ent.Hook
-	Transfer []ent.Hook
+	Block     []ent.Hook
+	Contract  []ent.Hook
+	Endpoint  []ent.Hook
+	OrderItem []ent.Hook
+	OrderPair []ent.Hook
+	Snapshot  []ent.Hook
+	SyncTask  []ent.Hook
+	Token     []ent.Hook
+	Transfer  []ent.Hook
 }
 
 // Options applies the options on the config object.

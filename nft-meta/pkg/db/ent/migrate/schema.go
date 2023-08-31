@@ -85,6 +85,57 @@ var (
 		Columns:    EndpointsColumns,
 		PrimaryKey: []*schema.Column{EndpointsColumns[0]},
 	}
+	// OrderItemsColumns holds the columns for the "order_items" table.
+	OrderItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "contract", Type: field.TypeString},
+		{Name: "token_type", Type: field.TypeString},
+		{Name: "token_id", Type: field.TypeString},
+		{Name: "amount", Type: field.TypeUint64},
+		{Name: "portion_num", Type: field.TypeUint32},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
+	}
+	// OrderItemsTable holds the schema information for the "order_items" table.
+	OrderItemsTable = &schema.Table{
+		Name:       "order_items",
+		Columns:    OrderItemsColumns,
+		PrimaryKey: []*schema.Column{OrderItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderitem_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderItemsColumns[0]},
+			},
+		},
+	}
+	// OrderPairsColumns holds the columns for the "order_pairs" table.
+	OrderPairsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "tx_hash", Type: field.TypeString},
+		{Name: "recipient", Type: field.TypeString},
+		{Name: "target_id", Type: field.TypeString},
+		{Name: "barter_id", Type: field.TypeString},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
+	}
+	// OrderPairsTable holds the schema information for the "order_pairs" table.
+	OrderPairsTable = &schema.Table{
+		Name:       "order_pairs",
+		Columns:    OrderPairsColumns,
+		PrimaryKey: []*schema.Column{OrderPairsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderpair_tx_hash_recipient",
+				Unique:  false,
+				Columns: []*schema.Column{OrderPairsColumns[4], OrderPairsColumns[5]},
+			},
+		},
+	}
 	// SnapshotsColumns holds the columns for the "snapshots" table.
 	SnapshotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -214,6 +265,8 @@ var (
 		BlocksTable,
 		ContractsTable,
 		EndpointsTable,
+		OrderItemsTable,
+		OrderPairsTable,
 		SnapshotsTable,
 		SyncTasksTable,
 		TokensTable,

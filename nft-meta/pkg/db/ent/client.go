@@ -14,6 +14,8 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderpair"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -34,6 +36,10 @@ type Client struct {
 	Contract *ContractClient
 	// Endpoint is the client for interacting with the Endpoint builders.
 	Endpoint *EndpointClient
+	// OrderItem is the client for interacting with the OrderItem builders.
+	OrderItem *OrderItemClient
+	// OrderPair is the client for interacting with the OrderPair builders.
+	OrderPair *OrderPairClient
 	// Snapshot is the client for interacting with the Snapshot builders.
 	Snapshot *SnapshotClient
 	// SyncTask is the client for interacting with the SyncTask builders.
@@ -58,6 +64,8 @@ func (c *Client) init() {
 	c.Block = NewBlockClient(c.config)
 	c.Contract = NewContractClient(c.config)
 	c.Endpoint = NewEndpointClient(c.config)
+	c.OrderItem = NewOrderItemClient(c.config)
+	c.OrderPair = NewOrderPairClient(c.config)
 	c.Snapshot = NewSnapshotClient(c.config)
 	c.SyncTask = NewSyncTaskClient(c.config)
 	c.Token = NewTokenClient(c.config)
@@ -93,15 +101,17 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Block:    NewBlockClient(cfg),
-		Contract: NewContractClient(cfg),
-		Endpoint: NewEndpointClient(cfg),
-		Snapshot: NewSnapshotClient(cfg),
-		SyncTask: NewSyncTaskClient(cfg),
-		Token:    NewTokenClient(cfg),
-		Transfer: NewTransferClient(cfg),
+		ctx:       ctx,
+		config:    cfg,
+		Block:     NewBlockClient(cfg),
+		Contract:  NewContractClient(cfg),
+		Endpoint:  NewEndpointClient(cfg),
+		OrderItem: NewOrderItemClient(cfg),
+		OrderPair: NewOrderPairClient(cfg),
+		Snapshot:  NewSnapshotClient(cfg),
+		SyncTask:  NewSyncTaskClient(cfg),
+		Token:     NewTokenClient(cfg),
+		Transfer:  NewTransferClient(cfg),
 	}, nil
 }
 
@@ -119,15 +129,17 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:      ctx,
-		config:   cfg,
-		Block:    NewBlockClient(cfg),
-		Contract: NewContractClient(cfg),
-		Endpoint: NewEndpointClient(cfg),
-		Snapshot: NewSnapshotClient(cfg),
-		SyncTask: NewSyncTaskClient(cfg),
-		Token:    NewTokenClient(cfg),
-		Transfer: NewTransferClient(cfg),
+		ctx:       ctx,
+		config:    cfg,
+		Block:     NewBlockClient(cfg),
+		Contract:  NewContractClient(cfg),
+		Endpoint:  NewEndpointClient(cfg),
+		OrderItem: NewOrderItemClient(cfg),
+		OrderPair: NewOrderPairClient(cfg),
+		Snapshot:  NewSnapshotClient(cfg),
+		SyncTask:  NewSyncTaskClient(cfg),
+		Token:     NewTokenClient(cfg),
+		Transfer:  NewTransferClient(cfg),
 	}, nil
 }
 
@@ -159,6 +171,8 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Block.Use(hooks...)
 	c.Contract.Use(hooks...)
 	c.Endpoint.Use(hooks...)
+	c.OrderItem.Use(hooks...)
+	c.OrderPair.Use(hooks...)
 	c.Snapshot.Use(hooks...)
 	c.SyncTask.Use(hooks...)
 	c.Token.Use(hooks...)
@@ -436,6 +450,188 @@ func (c *EndpointClient) GetX(ctx context.Context, id uuid.UUID) *Endpoint {
 func (c *EndpointClient) Hooks() []Hook {
 	hooks := c.hooks.Endpoint
 	return append(hooks[:len(hooks):len(hooks)], endpoint.Hooks[:]...)
+}
+
+// OrderItemClient is a client for the OrderItem schema.
+type OrderItemClient struct {
+	config
+}
+
+// NewOrderItemClient returns a client for the OrderItem from the given config.
+func NewOrderItemClient(c config) *OrderItemClient {
+	return &OrderItemClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderitem.Hooks(f(g(h())))`.
+func (c *OrderItemClient) Use(hooks ...Hook) {
+	c.hooks.OrderItem = append(c.hooks.OrderItem, hooks...)
+}
+
+// Create returns a builder for creating a OrderItem entity.
+func (c *OrderItemClient) Create() *OrderItemCreate {
+	mutation := newOrderItemMutation(c.config, OpCreate)
+	return &OrderItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderItem entities.
+func (c *OrderItemClient) CreateBulk(builders ...*OrderItemCreate) *OrderItemCreateBulk {
+	return &OrderItemCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderItem.
+func (c *OrderItemClient) Update() *OrderItemUpdate {
+	mutation := newOrderItemMutation(c.config, OpUpdate)
+	return &OrderItemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderItemClient) UpdateOne(oi *OrderItem) *OrderItemUpdateOne {
+	mutation := newOrderItemMutation(c.config, OpUpdateOne, withOrderItem(oi))
+	return &OrderItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderItemClient) UpdateOneID(id uuid.UUID) *OrderItemUpdateOne {
+	mutation := newOrderItemMutation(c.config, OpUpdateOne, withOrderItemID(id))
+	return &OrderItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderItem.
+func (c *OrderItemClient) Delete() *OrderItemDelete {
+	mutation := newOrderItemMutation(c.config, OpDelete)
+	return &OrderItemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderItemClient) DeleteOne(oi *OrderItem) *OrderItemDeleteOne {
+	return c.DeleteOneID(oi.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderItemClient) DeleteOneID(id uuid.UUID) *OrderItemDeleteOne {
+	builder := c.Delete().Where(orderitem.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderItemDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderItem.
+func (c *OrderItemClient) Query() *OrderItemQuery {
+	return &OrderItemQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderItem entity by its id.
+func (c *OrderItemClient) Get(ctx context.Context, id uuid.UUID) (*OrderItem, error) {
+	return c.Query().Where(orderitem.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderItemClient) GetX(ctx context.Context, id uuid.UUID) *OrderItem {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderItemClient) Hooks() []Hook {
+	hooks := c.hooks.OrderItem
+	return append(hooks[:len(hooks):len(hooks)], orderitem.Hooks[:]...)
+}
+
+// OrderPairClient is a client for the OrderPair schema.
+type OrderPairClient struct {
+	config
+}
+
+// NewOrderPairClient returns a client for the OrderPair from the given config.
+func NewOrderPairClient(c config) *OrderPairClient {
+	return &OrderPairClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `orderpair.Hooks(f(g(h())))`.
+func (c *OrderPairClient) Use(hooks ...Hook) {
+	c.hooks.OrderPair = append(c.hooks.OrderPair, hooks...)
+}
+
+// Create returns a builder for creating a OrderPair entity.
+func (c *OrderPairClient) Create() *OrderPairCreate {
+	mutation := newOrderPairMutation(c.config, OpCreate)
+	return &OrderPairCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrderPair entities.
+func (c *OrderPairClient) CreateBulk(builders ...*OrderPairCreate) *OrderPairCreateBulk {
+	return &OrderPairCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrderPair.
+func (c *OrderPairClient) Update() *OrderPairUpdate {
+	mutation := newOrderPairMutation(c.config, OpUpdate)
+	return &OrderPairUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrderPairClient) UpdateOne(op *OrderPair) *OrderPairUpdateOne {
+	mutation := newOrderPairMutation(c.config, OpUpdateOne, withOrderPair(op))
+	return &OrderPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrderPairClient) UpdateOneID(id uuid.UUID) *OrderPairUpdateOne {
+	mutation := newOrderPairMutation(c.config, OpUpdateOne, withOrderPairID(id))
+	return &OrderPairUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrderPair.
+func (c *OrderPairClient) Delete() *OrderPairDelete {
+	mutation := newOrderPairMutation(c.config, OpDelete)
+	return &OrderPairDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrderPairClient) DeleteOne(op *OrderPair) *OrderPairDeleteOne {
+	return c.DeleteOneID(op.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *OrderPairClient) DeleteOneID(id uuid.UUID) *OrderPairDeleteOne {
+	builder := c.Delete().Where(orderpair.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrderPairDeleteOne{builder}
+}
+
+// Query returns a query builder for OrderPair.
+func (c *OrderPairClient) Query() *OrderPairQuery {
+	return &OrderPairQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a OrderPair entity by its id.
+func (c *OrderPairClient) Get(ctx context.Context, id uuid.UUID) (*OrderPair, error) {
+	return c.Query().Where(orderpair.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrderPairClient) GetX(ctx context.Context, id uuid.UUID) *OrderPair {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrderPairClient) Hooks() []Hook {
+	hooks := c.hooks.OrderPair
+	return append(hooks[:len(hooks):len(hooks)], orderpair.Hooks[:]...)
 }
 
 // SnapshotClient is a client for the Snapshot schema.

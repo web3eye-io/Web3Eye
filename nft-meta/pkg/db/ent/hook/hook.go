@@ -48,6 +48,32 @@ func (f EndpointFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The OrderItemFunc type is an adapter to allow the use of ordinary
+// function as OrderItem mutator.
+type OrderItemFunc func(context.Context, *ent.OrderItemMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderItemMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderItemMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The OrderPairFunc type is an adapter to allow the use of ordinary
+// function as OrderPair mutator.
+type OrderPairFunc func(context.Context, *ent.OrderPairMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderPairFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderPairMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPairMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The SnapshotFunc type is an adapter to allow the use of ordinary
 // function as Snapshot mutator.
 type SnapshotFunc func(context.Context, *ent.SnapshotMutation) (ent.Value, error)

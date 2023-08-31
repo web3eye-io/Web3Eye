@@ -1,0 +1,284 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/orderitem/orderitem.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "orderitemConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Contract": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TokenID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Amount": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "PortionNum": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "orderitemCountOrderItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "orderitemCreateOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemCreateOrderItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderitemOrderItem"
+          }
+        }
+      }
+    },
+    "orderitemDeleteOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemExistOrderItemCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderitemExistOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderitemGetOrderItemOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemGetOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemGetOrderItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderitemOrderItem"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "orderitemOrderItem": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "PortionNum": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "orderitemOrderItemReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "type": "string"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "PortionNum": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "orderitemUpdateOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemUpsertOrderItemResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderitemOrderItem"
+        }
+      }
+    },
+    "orderitemUpsertOrderItemsResponse": {
+      "type": "object"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}

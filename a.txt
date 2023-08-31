@@ -1,0 +1,50 @@
+{
+ "0xD03839Bd570795814f77bef2fd22480Af2AFa7B4": [
+  {
+   "Plus": false,
+   "PayType": 2,
+   "TokenContract": "0xE3C783d9647d72F7f13ACe64892630e7E33BC968",
+   "TokenID": "4163",
+   "Amount": 1
+  },
+  {
+   "Plus": true,
+   "PayType": 0,
+   "TokenContract": "0x0000000000000000000000000000000000000000",
+   "TokenID": "0",
+   "Amount": 25450500000000000
+  }
+ ],
+ "0xc0301E31c9540B1F006a403C969267E73dB2aD2D": [
+  {
+   "Plus": true,
+   "PayType": 0,
+   "TokenContract": "0x0000000000000000000000000000000000000000",
+   "TokenID": "0",
+   "Amount": 1339500000000000
+  }
+ ],
+ "0xc5B7F24786e1178C395b5fda16137e88A1d260dE": [
+  {
+   "Plus": true,
+   "PayType": 2,
+   "TokenContract": "0xE3C783d9647d72F7f13ACe64892630e7E33BC968",
+   "TokenID": "4163",
+   "Amount": 1
+  },
+  {
+   "Plus": false,
+   "PayType": 0,
+   "TokenContract": "0x0000000000000000000000000000000000000000",
+   "TokenID": "0",
+   "Amount": 25450500000000000
+  },
+  {
+   "Plus": false,
+   "PayType": 0,
+   "TokenContract": "0x0000000000000000000000000000000000000000",
+   "TokenID": "0",
+   "Amount": 1339500000000000
+  }
+ ]
+}

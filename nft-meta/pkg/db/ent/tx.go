@@ -20,6 +20,10 @@ type Tx struct {
 	Contract *ContractClient
 	// Endpoint is the client for interacting with the Endpoint builders.
 	Endpoint *EndpointClient
+	// OrderItem is the client for interacting with the OrderItem builders.
+	OrderItem *OrderItemClient
+	// OrderPair is the client for interacting with the OrderPair builders.
+	OrderPair *OrderPairClient
 	// Snapshot is the client for interacting with the Snapshot builders.
 	Snapshot *SnapshotClient
 	// SyncTask is the client for interacting with the SyncTask builders.
@@ -166,6 +170,8 @@ func (tx *Tx) init() {
 	tx.Block = NewBlockClient(tx.config)
 	tx.Contract = NewContractClient(tx.config)
 	tx.Endpoint = NewEndpointClient(tx.config)
+	tx.OrderItem = NewOrderItemClient(tx.config)
+	tx.OrderPair = NewOrderPairClient(tx.config)
 	tx.Snapshot = NewSnapshotClient(tx.config)
 	tx.SyncTask = NewSyncTaskClient(tx.config)
 	tx.Token = NewTokenClient(tx.config)
