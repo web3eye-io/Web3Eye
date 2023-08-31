@@ -180,17 +180,6 @@
         }
       }
     },
-    "orderpairUpsertOrderPairResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/orderpairOrderPair"
-        }
-      }
-    },
-    "orderpairUpsertOrderPairsResponse": {
-      "type": "object"
-    },
     "protobufAny": {
       "type": "object",
       "properties": {

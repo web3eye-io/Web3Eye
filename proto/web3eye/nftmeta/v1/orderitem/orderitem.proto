@@ -9,11 +9,8 @@ import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc CreateOrderItem(CreateOrderItemRequest) returns (CreateOrderItemResponse) {}
-  rpc UpsertOrderItem(UpsertOrderItemRequest) returns (UpsertOrderItemResponse) {}
   rpc CreateOrderItems(CreateOrderItemsRequest)
       returns (CreateOrderItemsResponse) {}
-  rpc UpsertOrderItems(UpsertOrderItemsRequest)
-      returns (UpsertOrderItemsResponse) {}
   rpc UpdateOrderItem(UpdateOrderItemRequest) returns (UpdateOrderItemResponse) {}
   rpc GetOrderItem(GetOrderItemRequest) returns (GetOrderItemResponse) {}
   rpc GetOrderItemOnly(GetOrderItemOnlyRequest)
@@ -58,21 +55,13 @@ message Conds {
 }
 
 message CreateOrderItemRequest { OrderItemReq Info = 10; }
-
 message CreateOrderItemResponse { OrderItem Info = 10; }
 
-message UpsertOrderItemRequest { OrderItemReq Info = 10; }
-
-message UpsertOrderItemResponse { OrderItem Info = 10; }
 
 message CreateOrderItemsRequest { repeated OrderItemReq Infos = 10; }
 message CreateOrderItemsResponse { repeated OrderItem Infos = 10; }
-message UpsertOrderItemsRequest { repeated OrderItemReq Infos = 10; }
-
-message UpsertOrderItemsResponse { }
 
 message GetOrderItemRequest { string ID = 10; }
-
 message GetOrderItemResponse { OrderItem Info = 10; }
 
 message GetOrderItemsRequest {

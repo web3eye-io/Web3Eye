@@ -23,9 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	CreateOrderPair(ctx context.Context, in *CreateOrderPairRequest, opts ...grpc.CallOption) (*CreateOrderPairResponse, error)
-	UpsertOrderPair(ctx context.Context, in *UpsertOrderPairRequest, opts ...grpc.CallOption) (*UpsertOrderPairResponse, error)
 	CreateOrderPairs(ctx context.Context, in *CreateOrderPairsRequest, opts ...grpc.CallOption) (*CreateOrderPairsResponse, error)
-	UpsertOrderPairs(ctx context.Context, in *UpsertOrderPairsRequest, opts ...grpc.CallOption) (*UpsertOrderPairsResponse, error)
 	UpdateOrderPair(ctx context.Context, in *UpdateOrderPairRequest, opts ...grpc.CallOption) (*UpdateOrderPairResponse, error)
 	GetOrderPair(ctx context.Context, in *GetOrderPairRequest, opts ...grpc.CallOption) (*GetOrderPairResponse, error)
 	GetOrderPairOnly(ctx context.Context, in *GetOrderPairOnlyRequest, opts ...grpc.CallOption) (*GetOrderPairOnlyResponse, error)
@@ -53,27 +51,9 @@ func (c *managerClient) CreateOrderPair(ctx context.Context, in *CreateOrderPair
 	return out, nil
 }
 
-func (c *managerClient) UpsertOrderPair(ctx context.Context, in *UpsertOrderPairRequest, opts ...grpc.CallOption) (*UpsertOrderPairResponse, error) {
-	out := new(UpsertOrderPairResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderpair.Manager/UpsertOrderPair", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) CreateOrderPairs(ctx context.Context, in *CreateOrderPairsRequest, opts ...grpc.CallOption) (*CreateOrderPairsResponse, error) {
 	out := new(CreateOrderPairsResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderpair.Manager/CreateOrderPairs", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) UpsertOrderPairs(ctx context.Context, in *UpsertOrderPairsRequest, opts ...grpc.CallOption) (*UpsertOrderPairsResponse, error) {
-	out := new(UpsertOrderPairsResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderpair.Manager/UpsertOrderPairs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -157,9 +137,7 @@ func (c *managerClient) DeleteOrderPair(ctx context.Context, in *DeleteOrderPair
 // for forward compatibility
 type ManagerServer interface {
 	CreateOrderPair(context.Context, *CreateOrderPairRequest) (*CreateOrderPairResponse, error)
-	UpsertOrderPair(context.Context, *UpsertOrderPairRequest) (*UpsertOrderPairResponse, error)
 	CreateOrderPairs(context.Context, *CreateOrderPairsRequest) (*CreateOrderPairsResponse, error)
-	UpsertOrderPairs(context.Context, *UpsertOrderPairsRequest) (*UpsertOrderPairsResponse, error)
 	UpdateOrderPair(context.Context, *UpdateOrderPairRequest) (*UpdateOrderPairResponse, error)
 	GetOrderPair(context.Context, *GetOrderPairRequest) (*GetOrderPairResponse, error)
 	GetOrderPairOnly(context.Context, *GetOrderPairOnlyRequest) (*GetOrderPairOnlyResponse, error)
@@ -178,14 +156,8 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) CreateOrderPair(context.Context, *CreateOrderPairRequest) (*CreateOrderPairResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderPair not implemented")
 }
-func (UnimplementedManagerServer) UpsertOrderPair(context.Context, *UpsertOrderPairRequest) (*UpsertOrderPairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrderPair not implemented")
-}
 func (UnimplementedManagerServer) CreateOrderPairs(context.Context, *CreateOrderPairsRequest) (*CreateOrderPairsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderPairs not implemented")
-}
-func (UnimplementedManagerServer) UpsertOrderPairs(context.Context, *UpsertOrderPairsRequest) (*UpsertOrderPairsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrderPairs not implemented")
 }
 func (UnimplementedManagerServer) UpdateOrderPair(context.Context, *UpdateOrderPairRequest) (*UpdateOrderPairResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrderPair not implemented")
@@ -242,24 +214,6 @@ func _Manager_CreateOrderPair_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_UpsertOrderPair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertOrderPairRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).UpsertOrderPair(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderpair.Manager/UpsertOrderPair",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).UpsertOrderPair(ctx, req.(*UpsertOrderPairRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_CreateOrderPairs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrderPairsRequest)
 	if err := dec(in); err != nil {
@@ -274,24 +228,6 @@ func _Manager_CreateOrderPairs_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateOrderPairs(ctx, req.(*CreateOrderPairsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_UpsertOrderPairs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertOrderPairsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).UpsertOrderPairs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderpair.Manager/UpsertOrderPairs",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).UpsertOrderPairs(ctx, req.(*UpsertOrderPairsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -452,16 +388,8 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_CreateOrderPair_Handler,
 		},
 		{
-			MethodName: "UpsertOrderPair",
-			Handler:    _Manager_UpsertOrderPair_Handler,
-		},
-		{
 			MethodName: "CreateOrderPairs",
 			Handler:    _Manager_CreateOrderPairs_Handler,
-		},
-		{
-			MethodName: "UpsertOrderPairs",
-			Handler:    _Manager_UpsertOrderPairs_Handler,
 		},
 		{
 			MethodName: "UpdateOrderPair",

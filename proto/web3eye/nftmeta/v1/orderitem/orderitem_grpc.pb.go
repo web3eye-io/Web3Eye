@@ -23,9 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	CreateOrderItem(ctx context.Context, in *CreateOrderItemRequest, opts ...grpc.CallOption) (*CreateOrderItemResponse, error)
-	UpsertOrderItem(ctx context.Context, in *UpsertOrderItemRequest, opts ...grpc.CallOption) (*UpsertOrderItemResponse, error)
 	CreateOrderItems(ctx context.Context, in *CreateOrderItemsRequest, opts ...grpc.CallOption) (*CreateOrderItemsResponse, error)
-	UpsertOrderItems(ctx context.Context, in *UpsertOrderItemsRequest, opts ...grpc.CallOption) (*UpsertOrderItemsResponse, error)
 	UpdateOrderItem(ctx context.Context, in *UpdateOrderItemRequest, opts ...grpc.CallOption) (*UpdateOrderItemResponse, error)
 	GetOrderItem(ctx context.Context, in *GetOrderItemRequest, opts ...grpc.CallOption) (*GetOrderItemResponse, error)
 	GetOrderItemOnly(ctx context.Context, in *GetOrderItemOnlyRequest, opts ...grpc.CallOption) (*GetOrderItemOnlyResponse, error)
@@ -53,27 +51,9 @@ func (c *managerClient) CreateOrderItem(ctx context.Context, in *CreateOrderItem
 	return out, nil
 }
 
-func (c *managerClient) UpsertOrderItem(ctx context.Context, in *UpsertOrderItemRequest, opts ...grpc.CallOption) (*UpsertOrderItemResponse, error) {
-	out := new(UpsertOrderItemResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderitem.Manager/UpsertOrderItem", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) CreateOrderItems(ctx context.Context, in *CreateOrderItemsRequest, opts ...grpc.CallOption) (*CreateOrderItemsResponse, error) {
 	out := new(CreateOrderItemsResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderitem.Manager/CreateOrderItems", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) UpsertOrderItems(ctx context.Context, in *UpsertOrderItemsRequest, opts ...grpc.CallOption) (*UpsertOrderItemsResponse, error) {
-	out := new(UpsertOrderItemsResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderitem.Manager/UpsertOrderItems", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -157,9 +137,7 @@ func (c *managerClient) DeleteOrderItem(ctx context.Context, in *DeleteOrderItem
 // for forward compatibility
 type ManagerServer interface {
 	CreateOrderItem(context.Context, *CreateOrderItemRequest) (*CreateOrderItemResponse, error)
-	UpsertOrderItem(context.Context, *UpsertOrderItemRequest) (*UpsertOrderItemResponse, error)
 	CreateOrderItems(context.Context, *CreateOrderItemsRequest) (*CreateOrderItemsResponse, error)
-	UpsertOrderItems(context.Context, *UpsertOrderItemsRequest) (*UpsertOrderItemsResponse, error)
 	UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error)
 	GetOrderItem(context.Context, *GetOrderItemRequest) (*GetOrderItemResponse, error)
 	GetOrderItemOnly(context.Context, *GetOrderItemOnlyRequest) (*GetOrderItemOnlyResponse, error)
@@ -178,14 +156,8 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) CreateOrderItem(context.Context, *CreateOrderItemRequest) (*CreateOrderItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderItem not implemented")
 }
-func (UnimplementedManagerServer) UpsertOrderItem(context.Context, *UpsertOrderItemRequest) (*UpsertOrderItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrderItem not implemented")
-}
 func (UnimplementedManagerServer) CreateOrderItems(context.Context, *CreateOrderItemsRequest) (*CreateOrderItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderItems not implemented")
-}
-func (UnimplementedManagerServer) UpsertOrderItems(context.Context, *UpsertOrderItemsRequest) (*UpsertOrderItemsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrderItems not implemented")
 }
 func (UnimplementedManagerServer) UpdateOrderItem(context.Context, *UpdateOrderItemRequest) (*UpdateOrderItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrderItem not implemented")
@@ -242,24 +214,6 @@ func _Manager_CreateOrderItem_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_UpsertOrderItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertOrderItemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).UpsertOrderItem(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderitem.Manager/UpsertOrderItem",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).UpsertOrderItem(ctx, req.(*UpsertOrderItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_CreateOrderItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrderItemsRequest)
 	if err := dec(in); err != nil {
@@ -274,24 +228,6 @@ func _Manager_CreateOrderItems_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateOrderItems(ctx, req.(*CreateOrderItemsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_UpsertOrderItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertOrderItemsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).UpsertOrderItems(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderitem.Manager/UpsertOrderItems",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).UpsertOrderItems(ctx, req.(*UpsertOrderItemsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -452,16 +388,8 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_CreateOrderItem_Handler,
 		},
 		{
-			MethodName: "UpsertOrderItem",
-			Handler:    _Manager_UpsertOrderItem_Handler,
-		},
-		{
 			MethodName: "CreateOrderItems",
 			Handler:    _Manager_CreateOrderItems_Handler,
-		},
-		{
-			MethodName: "UpsertOrderItems",
-			Handler:    _Manager_UpsertOrderItems_Handler,
 		},
 		{
 			MethodName: "UpdateOrderItem",

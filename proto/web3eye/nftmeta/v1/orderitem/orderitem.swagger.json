@@ -193,17 +193,6 @@
         }
       }
     },
-    "orderitemUpsertOrderItemResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/orderitemOrderItem"
-        }
-      }
-    },
-    "orderitemUpsertOrderItemsResponse": {
-      "type": "object"
-    },
     "protobufAny": {
       "type": "object",
       "properties": {
