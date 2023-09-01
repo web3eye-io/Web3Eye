@@ -28,8 +28,8 @@ type OrderPair struct {
 	Recipient string `json:"recipient,omitempty"`
 	// TargetID holds the value of the "target_id" field.
 	TargetID string `json:"target_id,omitempty"`
-	// BarterID holds the value of the "barter_id" field.
-	BarterID string `json:"barter_id,omitempty"`
+	// OfferID holds the value of the "offer_id" field.
+	OfferID string `json:"offer_id,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -41,7 +41,7 @@ func (*OrderPair) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case orderpair.FieldCreatedAt, orderpair.FieldUpdatedAt, orderpair.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderpair.FieldTxHash, orderpair.FieldRecipient, orderpair.FieldTargetID, orderpair.FieldBarterID, orderpair.FieldRemark:
+		case orderpair.FieldTxHash, orderpair.FieldRecipient, orderpair.FieldTargetID, orderpair.FieldOfferID, orderpair.FieldRemark:
 			values[i] = new(sql.NullString)
 		case orderpair.FieldID:
 			values[i] = new(uuid.UUID)
@@ -102,11 +102,11 @@ func (op *OrderPair) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				op.TargetID = value.String
 			}
-		case orderpair.FieldBarterID:
+		case orderpair.FieldOfferID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field barter_id", values[i])
+				return fmt.Errorf("unexpected type %T for field offer_id", values[i])
 			} else if value.Valid {
-				op.BarterID = value.String
+				op.OfferID = value.String
 			}
 		case orderpair.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -160,8 +160,8 @@ func (op *OrderPair) String() string {
 	builder.WriteString("target_id=")
 	builder.WriteString(op.TargetID)
 	builder.WriteString(", ")
-	builder.WriteString("barter_id=")
-	builder.WriteString(op.BarterID)
+	builder.WriteString("offer_id=")
+	builder.WriteString(op.OfferID)
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(op.Remark)

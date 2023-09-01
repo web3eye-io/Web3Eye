@@ -27,7 +27,7 @@ func (OrderPair) Fields() []ent.Field {
 		field.String("tx_hash"),
 		field.String("recipient"),
 		field.String("target_id"),
-		field.String("barter_id"),
+		field.String("offer_id"),
 		field.Text("remark").
 			Optional(),
 	}

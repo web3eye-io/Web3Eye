@@ -133,7 +133,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderpair.FieldTxHash:    {Type: field.TypeString, Column: orderpair.FieldTxHash},
 			orderpair.FieldRecipient: {Type: field.TypeString, Column: orderpair.FieldRecipient},
 			orderpair.FieldTargetID:  {Type: field.TypeString, Column: orderpair.FieldTargetID},
-			orderpair.FieldBarterID:  {Type: field.TypeString, Column: orderpair.FieldBarterID},
+			orderpair.FieldOfferID:   {Type: field.TypeString, Column: orderpair.FieldOfferID},
 			orderpair.FieldRemark:    {Type: field.TypeString, Column: orderpair.FieldRemark},
 		},
 	}
@@ -694,9 +694,9 @@ func (f *OrderPairFilter) WhereTargetID(p entql.StringP) {
 	f.Where(p.Field(orderpair.FieldTargetID))
 }
 
-// WhereBarterID applies the entql string predicate on the barter_id field.
-func (f *OrderPairFilter) WhereBarterID(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldBarterID))
+// WhereOfferID applies the entql string predicate on the offer_id field.
+func (f *OrderPairFilter) WhereOfferID(p entql.StringP) {
+	f.Where(p.Field(orderpair.FieldOfferID))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.

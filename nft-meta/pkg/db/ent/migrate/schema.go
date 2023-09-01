@@ -120,7 +120,7 @@ var (
 		{Name: "tx_hash", Type: field.TypeString},
 		{Name: "recipient", Type: field.TypeString},
 		{Name: "target_id", Type: field.TypeString},
-		{Name: "barter_id", Type: field.TypeString},
+		{Name: "offer_id", Type: field.TypeString},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// OrderPairsTable holds the schema information for the "order_pairs" table.

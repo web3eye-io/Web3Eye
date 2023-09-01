@@ -51,8 +51,8 @@ func CreateSet(c *ent.OrderPairCreate, in *npool.OrderPairReq) *ent.OrderPairCre
 	if in.TargetID != nil {
 		c.SetTargetID(in.GetTargetID())
 	}
-	if in.BarterID != nil {
-		c.SetBarterID(in.GetBarterID())
+	if in.OfferID != nil {
+		c.SetOfferID(in.GetOfferID())
 	}
 	if in.Remark != nil {
 		c.SetRemark(in.GetRemark())
@@ -123,8 +123,8 @@ func UpdateSet(u *ent.OrderPairUpdateOne, in *npool.OrderPairReq) *ent.OrderPair
 	if in.TargetID != nil {
 		u.SetTargetID(in.GetTargetID())
 	}
-	if in.BarterID != nil {
-		u.SetBarterID(in.GetBarterID())
+	if in.OfferID != nil {
+		u.SetOfferID(in.GetOfferID())
 	}
 	if in.Remark != nil {
 		u.SetRemark(in.GetRemark())
@@ -210,10 +210,10 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.OrderPairQuery, er
 			return nil, fmt.Errorf("invalid orderpair field")
 		}
 	}
-	if conds.BarterID != nil {
-		switch conds.GetBarterID().GetOp() {
+	if conds.OfferID != nil {
+		switch conds.GetOfferID().GetOp() {
 		case cruder.EQ:
-			stm.Where(orderpair.BarterID(conds.GetBarterID().GetValue()))
+			stm.Where(orderpair.OfferID(conds.GetOfferID().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid orderpair field")
 		}

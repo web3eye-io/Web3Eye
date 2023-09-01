@@ -4242,7 +4242,7 @@ type OrderPairMutation struct {
 	tx_hash       *string
 	recipient     *string
 	target_id     *string
-	barter_id     *string
+	offer_id      *string
 	remark        *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -4630,40 +4630,40 @@ func (m *OrderPairMutation) ResetTargetID() {
 	m.target_id = nil
 }
 
-// SetBarterID sets the "barter_id" field.
-func (m *OrderPairMutation) SetBarterID(s string) {
-	m.barter_id = &s
+// SetOfferID sets the "offer_id" field.
+func (m *OrderPairMutation) SetOfferID(s string) {
+	m.offer_id = &s
 }
 
-// BarterID returns the value of the "barter_id" field in the mutation.
-func (m *OrderPairMutation) BarterID() (r string, exists bool) {
-	v := m.barter_id
+// OfferID returns the value of the "offer_id" field in the mutation.
+func (m *OrderPairMutation) OfferID() (r string, exists bool) {
+	v := m.offer_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldBarterID returns the old "barter_id" field's value of the OrderPair entity.
+// OldOfferID returns the old "offer_id" field's value of the OrderPair entity.
 // If the OrderPair object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderPairMutation) OldBarterID(ctx context.Context) (v string, err error) {
+func (m *OrderPairMutation) OldOfferID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBarterID is only allowed on UpdateOne operations")
+		return v, errors.New("OldOfferID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBarterID requires an ID field in the mutation")
+		return v, errors.New("OldOfferID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBarterID: %w", err)
+		return v, fmt.Errorf("querying old value for OldOfferID: %w", err)
 	}
-	return oldValue.BarterID, nil
+	return oldValue.OfferID, nil
 }
 
-// ResetBarterID resets all changes to the "barter_id" field.
-func (m *OrderPairMutation) ResetBarterID() {
-	m.barter_id = nil
+// ResetOfferID resets all changes to the "offer_id" field.
+func (m *OrderPairMutation) ResetOfferID() {
+	m.offer_id = nil
 }
 
 // SetRemark sets the "remark" field.
@@ -4753,8 +4753,8 @@ func (m *OrderPairMutation) Fields() []string {
 	if m.target_id != nil {
 		fields = append(fields, orderpair.FieldTargetID)
 	}
-	if m.barter_id != nil {
-		fields = append(fields, orderpair.FieldBarterID)
+	if m.offer_id != nil {
+		fields = append(fields, orderpair.FieldOfferID)
 	}
 	if m.remark != nil {
 		fields = append(fields, orderpair.FieldRemark)
@@ -4779,8 +4779,8 @@ func (m *OrderPairMutation) Field(name string) (ent.Value, bool) {
 		return m.Recipient()
 	case orderpair.FieldTargetID:
 		return m.TargetID()
-	case orderpair.FieldBarterID:
-		return m.BarterID()
+	case orderpair.FieldOfferID:
+		return m.OfferID()
 	case orderpair.FieldRemark:
 		return m.Remark()
 	}
@@ -4804,8 +4804,8 @@ func (m *OrderPairMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldRecipient(ctx)
 	case orderpair.FieldTargetID:
 		return m.OldTargetID(ctx)
-	case orderpair.FieldBarterID:
-		return m.OldBarterID(ctx)
+	case orderpair.FieldOfferID:
+		return m.OldOfferID(ctx)
 	case orderpair.FieldRemark:
 		return m.OldRemark(ctx)
 	}
@@ -4859,12 +4859,12 @@ func (m *OrderPairMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTargetID(v)
 		return nil
-	case orderpair.FieldBarterID:
+	case orderpair.FieldOfferID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetBarterID(v)
+		m.SetOfferID(v)
 		return nil
 	case orderpair.FieldRemark:
 		v, ok := value.(string)
@@ -4988,8 +4988,8 @@ func (m *OrderPairMutation) ResetField(name string) error {
 	case orderpair.FieldTargetID:
 		m.ResetTargetID()
 		return nil
-	case orderpair.FieldBarterID:
-		m.ResetBarterID()
+	case orderpair.FieldOfferID:
+		m.ResetOfferID()
 		return nil
 	case orderpair.FieldRemark:
 		m.ResetRemark()

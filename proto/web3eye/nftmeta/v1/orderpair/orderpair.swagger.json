@@ -32,7 +32,7 @@
         "TargetID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "BarterID": {
+        "OfferID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "Remark": {
@@ -141,7 +141,7 @@
         "TargetID": {
           "type": "string"
         },
-        "BarterID": {
+        "OfferID": {
           "type": "string"
         },
         "Remark": {
@@ -164,7 +164,7 @@
         "TargetID": {
           "type": "string"
         },
-        "BarterID": {
+        "OfferID": {
           "type": "string"
         },
         "Remark": {

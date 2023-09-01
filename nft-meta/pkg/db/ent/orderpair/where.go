@@ -121,10 +121,10 @@ func TargetID(v string) predicate.OrderPair {
 	})
 }
 
-// BarterID applies equality check predicate on the "barter_id" field. It's identical to BarterIDEQ.
-func BarterID(v string) predicate.OrderPair {
+// OfferID applies equality check predicate on the "offer_id" field. It's identical to OfferIDEQ.
+func OfferID(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBarterID), v))
+		s.Where(sql.EQ(s.C(FieldOfferID), v))
 	})
 }
 
@@ -624,102 +624,102 @@ func TargetIDContainsFold(v string) predicate.OrderPair {
 	})
 }
 
-// BarterIDEQ applies the EQ predicate on the "barter_id" field.
-func BarterIDEQ(v string) predicate.OrderPair {
+// OfferIDEQ applies the EQ predicate on the "offer_id" field.
+func OfferIDEQ(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBarterID), v))
+		s.Where(sql.EQ(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDNEQ applies the NEQ predicate on the "barter_id" field.
-func BarterIDNEQ(v string) predicate.OrderPair {
+// OfferIDNEQ applies the NEQ predicate on the "offer_id" field.
+func OfferIDNEQ(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldBarterID), v))
+		s.Where(sql.NEQ(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDIn applies the In predicate on the "barter_id" field.
-func BarterIDIn(vs ...string) predicate.OrderPair {
+// OfferIDIn applies the In predicate on the "offer_id" field.
+func OfferIDIn(vs ...string) predicate.OrderPair {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldBarterID), v...))
+		s.Where(sql.In(s.C(FieldOfferID), v...))
 	})
 }
 
-// BarterIDNotIn applies the NotIn predicate on the "barter_id" field.
-func BarterIDNotIn(vs ...string) predicate.OrderPair {
+// OfferIDNotIn applies the NotIn predicate on the "offer_id" field.
+func OfferIDNotIn(vs ...string) predicate.OrderPair {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldBarterID), v...))
+		s.Where(sql.NotIn(s.C(FieldOfferID), v...))
 	})
 }
 
-// BarterIDGT applies the GT predicate on the "barter_id" field.
-func BarterIDGT(v string) predicate.OrderPair {
+// OfferIDGT applies the GT predicate on the "offer_id" field.
+func OfferIDGT(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldBarterID), v))
+		s.Where(sql.GT(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDGTE applies the GTE predicate on the "barter_id" field.
-func BarterIDGTE(v string) predicate.OrderPair {
+// OfferIDGTE applies the GTE predicate on the "offer_id" field.
+func OfferIDGTE(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldBarterID), v))
+		s.Where(sql.GTE(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDLT applies the LT predicate on the "barter_id" field.
-func BarterIDLT(v string) predicate.OrderPair {
+// OfferIDLT applies the LT predicate on the "offer_id" field.
+func OfferIDLT(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldBarterID), v))
+		s.Where(sql.LT(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDLTE applies the LTE predicate on the "barter_id" field.
-func BarterIDLTE(v string) predicate.OrderPair {
+// OfferIDLTE applies the LTE predicate on the "offer_id" field.
+func OfferIDLTE(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldBarterID), v))
+		s.Where(sql.LTE(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDContains applies the Contains predicate on the "barter_id" field.
-func BarterIDContains(v string) predicate.OrderPair {
+// OfferIDContains applies the Contains predicate on the "offer_id" field.
+func OfferIDContains(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldBarterID), v))
+		s.Where(sql.Contains(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDHasPrefix applies the HasPrefix predicate on the "barter_id" field.
-func BarterIDHasPrefix(v string) predicate.OrderPair {
+// OfferIDHasPrefix applies the HasPrefix predicate on the "offer_id" field.
+func OfferIDHasPrefix(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldBarterID), v))
+		s.Where(sql.HasPrefix(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDHasSuffix applies the HasSuffix predicate on the "barter_id" field.
-func BarterIDHasSuffix(v string) predicate.OrderPair {
+// OfferIDHasSuffix applies the HasSuffix predicate on the "offer_id" field.
+func OfferIDHasSuffix(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldBarterID), v))
+		s.Where(sql.HasSuffix(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDEqualFold applies the EqualFold predicate on the "barter_id" field.
-func BarterIDEqualFold(v string) predicate.OrderPair {
+// OfferIDEqualFold applies the EqualFold predicate on the "offer_id" field.
+func OfferIDEqualFold(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldBarterID), v))
+		s.Where(sql.EqualFold(s.C(FieldOfferID), v))
 	})
 }
 
-// BarterIDContainsFold applies the ContainsFold predicate on the "barter_id" field.
-func BarterIDContainsFold(v string) predicate.OrderPair {
+// OfferIDContainsFold applies the ContainsFold predicate on the "offer_id" field.
+func OfferIDContainsFold(v string) predicate.OrderPair {
 	return predicate.OrderPair(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldBarterID), v))
+		s.Where(sql.ContainsFold(s.C(FieldOfferID), v))
 	})
 }
 

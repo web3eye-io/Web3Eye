@@ -28,7 +28,7 @@ message OrderPairReq {
   optional string TxHash = 20;
   optional string Recipient = 30;
   optional string TargetID = 40;
-  optional string BarterID = 50;
+  optional string OfferID = 50;
   optional string Remark = 60;
 }
 
@@ -37,7 +37,7 @@ message OrderPair {
   string TxHash = 20;
   string Recipient = 30;
   string TargetID = 40;
-  string BarterID = 50;
+  string OfferID = 50;
   string Remark = 60;
 }
 
@@ -46,7 +46,7 @@ message Conds {
   web3eye.StringVal TxHash = 20;
   web3eye.StringVal Recipient = 30;
   web3eye.StringVal TargetID = 40;
-  web3eye.StringVal BarterID = 50;
+  web3eye.StringVal OfferID = 50;
   web3eye.StringVal Remark = 60;
   web3eye.StringSliceVal IDs = 150;
 }

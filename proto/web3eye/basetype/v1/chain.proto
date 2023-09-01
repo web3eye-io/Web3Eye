@@ -13,6 +13,7 @@ enum ChainType{
 enum TokenType{
     TokenUnkonwn = 0;
     Native = 1;
+    ERC20 = 2;
     ERC721 = 10;
     ERC721_WITH_CRITERIA = 11;
     ERC1155 = 20;

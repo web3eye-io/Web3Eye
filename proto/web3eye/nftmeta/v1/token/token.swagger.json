@@ -96,6 +96,7 @@
       "enum": [
         "TokenUnkonwn",
         "Native",
+        "ERC20",
         "ERC721",
         "ERC721_WITH_CRITERIA",
         "ERC1155",

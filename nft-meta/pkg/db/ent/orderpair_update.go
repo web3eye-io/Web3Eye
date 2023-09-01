@@ -101,9 +101,9 @@ func (opu *OrderPairUpdate) SetTargetID(s string) *OrderPairUpdate {
 	return opu
 }
 
-// SetBarterID sets the "barter_id" field.
-func (opu *OrderPairUpdate) SetBarterID(s string) *OrderPairUpdate {
-	opu.mutation.SetBarterID(s)
+// SetOfferID sets the "offer_id" field.
+func (opu *OrderPairUpdate) SetOfferID(s string) *OrderPairUpdate {
+	opu.mutation.SetOfferID(s)
 	return opu
 }
 
@@ -288,11 +288,11 @@ func (opu *OrderPairUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderpair.FieldTargetID,
 		})
 	}
-	if value, ok := opu.mutation.BarterID(); ok {
+	if value, ok := opu.mutation.OfferID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: orderpair.FieldBarterID,
+			Column: orderpair.FieldOfferID,
 		})
 	}
 	if value, ok := opu.mutation.Remark(); ok {
@@ -402,9 +402,9 @@ func (opuo *OrderPairUpdateOne) SetTargetID(s string) *OrderPairUpdateOne {
 	return opuo
 }
 
-// SetBarterID sets the "barter_id" field.
-func (opuo *OrderPairUpdateOne) SetBarterID(s string) *OrderPairUpdateOne {
-	opuo.mutation.SetBarterID(s)
+// SetOfferID sets the "offer_id" field.
+func (opuo *OrderPairUpdateOne) SetOfferID(s string) *OrderPairUpdateOne {
+	opuo.mutation.SetOfferID(s)
 	return opuo
 }
 
@@ -619,11 +619,11 @@ func (opuo *OrderPairUpdateOne) sqlSave(ctx context.Context) (_node *OrderPair, 
 			Column: orderpair.FieldTargetID,
 		})
 	}
-	if value, ok := opuo.mutation.BarterID(); ok {
+	if value, ok := opuo.mutation.OfferID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: orderpair.FieldBarterID,
+			Column: orderpair.FieldOfferID,
 		})
 	}
 	if value, ok := opuo.mutation.Remark(); ok {

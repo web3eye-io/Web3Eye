@@ -83,9 +83,9 @@ func (opc *OrderPairCreate) SetTargetID(s string) *OrderPairCreate {
 	return opc
 }
 
-// SetBarterID sets the "barter_id" field.
-func (opc *OrderPairCreate) SetBarterID(s string) *OrderPairCreate {
-	opc.mutation.SetBarterID(s)
+// SetOfferID sets the "offer_id" field.
+func (opc *OrderPairCreate) SetOfferID(s string) *OrderPairCreate {
+	opc.mutation.SetOfferID(s)
 	return opc
 }
 
@@ -247,8 +247,8 @@ func (opc *OrderPairCreate) check() error {
 	if _, ok := opc.mutation.TargetID(); !ok {
 		return &ValidationError{Name: "target_id", err: errors.New(`ent: missing required field "OrderPair.target_id"`)}
 	}
-	if _, ok := opc.mutation.BarterID(); !ok {
-		return &ValidationError{Name: "barter_id", err: errors.New(`ent: missing required field "OrderPair.barter_id"`)}
+	if _, ok := opc.mutation.OfferID(); !ok {
+		return &ValidationError{Name: "offer_id", err: errors.New(`ent: missing required field "OrderPair.offer_id"`)}
 	}
 	return nil
 }
@@ -335,13 +335,13 @@ func (opc *OrderPairCreate) createSpec() (*OrderPair, *sqlgraph.CreateSpec) {
 		})
 		_node.TargetID = value
 	}
-	if value, ok := opc.mutation.BarterID(); ok {
+	if value, ok := opc.mutation.OfferID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: orderpair.FieldBarterID,
+			Column: orderpair.FieldOfferID,
 		})
-		_node.BarterID = value
+		_node.OfferID = value
 	}
 	if value, ok := opc.mutation.Remark(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -493,15 +493,15 @@ func (u *OrderPairUpsert) UpdateTargetID() *OrderPairUpsert {
 	return u
 }
 
-// SetBarterID sets the "barter_id" field.
-func (u *OrderPairUpsert) SetBarterID(v string) *OrderPairUpsert {
-	u.Set(orderpair.FieldBarterID, v)
+// SetOfferID sets the "offer_id" field.
+func (u *OrderPairUpsert) SetOfferID(v string) *OrderPairUpsert {
+	u.Set(orderpair.FieldOfferID, v)
 	return u
 }
 
-// UpdateBarterID sets the "barter_id" field to the value that was provided on create.
-func (u *OrderPairUpsert) UpdateBarterID() *OrderPairUpsert {
-	u.SetExcluded(orderpair.FieldBarterID)
+// UpdateOfferID sets the "offer_id" field to the value that was provided on create.
+func (u *OrderPairUpsert) UpdateOfferID() *OrderPairUpsert {
+	u.SetExcluded(orderpair.FieldOfferID)
 	return u
 }
 
@@ -676,17 +676,17 @@ func (u *OrderPairUpsertOne) UpdateTargetID() *OrderPairUpsertOne {
 	})
 }
 
-// SetBarterID sets the "barter_id" field.
-func (u *OrderPairUpsertOne) SetBarterID(v string) *OrderPairUpsertOne {
+// SetOfferID sets the "offer_id" field.
+func (u *OrderPairUpsertOne) SetOfferID(v string) *OrderPairUpsertOne {
 	return u.Update(func(s *OrderPairUpsert) {
-		s.SetBarterID(v)
+		s.SetOfferID(v)
 	})
 }
 
-// UpdateBarterID sets the "barter_id" field to the value that was provided on create.
-func (u *OrderPairUpsertOne) UpdateBarterID() *OrderPairUpsertOne {
+// UpdateOfferID sets the "offer_id" field to the value that was provided on create.
+func (u *OrderPairUpsertOne) UpdateOfferID() *OrderPairUpsertOne {
 	return u.Update(func(s *OrderPairUpsert) {
-		s.UpdateBarterID()
+		s.UpdateOfferID()
 	})
 }
 
@@ -1028,17 +1028,17 @@ func (u *OrderPairUpsertBulk) UpdateTargetID() *OrderPairUpsertBulk {
 	})
 }
 
-// SetBarterID sets the "barter_id" field.
-func (u *OrderPairUpsertBulk) SetBarterID(v string) *OrderPairUpsertBulk {
+// SetOfferID sets the "offer_id" field.
+func (u *OrderPairUpsertBulk) SetOfferID(v string) *OrderPairUpsertBulk {
 	return u.Update(func(s *OrderPairUpsert) {
-		s.SetBarterID(v)
+		s.SetOfferID(v)
 	})
 }
 
-// UpdateBarterID sets the "barter_id" field to the value that was provided on create.
-func (u *OrderPairUpsertBulk) UpdateBarterID() *OrderPairUpsertBulk {
+// UpdateOfferID sets the "offer_id" field to the value that was provided on create.
+func (u *OrderPairUpsertBulk) UpdateOfferID() *OrderPairUpsertBulk {
 	return u.Update(func(s *OrderPairUpsert) {
-		s.UpdateBarterID()
+		s.UpdateOfferID()
 	})
 }
 

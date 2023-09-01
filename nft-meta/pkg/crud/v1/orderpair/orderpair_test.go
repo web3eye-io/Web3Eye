@@ -42,7 +42,7 @@ func prepareData() {
 		TxHash:    "test",
 		Recipient: "sssss",
 		TargetID:  strconv.Itoa(RandInt()),
-		BarterID:  "1",
+		OfferID:   "1",
 		Remark:    "",
 	}
 
@@ -52,7 +52,7 @@ func prepareData() {
 		TxHash:    &entOrderPair.TxHash,
 		Recipient: &entOrderPair.Recipient,
 		TargetID:  &entOrderPair.TargetID,
-		BarterID:  &entOrderPair.BarterID,
+		OfferID:   &entOrderPair.OfferID,
 		Remark:    &entOrderPair.Remark,
 	}
 }
@@ -63,7 +63,7 @@ func rowToObject(row *ent.OrderPair) *ent.OrderPair {
 		TxHash:    row.TxHash,
 		Recipient: row.Recipient,
 		TargetID:  row.TargetID,
-		BarterID:  row.BarterID,
+		OfferID:   row.OfferID,
 		Remark:    row.Remark,
 	}
 }
@@ -88,7 +88,7 @@ func createBulk(t *testing.T) {
 			TxHash:    "test",
 			Recipient: "sssss",
 			TargetID:  strconv.Itoa(RandInt()),
-			BarterID:  "1",
+			OfferID:   "1",
 			Remark:    "",
 		},
 		{
@@ -96,7 +96,7 @@ func createBulk(t *testing.T) {
 			TxHash:    "test",
 			Recipient: "sssss",
 			TargetID:  strconv.Itoa(RandInt()),
-			BarterID:  "1",
+			OfferID:   "1",
 			Remark:    "",
 		},
 	}
@@ -109,7 +109,7 @@ func createBulk(t *testing.T) {
 			TxHash:    &entOrderPair[key].TxHash,
 			Recipient: &entOrderPair[key].Recipient,
 			TargetID:  &entOrderPair[key].TargetID,
-			BarterID:  &entOrderPair[key].BarterID,
+			OfferID:   &entOrderPair[key].OfferID,
 			Remark:    &entOrderPair[key].Remark,
 		})
 	}

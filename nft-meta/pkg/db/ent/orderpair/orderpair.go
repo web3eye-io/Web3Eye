@@ -24,8 +24,8 @@ const (
 	FieldRecipient = "recipient"
 	// FieldTargetID holds the string denoting the target_id field in the database.
 	FieldTargetID = "target_id"
-	// FieldBarterID holds the string denoting the barter_id field in the database.
-	FieldBarterID = "barter_id"
+	// FieldOfferID holds the string denoting the offer_id field in the database.
+	FieldOfferID = "offer_id"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// Table holds the table name of the orderpair in the database.
@@ -41,7 +41,7 @@ var Columns = []string{
 	FieldTxHash,
 	FieldRecipient,
 	FieldTargetID,
-	FieldBarterID,
+	FieldOfferID,
 	FieldRemark,
 }
 
