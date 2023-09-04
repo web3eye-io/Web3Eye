@@ -62,17 +62,30 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	go e.GetCurrentBlockNum(ctx, updateBlockNumInterval)
 
 	taskBlockNum := make(chan uint64)
-	indexBlockNum := make(chan uint64)
-	outTransfers := make(chan []*chains.TokenTransfer)
-	outTransfer := make(chan *chains.TokenTransfer)
 	e.onIndex = true
 
 	// TODO: can be muilti goroutine
 	go e.IndexTasks(ctx, taskBlockNum)
-	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
-	go e.IndexTransfer(ctx, indexBlockNum, outTransfers)
-	go e.IndexToken(ctx, outTransfers, outTransfer)
-	go e.IndexContract(ctx, outTransfer, FindContractCreator)
+	go func() {
+		num := <-taskBlockNum
+		err := e.IndexBlock(ctx, num)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		transfers, err := e.IndexTransfer(ctx, num)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		transfers, err = e.IndexToken(ctx, transfers)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+		err = e.IndexContract(ctx, transfers, FindContractCreator)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+	}()
+
 }
 
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
@@ -175,277 +188,244 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 	}
 }
 
-func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum, outBlockNum chan uint64) {
-	for {
-		select {
-		case blockNum := <-inBlockNum:
-			cli, err := eth.Client(e.Endpoints)
-			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-				continue
-			}
-			block, err := cli.BlockByNumber(ctx, blockNum)
-			if err != nil {
-				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-				continue
-			}
-			number := block.Number().Uint64()
-			blockHash := block.Hash().String()
-			blockTime := int64(block.Time())
-			_, err = blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
-				Info: &blockProto.BlockReq{
-					ChainType:   &e.ChainType,
-					ChainID:     &e.ChainID,
-					BlockNumber: &number,
-					BlockHash:   &blockHash,
-					BlockTime:   &blockTime,
-				},
-			})
-			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-				continue
-			}
-
-			outBlockNum <- block.Number().Uint64()
-		case <-ctx.Done():
-			return
-		}
+func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum uint64) error {
+	cli, err := eth.Client(e.Endpoints)
+	if err != nil {
+		return fmt.Errorf("cannot get eth client,err: %v", err)
 	}
+	block, err := cli.BlockByNumber(ctx, inBlockNum)
+	if err != nil {
+		e.checkErr(ctx, err)
+		return fmt.Errorf("cannot get eth client,err: %v", err)
+	}
+
+	number := block.Number().Uint64()
+	blockHash := block.Hash().String()
+	blockTime := int64(block.Time())
+	_, err = blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
+		Info: &blockProto.BlockReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			BlockNumber: &number,
+			BlockHash:   &blockHash,
+			BlockTime:   &blockTime,
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("cannot get eth client,err: %v", err)
+	}
+	return nil
 }
 
-func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, outTransfers chan []*chains.TokenTransfer) {
-	for {
-		select {
-		case num := <-inBlockNum:
-			cli, err := eth.Client(e.Endpoints)
-			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-				continue
-			}
-			transfers, err := cli.TransferLogs(ctx, int64(num), int64(num))
-			if err != nil {
-				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("failed to get transfer logs, err: %v, block: %v", err, num)
-				continue
-			}
-			if len(transfers) == 0 {
-				continue
-			}
+func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*chains.TokenTransfer, error) {
+	cli, err := eth.Client(e.Endpoints)
+	if err != nil {
+		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
+	}
 
-			infos := make([]*transferProto.TransferReq, len(transfers))
-			for i := range transfers {
-				tokenType := string(transfers[i].TokenType)
-				infos[i] = &transferProto.TransferReq{
-					ChainType:   &e.ChainType,
-					ChainID:     &e.ChainID,
-					Contract:    &transfers[i].Contract,
-					TokenType:   &tokenType,
-					TokenID:     &transfers[i].TokenID,
-					From:        &transfers[i].From,
-					To:          &transfers[i].To,
-					Amount:      &transfers[i].Amount,
-					BlockNumber: &transfers[i].BlockNumber,
-					TxHash:      &transfers[i].TxHash,
-					BlockHash:   &transfers[i].BlockHash,
-				}
-			}
+	transfers, err := cli.TransferLogs(ctx, int64(inBlockNum), int64(inBlockNum))
+	if err != nil {
+		e.checkErr(ctx, err)
+		return nil, fmt.Errorf("failed to get transfer logs, err: %v, block: %v", err, inBlockNum)
+	}
+	if len(transfers) == 0 {
+		return nil, nil
+	}
 
-			_, err = transferNMCli.UpsertTransfers(ctx, &transferProto.UpsertTransfersRequest{Infos: infos})
-			if err != nil {
-				logger.Sugar().Errorf("failed store transfers to db for block number: %v,err: %v", num, err)
-				continue
-			}
-
-			outTransfers <- transfers
-		case <-ctx.Done():
-			return
+	infos := make([]*transferProto.TransferReq, len(transfers))
+	for i := range transfers {
+		tokenType := string(transfers[i].TokenType)
+		infos[i] = &transferProto.TransferReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			Contract:    &transfers[i].Contract,
+			TokenType:   &tokenType,
+			TokenID:     &transfers[i].TokenID,
+			From:        &transfers[i].From,
+			To:          &transfers[i].To,
+			Amount:      &transfers[i].Amount,
+			BlockNumber: &transfers[i].BlockNumber,
+			TxHash:      &transfers[i].TxHash,
+			BlockHash:   &transfers[i].BlockHash,
 		}
 	}
+
+	_, err = transferNMCli.UpsertTransfers(ctx, &transferProto.UpsertTransfersRequest{Infos: infos})
+	if err != nil {
+		return nil, fmt.Errorf("failed store transfers to db for block number: %v,err: %v", inBlockNum, err)
+	}
+
+	return transfers, nil
 }
 
-func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.TokenTransfer, outTransfer chan *chains.TokenTransfer) {
-	for {
-		select {
-		case transfers := <-inTransfers:
-			for _, transfer := range transfers {
-				identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
-				locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
-				if err != nil {
-					logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
-					continue
-				}
-
-				if !locked {
-					continue
-				}
-
-				remark := ""
-				conds := &tokenProto.Conds{
-					ChainType: &ctMessage.StringVal{
-						Value: e.ChainType.String(),
-						Op:    "eq",
-					},
-					ChainID: &ctMessage.StringVal{
-						Value: e.ChainID,
-						Op:    "eq",
-					},
-					Contract: &ctMessage.StringVal{
-						Value: transfer.Contract,
-						Op:    "eq",
-					},
-					TokenID: &ctMessage.StringVal{
-						Value: transfer.TokenID,
-						Op:    "eq",
-					},
-				}
-
-				if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
-					continue
-				} else if err != nil {
-					logger.Sugar().Errorf("check if the token exist failed, err: %v", err)
-					continue
-				}
-
-				cli, err := eth.Client(e.Endpoints)
-				if err != nil {
-					logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-					continue
-				}
-
-				tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
-				if err != nil {
-					e.checkErr(ctx, err)
-					logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
-					remark = fmt.Sprintf("%v,%v", remark, err)
-				}
-
-				tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
-				if err != nil {
-					tokenURIInfo = &token.TokenURIInfo{}
-					remark = fmt.Sprintf("%v,%v", remark, err)
-				}
-
-				_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
-					Info: &tokenProto.TokenReq{
-						ChainType:   &e.ChainType,
-						ChainID:     &e.ChainID,
-						Contract:    &transfer.Contract,
-						TokenType:   &transfer.TokenType,
-						TokenID:     &transfer.TokenID,
-						URI:         &tokenURI,
-						URIType:     (*string)(&tokenURIInfo.URIType),
-						ImageURL:    &tokenURIInfo.ImageURL,
-						VideoURL:    &tokenURIInfo.VideoURL,
-						Name:        &tokenURIInfo.Name,
-						Description: &tokenURIInfo.Description,
-						VectorState: tokenProto.ConvertState_Waiting.Enum(),
-						Remark:      &remark,
-					},
-				})
-
-				if err != nil {
-					logger.Sugar().Errorf("create token record failed, %v", err)
-					continue
-				}
-				outTransfer <- transfer
-			}
-		case <-ctx.Done():
-			return
+func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*chains.TokenTransfer, error) {
+	outTransfer := []*chains.TokenTransfer{}
+	for _, transfer := range inTransfers {
+		identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+		if err != nil {
+			logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
+			continue
 		}
+
+		if !locked {
+			continue
+		}
+
+		remark := ""
+		conds := &tokenProto.Conds{
+			ChainType: &ctMessage.StringVal{
+				Value: e.ChainType.String(),
+				Op:    "eq",
+			},
+			ChainID: &ctMessage.StringVal{
+				Value: e.ChainID,
+				Op:    "eq",
+			},
+			Contract: &ctMessage.StringVal{
+				Value: transfer.Contract,
+				Op:    "eq",
+			},
+			TokenID: &ctMessage.StringVal{
+				Value: transfer.TokenID,
+				Op:    "eq",
+			},
+		}
+
+		if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
+			continue
+		} else if err != nil {
+			return nil, fmt.Errorf("check if the token exist failed, err: %v", err)
+		}
+
+		cli, err := eth.Client(e.Endpoints)
+		if err != nil {
+			return nil, fmt.Errorf("cannot get eth client,err: %v", err)
+		}
+
+		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
+		if err != nil {
+			e.checkErr(ctx, err)
+			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
+			remark = fmt.Sprintf("%v,%v", remark, err)
+		}
+
+		tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
+		if err != nil {
+			tokenURIInfo = &token.TokenURIInfo{}
+			remark = fmt.Sprintf("%v,%v", remark, err)
+		}
+
+		_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
+			Info: &tokenProto.TokenReq{
+				ChainType:   &e.ChainType,
+				ChainID:     &e.ChainID,
+				Contract:    &transfer.Contract,
+				TokenType:   &transfer.TokenType,
+				TokenID:     &transfer.TokenID,
+				URI:         &tokenURI,
+				URIType:     (*string)(&tokenURIInfo.URIType),
+				ImageURL:    &tokenURIInfo.ImageURL,
+				VideoURL:    &tokenURIInfo.VideoURL,
+				Name:        &tokenURIInfo.Name,
+				Description: &tokenURIInfo.Description,
+				VectorState: tokenProto.ConvertState_Waiting.Enum(),
+				Remark:      &remark,
+			},
+		})
+
+		if err != nil {
+			return nil, fmt.Errorf("create token record failed, %v", err)
+		}
+		outTransfer = append(outTransfer, transfer)
 	}
+	return outTransfer, nil
 }
 
-func (e *EthIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.TokenTransfer, findContractCreator bool) {
-	for {
-		select {
-		case transfer := <-inTransfer:
-			identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
-			locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
-			if err != nil {
-				logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
-				continue
-			}
+func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.TokenTransfer, findContractCreator bool) error {
+	for _, transfer := range inTransfers {
+		identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
+		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+		if err != nil {
+			logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
+		}
 
-			if !locked {
-				continue
-			}
+		if !locked {
+			return nil
+		}
+		// check if the record exist
+		conds := &contractProto.Conds{
+			ChainType: &ctMessage.StringVal{
+				Value: e.ChainType.String(),
+				Op:    "eq",
+			},
+			ChainID: &ctMessage.StringVal{
+				Value: e.ChainID,
+				Op:    "eq",
+			},
+			Address: &ctMessage.StringVal{
+				Value: transfer.Contract,
+				Op:    "eq",
+			},
+		}
 
-			conds := &contractProto.Conds{
-				ChainType: &ctMessage.StringVal{
-					Value: e.ChainType.String(),
-					Op:    "eq",
-				},
-				ChainID: &ctMessage.StringVal{
-					Value: e.ChainID,
-					Op:    "eq",
-				},
-				Address: &ctMessage.StringVal{
-					Value: transfer.Contract,
-					Op:    "eq",
-				},
-			}
+		if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
+			Conds: conds,
+		}); err == nil && resp != nil && resp.GetExist() {
+		} else if err != nil {
+			return fmt.Errorf("check if the contract exist failed, err: %v", err)
+		}
 
-			if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
-				Conds: conds,
-			}); err == nil && resp != nil && resp.GetExist() {
-				continue
-			} else if err != nil {
-				logger.Sugar().Errorf("check if the contract exist failed, err: %v", err)
-				continue
-			}
+		// parse the token metadata
+		remark := ""
+		cli, err := eth.Client(e.Endpoints)
+		if err != nil {
+			return fmt.Errorf("cannot get eth client,err: %v", err)
+		}
 
-			remark := ""
-			cli, err := eth.Client(e.Endpoints)
-			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
-				continue
-			}
+		contractMeta, err := cli.GetERC721Metadata(ctx, transfer.Contract)
+		if err != nil {
+			e.checkErr(ctx, err)
+			logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
+			contractMeta = &eth.ERC721Metadata{}
+			remark = fmt.Sprintf("%v,%v", remark, err)
+		}
 
-			contractMeta, err := cli.GetERC721Metadata(ctx, transfer.Contract)
+		creator := &eth.ContractCreator{}
+		// stop get info for creator
+		if findContractCreator {
+			creator, err = cli.GetContractCreator(ctx, transfer.Contract)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
-				contractMeta = &eth.ERC721Metadata{}
-				remark = fmt.Sprintf("%v,%v", remark, err)
+				remark = err.Error()
 			}
+		}
 
-			creator := &eth.ContractCreator{}
-			// stop get info for creator
-			if findContractCreator {
-				creator, err = cli.GetContractCreator(ctx, transfer.Contract)
-				if err != nil {
-					e.checkErr(ctx, err)
-					remark = err.Error()
-				}
-			}
-
-			from := creator.From.String()
-			txHash := creator.TxHash.Hex()
-			blockNum := creator.BlockNumber
-			txTime := uint32(creator.TxTime)
-			_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
-				Info: &contractProto.ContractReq{
-					ChainType: &e.ChainType,
-					ChainID:   &e.ChainID,
-					Address:   &transfer.Contract,
-					Name:      &contractMeta.Name,
-					Symbol:    &contractMeta.Symbol,
-					Creator:   &from,
-					BlockNum:  &blockNum,
-					TxHash:    &txHash,
-					TxTime:    &txTime,
-					Remark:    &remark,
-				},
-			})
-			if err != nil {
-				logger.Sugar().Errorf("create contract record failed, %v", err)
-				continue
-			}
-		case <-ctx.Done():
-			return
+		// store the result
+		from := creator.From.String()
+		txHash := creator.TxHash.Hex()
+		blockNum := creator.BlockNumber
+		txTime := uint32(creator.TxTime)
+		_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
+			Info: &contractProto.ContractReq{
+				ChainType: &e.ChainType,
+				ChainID:   &e.ChainID,
+				Address:   &transfer.Contract,
+				Name:      &contractMeta.Name,
+				Symbol:    &contractMeta.Symbol,
+				Creator:   &from,
+				BlockNum:  &blockNum,
+				TxHash:    &txHash,
+				TxTime:    &txTime,
+				Remark:    &remark,
+			},
+		})
+		if err != nil {
+			return fmt.Errorf("create contract record failed, %v", err)
 		}
 	}
+
+	return nil
 }
 
 func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {

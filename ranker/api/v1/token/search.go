@@ -47,7 +47,6 @@ type PageBone struct {
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
 	logger.Sugar().Info("start search")
 	start := time.Now()
-	defer logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
 
 	// search from milvus
 	scores, err := SerachFromMilvus(ctx, in.Vector)
@@ -55,13 +54,11 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		logger.Sugar().Errorf("search from milvus failed, %v", err)
 		return nil, err
 	}
-	logger.Sugar().Infof("1 %v ", time.Since(start).Milliseconds())
 	infos, err := QueryAndCollectTokens(ctx, scores)
 	if err != nil {
 		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return nil, err
 	}
-	logger.Sugar().Infof("2 %v ", time.Since(start).Milliseconds())
 
 	totalPages := uint32(len(infos) / int(in.Limit))
 	if len(infos)%int(in.Limit) > 0 {
@@ -91,13 +88,13 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 			return nil, err
 		}
 	}
-	logger.Sugar().Infof("3 %v ", time.Since(start).Milliseconds())
 
 	limit := int(in.Limit)
 	if len(infos) < limit {
 		limit = len(infos)
 	}
 
+	logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
 	return &rankernpool.SearchResponse{
 		Infos:       infos[:limit],
 		StorageKey:  storageKey,
@@ -143,7 +140,6 @@ func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32,
 	// search from milvus
 	milvusmgr := milvusdb.NewNFTConllectionMGR()
 	_vector := imageconvert.ToArrayVector(vector)
-
 	_scores, err := milvusmgr.Search(ctx, [][milvusdb.VectorDim]float32{_vector}, TopN)
 	if err != nil {
 		return nil, err

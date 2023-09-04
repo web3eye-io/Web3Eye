@@ -41,17 +41,17 @@ pipeline {
       }
     }
 
-    stage('install kafka') {
+    stage('install minio') {
       when{
         expression { INSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'kafka' }
+          expression { TARGET == 'minio' }
         }
       }
       
       steps {
-        sh 'bash basement/06-kafka/install.sh'
+        sh 'bash basement/06-minio/install.sh'
       }
     }
 
@@ -68,19 +68,6 @@ pipeline {
       }
     }
 
-    stage('install minio') {
-      when {
-        expression { INSTALL   ==  'true' }
-        anyOf {
-          expression { TARGET   ==  'all' }
-          expression { TARGET == 'minio' }
-        }
-      }
-      steps {
-        sh 'bash basement/09-minio/install.sh'
-      }
-    }
-    
     // -------uninstall tasks----------
     stage('uninstall traefik') {
       when {
@@ -121,17 +108,17 @@ pipeline {
       }
     }
 
-    stage('uninstall kafka') {
+    stage('uninstall minio') {
       when{
         expression { UNINSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
-          expression { TARGET == 'kafka' }
+          expression { TARGET == 'minio' }
         }
       }
       
       steps {
-        sh 'bash basement/06-kafka/uninstall.sh'
+        sh 'bash basement/06-minio/uninstall.sh'
       }
     }
 
@@ -145,19 +132,6 @@ pipeline {
       }
       steps {
         sh 'bash basement/07-mysql/uninstall.sh'
-      }
-    }
-
-    stage('uninstall minio') {
-      when {
-        expression { UNINSTALL   ==  'true' }
-        anyOf {
-          expression { TARGET   ==  'all' }
-          expression { TARGET == 'minio' }
-        }
-      }
-      steps {
-        sh 'bash basement/09-minio/uninstall.sh'
       }
     }
   }
