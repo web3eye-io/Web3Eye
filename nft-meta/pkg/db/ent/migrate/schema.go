@@ -204,7 +204,7 @@ var (
 		{Name: "token_type", Type: field.TypeString},
 		{Name: "token_id", Type: field.TypeString},
 		{Name: "owner", Type: field.TypeString, Nullable: true},
-		{Name: "uri", Type: field.TypeString, Nullable: true},
+		{Name: "uri", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "uri_type", Type: field.TypeString, Nullable: true},
 		{Name: "image_url", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "video_url", Type: field.TypeString, Nullable: true, Size: 2147483647},
