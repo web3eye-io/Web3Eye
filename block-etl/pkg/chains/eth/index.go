@@ -33,6 +33,7 @@ const (
 	FindContractCreator    = false
 	redisExpireDefaultTime = time.Second * 10
 	maxTopicNum            = 5
+	maxParseGoroutineNum   = 5
 	updateBlockNumInterval = time.Minute
 )
 
@@ -65,31 +66,56 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	e.onIndex = true
 
 	// TODO: can be muilti goroutine
-	go e.IndexTasks(ctx, taskBlockNum)
-	go func() {
-		num := <-taskBlockNum
-		err := e.IndexBlock(ctx, num)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-		transfers, err := e.IndexTransfer(ctx, num)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-		transfers, err = e.IndexToken(ctx, transfers)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-		err = e.IndexContract(ctx, transfers, FindContractCreator)
-		if err != nil {
-			logger.Sugar().Error(err)
-			return
-		}
-	}()
+	go e.PullTasks(ctx, taskBlockNum)
+	for i := 0; i < maxParseGoroutineNum; i++ {
+		go e.IndexTask(ctx, taskBlockNum)
+	}
+}
 
+func (e *EthIndexer) IndexTask(ctx context.Context, taskBlockNum chan uint64) {
+	for {
+		select {
+		case num := <-taskBlockNum:
+			var err error
+			var blockRecordID string
+			transfers := []*chains.TokenTransfer{}
+			func() {
+				blockRecordID, err = e.IndexBlock(ctx, num)
+				if err != nil {
+					logger.Sugar().Error(err)
+					return
+				}
+				transfers, err = e.IndexTransfer(ctx, num)
+				if err != nil {
+					logger.Sugar().Error(err)
+					return
+				}
+				transfers, err = e.IndexToken(ctx, transfers)
+				if err != nil {
+					logger.Sugar().Error(err)
+					return
+				}
+				err = e.IndexContract(ctx, transfers, FindContractCreator)
+				if err != nil {
+					logger.Sugar().Error(err)
+					return
+				}
+			}()
+			if err != nil && blockRecordID != "" {
+				err := err.Error()
+				parseState := basetype.BlockParseState_BlockTypeFailed
+				blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
+					Info: &blockProto.BlockReq{
+						ID:         &blockRecordID,
+						ParseState: &parseState,
+						Remark:     &err,
+					},
+				})
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }
 
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
@@ -111,7 +137,7 @@ func (e *EthIndexer) StopIndex() {
 	}
 }
 
-func (e *EthIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
+func (e *EthIndexer) PullTasks(ctx context.Context, outBlockNum chan uint64) {
 	logger.Sugar().Info("start to index task for ethereum")
 	conds := &synctask.Conds{
 		ChainType: &ctMessage.StringVal{
@@ -196,33 +222,37 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 	}
 }
 
-func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum uint64) error {
+func (e *EthIndexer) IndexBlock(ctx context.Context, inBlockNum uint64) (recordID string, err error) {
 	cli, err := eth.Client(e.Endpoints)
 	if err != nil {
-		return fmt.Errorf("cannot get eth client,err: %v", err)
+		return "", fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 	block, err := cli.BlockByNumber(ctx, inBlockNum)
 	if err != nil {
 		e.checkErr(ctx, err)
-		return fmt.Errorf("cannot get eth client,err: %v", err)
+		return "", fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
 	number := block.Number().Uint64()
 	blockHash := block.Hash().String()
 	blockTime := int64(block.Time())
-	_, err = blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
+	remark := ""
+	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{
 			ChainType:   &e.ChainType,
 			ChainID:     &e.ChainID,
 			BlockNumber: &number,
 			BlockHash:   &blockHash,
 			BlockTime:   &blockTime,
+			ParseState:  basetype.BlockParseState_BlockTypeStart.Enum(),
+			Remark:      &remark,
 		},
 	})
+
 	if err != nil {
-		return fmt.Errorf("cannot get eth client,err: %v", err)
+		return "", fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-	return nil
+	return resp.GetInfo().GetID(), nil
 }
 
 func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*chains.TokenTransfer, error) {

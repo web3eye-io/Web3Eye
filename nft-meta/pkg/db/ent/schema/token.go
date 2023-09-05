@@ -32,7 +32,7 @@ func (Token) Fields() []ent.Field {
 		field.String("token_id"),
 		field.String("owner").
 			Optional(),
-		field.String("uri").
+		field.Text("uri").
 			Optional(),
 		field.String("uri_type").
 			Optional(),
