@@ -24,18 +24,26 @@ func main() {
 	// fmt.Println("sss")
 	// go consumeNonce("test9", "s1")
 	// go consumeNonce("test9", "s2")
+	now := time.Now()
 	err := milvusdb.Init(context.Background())
 	if err != nil {
 		panic(fmt.Errorf("milvus init err: %v", err))
 	}
 	milvusmgr := milvusdb.NewNFTConllectionMGR()
+
 	_vector := imageconvert.ToArrayVector([]float32{})
-
-	ret, err := milvusmgr.Create(context.Background(), [][milvusdb.VectorDim]float32{_vector})
-
+	vectors := [][milvusdb.VectorDim]float32{}
+	fmt.Println(time.Now().Sub(now))
+	for i := 0; i < 100; i++ {
+		vectors = append(vectors, _vector)
+	}
+	ret, err := milvusmgr.Create(context.Background(), vectors)
 	fmt.Println(ret, err)
+
+	fmt.Println(time.Now().Sub(now))
 	_scores, err := milvusmgr.Search(context.Background(), [][milvusdb.VectorDim]float32{_vector}, 5)
 	fmt.Println(_scores, err)
+	fmt.Println(time.Now().Sub(now))
 
 	<-sigchan
 	os.Exit(1)

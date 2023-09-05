@@ -9,7 +9,7 @@ data:
 
 ---
 apiVersion: v1
-kind: ConfigMapcd 
+kind: ConfigMap
 metadata:
   name: system-environment
   namespace: kube-system
