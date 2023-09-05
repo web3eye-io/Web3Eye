@@ -32,6 +32,10 @@ type Block struct {
 	BlockHash string `json:"block_hash,omitempty"`
 	// BlockTime holds the value of the "block_time" field.
 	BlockTime int64 `json:"block_time,omitempty"`
+	// ParseState holds the value of the "parse_state" field.
+	ParseState string `json:"parse_state,omitempty"`
+	// Remark holds the value of the "remark" field.
+	Remark string `json:"remark,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -41,7 +45,7 @@ func (*Block) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case block.FieldCreatedAt, block.FieldUpdatedAt, block.FieldDeletedAt, block.FieldBlockNumber, block.FieldBlockTime:
 			values[i] = new(sql.NullInt64)
-		case block.FieldChainType, block.FieldChainID, block.FieldBlockHash:
+		case block.FieldChainType, block.FieldChainID, block.FieldBlockHash, block.FieldParseState, block.FieldRemark:
 			values[i] = new(sql.NullString)
 		case block.FieldID:
 			values[i] = new(uuid.UUID)
@@ -114,6 +118,18 @@ func (b *Block) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				b.BlockTime = value.Int64
 			}
+		case block.FieldParseState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field parse_state", values[i])
+			} else if value.Valid {
+				b.ParseState = value.String
+			}
+		case block.FieldRemark:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field remark", values[i])
+			} else if value.Valid {
+				b.Remark = value.String
+			}
 		}
 	}
 	return nil
@@ -165,6 +181,12 @@ func (b *Block) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("block_time=")
 	builder.WriteString(fmt.Sprintf("%v", b.BlockTime))
+	builder.WriteString(", ")
+	builder.WriteString("parse_state=")
+	builder.WriteString(b.ParseState)
+	builder.WriteString(", ")
+	builder.WriteString("remark=")
+	builder.WriteString(b.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }

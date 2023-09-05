@@ -19,6 +19,8 @@ var (
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "block_hash", Type: field.TypeString},
 		{Name: "block_time", Type: field.TypeInt64},
+		{Name: "parse_state", Type: field.TypeString},
+		{Name: "remark", Type: field.TypeString},
 	}
 	// BlocksTable holds the schema information for the "blocks" table.
 	BlocksTable = &schema.Table{

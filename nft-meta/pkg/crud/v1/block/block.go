@@ -83,6 +83,12 @@ func CreateSet(c *ent.BlockCreate, in *npool.BlockReq) *ent.BlockCreate {
 	if in.BlockTime != nil {
 		c.SetBlockTime(in.GetBlockTime())
 	}
+	if in.ParseState != nil {
+		c.SetParseState(in.GetParseState().String())
+	}
+	if in.Remark != nil {
+		c.SetRemark(in.GetRemark())
+	}
 	return c
 }
 
@@ -129,6 +135,12 @@ func Update(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 		}
 		if in.BlockTime != nil {
 			u.SetBlockTime(in.GetBlockTime())
+		}
+		if in.ParseState != nil {
+			u.SetParseState(in.GetParseState().String())
+		}
+		if in.Remark != nil {
+			u.SetRemark(in.GetRemark())
 		}
 		info, err = u.Save(_ctx)
 		return err
@@ -233,7 +245,22 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.BlockQuery, error)
 			return nil, fmt.Errorf("invalid block field")
 		}
 	}
-
+	if conds.ParseState != nil {
+		switch conds.GetParseState().GetOp() {
+		case cruder.EQ:
+			stm.Where(block.ParseState(conds.GetParseState().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid block field")
+		}
+	}
+	if conds.Remark != nil {
+		switch conds.GetRemark().GetOp() {
+		case cruder.EQ:
+			stm.Where(block.Remark(conds.GetRemark().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid block field")
+		}
+	}
 	return stm, nil
 }
 

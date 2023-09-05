@@ -41,6 +41,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			block.FieldBlockNumber: {Type: field.TypeUint64, Column: block.FieldBlockNumber},
 			block.FieldBlockHash:   {Type: field.TypeString, Column: block.FieldBlockHash},
 			block.FieldBlockTime:   {Type: field.TypeInt64, Column: block.FieldBlockTime},
+			block.FieldParseState:  {Type: field.TypeString, Column: block.FieldParseState},
+			block.FieldRemark:      {Type: field.TypeString, Column: block.FieldRemark},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -332,6 +334,16 @@ func (f *BlockFilter) WhereBlockHash(p entql.StringP) {
 // WhereBlockTime applies the entql int64 predicate on the block_time field.
 func (f *BlockFilter) WhereBlockTime(p entql.Int64P) {
 	f.Where(p.Field(block.FieldBlockTime))
+}
+
+// WhereParseState applies the entql string predicate on the parse_state field.
+func (f *BlockFilter) WhereParseState(p entql.StringP) {
+	f.Where(p.Field(block.FieldParseState))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *BlockFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(block.FieldRemark))
 }
 
 // addPredicate implements the predicateAdder interface.

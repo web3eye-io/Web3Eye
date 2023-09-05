@@ -95,6 +95,18 @@ func (bc *BlockCreate) SetBlockTime(i int64) *BlockCreate {
 	return bc
 }
 
+// SetParseState sets the "parse_state" field.
+func (bc *BlockCreate) SetParseState(s string) *BlockCreate {
+	bc.mutation.SetParseState(s)
+	return bc
+}
+
+// SetRemark sets the "remark" field.
+func (bc *BlockCreate) SetRemark(s string) *BlockCreate {
+	bc.mutation.SetRemark(s)
+	return bc
+}
+
 // SetID sets the "id" field.
 func (bc *BlockCreate) SetID(u uuid.UUID) *BlockCreate {
 	bc.mutation.SetID(u)
@@ -245,6 +257,12 @@ func (bc *BlockCreate) check() error {
 	if _, ok := bc.mutation.BlockTime(); !ok {
 		return &ValidationError{Name: "block_time", err: errors.New(`ent: missing required field "Block.block_time"`)}
 	}
+	if _, ok := bc.mutation.ParseState(); !ok {
+		return &ValidationError{Name: "parse_state", err: errors.New(`ent: missing required field "Block.parse_state"`)}
+	}
+	if _, ok := bc.mutation.Remark(); !ok {
+		return &ValidationError{Name: "remark", err: errors.New(`ent: missing required field "Block.remark"`)}
+	}
 	return nil
 }
 
@@ -345,6 +363,22 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldBlockTime,
 		})
 		_node.BlockTime = value
+	}
+	if value, ok := bc.mutation.ParseState(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldParseState,
+		})
+		_node.ParseState = value
+	}
+	if value, ok := bc.mutation.Remark(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldRemark,
+		})
+		_node.Remark = value
 	}
 	return _node, _spec
 }
@@ -521,6 +555,30 @@ func (u *BlockUpsert) UpdateBlockTime() *BlockUpsert {
 // AddBlockTime adds v to the "block_time" field.
 func (u *BlockUpsert) AddBlockTime(v int64) *BlockUpsert {
 	u.Add(block.FieldBlockTime, v)
+	return u
+}
+
+// SetParseState sets the "parse_state" field.
+func (u *BlockUpsert) SetParseState(v string) *BlockUpsert {
+	u.Set(block.FieldParseState, v)
+	return u
+}
+
+// UpdateParseState sets the "parse_state" field to the value that was provided on create.
+func (u *BlockUpsert) UpdateParseState() *BlockUpsert {
+	u.SetExcluded(block.FieldParseState)
+	return u
+}
+
+// SetRemark sets the "remark" field.
+func (u *BlockUpsert) SetRemark(v string) *BlockUpsert {
+	u.Set(block.FieldRemark, v)
+	return u
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *BlockUpsert) UpdateRemark() *BlockUpsert {
+	u.SetExcluded(block.FieldRemark)
 	return u
 }
 
@@ -716,6 +774,34 @@ func (u *BlockUpsertOne) AddBlockTime(v int64) *BlockUpsertOne {
 func (u *BlockUpsertOne) UpdateBlockTime() *BlockUpsertOne {
 	return u.Update(func(s *BlockUpsert) {
 		s.UpdateBlockTime()
+	})
+}
+
+// SetParseState sets the "parse_state" field.
+func (u *BlockUpsertOne) SetParseState(v string) *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetParseState(v)
+	})
+}
+
+// UpdateParseState sets the "parse_state" field to the value that was provided on create.
+func (u *BlockUpsertOne) UpdateParseState() *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateParseState()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *BlockUpsertOne) SetRemark(v string) *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *BlockUpsertOne) UpdateRemark() *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateRemark()
 	})
 }
 
@@ -1075,6 +1161,34 @@ func (u *BlockUpsertBulk) AddBlockTime(v int64) *BlockUpsertBulk {
 func (u *BlockUpsertBulk) UpdateBlockTime() *BlockUpsertBulk {
 	return u.Update(func(s *BlockUpsert) {
 		s.UpdateBlockTime()
+	})
+}
+
+// SetParseState sets the "parse_state" field.
+func (u *BlockUpsertBulk) SetParseState(v string) *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetParseState(v)
+	})
+}
+
+// UpdateParseState sets the "parse_state" field to the value that was provided on create.
+func (u *BlockUpsertBulk) UpdateParseState() *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateParseState()
+	})
+}
+
+// SetRemark sets the "remark" field.
+func (u *BlockUpsertBulk) SetRemark(v string) *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetRemark(v)
+	})
+}
+
+// UpdateRemark sets the "remark" field to the value that was provided on create.
+func (u *BlockUpsertBulk) UpdateRemark() *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateRemark()
 	})
 }
 

@@ -62,6 +62,8 @@ type BlockMutation struct {
 	block_hash      *string
 	block_time      *int64
 	addblock_time   *int64
+	parse_state     *string
+	remark          *string
 	clearedFields   map[string]struct{}
 	done            bool
 	oldValue        func(context.Context) (*Block, error)
@@ -560,6 +562,78 @@ func (m *BlockMutation) ResetBlockTime() {
 	m.addblock_time = nil
 }
 
+// SetParseState sets the "parse_state" field.
+func (m *BlockMutation) SetParseState(s string) {
+	m.parse_state = &s
+}
+
+// ParseState returns the value of the "parse_state" field in the mutation.
+func (m *BlockMutation) ParseState() (r string, exists bool) {
+	v := m.parse_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldParseState returns the old "parse_state" field's value of the Block entity.
+// If the Block object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BlockMutation) OldParseState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldParseState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldParseState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldParseState: %w", err)
+	}
+	return oldValue.ParseState, nil
+}
+
+// ResetParseState resets all changes to the "parse_state" field.
+func (m *BlockMutation) ResetParseState() {
+	m.parse_state = nil
+}
+
+// SetRemark sets the "remark" field.
+func (m *BlockMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *BlockMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the Block entity.
+// If the Block object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BlockMutation) OldRemark(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *BlockMutation) ResetRemark() {
+	m.remark = nil
+}
+
 // Where appends a list predicates to the BlockMutation builder.
 func (m *BlockMutation) Where(ps ...predicate.Block) {
 	m.predicates = append(m.predicates, ps...)
@@ -579,7 +653,7 @@ func (m *BlockMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, block.FieldCreatedAt)
 	}
@@ -603,6 +677,12 @@ func (m *BlockMutation) Fields() []string {
 	}
 	if m.block_time != nil {
 		fields = append(fields, block.FieldBlockTime)
+	}
+	if m.parse_state != nil {
+		fields = append(fields, block.FieldParseState)
+	}
+	if m.remark != nil {
+		fields = append(fields, block.FieldRemark)
 	}
 	return fields
 }
@@ -628,6 +708,10 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.BlockHash()
 	case block.FieldBlockTime:
 		return m.BlockTime()
+	case block.FieldParseState:
+		return m.ParseState()
+	case block.FieldRemark:
+		return m.Remark()
 	}
 	return nil, false
 }
@@ -653,6 +737,10 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldBlockHash(ctx)
 	case block.FieldBlockTime:
 		return m.OldBlockTime(ctx)
+	case block.FieldParseState:
+		return m.OldParseState(ctx)
+	case block.FieldRemark:
+		return m.OldRemark(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -717,6 +805,20 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBlockTime(v)
+		return nil
+	case block.FieldParseState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetParseState(v)
+		return nil
+	case block.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
@@ -853,6 +955,12 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldBlockTime:
 		m.ResetBlockTime()
+		return nil
+	case block.FieldParseState:
+		m.ResetParseState()
+		return nil
+	case block.FieldRemark:
+		m.ResetRemark()
 		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)

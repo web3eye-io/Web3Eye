@@ -127,6 +127,18 @@ func (bu *BlockUpdate) AddBlockTime(i int64) *BlockUpdate {
 	return bu
 }
 
+// SetParseState sets the "parse_state" field.
+func (bu *BlockUpdate) SetParseState(s string) *BlockUpdate {
+	bu.mutation.SetParseState(s)
+	return bu
+}
+
+// SetRemark sets the "remark" field.
+func (bu *BlockUpdate) SetRemark(s string) *BlockUpdate {
+	bu.mutation.SetRemark(s)
+	return bu
+}
+
 // Mutation returns the BlockMutation object of the builder.
 func (bu *BlockUpdate) Mutation() *BlockMutation {
 	return bu.mutation
@@ -316,6 +328,20 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: block.FieldBlockTime,
 		})
 	}
+	if value, ok := bu.mutation.ParseState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldParseState,
+		})
+	}
+	if value, ok := bu.mutation.Remark(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldRemark,
+		})
+	}
 	_spec.Modifiers = bu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -433,6 +459,18 @@ func (buo *BlockUpdateOne) SetBlockTime(i int64) *BlockUpdateOne {
 // AddBlockTime adds i to the "block_time" field.
 func (buo *BlockUpdateOne) AddBlockTime(i int64) *BlockUpdateOne {
 	buo.mutation.AddBlockTime(i)
+	return buo
+}
+
+// SetParseState sets the "parse_state" field.
+func (buo *BlockUpdateOne) SetParseState(s string) *BlockUpdateOne {
+	buo.mutation.SetParseState(s)
+	return buo
+}
+
+// SetRemark sets the "remark" field.
+func (buo *BlockUpdateOne) SetRemark(s string) *BlockUpdateOne {
+	buo.mutation.SetRemark(s)
 	return buo
 }
 
@@ -653,6 +691,20 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Type:   field.TypeInt64,
 			Value:  value,
 			Column: block.FieldBlockTime,
+		})
+	}
+	if value, ok := buo.mutation.ParseState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldParseState,
+		})
+	}
+	if value, ok := buo.mutation.Remark(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldRemark,
 		})
 	}
 	_spec.Modifiers = buo.modifiers

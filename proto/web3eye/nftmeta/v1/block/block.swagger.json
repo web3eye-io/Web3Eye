@@ -39,6 +39,12 @@
         "BlockTime": {
           "type": "string",
           "format": "int64"
+        },
+        "ParseState": {
+          "$ref": "#/definitions/chainBlockParseState"
+        },
+        "Remark": {
+          "type": "string"
         }
       }
     },
@@ -64,6 +70,12 @@
         "BlockTime": {
           "type": "string",
           "format": "int64"
+        },
+        "ParseState": {
+          "$ref": "#/definitions/chainBlockParseState"
+        },
+        "Remark": {
+          "type": "string"
         }
       }
     },
@@ -87,6 +99,12 @@
         },
         "BlockTime": {
           "$ref": "#/definitions/web3eyeInt64Val"
+        },
+        "ParseState": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
         },
         "IDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
@@ -191,6 +209,16 @@
           "$ref": "#/definitions/blockBlock"
         }
       }
+    },
+    "chainBlockParseState": {
+      "type": "string",
+      "enum": [
+        "BlockTypeUnkonwn",
+        "BlockTypeStart",
+        "BlockTypeFinish",
+        "BlockTypeFailed"
+      ],
+      "default": "BlockTypeUnkonwn"
     },
     "chainChainType": {
       "type": "string",

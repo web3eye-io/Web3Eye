@@ -28,6 +28,10 @@ const (
 	FieldBlockHash = "block_hash"
 	// FieldBlockTime holds the string denoting the block_time field in the database.
 	FieldBlockTime = "block_time"
+	// FieldParseState holds the string denoting the parse_state field in the database.
+	FieldParseState = "parse_state"
+	// FieldRemark holds the string denoting the remark field in the database.
+	FieldRemark = "remark"
 	// Table holds the table name of the block in the database.
 	Table = "blocks"
 )
@@ -43,6 +47,8 @@ var Columns = []string{
 	FieldBlockNumber,
 	FieldBlockHash,
 	FieldBlockTime,
+	FieldParseState,
+	FieldRemark,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

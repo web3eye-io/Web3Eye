@@ -28,3 +28,10 @@ enum UrlType{
     ImageUrl = 10;
     VedieoUrl = 20;
 }
+
+enum BlockParseState{
+    BlockTypeUnkonwn = 0;
+    BlockTypeStart = 10;
+    BlockTypeFinish = 20;
+    BlockTypeFailed = 30;
+}

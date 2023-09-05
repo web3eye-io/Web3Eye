@@ -71,18 +71,22 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 		err := e.IndexBlock(ctx, num)
 		if err != nil {
 			logger.Sugar().Error(err)
+			return
 		}
 		transfers, err := e.IndexTransfer(ctx, num)
 		if err != nil {
 			logger.Sugar().Error(err)
+			return
 		}
 		transfers, err = e.IndexToken(ctx, transfers)
 		if err != nil {
 			logger.Sugar().Error(err)
+			return
 		}
 		err = e.IndexContract(ctx, transfers, FindContractCreator)
 		if err != nil {
 			logger.Sugar().Error(err)
+			return
 		}
 	}()
 
@@ -173,15 +177,19 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 				continue
 			}
 			outBlockNum <- blockNum
+
 			consumer.Ack(msg)
 			retries = 0
 		case <-time.NewTicker(CheckTopicInterval).C:
 			if retries > maxRetries {
 				return
 			}
-			_, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
+			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
+			}
+			if resp.Info.SyncState != cttype.SyncState_Start {
+				return
 			}
 			retries++
 		}
@@ -264,8 +272,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
-			logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
-			continue
+			return nil, fmt.Errorf("lock the token indentifier failed, err: %v", err)
 		}
 
 		if !locked {

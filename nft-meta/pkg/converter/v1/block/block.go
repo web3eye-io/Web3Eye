@@ -18,6 +18,8 @@ func Ent2Grpc(row *ent.Block) *npool.Block {
 		BlockNumber: row.BlockNumber,
 		BlockHash:   row.BlockHash,
 		BlockTime:   row.BlockTime,
+		ParseState:  basetype.BlockParseState(basetype.BlockParseState_value[row.ParseState]),
+		Remark:      row.Remark,
 	}
 }
 
