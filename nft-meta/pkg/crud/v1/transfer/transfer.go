@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 )
 
@@ -40,32 +39,29 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 }
 
 func Upsert(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
-	conds := &npool.Conds{
-		Contract: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetContract(),
-		},
-		TokenID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetTokenID(),
-		},
-		TxHash: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetTxHash(),
-		},
-	}
-	rows, total, err := Rows(ctx, conds, 0, 1)
-	if err != nil {
-		return nil, err
-	}
-
-	if total != 0 {
-		id := rows[0].ID.String()
-		in.ID = &id
-		return Update(ctx, in)
-	}
-
-	return Create(ctx, in)
+	var info *ent.Transfer
+	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		rows, err := tx.Transfer.Query().Where(
+			transfer.Contract(in.GetContract()),
+			transfer.TokenID(in.GetTokenID()),
+			transfer.TxHash(in.GetTxHash()),
+		).All(ctx)
+		if err != nil {
+			return err
+		}
+		if len(rows) != 0 {
+			id := rows[0].ID.String()
+			in.ID = &id
+			updateInfo := tx.Transfer.UpdateOneID(uuid.MustParse(id))
+			updateInfo = UpdateSet(updateInfo, in)
+			info, err = updateInfo.Save(ctx)
+			return err
+		}
+		c := tx.Transfer.Create()
+		info, err = CreateSet(c, in).Save(ctx)
+		return err
+	})
+	return info, err
 }
 
 func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate {
