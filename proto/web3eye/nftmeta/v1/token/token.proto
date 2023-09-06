@@ -11,6 +11,7 @@ service Manager {
   rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse) {}
   rpc CreateTokens(CreateTokensRequest) returns (CreateTokensResponse) {}
   rpc UpdateToken(UpdateTokenRequest) returns (UpdateTokenResponse) {}
+  rpc UpsertToken(UpsertTokenRequest) returns (UpsertTokenResponse) {}
   rpc UpdateImageVector(UpdateImageVectorRequest) returns (UpdateImageVectorResponse) {
     option (google.api.http) = {
       post : "/v1/update/image/vector"
@@ -108,15 +109,15 @@ message Conds {
 }
 
 message CreateTokenRequest { TokenReq Info = 10; }
-
 message CreateTokenResponse { Token Info = 10; }
 
-message CreateTokensRequest { repeated TokenReq Infos = 10; }
+message UpsertTokenRequest { TokenReq Info = 10; }
+message UpsertTokenResponse { Token Info = 10; }
 
+message CreateTokensRequest { repeated TokenReq Infos = 10; }
 message CreateTokensResponse { repeated Token Infos = 10; }
 
 message GetTokenRequest { string ID = 10; }
-
 message GetTokenResponse { Token Info = 10; }
 
 message GetTokensRequest {
@@ -131,11 +132,9 @@ message GetTokensResponse {
 }
 
 message GetTokenOnlyRequest { Conds Conds = 10; }
-
 message GetTokenOnlyResponse { Token Info = 10; }
 
 message UpdateTokenRequest { TokenReq Info = 10; }
-
 message UpdateTokenResponse { Token Info = 10; }
 
 message UpdateImageVectorRequest { 
@@ -147,17 +146,13 @@ message UpdateImageVectorRequest {
 message UpdateImageVectorResponse { Token Info = 10; }
 
 message ExistTokenRequest { string ID = 10; }
-
 message ExistTokenResponse { bool Exist = 10; }
 
 message ExistTokenCondsRequest { Conds Conds = 10; }
-
 message ExistTokenCondsResponse { bool Exist = 10; }
 
 message CountTokensRequest { Conds Conds = 10; }
-
 message CountTokensResponse { uint32 Info = 10; }
 
 message DeleteTokenRequest { string ID = 10; }
-
 message DeleteTokenResponse { Token Info = 10; }

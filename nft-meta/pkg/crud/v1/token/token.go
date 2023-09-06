@@ -23,9 +23,9 @@ func Create(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 		return nil, errors.New("input is nil")
 	}
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.Token.Create(), in)
-		info, err = c.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		c := tx.Token.Create()
+		info, err = CreateSet(c, in).Save(ctx)
 		return err
 	})
 	if err != nil {
@@ -33,6 +33,27 @@ func Create(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	}
 
 	return info, nil
+}
+
+func Upsert(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
+	var info *ent.Token
+	var err error
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		row, _ := tx.Token.Query().Where(
+			token.Contract(in.GetContract()),
+			token.TokenID(in.GetTokenID()),
+		).Only(ctx)
+		if row == nil {
+			info, err = CreateSet(tx.Token.Create(), in).Save(ctx)
+			return err
+		}
+		info, err = UpdateSet(tx.Token.UpdateOneID(row.ID), in).Save(ctx)
+		return err
+	})
+	return info, err
 }
 
 //nolint:gocyclo
@@ -118,67 +139,18 @@ func CreateBulk(ctx context.Context, in []*npool.TokenReq) ([]*ent.Token, error)
 
 //nolint:gocyclo
 func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 	var err error
 	var info *ent.Token
-
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	id, err := uuid.Parse(in.GetID())
+	if err != nil {
 		return nil, err
 	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Token.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.Contract != nil {
-			u.SetContract(in.GetContract())
-		}
-		if in.TokenType != nil {
-			u.SetTokenType(in.GetTokenType().String())
-		}
-		if in.TokenID != nil {
-			u.SetTokenID(in.GetTokenID())
-		}
-		if in.Owner != nil {
-			u.SetOwner(in.GetOwner())
-		}
-		if in.URI != nil {
-			u.SetURI(in.GetURI())
-		}
-		if in.URIType != nil {
-			u.SetURIType(in.GetURIType())
-		}
-		if in.ImageURL != nil {
-			u.SetImageURL(in.GetImageURL())
-		}
-		if in.VideoURL != nil {
-			u.SetVideoURL(in.GetVideoURL())
-		}
-		if in.Description != nil {
-			u.SetDescription(in.GetDescription())
-		}
-		if in.Name != nil {
-			u.SetName(in.GetName())
-		}
-		if in.VectorState != nil {
-			u.SetVectorState(in.GetVectorState().String())
-		}
-		if in.VectorID != nil {
-			u.SetVectorID(in.GetVectorID())
-		}
-		if in.Remark != nil {
-			u.SetRemark(in.GetRemark())
-		}
-		if in.IPFSImageURL != nil {
-			u.SetIpfsImageURL(in.GetIPFSImageURL())
-		}
-		if in.ImageSnapshotID != nil {
-			u.SetImageSnapshotID(in.GetImageSnapshotID())
-		}
-
-		info, err = u.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		u := tx.Token.UpdateOneID(id)
+		info, err = UpdateSet(u, in).Save(ctx)
 		return err
 	})
 	if err != nil {
@@ -188,15 +160,60 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	return info, nil
 }
 
-// func UpdateSet(u *ent.TokenUpdateOne, in *npool.TokenReq) *ent.TokenUpdateOne {
-// 	if in.VectorID != nil {
-// 		u.SetVectorID(in.GetVectorID())
-// 	}
-// 	if in.Remark != nil {
-// 		u.SetRemark(in.GetRemark())
-// 	}
-// 	return u
-// }
+func UpdateSet(u *ent.TokenUpdateOne, in *npool.TokenReq) *ent.TokenUpdateOne {
+	if in.ChainType != nil {
+		u.SetChainType(in.GetChainType().String())
+	}
+	if in.ChainID != nil {
+		u.SetChainID(in.GetChainID())
+	}
+	if in.Contract != nil {
+		u.SetContract(in.GetContract())
+	}
+	if in.TokenType != nil {
+		u.SetTokenType(in.GetTokenType().String())
+	}
+	if in.TokenID != nil {
+		u.SetTokenID(in.GetTokenID())
+	}
+	if in.Owner != nil {
+		u.SetOwner(in.GetOwner())
+	}
+	if in.URI != nil {
+		u.SetURI(in.GetURI())
+	}
+	if in.URIType != nil {
+		u.SetURIType(in.GetURIType())
+	}
+	if in.ImageURL != nil {
+		u.SetImageURL(in.GetImageURL())
+	}
+	if in.VideoURL != nil {
+		u.SetVideoURL(in.GetVideoURL())
+	}
+	if in.Description != nil {
+		u.SetDescription(in.GetDescription())
+	}
+	if in.Name != nil {
+		u.SetName(in.GetName())
+	}
+	if in.VectorState != nil {
+		u.SetVectorState(in.GetVectorState().String())
+	}
+	if in.VectorID != nil {
+		u.SetVectorID(in.GetVectorID())
+	}
+	if in.Remark != nil {
+		u.SetRemark(in.GetRemark())
+	}
+	if in.IPFSImageURL != nil {
+		u.SetIpfsImageURL(in.GetIPFSImageURL())
+	}
+	if in.ImageSnapshotID != nil {
+		u.SetImageSnapshotID(in.GetImageSnapshotID())
+	}
+	return u
+}
 
 func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	var info *ent.Token
@@ -513,10 +530,10 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	var info *ent.Token
 	var err error
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Token.UpdateOneID(id).
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		info, err = tx.Token.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
+			Save(ctx)
 		return err
 	})
 	if err != nil {

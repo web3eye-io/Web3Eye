@@ -25,6 +25,7 @@ type ManagerClient interface {
 	CreateContract(ctx context.Context, in *CreateContractRequest, opts ...grpc.CallOption) (*CreateContractResponse, error)
 	CreateContracts(ctx context.Context, in *CreateContractsRequest, opts ...grpc.CallOption) (*CreateContractsResponse, error)
 	UpdateContract(ctx context.Context, in *UpdateContractRequest, opts ...grpc.CallOption) (*UpdateContractResponse, error)
+	UpsertContract(ctx context.Context, in *UpsertContractRequest, opts ...grpc.CallOption) (*UpsertContractResponse, error)
 	GetContract(ctx context.Context, in *GetContractRequest, opts ...grpc.CallOption) (*GetContractResponse, error)
 	GetContractOnly(ctx context.Context, in *GetContractOnlyRequest, opts ...grpc.CallOption) (*GetContractOnlyResponse, error)
 	GetContracts(ctx context.Context, in *GetContractsRequest, opts ...grpc.CallOption) (*GetContractsResponse, error)
@@ -63,6 +64,15 @@ func (c *managerClient) CreateContracts(ctx context.Context, in *CreateContracts
 func (c *managerClient) UpdateContract(ctx context.Context, in *UpdateContractRequest, opts ...grpc.CallOption) (*UpdateContractResponse, error) {
 	out := new(UpdateContractResponse)
 	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/UpdateContract", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpsertContract(ctx context.Context, in *UpsertContractRequest, opts ...grpc.CallOption) (*UpsertContractResponse, error) {
+	out := new(UpsertContractResponse)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.contract.Manager/UpsertContract", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,6 +149,7 @@ type ManagerServer interface {
 	CreateContract(context.Context, *CreateContractRequest) (*CreateContractResponse, error)
 	CreateContracts(context.Context, *CreateContractsRequest) (*CreateContractsResponse, error)
 	UpdateContract(context.Context, *UpdateContractRequest) (*UpdateContractResponse, error)
+	UpsertContract(context.Context, *UpsertContractRequest) (*UpsertContractResponse, error)
 	GetContract(context.Context, *GetContractRequest) (*GetContractResponse, error)
 	GetContractOnly(context.Context, *GetContractOnlyRequest) (*GetContractOnlyResponse, error)
 	GetContracts(context.Context, *GetContractsRequest) (*GetContractsResponse, error)
@@ -161,6 +172,9 @@ func (UnimplementedManagerServer) CreateContracts(context.Context, *CreateContra
 }
 func (UnimplementedManagerServer) UpdateContract(context.Context, *UpdateContractRequest) (*UpdateContractResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateContract not implemented")
+}
+func (UnimplementedManagerServer) UpsertContract(context.Context, *UpsertContractRequest) (*UpsertContractResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertContract not implemented")
 }
 func (UnimplementedManagerServer) GetContract(context.Context, *GetContractRequest) (*GetContractResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContract not implemented")
@@ -246,6 +260,24 @@ func _Manager_UpdateContract_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).UpdateContract(ctx, req.(*UpdateContractRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpsertContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertContractRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertContract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nftmeta.v1.contract.Manager/UpsertContract",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertContract(ctx, req.(*UpsertContractRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -394,6 +426,10 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateContract",
 			Handler:    _Manager_UpdateContract_Handler,
+		},
+		{
+			MethodName: "UpsertContract",
+			Handler:    _Manager_UpsertContract_Handler,
 		},
 		{
 			MethodName: "GetContract",

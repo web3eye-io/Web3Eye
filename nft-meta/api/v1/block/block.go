@@ -31,17 +31,15 @@ func (s *Server) CreateBlock(ctx context.Context, in *npool.CreateBlockRequest) 
 }
 
 func (s *Server) UpsertBlock(ctx context.Context, in *npool.UpsertBlockRequest) (*npool.UpsertBlockResponse, error) {
-	var err error
-
-	info, err := crud.Upsert(ctx, in.GetInfo())
+	row, err := crud.Upsert(ctx, in.GetInfo())
 	if err != nil {
 		logger.Sugar().Errorw("CreateBlock", "error", err)
-		return &npool.UpsertBlockResponse{}, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpsertBlockResponse{
-		Info: converter.Ent2Grpc(info),
-	}, nil
+		Info: converter.Ent2Grpc(row),
+	}, err
 }
 
 func (s *Server) CreateBlocks(ctx context.Context, in *npool.CreateBlocksRequest) (*npool.CreateBlocksResponse, error) {

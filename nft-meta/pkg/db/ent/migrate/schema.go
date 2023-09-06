@@ -237,11 +237,11 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "chain_type", Type: field.TypeString},
 		{Name: "chain_id", Type: field.TypeString},
-		{Name: "contract", Type: field.TypeString},
+		{Name: "contract", Type: field.TypeString, Size: 100},
 		{Name: "token_type", Type: field.TypeString},
 		{Name: "token_id", Type: field.TypeString},
-		{Name: "from", Type: field.TypeString},
-		{Name: "to", Type: field.TypeString},
+		{Name: "from", Type: field.TypeString, Size: 100},
+		{Name: "to", Type: field.TypeString, Size: 100},
 		{Name: "amount", Type: field.TypeUint64},
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "tx_hash", Type: field.TypeString},
@@ -256,9 +256,9 @@ var (
 		PrimaryKey: []*schema.Column{TransfersColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "transfer_contract_token_id_tx_hash",
+				Name:    "transfer_contract_token_id_tx_hash_from",
 				Unique:  true,
-				Columns: []*schema.Column{TransfersColumns[6], TransfersColumns[8], TransfersColumns[13]},
+				Columns: []*schema.Column{TransfersColumns[6], TransfersColumns[8], TransfersColumns[13], TransfersColumns[9]},
 			},
 		},
 	}

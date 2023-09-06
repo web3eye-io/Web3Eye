@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 )
 
@@ -35,32 +34,25 @@ func Create(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 }
 
 func Upsert(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
-	conds := &npool.Conds{
-		ChainType: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetChainType().String(),
-		},
-		ChainID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetChainID(),
-		},
-		BlockNumber: &web3eye.Uint64Val{
-			Op:    "eq",
-			Value: in.GetBlockNumber(),
-		},
+	if in == nil {
+		return nil, errors.New("input is nil")
 	}
-	rows, total, err := Rows(ctx, conds, 0, 1)
-	if err != nil {
-		return nil, err
-	}
-
-	if total != 0 {
-		id := rows[0].ID.String()
-		in.ID = &id
-		return Update(ctx, in)
-	}
-
-	return Create(ctx, in)
+	var info *ent.Block
+	var err error
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		row, _ := tx.Block.Query().Where(
+			block.ChainType(in.GetChainType().String()),
+			block.ChainID(in.GetChainID()),
+			block.BlockNumber(in.GetBlockNumber()),
+		).Only(ctx)
+		if row == nil {
+			info, err = CreateSet(tx.Block.Create(), in).Save(ctx)
+			return err
+		}
+		info, err = UpdateSet(tx.Block.UpdateOneID(row.ID), in).Save(ctx)
+		return err
+	})
+	return info, err
 }
 
 //nolint:gocyclo
@@ -113,54 +105,51 @@ func CreateBulk(ctx context.Context, in []*npool.BlockReq) ([]*ent.Block, error)
 
 //nolint:gocyclo
 func Update(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
+
 	var err error
 	var info *ent.Block
-
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	id, err := uuid.Parse(in.GetID())
+	if err != nil {
 		return nil, err
 	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Block.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.BlockNumber != nil {
-			u.SetBlockNumber(in.GetBlockNumber())
-		}
-		if in.BlockHash != nil {
-			u.SetBlockHash(in.GetBlockHash())
-		}
-		if in.BlockTime != nil {
-			u.SetBlockTime(in.GetBlockTime())
-		}
-		if in.ParseState != nil {
-			u.SetParseState(in.GetParseState().String())
-		}
-		if in.Remark != nil {
-			u.SetRemark(in.GetRemark())
-		}
-		info, err = u.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		blockUpdate := tx.Block.UpdateOneID(id)
+		info, err = UpdateSet(blockUpdate, in).Save(ctx)
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
-
 	return info, nil
 }
 
-// func UpdateSet(u *ent.BlockUpdateOne, in *npool.BlockReq) *ent.BlockUpdateOne {
-// 	if in.VectorID != nil {
-// 		u.SetVectorID(in.GetVectorID())
-// 	}
-// 	if in.Remark != nil {
-// 		u.SetRemark(in.GetRemark())
-// 	}
-// 	return u
-// }
+func UpdateSet(u *ent.BlockUpdateOne, in *npool.BlockReq) *ent.BlockUpdateOne {
+	if in.ChainType != nil {
+		u.SetChainType(in.GetChainType().String())
+	}
+	if in.ChainID != nil {
+		u.SetChainID(in.GetChainID())
+	}
+	if in.BlockNumber != nil {
+		u.SetBlockNumber(in.GetBlockNumber())
+	}
+	if in.BlockHash != nil {
+		u.SetBlockHash(in.GetBlockHash())
+	}
+	if in.BlockTime != nil {
+		u.SetBlockTime(in.GetBlockTime())
+	}
+	if in.ParseState != nil {
+		u.SetParseState(in.GetParseState().String())
+	}
+	if in.Remark != nil {
+		u.SetRemark(in.GetRemark())
+	}
+	return u
+}
 
 func Row(ctx context.Context, id uuid.UUID) (*ent.Block, error) {
 	var info *ent.Block
@@ -387,11 +376,10 @@ func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 func Delete(ctx context.Context, id uuid.UUID) (*ent.Block, error) {
 	var info *ent.Block
 	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Block.UpdateOneID(id).
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		info, err = tx.Block.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
+			Save(ctx)
 		return err
 	})
 	if err != nil {

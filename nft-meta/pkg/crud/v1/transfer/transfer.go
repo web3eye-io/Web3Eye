@@ -23,12 +23,9 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 		return nil, errors.New("input is nil")
 	}
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.Transfer.Create(), in)
-		if err != nil {
-			return err
-		}
-		info, err = c.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		c := tx.Transfer.Create()
+		info, err = CreateSet(c, in).Save(ctx)
 		return err
 	})
 	if err != nil {
@@ -39,26 +36,23 @@ func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 }
 
 func Upsert(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 	var info *ent.Transfer
-	err := db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		rows, err := tx.Transfer.Query().Where(
+	var err error
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		row, _ := tx.Transfer.Query().Where(
 			transfer.Contract(in.GetContract()),
-			transfer.TokenID(in.GetTokenID()),
+			transfer.TokenID(in.GetChainID()),
 			transfer.TxHash(in.GetTxHash()),
-		).All(ctx)
-		if err != nil {
+			transfer.From(in.GetFrom()),
+		).Only(ctx)
+		if row == nil {
+			info, err = CreateSet(tx.Transfer.Create(), in).Save(ctx)
 			return err
 		}
-		if len(rows) != 0 {
-			id := rows[0].ID.String()
-			in.ID = &id
-			updateInfo := tx.Transfer.UpdateOneID(uuid.MustParse(id))
-			updateInfo = UpdateSet(updateInfo, in)
-			info, err = updateInfo.Save(ctx)
-			return err
-		}
-		c := tx.Transfer.Create()
-		info, err = CreateSet(c, in).Save(ctx)
+		info, err = UpdateSet(tx.Transfer.UpdateOneID(row.ID), in).Save(ctx)
 		return err
 	})
 	return info, err
@@ -144,16 +138,18 @@ func CreateBulk(ctx context.Context, in []*npool.TransferReq) ([]*ent.Transfer, 
 
 //nolint:gocyclo
 func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 	var err error
 	var info *ent.Transfer
-
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	id, err := uuid.Parse(in.GetID())
+	if err != nil {
 		return nil, err
 	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Transfer.UpdateOneID(uuid.MustParse(in.GetID()))
-		u = UpdateSet(u, in)
-		info, err = u.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		u := tx.Transfer.UpdateOneID(id)
+		info, err = UpdateSet(u, in).Save(ctx)
 		return err
 	})
 	if err != nil {
@@ -492,8 +488,8 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
 	var info *ent.Transfer
 	var err error
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Transfer.UpdateOneID(id).
+	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+		info, err = tx.Transfer.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(_ctx)
 		return err

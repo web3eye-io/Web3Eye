@@ -30,6 +30,18 @@ func (s *Server) CreateContract(ctx context.Context, in *npool.CreateContractReq
 	}, nil
 }
 
+func (s *Server) UpsertContract(ctx context.Context, in *npool.UpsertContractRequest) (*npool.UpsertContractResponse, error) {
+	row, err := crud.Upsert(ctx, in.GetInfo())
+	if err != nil {
+		logger.Sugar().Errorw("CreateBlock", "error", err)
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpsertContractResponse{
+		Info: converter.Ent2Grpc(row),
+	}, err
+}
+
 func (s *Server) CreateContracts(ctx context.Context, in *npool.CreateContractsRequest) (*npool.CreateContractsResponse, error) {
 	var err error
 

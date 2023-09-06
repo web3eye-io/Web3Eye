@@ -303,6 +303,11 @@ func (tc *TransferCreate) check() error {
 	if _, ok := tc.mutation.Contract(); !ok {
 		return &ValidationError{Name: "contract", err: errors.New(`ent: missing required field "Transfer.contract"`)}
 	}
+	if v, ok := tc.mutation.Contract(); ok {
+		if err := transfer.ContractValidator(v); err != nil {
+			return &ValidationError{Name: "contract", err: fmt.Errorf(`ent: validator failed for field "Transfer.contract": %w`, err)}
+		}
+	}
 	if _, ok := tc.mutation.TokenType(); !ok {
 		return &ValidationError{Name: "token_type", err: errors.New(`ent: missing required field "Transfer.token_type"`)}
 	}
@@ -312,8 +317,18 @@ func (tc *TransferCreate) check() error {
 	if _, ok := tc.mutation.From(); !ok {
 		return &ValidationError{Name: "from", err: errors.New(`ent: missing required field "Transfer.from"`)}
 	}
+	if v, ok := tc.mutation.From(); ok {
+		if err := transfer.FromValidator(v); err != nil {
+			return &ValidationError{Name: "from", err: fmt.Errorf(`ent: validator failed for field "Transfer.from": %w`, err)}
+		}
+	}
 	if _, ok := tc.mutation.To(); !ok {
 		return &ValidationError{Name: "to", err: errors.New(`ent: missing required field "Transfer.to"`)}
+	}
+	if v, ok := tc.mutation.To(); ok {
+		if err := transfer.ToValidator(v); err != nil {
+			return &ValidationError{Name: "to", err: fmt.Errorf(`ent: validator failed for field "Transfer.to": %w`, err)}
+		}
 	}
 	if _, ok := tc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transfer.amount"`)}

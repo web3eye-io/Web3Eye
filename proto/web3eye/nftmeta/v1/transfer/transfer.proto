@@ -6,15 +6,14 @@ option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/tran
 import "web3eye/web3eye.proto";
 import "web3eye/basetype/v1/chain.proto";
 
-
 service Manager {
   rpc CreateTransfer(CreateTransferRequest) returns (CreateTransferResponse) {}
   rpc UpsertTransfer(UpsertTransferRequest) returns (UpsertTransferResponse) {}
+  rpc UpdateTransfer(UpdateTransferRequest) returns (UpdateTransferResponse) {}
   rpc CreateTransfers(CreateTransfersRequest)
       returns (CreateTransfersResponse) {}
   rpc UpsertTransfers(UpsertTransfersRequest)
       returns (UpsertTransfersResponse) {}
-  rpc UpdateTransfer(UpdateTransferRequest) returns (UpdateTransferResponse) {}
   rpc GetTransfer(GetTransferRequest) returns (GetTransferResponse) {}
   rpc GetTransferOnly(GetTransferOnlyRequest)
       returns (GetTransferOnlyResponse) {}
@@ -79,21 +78,18 @@ message Conds {
 }
 
 message CreateTransferRequest { TransferReq Info = 10; }
-
 message CreateTransferResponse { Transfer Info = 10; }
 
 message UpsertTransferRequest { TransferReq Info = 10; }
-
 message UpsertTransferResponse { Transfer Info = 10; }
 
 message CreateTransfersRequest { repeated TransferReq Infos = 10; }
 message CreateTransfersResponse { repeated Transfer Infos = 10; }
-message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
 
+message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
 message UpsertTransfersResponse { }
 
 message GetTransferRequest { string ID = 10; }
-
 message GetTransferResponse { Transfer Info = 10; }
 
 message GetTransfersRequest {
@@ -108,25 +104,19 @@ message GetTransfersResponse {
 }
 
 message GetTransferOnlyRequest { Conds Conds = 10; }
-
 message GetTransferOnlyResponse { Transfer Info = 10; }
 
 message UpdateTransferRequest { TransferReq Info = 10; }
-
 message UpdateTransferResponse { Transfer Info = 10; }
 
 message ExistTransferRequest { string ID = 10; }
-
 message ExistTransferResponse { bool Exist = 10; }
 
 message ExistTransferCondsRequest { Conds Conds = 10; }
-
 message ExistTransferCondsResponse { bool Exist = 10; }
 
 message CountTransfersRequest { Conds Conds = 10; }
-
 message CountTransfersResponse { uint32 Info = 10; }
 
 message DeleteTransferRequest { string ID = 10; }
-
 message DeleteTransferResponse { Transfer Info = 10; }

@@ -274,6 +274,14 @@
         }
       }
     },
+    "contractUpsertContractResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/contractContract"
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {

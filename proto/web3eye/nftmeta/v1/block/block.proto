@@ -6,6 +6,7 @@ option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/bloc
 import "web3eye/web3eye.proto";
 import "web3eye/basetype/v1/chain.proto";
 
+
 service Manager {
   rpc CreateBlock(CreateBlockRequest) returns (CreateBlockResponse) {}
   rpc CreateBlocks(CreateBlocksRequest) returns (CreateBlocksResponse) {}
@@ -57,19 +58,15 @@ message Conds {
 }
 
 message CreateBlockRequest { BlockReq Info = 10; }
-
 message CreateBlockResponse { Block Info = 10; }
 
 message UpsertBlockRequest { BlockReq Info = 10; }
-
 message UpsertBlockResponse { Block Info = 10; }
 
 message CreateBlocksRequest { repeated BlockReq Infos = 10; }
-
 message CreateBlocksResponse { repeated Block Infos = 10; }
 
 message GetBlockRequest { string ID = 10; }
-
 message GetBlockResponse { Block Info = 10; }
 
 message GetBlocksRequest {
@@ -84,25 +81,19 @@ message GetBlocksResponse {
 }
 
 message GetBlockOnlyRequest { Conds Conds = 10; }
-
 message GetBlockOnlyResponse { Block Info = 10; }
 
 message UpdateBlockRequest { BlockReq Info = 10; }
-
 message UpdateBlockResponse { Block Info = 10; }
 
 message ExistBlockRequest { string ID = 10; }
-
 message ExistBlockResponse { bool Exist = 10; }
 
 message ExistBlockCondsRequest { Conds Conds = 10; }
-
 message ExistBlockCondsResponse { bool Exist = 10; }
 
 message CountBlocksRequest { Conds Conds = 10; }
-
 message CountBlocksResponse { uint32 Info = 10; }
 
 message DeleteBlockRequest { string ID = 10; }
-
 message DeleteBlockResponse { Block Info = 10; }

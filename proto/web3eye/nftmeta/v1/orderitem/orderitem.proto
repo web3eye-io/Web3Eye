@@ -76,25 +76,19 @@ message GetOrderItemsResponse {
 }
 
 message GetOrderItemOnlyRequest { Conds Conds = 10; }
-
 message GetOrderItemOnlyResponse { OrderItem Info = 10; }
 
 message UpdateOrderItemRequest { OrderItemReq Info = 10; }
-
 message UpdateOrderItemResponse { OrderItem Info = 10; }
 
 message ExistOrderItemRequest { string ID = 10; }
-
 message ExistOrderItemResponse { bool Exist = 10; }
 
 message ExistOrderItemCondsRequest { Conds Conds = 10; }
-
 message ExistOrderItemCondsResponse { bool Exist = 10; }
 
 message CountOrderItemsRequest { Conds Conds = 10; }
-
 message CountOrderItemsResponse { uint32 Info = 10; }
 
 message DeleteOrderItemRequest { string ID = 10; }
-
 message DeleteOrderItemResponse { OrderItem Info = 10; }

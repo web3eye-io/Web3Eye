@@ -225,12 +225,18 @@ func (tu *TransferUpdate) Save(ctx context.Context) (int, error) {
 		return 0, err
 	}
 	if len(tu.hooks) == 0 {
+		if err = tu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TransferMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tu.check(); err != nil {
+				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -280,6 +286,26 @@ func (tu *TransferUpdate) defaults() error {
 		}
 		v := transfer.UpdateDefaultUpdatedAt()
 		tu.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tu *TransferUpdate) check() error {
+	if v, ok := tu.mutation.Contract(); ok {
+		if err := transfer.ContractValidator(v); err != nil {
+			return &ValidationError{Name: "contract", err: fmt.Errorf(`ent: validator failed for field "Transfer.contract": %w`, err)}
+		}
+	}
+	if v, ok := tu.mutation.From(); ok {
+		if err := transfer.FromValidator(v); err != nil {
+			return &ValidationError{Name: "from", err: fmt.Errorf(`ent: validator failed for field "Transfer.from": %w`, err)}
+		}
+	}
+	if v, ok := tu.mutation.To(); ok {
+		if err := transfer.ToValidator(v); err != nil {
+			return &ValidationError{Name: "to", err: fmt.Errorf(`ent: validator failed for field "Transfer.to": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -699,12 +725,18 @@ func (tuo *TransferUpdateOne) Save(ctx context.Context) (*Transfer, error) {
 		return nil, err
 	}
 	if len(tuo.hooks) == 0 {
+		if err = tuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TransferMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tuo.check(); err != nil {
+				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -760,6 +792,26 @@ func (tuo *TransferUpdateOne) defaults() error {
 		}
 		v := transfer.UpdateDefaultUpdatedAt()
 		tuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TransferUpdateOne) check() error {
+	if v, ok := tuo.mutation.Contract(); ok {
+		if err := transfer.ContractValidator(v); err != nil {
+			return &ValidationError{Name: "contract", err: fmt.Errorf(`ent: validator failed for field "Transfer.contract": %w`, err)}
+		}
+	}
+	if v, ok := tuo.mutation.From(); ok {
+		if err := transfer.FromValidator(v); err != nil {
+			return &ValidationError{Name: "from", err: fmt.Errorf(`ent: validator failed for field "Transfer.from": %w`, err)}
+		}
+	}
+	if v, ok := tuo.mutation.To(); ok {
+		if err := transfer.ToValidator(v); err != nil {
+			return &ValidationError{Name: "to", err: fmt.Errorf(`ent: validator failed for field "Transfer.to": %w`, err)}
+		}
 	}
 	return nil
 }

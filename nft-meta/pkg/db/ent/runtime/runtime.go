@@ -317,6 +317,18 @@ func init() {
 	transferDescDeletedAt := transferMixinFields0[2].Descriptor()
 	// transfer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	transfer.DefaultDeletedAt = transferDescDeletedAt.Default.(func() uint32)
+	// transferDescContract is the schema descriptor for contract field.
+	transferDescContract := transferFields[3].Descriptor()
+	// transfer.ContractValidator is a validator for the "contract" field. It is called by the builders before save.
+	transfer.ContractValidator = transferDescContract.Validators[0].(func(string) error)
+	// transferDescFrom is the schema descriptor for from field.
+	transferDescFrom := transferFields[6].Descriptor()
+	// transfer.FromValidator is a validator for the "from" field. It is called by the builders before save.
+	transfer.FromValidator = transferDescFrom.Validators[0].(func(string) error)
+	// transferDescTo is the schema descriptor for to field.
+	transferDescTo := transferFields[7].Descriptor()
+	// transfer.ToValidator is a validator for the "to" field. It is called by the builders before save.
+	transfer.ToValidator = transferDescTo.Validators[0].(func(string) error)
 	// transferDescID is the schema descriptor for id field.
 	transferDescID := transferFields[0].Descriptor()
 	// transfer.DefaultID holds the default value on creation for the id field.

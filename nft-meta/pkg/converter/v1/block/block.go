@@ -23,6 +23,23 @@ func Ent2Grpc(row *ent.Block) *npool.Block {
 	}
 }
 
+func Req2Grpc(row *npool.BlockReq) *npool.Block {
+	if row == nil {
+		return nil
+	}
+
+	return &npool.Block{
+		ID:          *row.ID,
+		ChainType:   *row.ChainType,
+		ChainID:     *row.ChainID,
+		BlockNumber: *row.BlockNumber,
+		BlockHash:   *row.BlockHash,
+		BlockTime:   *row.BlockTime,
+		ParseState:  *row.ParseState,
+		Remark:      *row.Remark,
+	}
+}
+
 func Ent2GrpcMany(rows []*ent.Block) []*npool.Block {
 	infos := []*npool.Block{}
 	for _, row := range rows {

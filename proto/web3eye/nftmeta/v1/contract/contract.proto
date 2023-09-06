@@ -11,6 +11,7 @@ service Manager {
   rpc CreateContracts(CreateContractsRequest)
       returns (CreateContractsResponse) {}
   rpc UpdateContract(UpdateContractRequest) returns (UpdateContractResponse) {}
+  rpc UpsertContract(UpsertContractRequest) returns (UpsertContractResponse) {}
   rpc GetContract(GetContractRequest) returns (GetContractResponse) {}
   rpc GetContractOnly(GetContractOnlyRequest)
       returns (GetContractOnlyResponse) {}
@@ -78,15 +79,15 @@ message Conds {
 }
 
 message CreateContractRequest { ContractReq Info = 10; }
-
 message CreateContractResponse { Contract Info = 10; }
 
-message CreateContractsRequest { repeated ContractReq Infos = 10; }
+message UpsertContractRequest { ContractReq Info = 10; }
+message UpsertContractResponse { Contract Info = 10; }
 
+message CreateContractsRequest { repeated ContractReq Infos = 10; }
 message CreateContractsResponse { repeated Contract Infos = 10; }
 
 message GetContractRequest { string ID = 10; }
-
 message GetContractResponse { Contract Info = 10; }
 
 message GetContractsRequest {
@@ -101,25 +102,19 @@ message GetContractsResponse {
 }
 
 message GetContractOnlyRequest { Conds Conds = 10; }
-
 message GetContractOnlyResponse { Contract Info = 10; }
 
 message UpdateContractRequest { ContractReq Info = 10; }
-
 message UpdateContractResponse { Contract Info = 10; }
 
 message ExistContractRequest { string ID = 10; }
-
 message ExistContractResponse { bool Exist = 10; }
 
 message ExistContractCondsRequest { Conds Conds = 10; }
-
 message ExistContractCondsResponse { bool Exist = 10; }
 
 message CountContractsRequest { Conds Conds = 10; }
-
 message CountContractsResponse { uint32 Info = 10; }
 
 message DeleteContractRequest { string ID = 10; }
-
 message DeleteContractResponse { Contract Info = 10; }

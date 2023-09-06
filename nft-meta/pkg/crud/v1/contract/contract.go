@@ -23,16 +23,39 @@ func Create(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 		return nil, errors.New("input is nil")
 	}
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.Contract.Create(), in)
-		info, err = c.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		c := tx.Contract.Create()
+		info, err = CreateSet(c, in).Save(ctx)
 		return err
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
 	return info, nil
+}
+
+func Upsert(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
+	var info *ent.Contract
+	var err error
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		row, _ := tx.Contract.Query().Where(
+			contract.ChainType(in.GetChainType().String()),
+			contract.ChainID(in.GetChainID()),
+			contract.Address(in.GetAddress()),
+		).Only(ctx)
+		if row == nil {
+			info, err = CreateSet(tx.Contract.Create(), in).Save(ctx)
+			return err
+		}
+		info, err = UpdateSet(tx.Contract.UpdateOneID(row.ID), in).Save(ctx)
+		return err
+	})
+	return info, err
 }
 
 // nolint
@@ -94,8 +117,7 @@ func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, 
 		for i, info := range in {
 			bulk[i] = CreateSet(tx.Contract.Create(), info)
 		}
-		rows, err = tx.Contract.CreateBulk(bulk...).Save(_ctx)
-		return err
+		return tx.Contract.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
 	})
 	if err != nil {
 		return nil, err
@@ -106,65 +128,72 @@ func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, 
 
 // nolint
 func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
-	var err error
-	var info *ent.Contract
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
 
-	if _, err := uuid.Parse(in.GetID()); err != nil {
+	var info *ent.Contract
+	id, err := uuid.Parse(in.GetID())
+	if err != nil {
 		return nil, err
 	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Contract.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.Address != nil {
-			u.SetAddress(in.GetAddress())
-		}
-		if in.Name != nil {
-			u.SetName(in.GetName())
-		}
-		if in.Symbol != nil {
-			u.SetSymbol(in.GetSymbol())
-		}
-		if in.Creator != nil {
-			u.SetCreator(in.GetCreator())
-		}
-		if in.BlockNum != nil {
-			u.SetBlockNum(in.GetBlockNum())
-		}
-		if in.TxHash != nil {
-			u.SetTxHash(in.GetTxHash())
-		}
-		if in.TxTime != nil {
-			u.SetTxTime(in.GetTxTime())
-		}
-		if in.ProfileURL != nil {
-			u.SetProfileURL(in.GetProfileURL())
-		}
-		if in.BaseURL != nil {
-			u.SetBaseURL(in.GetBaseURL())
-		}
-		if in.BannerURL != nil {
-			u.SetBannerURL(in.GetBannerURL())
-		}
-		if in.Description != nil {
-			u.SetDescription(in.GetDescription())
-		}
-		if in.Remark != nil {
-			u.SetRemark(in.GetRemark())
-		}
-
-		info, err = u.Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		contractUpdate := tx.Contract.UpdateOneID(id)
+		info, err = UpdateSet(contractUpdate, in).Save(ctx)
 		return err
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
 	return info, nil
+}
+
+func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpdateOne {
+	if in.ChainType != nil {
+		u.SetChainType(in.GetChainType().String())
+	}
+	if in.ChainID != nil {
+		u.SetChainID(in.GetChainID())
+	}
+	if in.Address != nil {
+		u.SetAddress(in.GetAddress())
+	}
+	if in.Name != nil {
+		u.SetName(in.GetName())
+	}
+	if in.Symbol != nil {
+		u.SetSymbol(in.GetSymbol())
+	}
+	if in.Creator != nil {
+		u.SetCreator(in.GetCreator())
+	}
+	if in.BlockNum != nil {
+		u.SetBlockNum(in.GetBlockNum())
+	}
+	if in.TxHash != nil {
+		u.SetTxHash(in.GetTxHash())
+	}
+	if in.TxTime != nil {
+		u.SetTxTime(in.GetTxTime())
+	}
+	if in.ProfileURL != nil {
+		u.SetProfileURL(in.GetProfileURL())
+	}
+	if in.BaseURL != nil {
+		u.SetBaseURL(in.GetBaseURL())
+	}
+	if in.BannerURL != nil {
+		u.SetBannerURL(in.GetBannerURL())
+	}
+	if in.Description != nil {
+		u.SetDescription(in.GetDescription())
+	}
+	if in.Remark != nil {
+		u.SetRemark(in.GetRemark())
+	}
+	return u
 }
 
 func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
@@ -457,10 +486,8 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
 	var info *ent.Contract
 	var err error
 
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Contract.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
+	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
+		info, err = tx.Contract.UpdateOneID(id).SetDeletedAt(uint32(time.Now().Unix())).Save(ctx)
 		return err
 	})
 	if err != nil {

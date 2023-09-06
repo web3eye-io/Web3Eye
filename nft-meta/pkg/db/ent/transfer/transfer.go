@@ -95,6 +95,12 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// ContractValidator is a validator for the "contract" field. It is called by the builders before save.
+	ContractValidator func(string) error
+	// FromValidator is a validator for the "from" field. It is called by the builders before save.
+	FromValidator func(string) error
+	// ToValidator is a validator for the "to" field. It is called by the builders before save.
+	ToValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

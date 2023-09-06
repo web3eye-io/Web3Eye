@@ -109,7 +109,6 @@ message Conds {
 }
 
 message CreateSyncTaskRequest { SyncTaskReq Info = 10; }
-
 message CreateSyncTaskResponse { SyncTask Info = 10; }
 
 message TriggerSyncTaskRequest { 
@@ -122,7 +121,6 @@ message TriggerSyncTaskResponse {
 }
 
 message GetSyncTaskRequest { string ID = 10; }
-
 message GetSyncTaskResponse { SyncTask Info = 10; }
 
 message GetSyncTasksRequest {
@@ -137,25 +135,19 @@ message GetSyncTasksResponse {
 }
 
 message GetSyncTaskOnlyRequest { Conds Conds = 10; }
-
 message GetSyncTaskOnlyResponse { SyncTask Info = 10; }
 
 message UpdateSyncTaskRequest { SyncTaskReq Info = 10; }
-
 message UpdateSyncTaskResponse { SyncTask Info = 10; }
 
 message ExistSyncTaskRequest { string ID = 10; }
-
 message ExistSyncTaskResponse { bool Exist = 10; }
 
 message ExistSyncTaskCondsRequest { Conds Conds = 10; }
-
 message ExistSyncTaskCondsResponse { bool Exist = 10; }
 
 message CountSyncTasksRequest { Conds Conds = 10; }
-
 message CountSyncTasksResponse { uint32 Info = 10; }
 
 message DeleteSyncTaskRequest { string ID = 10; }
-
 message DeleteSyncTaskResponse { SyncTask Info = 10; }

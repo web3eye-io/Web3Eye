@@ -3,7 +3,9 @@ package transfer
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/transfer"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 
@@ -30,20 +32,6 @@ func (s *Server) CreateTransfer(ctx context.Context, in *npool.CreateTransferReq
 	}, nil
 }
 
-func (s *Server) UpsertTransfer(ctx context.Context, in *npool.UpsertTransferRequest) (*npool.UpsertTransferResponse, error) {
-	var err error
-
-	info, err := crud.Upsert(ctx, in.GetInfo())
-	if err != nil {
-		logger.Sugar().Errorw("UpsertTransfer", "error", err)
-		return &npool.UpsertTransferResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.UpsertTransferResponse{
-		Info: converter.Ent2Grpc(info),
-	}, nil
-}
-
 func (s *Server) CreateTransfers(ctx context.Context, in *npool.CreateTransfersRequest) (*npool.CreateTransfersResponse, error) {
 	var err error
 
@@ -63,19 +51,20 @@ func (s *Server) CreateTransfers(ctx context.Context, in *npool.CreateTransfersR
 	}, nil
 }
 
-func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
+func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*empty.Empty, error) {
 	if len(in.GetInfos()) == 0 {
 		logger.Sugar().Warnw("UpsertTransfers", "error", "Infos is empty")
-		return &npool.UpsertTransfersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+		return nil, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
 
 	err := crud.UpsertBulk(ctx, in.GetInfos())
 	if err != nil {
+		fmt.Println(in.GetInfos())
 		logger.Sugar().Errorw("UpsertTransfers", "error", err)
-		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpsertTransfersResponse{}, nil
+	return nil, nil
 }
 
 func (s *Server) UpdateTransfer(ctx context.Context, in *npool.UpdateTransferRequest) (*npool.UpdateTransferResponse, error) {

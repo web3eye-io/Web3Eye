@@ -26,11 +26,11 @@ func (Transfer) Fields() []ent.Field {
 			Unique(),
 		field.String("chain_type"),
 		field.String("chain_id"),
-		field.String("contract"),
+		field.String("contract").MaxLen(100),
 		field.String("token_type"),
 		field.String("token_id"),
-		field.String("from"),
-		field.String("to"),
+		field.String("from").MaxLen(100),
+		field.String("to").MaxLen(100),
 		field.Uint64("amount"),
 		field.Uint64("block_number"),
 		field.String("tx_hash"),
@@ -44,6 +44,6 @@ func (Transfer) Fields() []ent.Field {
 
 func (Transfer) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("contract", "token_id", "tx_hash").Unique(),
+		index.Fields("contract", "token_id", "tx_hash", "from").Unique(),
 	}
 }

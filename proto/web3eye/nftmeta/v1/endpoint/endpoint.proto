@@ -53,15 +53,12 @@ message Conds {
 }
 
 message CreateEndpointRequest { EndpointReq Info = 10; }
-
 message CreateEndpointResponse { Endpoint Info = 10; }
 
 message CreateEndpointsRequest { repeated EndpointReq Infos = 10; }
-
 message CreateEndpointsResponse { repeated Endpoint Infos = 10; }
 
 message GetEndpointRequest { string ID = 10; }
-
 message GetEndpointResponse { Endpoint Info = 10; }
 
 message GetEndpointsRequest {
@@ -81,29 +78,22 @@ message FailedInfo {
 }
 
 message GetEndpointOnlyRequest { Conds Conds = 10; }
-
 message GetEndpointOnlyResponse { Endpoint Info = 10; }
 
 message UpdateEndpointRequest { EndpointReq Info = 10; }
-
 message UpdateEndpointResponse { Endpoint Info = 10; }
 
 message UpdateEndpointsRequest { repeated EndpointReq Infos = 10; }
-
 message UpdateEndpointsResponse { repeated FailedInfo Infos = 10; }
 
 message ExistEndpointRequest { string ID = 10; }
-
 message ExistEndpointResponse { bool Exist = 10; }
 
 message ExistEndpointCondsRequest { Conds Conds = 10; }
-
 message ExistEndpointCondsResponse { bool Exist = 10; }
 
 message CountEndpointsRequest { Conds Conds = 10; }
-
 message CountEndpointsResponse { uint32 Info = 10; }
 
 message DeleteEndpointRequest { string ID = 10; }
-
 message DeleteEndpointResponse { Endpoint Info = 10; }

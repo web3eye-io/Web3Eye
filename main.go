@@ -8,11 +8,14 @@ import (
 	"syscall"
 	"time"
 
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
+
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/block"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 )
 
 func main() {
@@ -24,27 +27,22 @@ func main() {
 	// fmt.Println("sss")
 	// go consumeNonce("test9", "s1")
 	// go consumeNonce("test9", "s2")
-	now := time.Now()
-	err := milvusdb.Init(context.Background())
-	if err != nil {
-		panic(fmt.Errorf("milvus init err: %v", err))
-	}
-	milvusmgr := milvusdb.NewNFTConllectionMGR()
-
-	_vector := imageconvert.ToArrayVector([]float32{})
-	vectors := [][milvusdb.VectorDim]float32{}
-	fmt.Println(time.Now().Sub(now))
-	for i := 0; i < 100; i++ {
-		vectors = append(vectors, _vector)
-	}
-	ret, err := milvusmgr.Create(context.Background(), vectors)
-	fmt.Println(ret, err)
-
-	fmt.Println(time.Now().Sub(now))
-	_scores, err := milvusmgr.Search(context.Background(), [][milvusdb.VectorDim]float32{_vector}, 5)
-	fmt.Println(_scores, err)
-	fmt.Println(time.Now().Sub(now))
-
+	db.Init()
+	chainID := "ssss"
+	blockHash := "ssss"
+	blockTime := time.Now().Unix()
+	blockNum := uint64(111)
+	parseState := v1.BlockParseState_BlockTypeFinish
+	remark := "ss11"
+	fmt.Println(block.Upsert(context.Background(), &npool.BlockReq{
+		ChainType:   v1.ChainType_Solana.Enum(),
+		ChainID:     &chainID,
+		BlockNumber: &blockNum,
+		BlockHash:   &blockHash,
+		BlockTime:   &blockTime,
+		ParseState:  &parseState,
+		Remark:      &remark,
+	}))
 	<-sigchan
 	os.Exit(1)
 }

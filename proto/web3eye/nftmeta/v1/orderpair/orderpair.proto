@@ -72,25 +72,19 @@ message GetOrderPairsResponse {
 }
 
 message GetOrderPairOnlyRequest { Conds Conds = 10; }
-
 message GetOrderPairOnlyResponse { OrderPair Info = 10; }
 
 message UpdateOrderPairRequest { OrderPairReq Info = 10; }
-
 message UpdateOrderPairResponse { OrderPair Info = 10; }
 
 message ExistOrderPairRequest { string ID = 10; }
-
 message ExistOrderPairResponse { bool Exist = 10; }
 
 message ExistOrderPairCondsRequest { Conds Conds = 10; }
-
 message ExistOrderPairCondsResponse { bool Exist = 10; }
 
 message CountOrderPairsRequest { Conds Conds = 10; }
-
 message CountOrderPairsResponse { uint32 Info = 10; }
 
 message DeleteOrderPairRequest { string ID = 10; }
-
 message DeleteOrderPairResponse { OrderPair Info = 10; }

@@ -65,7 +65,6 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	taskBlockNum := make(chan uint64)
 	e.onIndex = true
 
-	// TODO: can be muilti goroutine
 	go e.PullTasks(ctx, taskBlockNum)
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexTask(ctx, taskBlockNum)
@@ -101,17 +100,21 @@ func (e *EthIndexer) IndexTask(ctx context.Context, taskBlockNum chan uint64) {
 					return
 				}
 			}()
+
+			remark := ""
+			parseState := basetype.BlockParseState_BlockTypeFinish
 			if err != nil && blockRecordID != "" {
-				err := err.Error()
-				parseState := basetype.BlockParseState_BlockTypeFailed
-				blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
-					Info: &blockProto.BlockReq{
-						ID:         &blockRecordID,
-						ParseState: &parseState,
-						Remark:     &err,
-					},
-				})
+				remark = err.Error()
+				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
+
+			blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
+				Info: &blockProto.BlockReq{
+					ID:         &blockRecordID,
+					ParseState: &parseState,
+					Remark:     &remark,
+				},
+			})
 		case <-ctx.Done():
 			return
 		}
@@ -213,6 +216,7 @@ func (e *EthIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
+				continue
 			}
 			if resp.Info.SyncState != cttype.SyncState_Start {
 				return
@@ -270,8 +274,22 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 		return nil, nil
 	}
 
+	transfersMap := make(map[string]struct{}, len(transfers))
 	infos := make([]*transferProto.TransferReq, len(transfers))
+
 	for i := range transfers {
+
+		transIdentifier := transferIdentifier(
+			transfers[i].Contract,
+			transfers[i].TokenID,
+			transfers[i].TxHash,
+			transfers[i].From)
+		// just for avoid  repetition
+		if _, ok := transfersMap[transIdentifier]; ok {
+			continue
+		}
+		transfersMap[transIdentifier] = struct{}{}
+
 		tokenType := string(transfers[i].TokenType)
 		infos[i] = &transferProto.TransferReq{
 			ChainType:   &e.ChainType,
@@ -384,7 +402,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 		identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
-			logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
+			return fmt.Errorf("lock the token indentifier failed, err: %v", err)
 		}
 
 		if !locked {
@@ -492,6 +510,9 @@ func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 			return
 		}
 	}
+}
+func transferIdentifier(contract, tokenID, txHash, from string) string {
+	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
 }
 
 func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {

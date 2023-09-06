@@ -464,6 +464,14 @@
         }
       }
     },
+    "tokenUpsertTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/tokenToken"
+        }
+      }
+    },
     "web3eyeInt64SliceVal": {
       "type": "object",
       "properties": {

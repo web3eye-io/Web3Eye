@@ -48,15 +48,12 @@ message Conds {
 }
 
 message CreateChainRequest { ChainReq Info = 10; }
-
 message CreateChainResponse { Chain Info = 10; }
 
 message CreateChainsRequest { repeated ChainReq Infos = 10; }
-
 message CreateChainsResponse { repeated Chain Infos = 10; }
 
 message GetChainRequest { string ID = 10; }
-
 message GetChainResponse { Chain Info = 10; }
 
 message GetChainsRequest {
@@ -71,25 +68,19 @@ message GetChainsResponse {
 }
 
 message GetChainOnlyRequest { Conds Conds = 10; }
-
 message GetChainOnlyResponse { Chain Info = 10; }
 
 message UpdateChainRequest { ChainReq Info = 10; }
-
 message UpdateChainResponse { Chain Info = 10; }
 
 message ExistChainRequest { string ID = 10; }
-
 message ExistChainResponse { bool Exist = 10; }
 
 message ExistChainCondsRequest { Conds Conds = 10; }
-
 message ExistChainCondsResponse { bool Exist = 10; }
 
 message CountChainsRequest { Conds Conds = 10; }
-
 message CountChainsResponse { uint32 Info = 10; }
 
 message DeleteChainRequest { string ID = 10; }
-
 message DeleteChainResponse { Chain Info = 10; }
