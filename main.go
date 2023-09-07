@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
 )
@@ -17,11 +18,18 @@ func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	// go produceNonce("test9")
-	// time.Sleep(time.Minute)
-	// fmt.Println("sss")
-	// go consumeNonce("test9", "s1")
-	// go consumeNonce("test9", "s2")
+	// cli, err := ethclient.Dial("https://mainnet.infura.io/v3/8cc70eaecd7c40d9817b6f4747f0e2f7")
+	// fmt.Println(err)
+	// logs, err := cli.FilterLogs(context.Background(), ethereum.FilterQuery{FromBlock: big.NewInt(18082804), ToBlock: big.NewInt(18082804), Topics: [][]common.Hash{{common.HexToHash("0x9d9af8e38d66c62e2c12f0225249fd9d721c54b83f48d9352c97c6cacdcb6f31")}}})
+	// fmt.Println(err)
+	// fmt.Println(utils.PrettyStruct(logs))
+
+	cli, err := eth.Client([]string{"https://mainnet.infura.io/v3/8cc70eaecd7c40d9817b6f4747f0e2f7"})
+	fmt.Println(err)
+	price, err := cli.OrderFulfilledLogs(context.Background(), 18031213, 18031213)
+	fmt.Println(err)
+	fmt.Println(utils.PrettyStruct(price))
+
 	<-sigchan
 	os.Exit(1)
 }
