@@ -81,7 +81,7 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) (*npool.UpsertTokenResponse, error) {
 	err := TransformImage(ctx, in.Info)
 	if err != nil {
-		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
+		logger.Sugar().Errorw("UpsertToken", "action", "publish imageurl to pulsar", "error", err)
 	}
 
 	row, err := crud.Upsert(ctx, in.GetInfo())

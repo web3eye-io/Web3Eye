@@ -69,6 +69,7 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexTask(ctx, taskBlockNum)
 	}
+	time.Sleep(time.Minute * 3)
 }
 
 func (e *EthIndexer) IndexTask(ctx context.Context, taskBlockNum chan uint64) {
@@ -77,24 +78,24 @@ func (e *EthIndexer) IndexTask(ctx context.Context, taskBlockNum chan uint64) {
 		case num := <-taskBlockNum:
 			var err error
 			var blockRecordID string
-			transfers := []*chains.TokenTransfer{}
 			func() {
 				blockRecordID, err = e.IndexBlock(ctx, num)
 				if err != nil {
 					logger.Sugar().Error(err)
 					return
 				}
-				transfers, err = e.IndexTransfer(ctx, num)
+				filteredT1, err := e.IndexTransfer(ctx, num)
 				if err != nil {
 					logger.Sugar().Error(err)
 					return
 				}
-				transfers, err = e.IndexToken(ctx, transfers)
+				filteredT2, err := e.IndexToken(ctx, filteredT1)
 				if err != nil {
 					logger.Sugar().Error(err)
 					return
 				}
-				err = e.IndexContract(ctx, transfers, FindContractCreator)
+
+				err = e.IndexContract(ctx, filteredT2, FindContractCreator)
 				if err != nil {
 					logger.Sugar().Error(err)
 					return
@@ -318,6 +319,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 	outTransfer := []*chains.TokenTransfer{}
 	for _, transfer := range inTransfers {
 		identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+		fmt.Println("Token:", identifier)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
 			return nil, fmt.Errorf("lock the token indentifier failed, err: %v", err)
@@ -371,7 +373,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
-		_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
+		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
 			Info: &tokenProto.TokenReq{
 				ChainType:   &e.ChainType,
 				ChainID:     &e.ChainID,
@@ -404,9 +406,9 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 		if err != nil {
 			return fmt.Errorf("lock the token indentifier failed, err: %v", err)
 		}
-
+		fmt.Println("Contract:", identifier, locked)
 		if !locked {
-			return nil
+			continue
 		}
 		// check if the record exist
 		conds := &contractProto.Conds{
@@ -423,10 +425,10 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 				Op:    "eq",
 			},
 		}
-
 		if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
 			Conds: conds,
 		}); err == nil && resp != nil && resp.GetExist() {
+			continue
 		} else if err != nil {
 			return fmt.Errorf("check if the contract exist failed, err: %v", err)
 		}
@@ -461,7 +463,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 		txHash := creator.TxHash.Hex()
 		blockNum := creator.BlockNumber
 		txTime := uint32(creator.TxTime)
-		_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
+		_, err = contractNMCli.UpsertContract(ctx, &contractProto.UpsertContractRequest{
 			Info: &contractProto.ContractReq{
 				ChainType: &e.ChainType,
 				ChainID:   &e.ChainID,
@@ -520,5 +522,5 @@ func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string
 }
 
 func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
-	return fmt.Sprintf("%v+%v+%v", chain, chainID, contract)
+	return fmt.Sprintf("%v:%v:%v", chain, chainID, contract)
 }

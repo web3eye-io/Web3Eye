@@ -53,6 +53,14 @@ func CreateContracts(ctx context.Context, in *npool.CreateContractsRequest) (res
 	return resp, err
 }
 
+func UpsertContract(ctx context.Context, in *npool.UpsertContractRequest) (resp *npool.UpsertContractResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertContract(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func UpdateContract(ctx context.Context, in *npool.UpdateContractRequest) (resp *npool.UpdateContractResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.UpdateContract(_ctx, in)

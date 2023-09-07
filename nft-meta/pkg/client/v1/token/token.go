@@ -57,6 +57,14 @@ func CreateTokens(ctx context.Context, in *npool.CreateTokensRequest) (resp *npo
 	return resp, err
 }
 
+func UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) (resp *npool.UpsertTokenResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertToken(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) (resp *npool.UpdateTokenResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.UpdateToken(ctx, in)

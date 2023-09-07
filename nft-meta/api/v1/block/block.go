@@ -33,7 +33,7 @@ func (s *Server) CreateBlock(ctx context.Context, in *npool.CreateBlockRequest) 
 func (s *Server) UpsertBlock(ctx context.Context, in *npool.UpsertBlockRequest) (*npool.UpsertBlockResponse, error) {
 	row, err := crud.Upsert(ctx, in.GetInfo())
 	if err != nil {
-		logger.Sugar().Errorw("CreateBlock", "error", err)
+		logger.Sugar().Errorw("UpsertBlock", "error", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

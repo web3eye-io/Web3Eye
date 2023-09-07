@@ -8,14 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
-
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/block"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 )
 
 func main() {
@@ -27,22 +22,6 @@ func main() {
 	// fmt.Println("sss")
 	// go consumeNonce("test9", "s1")
 	// go consumeNonce("test9", "s2")
-	db.Init()
-	chainID := "ssss"
-	blockHash := "ssss"
-	blockTime := time.Now().Unix()
-	blockNum := uint64(111)
-	parseState := v1.BlockParseState_BlockTypeFinish
-	remark := "ss11"
-	fmt.Println(block.Upsert(context.Background(), &npool.BlockReq{
-		ChainType:   v1.ChainType_Solana.Enum(),
-		ChainID:     &chainID,
-		BlockNumber: &blockNum,
-		BlockHash:   &blockHash,
-		BlockTime:   &blockTime,
-		ParseState:  &parseState,
-		Remark:      &remark,
-	}))
 	<-sigchan
 	os.Exit(1)
 }
