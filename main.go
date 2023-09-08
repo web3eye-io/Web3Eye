@@ -9,48 +9,20 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/order"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 )
 
 func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	db.Init()
-	// id := "042c9730-3570-4336-9704-3f80eb9f3244"
-	// chainType := basetype.ChainType_Ethereum.String()
-	// chainID := "1"
-	// txHash := "sssssss"
-	// blockNumber := uint64(123)
-	// txIndex := uint32(123)
-	// logIndex := uint32(125)
-	// logIndex1 := uint32(126)
-	// recipient := "123"
-	// targetItems := []*npool.OrderItem{
-	// 	{
-	// 		Contract:  "contract",
-	// 		TokenType: "sajdiofjasiodfjois",
-	// 		TokenID:   "sss",
-	// 		Amount:    uint64(11),
-	// 		Remark:    "ssss",
-	// 	},
-	// }
-	// offerItems := []*npool.OrderItem{
-	// 	{
-	// 		Contract:  "contract",
-	// 		TokenType: "sajdiofjasiodfjois",
-	// 		TokenID:   "ssddfsds",
-	// 		Amount:    uint64(11),
-	// 		Remark:    "ssss",
-	// 	},
-	// }
-	// remark := "123"
-
-	order, _, err := order.Rows(context.Background(), nil, 0, 100)
-	fmt.Println(utils.PrettyStruct(order), err)
+	cli, err := eth.Client([]string{"https://mainnet.infura.io/v3/8cc70eaecd7c40d9817b6f4747f0e2f7"})
+	fmt.Println(err)
+	logs, err := cli.OrderFulfilledLogs(context.Background(), 18024821, 18024821)
+	fmt.Println(utils.PrettyStruct(logs))
+	fmt.Println(err)
 
 	<-sigchan
 	os.Exit(1)

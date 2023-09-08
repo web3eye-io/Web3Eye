@@ -33,7 +33,7 @@ type OrderItem struct {
 	// TokenID holds the value of the "token_id" field.
 	TokenID string `json:"token_id,omitempty"`
 	// Amount holds the value of the "amount" field.
-	Amount uint64 `json:"amount,omitempty"`
+	Amount int64 `json:"amount,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -122,7 +122,7 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				oi.Amount = uint64(value.Int64)
+				oi.Amount = value.Int64
 			}
 		case orderitem.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {

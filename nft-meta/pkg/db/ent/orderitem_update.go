@@ -114,15 +114,15 @@ func (oiu *OrderItemUpdate) SetTokenID(s string) *OrderItemUpdate {
 }
 
 // SetAmount sets the "amount" field.
-func (oiu *OrderItemUpdate) SetAmount(u uint64) *OrderItemUpdate {
+func (oiu *OrderItemUpdate) SetAmount(i int64) *OrderItemUpdate {
 	oiu.mutation.ResetAmount()
-	oiu.mutation.SetAmount(u)
+	oiu.mutation.SetAmount(i)
 	return oiu
 }
 
-// AddAmount adds u to the "amount" field.
-func (oiu *OrderItemUpdate) AddAmount(u int64) *OrderItemUpdate {
-	oiu.mutation.AddAmount(u)
+// AddAmount adds i to the "amount" field.
+func (oiu *OrderItemUpdate) AddAmount(i int64) *OrderItemUpdate {
+	oiu.mutation.AddAmount(i)
 	return oiu
 }
 
@@ -323,14 +323,14 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := oiu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
 	}
 	if value, ok := oiu.mutation.AddedAmount(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
@@ -455,15 +455,15 @@ func (oiuo *OrderItemUpdateOne) SetTokenID(s string) *OrderItemUpdateOne {
 }
 
 // SetAmount sets the "amount" field.
-func (oiuo *OrderItemUpdateOne) SetAmount(u uint64) *OrderItemUpdateOne {
+func (oiuo *OrderItemUpdateOne) SetAmount(i int64) *OrderItemUpdateOne {
 	oiuo.mutation.ResetAmount()
-	oiuo.mutation.SetAmount(u)
+	oiuo.mutation.SetAmount(i)
 	return oiuo
 }
 
-// AddAmount adds u to the "amount" field.
-func (oiuo *OrderItemUpdateOne) AddAmount(u int64) *OrderItemUpdateOne {
-	oiuo.mutation.AddAmount(u)
+// AddAmount adds i to the "amount" field.
+func (oiuo *OrderItemUpdateOne) AddAmount(i int64) *OrderItemUpdateOne {
+	oiuo.mutation.AddAmount(i)
 	return oiuo
 }
 
@@ -694,14 +694,14 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	}
 	if value, ok := oiuo.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
 	}
 	if value, ok := oiuo.mutation.AddedAmount(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeInt64,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
