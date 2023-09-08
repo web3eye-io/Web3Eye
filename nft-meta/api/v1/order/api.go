@@ -1,7 +1,7 @@
-package orderpair
+package order
 
 import (
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/orderpair"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
 	"google.golang.org/grpc"
 )
 

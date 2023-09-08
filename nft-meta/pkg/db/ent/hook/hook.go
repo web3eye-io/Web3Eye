@@ -48,6 +48,19 @@ func (f EndpointFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The OrderFunc type is an adapter to allow the use of ordinary
+// function as Order mutator.
+type OrderFunc func(context.Context, *ent.OrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.OrderMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The OrderItemFunc type is an adapter to allow the use of ordinary
 // function as OrderItem mutator.
 type OrderItemFunc func(context.Context, *ent.OrderItemMutation) (ent.Value, error)
@@ -57,19 +70,6 @@ func (f OrderItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.OrderItemMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderItemMutation", m)
-	}
-	return f(ctx, mv)
-}
-
-// The OrderPairFunc type is an adapter to allow the use of ordinary
-// function as OrderPair mutator.
-type OrderPairFunc func(context.Context, *ent.OrderPairMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f OrderPairFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.OrderPairMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OrderPairMutation", m)
 	}
 	return f(ctx, mv)
 }

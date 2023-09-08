@@ -206,7 +206,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 	// full the siblinsTokens
 	for _, v := range result {
 		conds = &nftmetanpool.Conds{
-			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType},
+			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType.String()},
 			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
 			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
 		}

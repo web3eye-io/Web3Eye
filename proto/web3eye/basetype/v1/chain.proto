@@ -35,3 +35,11 @@ enum BlockParseState{
     BlockTypeFinish = 20;
     BlockTypeFailed = 30;
 }
+
+enum OrderItemType{
+    OrderItemTypeUnkonwn = 0;
+    // Target: That`s mean want to gain the goods.
+    OrderItemTarget = 10;
+    // Target: That`s mean willing to offer goods for gaining something.
+    OrderItemOffer = 20;
+}

@@ -224,7 +224,7 @@
           "title": "nftmeta.v1.token.Token Token = 10;"
         },
         "ChainType": {
-          "type": "string"
+          "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
           "type": "string"

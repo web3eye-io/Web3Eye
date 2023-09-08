@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package nftmeta.v1.orderhead;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/orderhead";
+import "web3eye/web3eye.proto";
+import "web3eye/basetype/v1/chain.proto";
+
+
+service Manager {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+  rpc CreateOrders(CreateOrdersRequest)
+      returns (CreateOrdersResponse) {}
+  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {}
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
+  rpc GetOrderOnly(GetOrderOnlyRequest)
+      returns (GetOrderOnlyResponse) {}
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {}
+  rpc ExistOrder(ExistOrderRequest) returns (ExistOrderResponse) {}
+  rpc ExistOrderConds(ExistOrderCondsRequest)
+      returns (ExistOrderCondsResponse) {}
+  rpc CountOrders(CountOrdersRequest) returns (CountOrdersResponse) {}
+  rpc DeleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse) {}
+}
+
+message OrderItem{
+  string Contract = 40;
+  chain.TokenType TokenType = 50;
+  string TokenID = 60;
+  uint64 Amount = 70;
+  string Remark = 80;
+}
+
+message OrderReq {
+  optional string ID = 10;
+  optional chain.ChainType ChainType = 20;
+  optional string ChainID = 30;
+  optional string TxHash = 40;
+  optional uint64 BlockNumber = 50;
+  optional uint32 TxIndex = 60;
+  optional uint32 LogIndex = 70;
+  optional string Recipient = 80;
+  repeated OrderItem TargetItems = 90;
+  repeated OrderItem OfferItems = 100;
+  optional string Remark = 110;
+}
+
+message Order {
+  string ID = 10;
+  chain.ChainType ChainType = 20;
+  string ChainID = 30;
+  string TxHash = 40;
+  uint64 BlockNumber = 50;
+  uint32 TxIndex = 60;
+  uint32 LogIndex = 70;
+  string Recipient = 80;
+  repeated OrderItem TargetItems = 90;
+  repeated OrderItem OfferItems = 100;
+  string Remark = 110;
+}
+
+message Conds {
+  web3eye.StringVal ID = 10;
+  web3eye.StringVal ChainType = 20;
+  web3eye.StringVal ChainID = 30;
+  web3eye.StringVal TxHash = 40;
+  web3eye.Uint64Val BlockNumber = 50;
+  web3eye.Uint32Val TxIndex = 60;
+  web3eye.Uint32Val LogIndex = 70;
+  web3eye.StringVal Recipient = 80;
+  web3eye.StringVal Remark = 90;
+  web3eye.StringSliceVal IDs = 150;
+}
+
+message CreateOrderRequest { OrderReq Info = 10; }
+message CreateOrderResponse { Order Info = 10; }
+
+message CreateOrdersRequest { repeated OrderReq Infos = 10; }
+message CreateOrdersResponse { repeated Order Infos = 10; }
+
+message GetOrderRequest { string ID = 10; }
+message GetOrderResponse { Order Info = 10; }
+
+message GetOrdersRequest {
+  Conds Conds = 10;
+  int32 Offset = 20;
+  int32 Limit = 30;
+}
+
+message GetOrdersResponse {
+  repeated Order Infos = 10;
+  uint32 Total = 20;
+}
+
+message GetOrderOnlyRequest { Conds Conds = 10; }
+message GetOrderOnlyResponse { Order Info = 10; }
+
+message UpdateOrderRequest { OrderReq Info = 10; }
+message UpdateOrderResponse { Order Info = 10; }
+
+message ExistOrderRequest { string ID = 10; }
+message ExistOrderResponse { bool Exist = 10; }
+
+message ExistOrderCondsRequest { Conds Conds = 10; }
+message ExistOrderCondsResponse { bool Exist = 10; }
+
+message CountOrdersRequest { Conds Conds = 10; }
+message CountOrdersResponse { uint32 Info = 10; }
+
+message DeleteOrderRequest { string ID = 10; }
+message DeleteOrderResponse { Order Info = 10; }

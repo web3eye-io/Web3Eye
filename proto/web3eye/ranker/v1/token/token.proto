@@ -4,6 +4,7 @@ package ranker.v1.token;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token";
 import "web3eye/nftmeta/v1/token/token.proto";
+import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
   rpc GetToken(nftmeta.v1.token.GetTokenRequest) returns (nftmeta.v1.token.GetTokenResponse) {}
@@ -24,7 +25,7 @@ message SiblingToken{
 message SearchToken{
   // nftmeta.v1.token.Token Token = 10;
   string ID = 10;
-  string ChainType = 20;
+  chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
   string TokenType = 50;

@@ -9,8 +9,8 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderpair"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/schema"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
@@ -121,6 +121,46 @@ func init() {
 	endpointDescID := endpointFields[0].Descriptor()
 	// endpoint.DefaultID holds the default value on creation for the id field.
 	endpoint.DefaultID = endpointDescID.Default.(func() uuid.UUID)
+	orderMixin := schema.Order{}.Mixin()
+	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
+	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := order.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	orderMixinFields0 := orderMixin[0].Fields()
+	_ = orderMixinFields0
+	orderFields := schema.Order{}.Fields()
+	_ = orderFields
+	// orderDescCreatedAt is the schema descriptor for created_at field.
+	orderDescCreatedAt := orderMixinFields0[0].Descriptor()
+	// order.DefaultCreatedAt holds the default value on creation for the created_at field.
+	order.DefaultCreatedAt = orderDescCreatedAt.Default.(func() uint32)
+	// orderDescUpdatedAt is the schema descriptor for updated_at field.
+	orderDescUpdatedAt := orderMixinFields0[1].Descriptor()
+	// order.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	order.DefaultUpdatedAt = orderDescUpdatedAt.Default.(func() uint32)
+	// order.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	order.UpdateDefaultUpdatedAt = orderDescUpdatedAt.UpdateDefault.(func() uint32)
+	// orderDescDeletedAt is the schema descriptor for deleted_at field.
+	orderDescDeletedAt := orderMixinFields0[2].Descriptor()
+	// order.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	order.DefaultDeletedAt = orderDescDeletedAt.Default.(func() uint32)
+	// orderDescTxHash is the schema descriptor for tx_hash field.
+	orderDescTxHash := orderFields[3].Descriptor()
+	// order.TxHashValidator is a validator for the "tx_hash" field. It is called by the builders before save.
+	order.TxHashValidator = orderDescTxHash.Validators[0].(func(string) error)
+	// orderDescRecipient is the schema descriptor for recipient field.
+	orderDescRecipient := orderFields[7].Descriptor()
+	// order.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
+	order.RecipientValidator = orderDescRecipient.Validators[0].(func(string) error)
+	// orderDescID is the schema descriptor for id field.
+	orderDescID := orderFields[0].Descriptor()
+	// order.DefaultID holds the default value on creation for the id field.
+	order.DefaultID = orderDescID.Default.(func() uuid.UUID)
 	orderitemMixin := schema.OrderItem{}.Mixin()
 	orderitem.Policy = privacy.NewPolicies(orderitemMixin[0], schema.OrderItem{})
 	orderitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -153,38 +193,6 @@ func init() {
 	orderitemDescID := orderitemFields[0].Descriptor()
 	// orderitem.DefaultID holds the default value on creation for the id field.
 	orderitem.DefaultID = orderitemDescID.Default.(func() uuid.UUID)
-	orderpairMixin := schema.OrderPair{}.Mixin()
-	orderpair.Policy = privacy.NewPolicies(orderpairMixin[0], schema.OrderPair{})
-	orderpair.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := orderpair.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	orderpairMixinFields0 := orderpairMixin[0].Fields()
-	_ = orderpairMixinFields0
-	orderpairFields := schema.OrderPair{}.Fields()
-	_ = orderpairFields
-	// orderpairDescCreatedAt is the schema descriptor for created_at field.
-	orderpairDescCreatedAt := orderpairMixinFields0[0].Descriptor()
-	// orderpair.DefaultCreatedAt holds the default value on creation for the created_at field.
-	orderpair.DefaultCreatedAt = orderpairDescCreatedAt.Default.(func() uint32)
-	// orderpairDescUpdatedAt is the schema descriptor for updated_at field.
-	orderpairDescUpdatedAt := orderpairMixinFields0[1].Descriptor()
-	// orderpair.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	orderpair.DefaultUpdatedAt = orderpairDescUpdatedAt.Default.(func() uint32)
-	// orderpair.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	orderpair.UpdateDefaultUpdatedAt = orderpairDescUpdatedAt.UpdateDefault.(func() uint32)
-	// orderpairDescDeletedAt is the schema descriptor for deleted_at field.
-	orderpairDescDeletedAt := orderpairMixinFields0[2].Descriptor()
-	// orderpair.DefaultDeletedAt holds the default value on creation for the deleted_at field.
-	orderpair.DefaultDeletedAt = orderpairDescDeletedAt.Default.(func() uint32)
-	// orderpairDescID is the schema descriptor for id field.
-	orderpairDescID := orderpairFields[0].Descriptor()
-	// orderpair.DefaultID holds the default value on creation for the id field.
-	orderpair.DefaultID = orderpairDescID.Default.(func() uuid.UUID)
 	snapshotMixin := schema.Snapshot{}.Mixin()
 	snapshot.Policy = privacy.NewPolicies(snapshotMixin[0], schema.Snapshot{})
 	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {

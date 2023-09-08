@@ -222,6 +222,30 @@ func (f EndpointMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EndpointMutation", m)
 }
 
+// The OrderQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrderQueryRuleFunc func(context.Context, *ent.OrderQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrderQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OrderQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderQuery", q)
+}
+
+// The OrderMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrderMutationRuleFunc func(context.Context, *ent.OrderMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.OrderMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderMutation", m)
+}
+
 // The OrderItemQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrderItemQueryRuleFunc func(context.Context, *ent.OrderItemQuery) error
@@ -244,30 +268,6 @@ func (f OrderItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderItemMutation", m)
-}
-
-// The OrderPairQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type OrderPairQueryRuleFunc func(context.Context, *ent.OrderPairQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f OrderPairQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.OrderPairQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.OrderPairQuery", q)
-}
-
-// The OrderPairMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type OrderPairMutationRuleFunc func(context.Context, *ent.OrderPairMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f OrderPairMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.OrderPairMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrderPairMutation", m)
 }
 
 // The SnapshotQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -407,9 +407,9 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.EndpointQuery:
 		return q.Filter(), nil
-	case *ent.OrderItemQuery:
+	case *ent.OrderQuery:
 		return q.Filter(), nil
-	case *ent.OrderPairQuery:
+	case *ent.OrderItemQuery:
 		return q.Filter(), nil
 	case *ent.SnapshotQuery:
 		return q.Filter(), nil
@@ -432,9 +432,9 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.EndpointMutation:
 		return m.Filter(), nil
-	case *ent.OrderItemMutation:
+	case *ent.OrderMutation:
 		return m.Filter(), nil
-	case *ent.OrderPairMutation:
+	case *ent.OrderItemMutation:
 		return m.Filter(), nil
 	case *ent.SnapshotMutation:
 		return m.Filter(), nil

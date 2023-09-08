@@ -31,8 +31,8 @@ type hooks struct {
 	Block     []ent.Hook
 	Contract  []ent.Hook
 	Endpoint  []ent.Hook
+	Order     []ent.Hook
 	OrderItem []ent.Hook
-	OrderPair []ent.Hook
 	Snapshot  []ent.Hook
 	SyncTask  []ent.Hook
 	Token     []ent.Hook

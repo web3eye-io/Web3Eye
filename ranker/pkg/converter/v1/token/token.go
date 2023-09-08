@@ -2,6 +2,7 @@ package token
 
 import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	ranker_npool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 )
@@ -13,7 +14,7 @@ func Ent2Grpc(row *ent.Token) *ranker_npool.SearchToken {
 
 	return &ranker_npool.SearchToken{
 		ID:              row.ID.String(),
-		ChainType:       row.ChainType,
+		ChainType:       basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:         row.ChainID,
 		Contract:        row.Contract,
 		TokenID:         row.TokenID,
