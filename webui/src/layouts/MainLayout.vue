@@ -1,11 +1,10 @@
 <template>
-  <q-layout view='lHh Lpr lFf'>
-    <q-header elevated>
-      <q-toolbar>
-        <div class='search row' v-if='displaySearchBox'>
-          <a href='#'>
-            <q-img :src='logobottom' class='logo' fit='contain' />
-          </a>
+  <div  class="outer">
+    <q-layout view='lHh Lpr lFf'>
+      <q-header>
+        <q-toolbar>
+        <div class='search row'>
+            <q-img :src='logobottom' class='logo' fit="contain" />
           <q-input
             v-model='search'
             rounded
@@ -14,6 +13,7 @@
             dense
             class='search-box'
             placeholder='Coming soon'
+            v-if='displaySearchBox'
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -21,12 +21,14 @@
           </q-input>
         </div>
         <q-space />
-        <a class='tools' href='#/whitepaper'>White Paper</a>
-        <a class='tools' href='#/deck'>Deck</a>
-        <a class='tools' href='#/blog'>Blog</a>
-        <a class='tools' href='#/daily'>Daily</a>
-        <a class='tools' href='#/schedule'>Schedule</a>
-        <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
+        <a href='#/whitepaper'>White Paper</a>
+        <a  href='#/deck'>Deck</a>
+        <a  href='#/blog'>Blog</a>
+        <a  href='#/daily'>Daily</a>
+        <a  href='#/schedule'>Schedule</a>
+        <q-btn size="md" color="primary" outline rounded label="Connect Wallet" />
+
+        <!-- <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
           <q-menu auto-close>
             <q-list>
               <q-item clickable>
@@ -40,10 +42,10 @@
               </q-item>
             </q-list>
           </q-menu>
-        </q-btn>
+        </q-btn> -->
       </q-toolbar>
     </q-header>
-
+  
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -54,6 +56,7 @@
       </q-toolbar>
     </q-footer>
   </q-layout>
+  </div>
 </template>
 
 <script setup lang='ts'>
@@ -120,23 +123,35 @@ const onTxClick = () => {
 </script>
 
 <style scoped lang='sass'>
-.q-layout__section--marginal
-  background-color: white
-  color: $grey-9
-  font-size: 16px
+.q-layout
+  background-color: $white
+  font-size: 14px
+  font-weight: 500
+  color: #31373D
+  font-family: 'Manrope'
+  width: 93%
+  margin: 0 auto
+  .q-header, .q-footer
+    background-color: $white
+  .q-header
+    height: 48px
+    line-height: 48px
+    position: inherit
+    a,button
+      margin: 0 18px 0 18px
+    a
+      text-decoration: none
+      color: #31373D
+      @media (max-width: $breakpoint-sm-max)
+        display: none
+    button
+      text-transform: none
 
 .logo
   width: 120px
   margin-right: 10px
   line-height: 72px
   @media (max-width: 660px)
-    display: none
-
-.tools
-  margin: 0 10px 0 10px
-  text-decoration: none
-  color: $grey-9
-  @media (max-width: $breakpoint-sm-max)
     display: none
 
 .q-page-container
