@@ -1,13 +1,36 @@
 <template>
-  <div id="token">
-    <h5>Target</h5>
-    <div class="top row">
-      <div class="col-2">
-        <MyImage :url="token?.SearchTokens?.Current" :height="'230px'" />
-      </div>
+  <div>
+    <div class="token row nowrap justify-between">
+    <div class="left">
+      <q-list bordered class="rounded-borders">
+        <q-expansion-item
+          expand-separator
+          default-opened
+          label="Chains"
+        >
+          <q-card>
+            <q-card-section>
+              <q-option-group
+                v-model="group"
+                :options="options"
+                color="blue"
+                type="checkbox"
+              >
+              <template v-slot:label="row">
+                <div class="row justify-between">
+                  <div>{{ row.label }}</div>
+                  <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
+                </div>
+              </template>
+            </q-option-group>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
+      </q-list>
     </div>
-    <h5>Result</h5>
-    <div class="row box" v-for="token in tokens" :key="token.ID">
+    <div class="right">
+      <div class="title">Collection Results</div>
+      <div class="row box" v-for="token in tokens" :key="token.ID">
       <div class="col-2 left">
         <MyImage :url="token.ImageURL" :height="'230px'" :title="token.TokenID" />
       </div>
@@ -55,6 +78,8 @@
         </div>
       </div>
     </div>
+    </div>
+  </div>
   </div>
   <q-dialog v-model="showing" id="transfer-card">
     <q-card style="width: 860px;">
@@ -73,6 +98,28 @@ import { ChainType } from 'src/teststore/basetypes/const';
 
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
+
+const group = ref(['op1'])
+const options = ref(
+  [
+    {
+      label: 'Ethereum',
+      value: 'op1',
+      amount: 100,
+    },
+    {
+      label: 'Flow',
+      value: 'op2',
+      amount: 10,
+    },
+    {
+      label: 'Tezos',
+      value: 'op3',
+      amount: 21,
+    }
+  ]
+)
+
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -146,6 +193,21 @@ onMounted(() => {
 })
 </script>
 <style lang="sass" scoped>
+.token
+  background-color: $white
+  .left
+    width: 25%
+    .rounded-borders
+      border-radius: 10px
+    ::v-deep .q-checkbox
+      width: 100%
+      .q-checkbox__label
+        flex-grow: 1
+  .right
+    width: 72%
+    .title
+      font-weight: 700
+      font-size: 36px
 #token
   width: 60%
   margin:  0 auto

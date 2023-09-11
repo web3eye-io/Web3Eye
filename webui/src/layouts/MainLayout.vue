@@ -13,7 +13,7 @@
             dense
             class='search-box'
             placeholder='Coming soon'
-            v-if='displaySearchBox'
+            v-if='false'
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -124,7 +124,7 @@ const onTxClick = () => {
 
 <style scoped lang='sass'>
 .outer
-  background: $bg-color
+  background:  $white
   background-image: url(../assets/material/background.png)
   background-repeat: repeat
   content: ""
@@ -139,7 +139,7 @@ const onTxClick = () => {
   font-weight: 500
   color: $light-black
   font-family: 'Manrope'
-  width: 93%
+  width: 90%
   margin: 0 auto
   
   .q-header, .q-footer
@@ -160,6 +160,8 @@ const onTxClick = () => {
       text-transform: none
       ::v-deep .q-btn_context
         padding: 4px 0
+  .q-toolbar
+    padding: 0
   .q-footer
     background-color: $white
     opacity: 0.7
