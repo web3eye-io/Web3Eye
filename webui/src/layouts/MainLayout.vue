@@ -4,7 +4,7 @@
       <q-header>
         <q-toolbar>
         <div class='search row'>
-            <q-img :src='logobottom' class='logo' fit="contain" />
+          <q-img :src='logobottom' class='logo' fit="contain" />
           <q-input
             v-model='search'
             rounded
@@ -51,7 +51,7 @@
     </q-page-container>
 
     <q-footer elevated>
-      <q-toolbar>
+      <q-toolbar class="justify-center">
         <div class='footer'>© 2022 - Cyber Tracer</div>
       </q-toolbar>
     </q-footer>
@@ -127,15 +127,16 @@ const onTxClick = () => {
   background-color: $white
   font-size: 14px
   font-weight: 500
-  color: #31373D
+  color: $light-black
   font-family: 'Manrope'
   width: 93%
   margin: 0 auto
   .q-header, .q-footer
     background-color: $white
-  .q-header
+    color: $light-black
     height: 48px
     line-height: 48px
+  .q-header
     position: inherit
     a,button
       margin: 0 18px 0 18px
@@ -158,10 +159,6 @@ const onTxClick = () => {
   ::v-deep .justify-evenly
     justify-content: center
     min-height: 800px !important
-
-.footer
-  color: $blue-14
-  font-size: 14px
 
 .search-box
   width: 450px
