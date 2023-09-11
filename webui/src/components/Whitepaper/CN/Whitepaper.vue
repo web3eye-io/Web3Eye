@@ -211,10 +211,10 @@
 <script setup lang='ts'>
 import { defineAsyncComponent } from 'vue'
 
-import homepage from '../../../assets/meterial/homepage.png'
-import searchResult from '../../../assets/meterial/search-result.png'
-import productArch from '../../../assets/meterial/product-arch.png'
-import milvusArch from '../../../assets/meterial/milvus-arch.png'
+import homepage from '../../../assets/material/homepage.png'
+import searchResult from '../../../assets/material/search-result.png'
+import productArch from '../../../assets/material/product-arch.png'
+import milvusArch from '../../../assets/material/milvus-arch.png'
 
 const ContentTable = defineAsyncComponent(() => import('../../BlogPage/ContentTable.vue'))
 

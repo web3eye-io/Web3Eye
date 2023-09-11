@@ -1,5 +1,5 @@
 <template>
-  <div  class="outer">
+  <div class="outer">
     <q-layout view='lHh Lpr lFf'>
       <q-header>
         <q-toolbar>
@@ -50,7 +50,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated>
+    <q-footer>
       <q-toolbar class="justify-center">
         <div class='footer'>© 2022 - Cyber Tracer</div>
       </q-toolbar>
@@ -123,16 +123,27 @@ const onTxClick = () => {
 </script>
 
 <style scoped lang='sass'>
+.outer
+  background: $bg-color
+  background-image: url(../assets/material/background.png)
+  background-repeat: repeat
+  content: ""
+  display: block
+  position: absolute
+  top: 0
+  right: 0
+  height: 100%
+  width: 100%
 .q-layout
-  background-color: $white
   font-size: 14px
   font-weight: 500
   color: $light-black
   font-family: 'Manrope'
   width: 93%
   margin: 0 auto
+  
   .q-header, .q-footer
-    background-color: $white
+    background-color: inherit
     color: $light-black
     height: 48px
     line-height: 48px
@@ -147,6 +158,11 @@ const onTxClick = () => {
         display: none
     button
       text-transform: none
+      ::v-deep .q-btn_context
+        padding: 4px 0
+  .q-footer
+    background-color: $white
+    opacity: 0.7
 
 .logo
   width: 120px
