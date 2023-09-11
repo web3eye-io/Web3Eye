@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
@@ -20,9 +21,14 @@ func main() {
 
 	cli, err := eth.Client([]string{"https://mainnet.infura.io/v3/8cc70eaecd7c40d9817b6f4747f0e2f7"})
 	fmt.Println(err)
-	logs, err := cli.OrderFulfilledLogs(context.Background(), 18024821, 18024821)
-	fmt.Println(utils.PrettyStruct(logs))
-	fmt.Println(err)
+	start := time.Now()
+	for i := 0; i < 100; i++ {
+		cli.FilterLogsForTopics(context.Background(), 18024821, 18024821, [][]common.Hash{
+			eth.TransfersTopics,
+			eth.OrderFulfilledTopics,
+		})
+	}
+	fmt.Println(time.Now().Sub(start).String())
 
 	<-sigchan
 	os.Exit(1)

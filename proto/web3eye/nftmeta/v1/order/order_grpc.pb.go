@@ -4,7 +4,7 @@
 // - protoc             v3.18.1
 // source: web3eye/nftmeta/v1/order/order.proto
 
-package orderhead
+package order
 
 import (
 	context "context"
@@ -44,7 +44,7 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 
 func (c *managerClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
 	out := new(CreateOrderResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/CreateOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/CreateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *managerClient) CreateOrder(ctx context.Context, in *CreateOrderRequest,
 
 func (c *managerClient) CreateOrders(ctx context.Context, in *CreateOrdersRequest, opts ...grpc.CallOption) (*CreateOrdersResponse, error) {
 	out := new(CreateOrdersResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/CreateOrders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/CreateOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *managerClient) CreateOrders(ctx context.Context, in *CreateOrdersReques
 
 func (c *managerClient) UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...grpc.CallOption) (*UpdateOrderResponse, error) {
 	out := new(UpdateOrderResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/UpdateOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/UpdateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *managerClient) UpdateOrder(ctx context.Context, in *UpdateOrderRequest,
 
 func (c *managerClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
 	out := new(GetOrderResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/GetOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/GetOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (c *managerClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts 
 
 func (c *managerClient) GetOrderOnly(ctx context.Context, in *GetOrderOnlyRequest, opts ...grpc.CallOption) (*GetOrderOnlyResponse, error) {
 	out := new(GetOrderOnlyResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/GetOrderOnly", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/GetOrderOnly", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (c *managerClient) GetOrderOnly(ctx context.Context, in *GetOrderOnlyReques
 
 func (c *managerClient) GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
 	out := new(GetOrdersResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/GetOrders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/GetOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (c *managerClient) GetOrders(ctx context.Context, in *GetOrdersRequest, opt
 
 func (c *managerClient) ExistOrder(ctx context.Context, in *ExistOrderRequest, opts ...grpc.CallOption) (*ExistOrderResponse, error) {
 	out := new(ExistOrderResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/ExistOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/ExistOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (c *managerClient) ExistOrder(ctx context.Context, in *ExistOrderRequest, o
 
 func (c *managerClient) ExistOrderConds(ctx context.Context, in *ExistOrderCondsRequest, opts ...grpc.CallOption) (*ExistOrderCondsResponse, error) {
 	out := new(ExistOrderCondsResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/ExistOrderConds", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/ExistOrderConds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (c *managerClient) ExistOrderConds(ctx context.Context, in *ExistOrderConds
 
 func (c *managerClient) CountOrders(ctx context.Context, in *CountOrdersRequest, opts ...grpc.CallOption) (*CountOrdersResponse, error) {
 	out := new(CountOrdersResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/CountOrders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/CountOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func (c *managerClient) CountOrders(ctx context.Context, in *CountOrdersRequest,
 
 func (c *managerClient) DeleteOrder(ctx context.Context, in *DeleteOrderRequest, opts ...grpc.CallOption) (*DeleteOrderResponse, error) {
 	out := new(DeleteOrderResponse)
-	err := c.cc.Invoke(ctx, "/nftmeta.v1.orderhead.Manager/DeleteOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/nftmeta.v1.order.Manager/DeleteOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func _Manager_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/CreateOrder",
+		FullMethod: "/nftmeta.v1.order.Manager/CreateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateOrder(ctx, req.(*CreateOrderRequest))
@@ -224,7 +224,7 @@ func _Manager_CreateOrders_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/CreateOrders",
+		FullMethod: "/nftmeta.v1.order.Manager/CreateOrders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateOrders(ctx, req.(*CreateOrdersRequest))
@@ -242,7 +242,7 @@ func _Manager_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/UpdateOrder",
+		FullMethod: "/nftmeta.v1.order.Manager/UpdateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).UpdateOrder(ctx, req.(*UpdateOrderRequest))
@@ -260,7 +260,7 @@ func _Manager_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/GetOrder",
+		FullMethod: "/nftmeta.v1.order.Manager/GetOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).GetOrder(ctx, req.(*GetOrderRequest))
@@ -278,7 +278,7 @@ func _Manager_GetOrderOnly_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/GetOrderOnly",
+		FullMethod: "/nftmeta.v1.order.Manager/GetOrderOnly",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).GetOrderOnly(ctx, req.(*GetOrderOnlyRequest))
@@ -296,7 +296,7 @@ func _Manager_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/GetOrders",
+		FullMethod: "/nftmeta.v1.order.Manager/GetOrders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).GetOrders(ctx, req.(*GetOrdersRequest))
@@ -314,7 +314,7 @@ func _Manager_ExistOrder_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/ExistOrder",
+		FullMethod: "/nftmeta.v1.order.Manager/ExistOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).ExistOrder(ctx, req.(*ExistOrderRequest))
@@ -332,7 +332,7 @@ func _Manager_ExistOrderConds_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/ExistOrderConds",
+		FullMethod: "/nftmeta.v1.order.Manager/ExistOrderConds",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).ExistOrderConds(ctx, req.(*ExistOrderCondsRequest))
@@ -350,7 +350,7 @@ func _Manager_CountOrders_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/CountOrders",
+		FullMethod: "/nftmeta.v1.order.Manager/CountOrders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CountOrders(ctx, req.(*CountOrdersRequest))
@@ -368,7 +368,7 @@ func _Manager_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/nftmeta.v1.orderhead.Manager/DeleteOrder",
+		FullMethod: "/nftmeta.v1.order.Manager/DeleteOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).DeleteOrder(ctx, req.(*DeleteOrderRequest))
@@ -380,7 +380,7 @@ func _Manager_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Manager_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "nftmeta.v1.orderhead.Manager",
+	ServiceName: "nftmeta.v1.order.Manager",
 	HandlerType: (*ManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

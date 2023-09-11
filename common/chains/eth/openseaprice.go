@@ -1,7 +1,6 @@
 package eth
 
 import (
-	"context"
 	"fmt"
 	"math/big"
 
@@ -10,7 +9,6 @@ import (
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
 
-	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
@@ -24,6 +22,9 @@ const (
 )
 
 var (
+	OrderFulfilledTopics = []common.Hash{
+		common.HexToHash(orderFulfilledEventHash),
+	}
 	openseaABI, _       = contracts.OpenseaMetaData.GetAbi()
 	ItemTypeToTokenType = map[uint8]basetype.TokenType{
 		0: basetype.TokenType_Native,
@@ -59,7 +60,7 @@ type OrderPriceDetails struct {
 }
 
 //nolint:gocritic
-func LogsToPrice(pLogs []types.Log) []*npool.Order {
+func LogsToOrders(pLogs []types.Log) []*npool.Order {
 	result := make([]*npool.Order, 0)
 	for _, pLog := range pLogs {
 		orderObj, err := LogToOrderFulfilled(pLog)
@@ -70,6 +71,7 @@ func LogsToPrice(pLogs []types.Log) []*npool.Order {
 		orderAD := TidyOrderAccount(orderObj)
 		orderPD := CalOrderPrice(orderAD)
 		for _, v := range orderPD.OrderPricePairs {
+
 			result = append(result, &npool.Order{
 				TxHash:      pLog.TxHash.String(),
 				BlockNumber: pLog.BlockNumber,
@@ -82,23 +84,6 @@ func LogsToPrice(pLogs []types.Log) []*npool.Order {
 		}
 	}
 	return result
-}
-
-func (ethCli *ethClients) OrderFulfilledLogs(ctx context.Context, fromBlock, toBlock int64) ([]*npool.Order, error) {
-	topics := [][]common.Hash{{
-		common.HexToHash(string(orderFulfilledEventHash)),
-	}}
-
-	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
-		FromBlock: big.NewInt(fromBlock),
-		ToBlock:   big.NewInt(toBlock),
-		Topics:    topics,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return LogsToPrice(logs), nil
 }
 
 func LogToOrderFulfilled(orderLog types.Log) (*contracts.OpenseaOrderFulfilled, error) {

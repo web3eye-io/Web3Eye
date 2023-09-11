@@ -6,6 +6,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/token"
@@ -29,6 +30,7 @@ func Register(server grpc.ServiceRegistrar) {
 	synctask.Register(server)
 	snapshot.Register(server)
 	endpoint.Register(server)
+	order.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

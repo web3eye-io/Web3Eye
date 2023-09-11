@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package nftmeta.v1.orderhead;
+package nftmeta.v1.order;
 
-option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/orderhead";
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order";
 import "web3eye/web3eye.proto";
 import "web3eye/basetype/v1/chain.proto";
 

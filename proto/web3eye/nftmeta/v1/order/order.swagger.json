@@ -41,7 +41,7 @@
       ],
       "default": "TokenUnkonwn"
     },
-    "orderheadConds": {
+    "orderConds": {
       "type": "object",
       "properties": {
         "ID": {
@@ -76,7 +76,7 @@
         }
       }
     },
-    "orderheadCountOrdersResponse": {
+    "orderCountOrdersResponse": {
       "type": "object",
       "properties": {
         "Info": {
@@ -85,34 +85,34 @@
         }
       }
     },
-    "orderheadCreateOrderResponse": {
+    "orderCreateOrderResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/orderheadOrder"
+          "$ref": "#/definitions/orderOrder"
         }
       }
     },
-    "orderheadCreateOrdersResponse": {
+    "orderCreateOrdersResponse": {
       "type": "object",
       "properties": {
         "Infos": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrder"
+            "$ref": "#/definitions/orderOrder"
           }
         }
       }
     },
-    "orderheadDeleteOrderResponse": {
+    "orderDeleteOrderResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/orderheadOrder"
+          "$ref": "#/definitions/orderOrder"
         }
       }
     },
-    "orderheadExistOrderCondsResponse": {
+    "orderExistOrderCondsResponse": {
       "type": "object",
       "properties": {
         "Exist": {
@@ -120,7 +120,7 @@
         }
       }
     },
-    "orderheadExistOrderResponse": {
+    "orderExistOrderResponse": {
       "type": "object",
       "properties": {
         "Exist": {
@@ -128,29 +128,29 @@
         }
       }
     },
-    "orderheadGetOrderOnlyResponse": {
+    "orderGetOrderOnlyResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/orderheadOrder"
+          "$ref": "#/definitions/orderOrder"
         }
       }
     },
-    "orderheadGetOrderResponse": {
+    "orderGetOrderResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/orderheadOrder"
+          "$ref": "#/definitions/orderOrder"
         }
       }
     },
-    "orderheadGetOrdersResponse": {
+    "orderGetOrdersResponse": {
       "type": "object",
       "properties": {
         "Infos": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrder"
+            "$ref": "#/definitions/orderOrder"
           }
         },
         "Total": {
@@ -159,7 +159,7 @@
         }
       }
     },
-    "orderheadOrder": {
+    "orderOrder": {
       "type": "object",
       "properties": {
         "ID": {
@@ -192,13 +192,13 @@
         "TargetItems": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrderItem"
+            "$ref": "#/definitions/orderOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrderItem"
+            "$ref": "#/definitions/orderOrderItem"
           }
         },
         "Remark": {
@@ -206,7 +206,7 @@
         }
       }
     },
-    "orderheadOrderItem": {
+    "orderOrderItem": {
       "type": "object",
       "properties": {
         "Contract": {
@@ -227,7 +227,7 @@
         }
       }
     },
-    "orderheadOrderReq": {
+    "orderOrderReq": {
       "type": "object",
       "properties": {
         "ID": {
@@ -260,13 +260,13 @@
         "TargetItems": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrderItem"
+            "$ref": "#/definitions/orderOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/orderheadOrderItem"
+            "$ref": "#/definitions/orderOrderItem"
           }
         },
         "Remark": {
@@ -274,11 +274,11 @@
         }
       }
     },
-    "orderheadUpdateOrderResponse": {
+    "orderUpdateOrderResponse": {
       "type": "object",
       "properties": {
         "Info": {
-          "$ref": "#/definitions/orderheadOrder"
+          "$ref": "#/definitions/orderOrder"
         }
       }
     },

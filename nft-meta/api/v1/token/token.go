@@ -86,7 +86,7 @@ func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) 
 
 	row, err := crud.Upsert(ctx, in.GetInfo())
 	if err != nil {
-		logger.Sugar().Errorw("CreateBlock", "error", err)
+		logger.Sugar().Errorw("UpsertToken", "error", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

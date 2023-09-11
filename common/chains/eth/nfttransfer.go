@@ -26,7 +26,12 @@ const (
 )
 
 var (
-	erc1155ABI, _ = contracts.IERC1155MetaData.GetAbi()
+	erc1155ABI, _   = contracts.IERC1155MetaData.GetAbi()
+	TransfersTopics = []common.Hash{
+		common.HexToHash(transferEventHash),
+		common.HexToHash(transferSingleEventHash),
+		common.HexToHash(transferBatchEventHash),
+	}
 )
 
 //nolint:gocritic
@@ -120,21 +125,50 @@ func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
 	return result, nil
 }
 
-func (ethCli *ethClients) TransferLogs(ctx context.Context, fromBlock, toBlock int64) ([]*chains.TokenTransfer, error) {
-	topics := [][]common.Hash{{
-		common.HexToHash(string(transferEventHash)),
-		common.HexToHash(string(transferSingleEventHash)),
-		common.HexToHash(string(transferBatchEventHash)),
-	}}
-
+// get the logs from chain
+// overwrite the ethclient.FilterLogs,for filter diffent topics from logs
+// if topics={{}} retrun {{all logs}}
+// if topics={{A}} retrun {{A logs}}
+// if topics={{A,B,C}} return {{A or B or C logs}}
+// if topics={{A,B,C},{D}} return {{A or B or C logs},{D logs}}
+func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, toBlock int64, topics [][]common.Hash) ([][]types.Log, error) {
 	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock),
 		ToBlock:   big.NewInt(toBlock),
-		Topics:    topics,
+		Topics:    [][]common.Hash{},
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return LogsToTransfer(logs)
+	if len(topics) == 0 {
+		return [][]types.Log{logs}, err
+	}
+
+	// init topicSets
+	topicSets := make([]map[common.Hash]struct{}, len(topics))
+	topicLogs := make([][]types.Log, len(topics))
+	allSets := make(map[common.Hash]struct{})
+	for i, items := range topics {
+		topicSets[i] = make(map[common.Hash]struct{}, len(items))
+		topicLogs[i] = make([]types.Log, 0)
+		for _, item := range items {
+			topicSets[i][item] = struct{}{}
+			allSets[item] = struct{}{}
+		}
+	}
+
+	for _, v := range logs {
+		if _, ok := allSets[v.Topics[0]]; !ok {
+			continue
+		}
+		for i, topic := range topicSets {
+			if _, ok := topic[v.Topics[0]]; ok {
+				topicLogs[i] = append(topicLogs[i], v)
+			}
+		}
+	}
+
+	return topicLogs, nil
 }
