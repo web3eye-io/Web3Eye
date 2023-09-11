@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
@@ -9,26 +10,22 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
 )
+
+type Ss struct {
+	B uint
+	C string
+}
 
 func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	cli, err := eth.Client([]string{"https://mainnet.infura.io/v3/8cc70eaecd7c40d9817b6f4747f0e2f7"})
-	fmt.Println(err)
-	start := time.Now()
-	for i := 0; i < 100; i++ {
-		cli.FilterLogsForTopics(context.Background(), 18024821, 18024821, [][]common.Hash{
-			eth.TransfersTopics,
-			eth.OrderFulfilledTopics,
-		})
-	}
-	fmt.Println(time.Now().Sub(start).String())
+	s := &Ss{B: 0, C: ""}
+	sBytes, err := json.Marshal(s)
+	fmt.Println(string(sBytes), err)
 
 	<-sigchan
 	os.Exit(1)

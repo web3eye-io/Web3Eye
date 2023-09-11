@@ -118,7 +118,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
 	respBody["Msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
-	respBody["Infos"] = resp.Infos
+	respBody["Infos"], _ = json.Marshal(resp.Infos)
 	respBody["Page"] = resp.Page
 	respBody["StorageKey"] = resp.StorageKey
 	respBody["TotalPages"] = resp.TotalPages
