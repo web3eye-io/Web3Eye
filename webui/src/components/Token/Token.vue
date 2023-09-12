@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="token row nowrap justify-between">
+    <div class="token row nowrap">
     <div class="left">
       <q-list bordered class="rounded-borders">
         <q-expansion-item
@@ -31,52 +31,58 @@
     <div class="right">
       <div class="title">Collection Results</div>
       <div class="row box" v-for="token in tokens" :key="token.ID">
-      <div class="col-2 left">
-        <MyImage :url="token.ImageURL" :height="'230px'" :title="token.TokenID" />
-      </div>
-      <div class="col flex column center">
-        <div class="content col">
-          <div class="line-top">
-            <span class="distance">Distance: {{ token.Distance }}</span>
-            <!-- <span class="block1">Block: {{ token.SiblingsNum }}</span> -->
+        <div class="content-left">
+          <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" :title="token.TokenID" />
+        </div>
+        <div class="content-right column">
+          <div class="line-top row space-between items-center">
+            <div class="distance">Distance: {{ token.Distance }}</div>
+            <div class="block1">Block: {{ token.SiblingsNum }}</div>
+            <q-space />
+            <div>
+                <q-icon  name="img:icons/ethereum-eth-logo.png" />
+                <!-- <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" /> -->
+                <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
+              </div>
+              <div class="chain-logo">{{ 'Ethereum' }}</div>
           </div>
-          <div class="name">
-            <span>{{ token.Name }}</span>
-          </div>
-          <div class="total-transfers">
-            <a href="#" @click.prevent @click="onTransferClick(token)" style="color: black;">{{token?.TransfersNum}} transfers</a>
-          </div>
-          <div class="contract">
-            <a href="#" @click.prevent @click="onContractClick(token)" style="color: black;">
-              <span>Contract: {{ token.Contract }}</span>
-            </a>
+            <!-- <div class="name">
+              <span>{{ token.Name }}</span>
+            </div>
+            <div class="total-transfers">
+              <a href="#" @click.prevent @click="onTransferClick(token)" style="color: black;">{{token?.TransfersNum}} transfers</a>
+            </div>
+            <div class="contract">
+              <a href="#" @click.prevent @click="onContractClick(token)" style="color: black;">
+                <span>Contract: {{ token.Contract }}</span>
+              </a>
+            </div> -->
+          
+          <div class="transfers col flex">
+            <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
+              <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'" :title="item.TokenID" />
+            </div>
+            <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
+              ...
+            </div>
           </div>
         </div>
-        <div class="transfers col flex">
-          <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
-            <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'" :title="item.TokenID" />
+        <!-- <div class="col-2">
+          <div class="right column justify-between">
+            <div class="right-top self-end">
+              <span class="name">
+                <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" style="padding-bottom: 3px;" />
+                <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" style="padding-bottom: 2px;" />
+                {{ token.ChainType }}
+              </span>
+              <span class="net">@mainnet</span>
+            </div>
+            <div class="right-bottom self-end">
+              <span>{{token.TokenType}}</span>
+              <span>  ChainID-{{token.ChainID}}</span>
+            </div>
           </div>
-          <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
-            ...
-          </div>
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="right column justify-between">
-          <div class="right-top self-end">
-            <span class="name">
-              <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" style="padding-bottom: 3px;" />
-              <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" style="padding-bottom: 2px;" />
-              {{ token.ChainType }}
-            </span>
-            <span class="net">@mainnet</span>
-          </div>
-          <div class="right-bottom self-end">
-            <span>{{token.TokenType}}</span>
-            <!-- <span>  ChainID-{{token.ChainID}}</span> -->
-          </div>
-        </div>
-      </div>
+        </div> -->
     </div>
     </div>
   </div>
@@ -196,7 +202,7 @@ onMounted(() => {
 .token
   background-color: $white
   .left
-    width: 25%
+    width: 290px
     .rounded-borders
       border-radius: 10px
     ::v-deep .q-checkbox
@@ -204,10 +210,39 @@ onMounted(() => {
       .q-checkbox__label
         flex-grow: 1
   .right
-    width: 72%
+    margin-left: 40px
+    flex-grow: 1
     .title
       font-weight: 700
       font-size: 36px
+      line-height: 50px
+    .box
+      height: 230px
+      border: 1px solid #EFEFEF
+      border-radius: 4px
+      margin-top: 20px
+      background-color: #fcfbfb
+      border-radius: 16px
+      .content-right
+        flex-grow: 1
+        padding-left: 25px
+        opacity: 0.8
+        .line-top
+          padding-top: 15px
+          .block1
+            padding-left: 30px
+          .chain-logo
+            padding-right: 20px
+    .transfers div
+      margin-right: 5px
+    .right
+        height: 100%
+        .right-top, .right-bottom
+          padding: 10px 10px 10px 0
+        .right-top
+          .name
+            font-weight: 700px
+            color: #7D7D7D
 #token
   width: 60%
   margin:  0 auto
@@ -223,8 +258,6 @@ onMounted(() => {
       padding: 10px 10px
     .content
       .line-top
-        .distance,.block1
-          font-weight: bolder
         .block1
           padding-left: 15px
         .name

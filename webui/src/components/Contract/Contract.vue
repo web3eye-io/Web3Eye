@@ -1,6 +1,6 @@
 <template>
   <div id="contract">
-    <div class="row justify-center q-pa-md">
+    <div class="row justify-center">
       <div class="left self-end">
         <q-carousel
           animated

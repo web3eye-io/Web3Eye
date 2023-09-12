@@ -35,7 +35,7 @@
       </template>
     </q-input>
     <q-uploader
-      v-if='false'
+      v-if='!isText'
       class='upload-box'
       url="/api/entrance/search/file"
       color='white'

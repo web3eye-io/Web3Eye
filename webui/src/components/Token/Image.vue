@@ -9,11 +9,11 @@
     :src="imageUrl"
     spinner-color="red"
     :height="height" 
-    :width="width" 
+    :width="width"
     fit="fill" 
   >
     <div class="absolute-bottom-left text-subtitle2" v-if="title">
-      {{title}}
+      <!-- {{title}} -->
     </div>
   </q-img>
 </template>
