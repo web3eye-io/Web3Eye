@@ -38,8 +38,7 @@
         </div>
       </div>
       <div id="contract">
-        <div class="contracts q-pa-md">
-        <div class="inner row">
+        <div class="inner row" v-if="tab == 'Collections'">
           <div class="box column" v-for="token in tokens" :key="token.ID">
             <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
             <div class="content">
@@ -60,8 +59,15 @@
             </div>
           </div>
         </div>
+        <div v-else>
+          <q-table
+          row-key="Block" 
+          flat bordered
+          :columns="(columns as any)"
+          :rows="transfers"
+        />
+        </div>
       </div>
-    </div>
     </div>
   </div>
   
@@ -71,6 +77,7 @@ import { useContractStore } from 'src/teststore/contract'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
+import { Transfer } from 'src/teststore/transfer/types';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
 const tab = ref("Collections")
@@ -112,7 +119,40 @@ const getContract = () => {
     // TODO
   })
 }
-const slide = ref(1)
+
+const transfers = ref([] as Array<Transfer>) 
+const columns = computed(() => [
+  {
+    name: 'Block',
+    label: 'BLOCK',
+    align: 'center',
+    field: (row: Transfer) => row.BlockNumber
+  },
+  {
+    name: 'Time',
+    label: 'Time',
+    align: 'center',
+    field: (row: Transfer) => row.TxTime
+  },
+  {
+    name: 'Value',
+    label: 'Value',
+    align: 'center',
+    field: (row: Transfer) => row.Amount
+  },
+  {
+    name: 'From',
+    label: 'From',
+    align: 'center',
+    field: (row: Transfer) => row.From
+  },
+  {
+    name: 'To',
+    label: 'To',
+    align: 'center',
+    field: (row: Transfer) => row.To
+  },
+])
 </script>
 <style lang="sass" scoped>
 
