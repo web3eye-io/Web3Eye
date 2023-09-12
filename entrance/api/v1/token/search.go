@@ -65,28 +65,20 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
-type SearchResponse struct {
-	Msg         string
-	Infos       json.RawMessage
-	Page        uint32
-	StorageKey  string
-	TotalPages  uint32
-	TotalTokens uint32
-	Limit       uint32
-}
-
 // nolint
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
-	respBody := SearchResponse{}
+	respBody := []byte{}
 	var err error
+	var errMsg string
 	defer func() {
-		_respBody, err := json.Marshal(respBody)
-		if err != nil {
-			w.Write([]byte(fmt.Sprintf("json marshal response body fail, %v", err)))
+		if errMsg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(errMsg))
 			return
 		}
-		_, err = w.Write(_respBody)
+
+		_, err = w.Write(respBody)
 		if err != nil {
 			w.Write([]byte(fmt.Sprintf("write response body fail, %v", err)))
 		}
@@ -96,16 +88,14 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.ParseUint(_limit, 10, 32)
 
 	if err != nil {
-		respBody.Msg = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
 		return
 	}
 
 	// judge weather filesize exceed max-size
 	err = r.ParseMultipartForm(MaxUploadFileSize)
 	if err != nil {
-		respBody.Msg = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
 		return
 	}
 
@@ -115,8 +105,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// convert to vector
 	vector, err := ImgReqConvertVector(r)
 	if err != nil {
-		respBody.Msg = fmt.Sprintf("image convert fail, %v", err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("image convert fail, %v", err)
 		return
 	}
 
@@ -128,9 +117,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Vector: vector,
 		Limit:  uint32(limit),
 	})
+
 	if err != nil {
-		respBody.Msg = fmt.Sprintf("search fail, %v", err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("search fail, %v", err)
 		return
 	}
 
@@ -140,18 +129,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	buff := bytes.NewBuffer([]byte{})
 	err = pbJsonMarshaler.Marshal(buff, resp)
 	if err != nil {
-		respBody.Msg = fmt.Sprintf("marshal result fail, %v", err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("marshal result fail, %v", err)
 		return
 	}
 
-	respBody.Msg = fmt.Sprintf("have %v infos", len(resp.Infos))
-	respBody.Infos = buff.Bytes()
-	respBody.Page = resp.Page
-	respBody.StorageKey = resp.StorageKey
-	respBody.TotalPages = resp.TotalPages
-	respBody.TotalTokens = resp.TotalTokens
-	respBody.Limit = resp.Limit
+	respBody = buff.Bytes()
 }
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct

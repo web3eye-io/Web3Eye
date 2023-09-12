@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
@@ -23,12 +22,22 @@ func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	s := &Ss{B: 0, C: ""}
-	sBytes, err := json.Marshal(s)
-	fmt.Println(string(sBytes), err)
+	ppp()
 
 	<-sigchan
 	os.Exit(1)
+}
+
+func ppp() {
+	var sss error
+	defer func() {
+		if sss == nil {
+			fmt.Println("sss")
+		}
+		fmt.Println("sss")
+	}()
+
+	sss = fmt.Errorf("ssssdfasdf")
 }
 
 func produceNonce(topic string) {
