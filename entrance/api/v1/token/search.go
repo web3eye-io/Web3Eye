@@ -53,7 +53,7 @@ var (
 
 func init() {
 	pbJsonMarshaler = jsonpb.Marshaler{
-		EmitDefaults: false,
+		EmitDefaults: true,
 	}
 	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
