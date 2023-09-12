@@ -125,7 +125,7 @@ const getChainID = async() => {
 
 <style scoped lang='sass'>
 .outer
-  background:  $white
+  background-color:  $white
   background-image: url(../assets/material/background.png)
   background-repeat: repeat
   content: ""
@@ -140,15 +140,14 @@ const getChainID = async() => {
   font-weight: 500
   color: $light-black
   font-family: 'Manrope'
-  width: 90%
-  margin: 0 auto
-  
   .q-header, .q-footer
-    background-color: inherit
+    background: linear-gradient(to right, transparent 0, #3187FF 0%, transparent 0%)
     color: $light-black
     height: 48px
     line-height: 48px
   .q-header
+    width: 90%
+    margin: 0 auto
     position: inherit
     a,button
       margin: 0 18px 0 18px
@@ -175,6 +174,7 @@ const getChainID = async() => {
     display: none
 
 .q-page-container
+  padding-top: 10px
   ::v-deep .justify-evenly
     justify-content: center
     min-height: 800px !important

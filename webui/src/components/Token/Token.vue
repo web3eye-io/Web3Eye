@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div class="token row nowrap">
+  <div class="outer-bg">
+    <div class="outer-container">
+      <div class="token row nowrap">
     <div class="left">
       <q-list bordered class="rounded-borders">
         <q-expansion-item
@@ -70,6 +71,8 @@
     </div>
     </div>
   </div>
+    </div>
+    
   </div>
   <q-dialog v-model="showing" id="transfer-card">
     <q-card style="width: 860px;">
@@ -189,6 +192,8 @@ onMounted(() => {
 })
 </script>
 <style lang="sass" scoped>
+.outer-bg
+  background: $white
 .token
   background-color: $white
   .left
