@@ -210,12 +210,12 @@ onMounted(() => {
     .title
       font-weight: 700
       font-size: 36px
-      line-height: 50px
+      line-height: 33px
     .box
       height: 230px
       border: 1px solid #EFEFEF
       border-radius: 4px
-      margin-top: 20px
+      margin-top: 30px
       background-color: #fcfbfb
       border-radius: 16px
       .content-right
