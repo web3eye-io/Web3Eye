@@ -26,7 +26,7 @@
         <a  href='#/blog'>Blog</a>
         <a  href='#/daily'>Daily</a>
         <a  href='#/schedule'>Schedule</a>
-        <q-btn size="md" color="primary" outline rounded label="Connect Wallet" />
+        <q-btn size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
 
         <!-- <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
           <q-menu auto-close>
@@ -60,23 +60,24 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, reactive } from 'vue'
-import { useLocalSettingStore, useWeb3jsStore } from 'src/localstore'
+import { ref, reactive } from 'vue'
+import { useWeb3jsStore } from 'src/localstore'
 
 import logobottom from '../assets/logo/logo-bottom.png'
-import metamask from '../assets/icon/metamask.webp'
+// import metamask from '../assets/icon/metamask.webp'
 import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-const setting = useLocalSettingStore()
-const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
+// const setting = useLocalSettingStore()
+// const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
 
 const search = ref('')
 
 const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
 let web3 = new Web3(window.ethereum)
+
 
 const onMetaMaskClick = () => {
   web3.eth.requestAccounts((_, accounts) => {
@@ -111,14 +112,14 @@ const getChainID = async() => {
   console.log('web3: ', web3js.getAccount())
 }
 
-const onLogout = () => {
-  // TODO
-}
+// const onLogout = () => {
+//   // TODO
+// }
 
-const router = useRouter()
-const onTxClick = () => {
-  void router.push({path: '/transaction'})
-}
+// const router = useRouter()
+// const onTxClick = () => {
+//   void router.push({path: '/transaction'})
+// }
 
 </script>
 

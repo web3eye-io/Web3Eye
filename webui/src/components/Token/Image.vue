@@ -59,6 +59,7 @@ const imageUrl = computed(() => {
 </script>
 <style lang="sass" scoped>
 .q-img__content > div
-  padding: 2px
   background: none
+::v-deep .q-img__image
+  border-radius: 6px
 </style>

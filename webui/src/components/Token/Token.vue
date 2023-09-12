@@ -29,7 +29,7 @@
       </q-list>
     </div>
     <div class="right">
-      <div class="title">Collection Results</div>
+      <div class="title">Collections</div>
       <div class="row box" v-for="token in tokens" :key="token.ID">
         <div class="content-left">
           <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" :title="token.TokenID" />
@@ -40,30 +40,30 @@
             <div class="block1">Block: {{ token.SiblingsNum }}</div>
             <q-space />
             <div>
-                <q-icon  name="img:icons/ethereum-eth-logo.png" />
-                <!-- <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" /> -->
+                <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
                 <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
               </div>
               <div class="chain-logo">{{ 'Ethereum' }}</div>
           </div>
-            <!-- <div class="name">
+          <div class="name">
               <span>{{ token.Name }}</span>
-            </div>
-            <div class="total-transfers">
-              <a href="#" @click.prevent @click="onTransferClick(token)" style="color: black;">{{token?.TransfersNum}} transfers</a>
-            </div>
-            <div class="contract">
-              <a href="#" @click.prevent @click="onContractClick(token)" style="color: black;">
+          </div>
+          <div class="contract row">
+              <a href="#" @click.prevent @click="onContractClick(token)">
                 <span>Contract: {{ token.Contract }}</span>
               </a>
-            </div> -->
-          
-          <div class="transfers col flex">
-            <div class="col-9" v-for="item in token.SiblingTokens?.slice(0, 5)" :key="item.ID">
-              <MyImage :url="item.ImageURL" :height="'110px'" :width="'120px'" :title="item.TokenID" />
-            </div>
-            <div class="col-1 self-center" v-if="token?.SiblingTokens?.length > 5">
-              ...
+              <div class="copy">
+                <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)"/>
+              </div>
+          </div>
+          <div class="total-transfers">
+            <a href="#" @click.prevent @click="onTransferClick(token)">
+              <span>Transfers: {{token?.TransfersNum}}</span>
+            </a>
+          </div>
+          <div class="transfers row">
+            <div v-for="item in token.SiblingTokens" :key="item.ID">
+              <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
             </div>
           </div>
         </div>
@@ -96,14 +96,15 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
-import { SearchToken } from 'src/teststore/token/types';
+import { SearchToken, Token } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
 import { ChainType } from 'src/teststore/basetypes/const';
-
+import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
+import { copyToClipboard } from 'quasar'
 
 const group = ref(['op1'])
 const options = ref(
@@ -180,6 +181,7 @@ const onContractClick = (token: SearchToken) => {
     }
   })
 }
+
 const getTokens = (page: number) => {
   token.getTokens({
     StorageKey: token.SearchTokens.StorageKey,
@@ -190,6 +192,10 @@ const getTokens = (page: number) => {
     page += 1
     getTokens(page)
   })
+}
+
+const onCopyClick = (token: SearchToken) =>  {
+  void copyToClipboard(token.Contract)
 }
 
 onMounted(() => {
@@ -226,52 +232,66 @@ onMounted(() => {
       .content-right
         flex-grow: 1
         padding-left: 25px
-        opacity: 0.8
+        opacity: 0.9
         .line-top
           padding-top: 15px
           .block1
             padding-left: 30px
           .chain-logo
             padding-right: 20px
-    .transfers div
-      margin-right: 5px
-    .right
-        height: 100%
-        .right-top, .right-bottom
-          padding: 10px 10px 10px 0
-        .right-top
-          .name
-            font-weight: 700px
-            color: #7D7D7D
-#token
-  width: 60%
-  margin:  0 auto
-  padding-top: 30px
-  .top
-    padding-bottom: 20px
-  .box
-    height: 230px
-    border: 1px solid #f4eeee
-    border-radius: 4px
-    margin-bottom: 30px
-    .center
-      padding: 10px 10px
-    .content
-      .line-top
-        .block1
-          padding-left: 15px
         .name
-          padding: 10px 0
-    .transfers div
-      margin-right: 5px
-    .right
-        height: 100%
-        .right-top, .right-bottom
-          padding: 10px 10px 10px 0
-        .right-top
-          .name
-            font-weight: 700px
-            color: #7D7D7D
+          color: #F5841F
+          font-size: 20px
+          min-height: 28px
+        .contract,.total-transfers
+          padding: 4px 0
+          a
+            color: inherit
+            text-decoration: none
+          .copy
+            padding: 0 5px
+        .transfers
+          padding-top: 12px
+          gap: 8px
+    // .transfers div
+    //   margin-right: 5px
+    // .right
+    //     height: 100%
+    //     .right-top, .right-bottom
+    //       padding: 10px 10px 10px 0
+    //     .right-top
+    //       .name
+    //         font-weight: 700px
+    //         color: #7D7D7D
+// #token
+//   width: 60%
+//   margin:  0 auto
+//   padding-top: 30px
+//   .top
+//     padding-bottom: 20px
+//   .box
+//     height: 230px
+//     border: 1px solid #f4eeee
+//     border-radius: 4px
+//     margin-bottom: 30px
+//     .center
+//       padding: 10px 10px
+//     .content
+//       .line-top
+//         .block1
+//           padding-left: 15px
+//         .name
+//           padding: 10px 0
+//     .transfers div
+//       margin-right: 5px
+//     .right
+//         height: 100%
+//         .right-top, .right-bottom
+//           padding: 10px 10px 10px 0
+//         .right-top
+//           .name
+//             font-weight: 700px
+//             color: #7D7D7D
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%
