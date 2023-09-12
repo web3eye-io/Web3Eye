@@ -67,22 +67,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="col-2">
-          <div class="right column justify-between">
-            <div class="right-top self-end">
-              <span class="name">
-                <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" style="padding-bottom: 3px;" />
-                <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" style="padding-bottom: 2px;" />
-                {{ token.ChainType }}
-              </span>
-              <span class="net">@mainnet</span>
-            </div>
-            <div class="right-bottom self-end">
-              <span>{{token.TokenType}}</span>
-              <span>  ChainID-{{token.ChainID}}</span>
-            </div>
-          </div>
-        </div> -->
     </div>
     </div>
   </div>
@@ -253,45 +237,6 @@ onMounted(() => {
         .transfers
           padding-top: 12px
           gap: 8px
-    // .transfers div
-    //   margin-right: 5px
-    // .right
-    //     height: 100%
-    //     .right-top, .right-bottom
-    //       padding: 10px 10px 10px 0
-    //     .right-top
-    //       .name
-    //         font-weight: 700px
-    //         color: #7D7D7D
-// #token
-//   width: 60%
-//   margin:  0 auto
-//   padding-top: 30px
-//   .top
-//     padding-bottom: 20px
-//   .box
-//     height: 230px
-//     border: 1px solid #f4eeee
-//     border-radius: 4px
-//     margin-bottom: 30px
-//     .center
-//       padding: 10px 10px
-//     .content
-//       .line-top
-//         .block1
-//           padding-left: 15px
-//         .name
-//           padding: 10px 0
-//     .transfers div
-//       margin-right: 5px
-//     .right
-//         height: 100%
-//         .right-top, .right-bottom
-//           padding: 10px 10px 10px 0
-//         .right-top
-//           .name
-//             font-weight: 700px
-//             color: #7D7D7D
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%
