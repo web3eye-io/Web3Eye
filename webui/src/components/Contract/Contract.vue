@@ -21,9 +21,24 @@
           {{ current.Description }}
         </div>
       </div>
+      <div class="content">
+        <div class="nav row">
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+            narrow-indicator
+          >
+            <q-tab name="Collections" label="Collections" />
+            <q-tab name="Transfers" label="Transfers" />
+          </q-tabs>
+        </div>
+      </div>
       <div id="contract">
         <div class="contracts q-pa-md">
-        <h5>Tokens</h5>
         <div class="inner row">
           <div class="box column" v-for="token in tokens" :key="token.ID">
             <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
@@ -58,6 +73,7 @@ import { useRoute } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
+const tab = ref("Collections")
 const contract = useContractStore()
 const tokens = computed(() => contract.ShotTokens.ShotTokens)
 const current = computed(() => contract.Contract)
@@ -124,7 +140,6 @@ const slide = ref(1)
       &:last-child
         border-right: none
 #contract
-  width: 60%
   margin: 0 auto
   padding: 10px
   padding-left: 0
