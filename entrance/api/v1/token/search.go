@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/gogo/protobuf/jsonpb"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	entranceproto "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/token"
 
@@ -46,7 +47,14 @@ type SearchToken struct {
 	Distance float32
 }
 
+var (
+	pbJsonMarshaler jsonpb.Marshaler
+)
+
 func init() {
+	pbJsonMarshaler = jsonpb.Marshaler{
+		EmitDefaults: false,
+	}
 	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
 
@@ -57,18 +65,29 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
+type SearchResponse struct {
+	Msg         string
+	Infos       []byte
+	Page        uint32
+	StorageKey  string
+	TotalPages  uint32
+	TotalTokens uint32
+	Limit       uint32
+}
+
 // nolint
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
-	respBody := make(map[string]interface{})
+	respBody := SearchResponse{}
 	defer func() {
 		_respBody, err := json.Marshal(respBody)
 		if err != nil {
-			respBody["msg"] = fmt.Sprintf("json marshal response body fail, %v", err)
+			w.Write([]byte(fmt.Sprintf("json marshal response body fail, %v", err)))
+			return
 		}
 		_, err = w.Write(_respBody)
 		if err != nil {
-			respBody["msg"] = fmt.Sprintf("write response body fail, %v", err)
+			w.Write([]byte(fmt.Sprintf("write response body fail, %v", err)))
 		}
 	}()
 
@@ -76,7 +95,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	limit, err := strconv.ParseUint(_limit, 10, 32)
 
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
+		respBody.Msg = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -84,7 +103,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// judge weather filesize exceed max-size
 	err = r.ParseMultipartForm(MaxUploadFileSize)
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
+		respBody.Msg = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -95,7 +114,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// convert to vector
 	vector, err := ImgReqConvertVector(r)
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("image convert fail, %v", err)
+		respBody.Msg = fmt.Sprintf("image convert fail, %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -109,7 +128,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Limit:  uint32(limit),
 	})
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
+		respBody.Msg = fmt.Sprintf("search fail, %v", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -117,13 +136,16 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	inT = time.Now()
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
-	respBody["Msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
-	respBody["Infos"] = resp.Infos
-	respBody["Page"] = resp.Page
-	respBody["StorageKey"] = resp.StorageKey
-	respBody["TotalPages"] = resp.TotalPages
-	respBody["TotalTokens"] = resp.TotalTokens
-	respBody["Limit"] = resp.Limit
+	buff := bytes.NewBuffer([]byte{})
+	err = pbJsonMarshaler.Marshal(buff, resp)
+
+	respBody.Msg = fmt.Sprintf("have %v infos", len(resp.Infos))
+	respBody.Infos = buff.Bytes()
+	respBody.Page = resp.Page
+	respBody.StorageKey = resp.StorageKey
+	respBody.TotalPages = resp.TotalPages
+	respBody.TotalTokens = resp.TotalTokens
+	respBody.Limit = resp.Limit
 }
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
