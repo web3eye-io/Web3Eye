@@ -174,7 +174,7 @@ const getChainID = async() => {
     display: none
 
 .q-page-container
-  padding-top: 10px
+  padding-top: 10px !important
   ::v-deep .justify-evenly
     justify-content: center
     min-height: 800px !important

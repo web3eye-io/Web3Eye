@@ -192,8 +192,8 @@ onMounted(() => {
 })
 </script>
 <style lang="sass" scoped>
-.outer-bg
-  background: $white
+.outer-container
+  padding-top: 40px
 .token
   background-color: $white
   .left

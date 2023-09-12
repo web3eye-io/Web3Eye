@@ -1,70 +1,61 @@
 <template>
-  <div id="contract">
-    <div class="row justify-center">
-      <div class="left self-end">
-        <q-carousel
-          animated
-          v-model="slide"
-          infinite
-          autoplay
-          arrows
-          transition-prev="slide-right"
-          transition-next="slide-left"
-          style="height: 220px;width: 180px;"
-        >
-          <q-carousel-slide  
-            v-for="(token,index) in tokens" 
-            :key="token.ID"
-            :img-src="getImageUrl(token.ImageURL)"
-            :name="index"  
-          />
-        </q-carousel>
-        <!-- <MyImage :url="current.ProfileURL" :height="'100%'" :width="'90%'" /> -->
+  <div class="outer-bg">
+    <div class="outer-container">
+      <q-img :src="contractbg" />
+      <div class="row items-center justify-center">
+        <q-avatar>
+          <img src="https://cdn.quasar.dev/img/avatar.png">
+        </q-avatar>
       </div>
-      <div class="right flex column col">
-        <div class="header">{{ current.Name }}</div>
-        <!-- <div class="title">Milady 12</div> -->
-        <div class="contract">
-          <span>Contract</span>
-          <span>{{current.Address}}</span>
+      <div class="collection column items-center justify-center">
+        <div class="name">
+          {{ current.Name }}
         </div>
-        <div class="chain">
-          <span>Name</span>
-          {{current.Name}}
+        <div class="table row">
+          <div class="listed">1.4 <span>%</span></div>
+          <div class="owner">11 <span>K</span></div>
+          <div class="price">0.03 <span>ETH</span></div>
+          <div class="volume">0.03 <span>ETH</span></div>
+        </div>
+        <div class="description">
+          {{ current.Description }}
         </div>
       </div>
-    </div>
-    <div class="contracts q-pa-md">
-      <h5>Tokens</h5>
-      <div class="inner row">
-        <div class="box column" v-for="token in tokens" :key="token.ID">
-          <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
-          <div class="content">
-            <div class="line row justify-between">
-              <span class="title">#{{token.TokenID}}</span>
-              <div class="row fee">
-                <span>4.75</span>
-                <q-icon name="img:icons/ethereum-eth-logo.png" style="padding-top: 3px;" />
+      <div id="contract">
+        <div class="contracts q-pa-md">
+        <h5>Tokens</h5>
+        <div class="inner row">
+          <div class="box column" v-for="token in tokens" :key="token.ID">
+            <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
+            <div class="content">
+              <div class="line row justify-between">
+                <span class="title">#{{token.TokenID}}</span>
+                <div class="row fee">
+                  <span>4.75</span>
+                  <q-icon name="img:icons/ethereum-eth-logo.png" style="padding-top: 3px;" />
+                </div>
               </div>
-            </div>
-            <div class="super row justify-between">
-              <div>{{token.Name}}</div>
-              <div class="transfers">
-                {{token.TransfersNum}}
-                <q-icon name="img:icons/transfers.png" />
+              <div class="super row justify-between">
+                <div>{{token.Name}}</div>
+                <div class="transfers">
+                  {{token.TransfersNum}}
+                  <q-icon name="img:icons/transfers.png" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </div>
   </div>
+  
 </template>
 <script lang="ts" setup>
 import { useContractStore } from 'src/teststore/contract'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-
+import contractbg from '../../assets/material/contract-bg.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
 const contract = useContractStore()
@@ -108,6 +99,30 @@ const getContract = () => {
 const slide = ref(1)
 </script>
 <style lang="sass" scoped>
+
+.q-avatar
+  top: -40px
+  height: 1.5em
+  width: 1.5em
+  max-height: 33px
+.q-avatar__content
+  flex-grow: 1
+.name
+  color: #F5841F
+  font-size: 40px
+.collection
+  .table
+    margin-top: 15px
+    border-radius: 10px
+    font-size: 24px
+    background-color: #FAFAFA
+    border: 1px solid #efeded
+    div
+      padding: 20px
+      line-height: 32px
+      border-right: 1px solid #efeded
+      &:last-child
+        border-right: none
 #contract
   width: 60%
   margin: 0 auto
