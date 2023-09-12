@@ -85,6 +85,10 @@ func init() {
 	contractDescDeletedAt := contractMixinFields0[2].Descriptor()
 	// contract.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	contract.DefaultDeletedAt = contractDescDeletedAt.Default.(func() uint32)
+	// contractDescDecimals is the schema descriptor for decimals field.
+	contractDescDecimals := contractFields[6].Descriptor()
+	// contract.DefaultDecimals holds the default value on creation for the decimals field.
+	contract.DefaultDecimals = contractDescDecimals.Default.(uint32)
 	// contractDescID is the schema descriptor for id field.
 	contractDescID := contractFields[0].Descriptor()
 	// contract.DefaultID holds the default value on creation for the id field.

@@ -135,6 +135,13 @@ func Symbol(v string) predicate.Contract {
 	})
 }
 
+// Decimals applies equality check predicate on the "decimals" field. It's identical to DecimalsEQ.
+func Decimals(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDecimals), v))
+	})
+}
+
 // Creator applies equality check predicate on the "creator" field. It's identical to CreatorEQ.
 func Creator(v string) predicate.Contract {
 	return predicate.Contract(func(s *sql.Selector) {
@@ -882,6 +889,70 @@ func SymbolEqualFold(v string) predicate.Contract {
 func SymbolContainsFold(v string) predicate.Contract {
 	return predicate.Contract(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldSymbol), v))
+	})
+}
+
+// DecimalsEQ applies the EQ predicate on the "decimals" field.
+func DecimalsEQ(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDecimals), v))
+	})
+}
+
+// DecimalsNEQ applies the NEQ predicate on the "decimals" field.
+func DecimalsNEQ(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDecimals), v))
+	})
+}
+
+// DecimalsIn applies the In predicate on the "decimals" field.
+func DecimalsIn(vs ...uint32) predicate.Contract {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldDecimals), v...))
+	})
+}
+
+// DecimalsNotIn applies the NotIn predicate on the "decimals" field.
+func DecimalsNotIn(vs ...uint32) predicate.Contract {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldDecimals), v...))
+	})
+}
+
+// DecimalsGT applies the GT predicate on the "decimals" field.
+func DecimalsGT(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDecimals), v))
+	})
+}
+
+// DecimalsGTE applies the GTE predicate on the "decimals" field.
+func DecimalsGTE(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDecimals), v))
+	})
+}
+
+// DecimalsLT applies the LT predicate on the "decimals" field.
+func DecimalsLT(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDecimals), v))
+	})
+}
+
+// DecimalsLTE applies the LTE predicate on the "decimals" field.
+func DecimalsLTE(v uint32) predicate.Contract {
+	return predicate.Contract(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDecimals), v))
 	})
 }
 

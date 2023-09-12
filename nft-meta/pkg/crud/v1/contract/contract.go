@@ -78,6 +78,9 @@ func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate
 	if in.Symbol != nil {
 		c.SetSymbol(in.GetSymbol())
 	}
+	if in.Decimals != nil {
+		c.SetDecimals(in.GetDecimals())
+	}
 	if in.Creator != nil {
 		c.SetCreator(in.GetCreator())
 	}
@@ -165,6 +168,9 @@ func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpd
 	}
 	if in.Symbol != nil {
 		u.SetSymbol(in.GetSymbol())
+	}
+	if in.Decimals != nil {
+		u.SetDecimals(in.GetDecimals())
 	}
 	if in.Creator != nil {
 		u.SetCreator(in.GetCreator())
@@ -282,6 +288,15 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, err
 			stm.Where(contract.Symbol(conds.GetSymbol().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid Symbol field")
+		}
+	}
+
+	if conds.Decimals != nil {
+		switch conds.GetDecimals().GetOp() {
+		case cruder.EQ:
+			stm.Where(contract.Decimals(conds.GetDecimals().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid Decimals field")
 		}
 	}
 

@@ -113,6 +113,27 @@ func (cu *ContractUpdate) SetSymbol(s string) *ContractUpdate {
 	return cu
 }
 
+// SetDecimals sets the "decimals" field.
+func (cu *ContractUpdate) SetDecimals(u uint32) *ContractUpdate {
+	cu.mutation.ResetDecimals()
+	cu.mutation.SetDecimals(u)
+	return cu
+}
+
+// SetNillableDecimals sets the "decimals" field if the given value is not nil.
+func (cu *ContractUpdate) SetNillableDecimals(u *uint32) *ContractUpdate {
+	if u != nil {
+		cu.SetDecimals(*u)
+	}
+	return cu
+}
+
+// AddDecimals adds u to the "decimals" field.
+func (cu *ContractUpdate) AddDecimals(u int32) *ContractUpdate {
+	cu.mutation.AddDecimals(u)
+	return cu
+}
+
 // SetCreator sets the "creator" field.
 func (cu *ContractUpdate) SetCreator(s string) *ContractUpdate {
 	cu.mutation.SetCreator(s)
@@ -482,6 +503,20 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: contract.FieldSymbol,
 		})
 	}
+	if value, ok := cu.mutation.Decimals(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: contract.FieldDecimals,
+		})
+	}
+	if value, ok := cu.mutation.AddedDecimals(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: contract.FieldDecimals,
+		})
+	}
 	if value, ok := cu.mutation.Creator(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -716,6 +751,27 @@ func (cuo *ContractUpdateOne) SetName(s string) *ContractUpdateOne {
 // SetSymbol sets the "symbol" field.
 func (cuo *ContractUpdateOne) SetSymbol(s string) *ContractUpdateOne {
 	cuo.mutation.SetSymbol(s)
+	return cuo
+}
+
+// SetDecimals sets the "decimals" field.
+func (cuo *ContractUpdateOne) SetDecimals(u uint32) *ContractUpdateOne {
+	cuo.mutation.ResetDecimals()
+	cuo.mutation.SetDecimals(u)
+	return cuo
+}
+
+// SetNillableDecimals sets the "decimals" field if the given value is not nil.
+func (cuo *ContractUpdateOne) SetNillableDecimals(u *uint32) *ContractUpdateOne {
+	if u != nil {
+		cuo.SetDecimals(*u)
+	}
+	return cuo
+}
+
+// AddDecimals adds u to the "decimals" field.
+func (cuo *ContractUpdateOne) AddDecimals(u int32) *ContractUpdateOne {
+	cuo.mutation.AddDecimals(u)
 	return cuo
 }
 
@@ -1116,6 +1172,20 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 			Type:   field.TypeString,
 			Value:  value,
 			Column: contract.FieldSymbol,
+		})
+	}
+	if value, ok := cuo.mutation.Decimals(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: contract.FieldDecimals,
+		})
+	}
+	if value, ok := cuo.mutation.AddedDecimals(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: contract.FieldDecimals,
 		})
 	}
 	if value, ok := cuo.mutation.Creator(); ok {

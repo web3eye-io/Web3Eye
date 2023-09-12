@@ -46,6 +46,7 @@ var (
 		{Name: "address", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "symbol", Type: field.TypeString},
+		{Name: "decimals", Type: field.TypeUint32, Default: 0},
 		{Name: "creator", Type: field.TypeString, Nullable: true},
 		{Name: "block_num", Type: field.TypeUint64, Nullable: true},
 		{Name: "tx_hash", Type: field.TypeString, Nullable: true},

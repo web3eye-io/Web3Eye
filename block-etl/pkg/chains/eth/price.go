@@ -12,7 +12,7 @@ import (
 )
 
 // index blocks [start,start+limit]
-func (e *EthIndexer) IndexOrder(ctx context.Context, logs []types.Log) ([]*order.OrderReq, error) {
+func (e *EthIndexer) IndexOrder(ctx context.Context, logs []types.Log) ([]*ContractMeta, error) {
 	orders := eth.LogsToOrders(logs)
 	if len(orders) == 0 {
 		return nil, nil
@@ -41,5 +41,18 @@ func (e *EthIndexer) IndexOrder(ctx context.Context, logs []types.Log) ([]*order
 		return nil, fmt.Errorf("failed store orders to db,err: %v", err)
 	}
 
-	return nil, nil
+	contractSet := make(map[string]struct{})
+	contractList := []*ContractMeta{}
+	for _, order := range orders {
+		items := append(order.TargetItems, order.OfferItems...)
+		for _, item := range items {
+			if _, ok := contractSet[item.Contract]; ok {
+				continue
+			}
+			contractSet[item.Contract] = struct{}{}
+			contractList = append(contractList, &ContractMeta{TokenType: item.TokenType, Contract: item.Contract})
+		}
+	}
+
+	return contractList, nil
 }

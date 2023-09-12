@@ -199,17 +199,22 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 					return err
 				}
 
-				_, err = e.IndexOrder(ctx, blockLogs.OrderLogs)
+				contractT1, err := e.IndexToken(ctx, filteredT1)
 				if err != nil {
 					return err
 				}
 
-				filteredT2, err := e.IndexToken(ctx, filteredT1)
+				err = e.IndexContract(ctx, contractT1, FindContractCreator)
 				if err != nil {
 					return err
 				}
 
-				err = e.IndexContract(ctx, filteredT2, FindContractCreator)
+				contractT2, err := e.IndexOrder(ctx, blockLogs.OrderLogs)
+				if err != nil {
+					return err
+				}
+
+				err = e.IndexContract(ctx, contractT2, FindContractCreator)
 				if err != nil {
 					return err
 				}

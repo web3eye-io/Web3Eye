@@ -95,6 +95,10 @@
         "Symbol": {
           "type": "string"
         },
+        "Decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
         "Creator": {
           "type": "string"
         },

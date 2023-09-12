@@ -1031,6 +1031,8 @@ type ContractMutation struct {
 	address       *string
 	name          *string
 	symbol        *string
+	decimals      *uint32
+	adddecimals   *int32
 	creator       *string
 	block_num     *uint64
 	addblock_num  *int64
@@ -1498,6 +1500,62 @@ func (m *ContractMutation) OldSymbol(ctx context.Context) (v string, err error) 
 // ResetSymbol resets all changes to the "symbol" field.
 func (m *ContractMutation) ResetSymbol() {
 	m.symbol = nil
+}
+
+// SetDecimals sets the "decimals" field.
+func (m *ContractMutation) SetDecimals(u uint32) {
+	m.decimals = &u
+	m.adddecimals = nil
+}
+
+// Decimals returns the value of the "decimals" field in the mutation.
+func (m *ContractMutation) Decimals() (r uint32, exists bool) {
+	v := m.decimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDecimals returns the old "decimals" field's value of the Contract entity.
+// If the Contract object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContractMutation) OldDecimals(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDecimals is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDecimals requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDecimals: %w", err)
+	}
+	return oldValue.Decimals, nil
+}
+
+// AddDecimals adds u to the "decimals" field.
+func (m *ContractMutation) AddDecimals(u int32) {
+	if m.adddecimals != nil {
+		*m.adddecimals += u
+	} else {
+		m.adddecimals = &u
+	}
+}
+
+// AddedDecimals returns the value that was added to the "decimals" field in this mutation.
+func (m *ContractMutation) AddedDecimals() (r int32, exists bool) {
+	v := m.adddecimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDecimals resets all changes to the "decimals" field.
+func (m *ContractMutation) ResetDecimals() {
+	m.decimals = nil
+	m.adddecimals = nil
 }
 
 // SetCreator sets the "creator" field.
@@ -2002,7 +2060,7 @@ func (m *ContractMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ContractMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, contract.FieldCreatedAt)
 	}
@@ -2026,6 +2084,9 @@ func (m *ContractMutation) Fields() []string {
 	}
 	if m.symbol != nil {
 		fields = append(fields, contract.FieldSymbol)
+	}
+	if m.decimals != nil {
+		fields = append(fields, contract.FieldDecimals)
 	}
 	if m.creator != nil {
 		fields = append(fields, contract.FieldCreator)
@@ -2078,6 +2139,8 @@ func (m *ContractMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case contract.FieldSymbol:
 		return m.Symbol()
+	case contract.FieldDecimals:
+		return m.Decimals()
 	case contract.FieldCreator:
 		return m.Creator()
 	case contract.FieldBlockNum:
@@ -2121,6 +2184,8 @@ func (m *ContractMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldName(ctx)
 	case contract.FieldSymbol:
 		return m.OldSymbol(ctx)
+	case contract.FieldDecimals:
+		return m.OldDecimals(ctx)
 	case contract.FieldCreator:
 		return m.OldCreator(ctx)
 	case contract.FieldBlockNum:
@@ -2204,6 +2269,13 @@ func (m *ContractMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSymbol(v)
 		return nil
+	case contract.FieldDecimals:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDecimals(v)
+		return nil
 	case contract.FieldCreator:
 		v, ok := value.(string)
 		if !ok {
@@ -2284,6 +2356,9 @@ func (m *ContractMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, contract.FieldDeletedAt)
 	}
+	if m.adddecimals != nil {
+		fields = append(fields, contract.FieldDecimals)
+	}
 	if m.addblock_num != nil {
 		fields = append(fields, contract.FieldBlockNum)
 	}
@@ -2304,6 +2379,8 @@ func (m *ContractMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case contract.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case contract.FieldDecimals:
+		return m.AddedDecimals()
 	case contract.FieldBlockNum:
 		return m.AddedBlockNum()
 	case contract.FieldTxTime:
@@ -2337,6 +2414,13 @@ func (m *ContractMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case contract.FieldDecimals:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDecimals(v)
 		return nil
 	case contract.FieldBlockNum:
 		v, ok := value.(int64)
@@ -2459,6 +2543,9 @@ func (m *ContractMutation) ResetField(name string) error {
 		return nil
 	case contract.FieldSymbol:
 		m.ResetSymbol()
+		return nil
+	case contract.FieldDecimals:
+		m.ResetDecimals()
 		return nil
 	case contract.FieldCreator:
 		m.ResetCreator()

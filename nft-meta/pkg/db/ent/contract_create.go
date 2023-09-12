@@ -95,6 +95,20 @@ func (cc *ContractCreate) SetSymbol(s string) *ContractCreate {
 	return cc
 }
 
+// SetDecimals sets the "decimals" field.
+func (cc *ContractCreate) SetDecimals(u uint32) *ContractCreate {
+	cc.mutation.SetDecimals(u)
+	return cc
+}
+
+// SetNillableDecimals sets the "decimals" field if the given value is not nil.
+func (cc *ContractCreate) SetNillableDecimals(u *uint32) *ContractCreate {
+	if u != nil {
+		cc.SetDecimals(*u)
+	}
+	return cc
+}
+
 // SetCreator sets the "creator" field.
 func (cc *ContractCreate) SetCreator(s string) *ContractCreate {
 	cc.mutation.SetCreator(s)
@@ -335,6 +349,10 @@ func (cc *ContractCreate) defaults() error {
 		v := contract.DefaultDeletedAt()
 		cc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := cc.mutation.Decimals(); !ok {
+		v := contract.DefaultDecimals
+		cc.mutation.SetDecimals(v)
+	}
 	if _, ok := cc.mutation.ID(); !ok {
 		if contract.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized contract.DefaultID (forgotten import ent/runtime?)")
@@ -370,6 +388,9 @@ func (cc *ContractCreate) check() error {
 	}
 	if _, ok := cc.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Contract.symbol"`)}
+	}
+	if _, ok := cc.mutation.Decimals(); !ok {
+		return &ValidationError{Name: "decimals", err: errors.New(`ent: missing required field "Contract.decimals"`)}
 	}
 	return nil
 }
@@ -471,6 +492,14 @@ func (cc *ContractCreate) createSpec() (*Contract, *sqlgraph.CreateSpec) {
 			Column: contract.FieldSymbol,
 		})
 		_node.Symbol = value
+	}
+	if value, ok := cc.mutation.Decimals(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: contract.FieldDecimals,
+		})
+		_node.Decimals = value
 	}
 	if value, ok := cc.mutation.Creator(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -707,6 +736,24 @@ func (u *ContractUpsert) SetSymbol(v string) *ContractUpsert {
 // UpdateSymbol sets the "symbol" field to the value that was provided on create.
 func (u *ContractUpsert) UpdateSymbol() *ContractUpsert {
 	u.SetExcluded(contract.FieldSymbol)
+	return u
+}
+
+// SetDecimals sets the "decimals" field.
+func (u *ContractUpsert) SetDecimals(v uint32) *ContractUpsert {
+	u.Set(contract.FieldDecimals, v)
+	return u
+}
+
+// UpdateDecimals sets the "decimals" field to the value that was provided on create.
+func (u *ContractUpsert) UpdateDecimals() *ContractUpsert {
+	u.SetExcluded(contract.FieldDecimals)
+	return u
+}
+
+// AddDecimals adds v to the "decimals" field.
+func (u *ContractUpsert) AddDecimals(v uint32) *ContractUpsert {
+	u.Add(contract.FieldDecimals, v)
 	return u
 }
 
@@ -1062,6 +1109,27 @@ func (u *ContractUpsertOne) SetSymbol(v string) *ContractUpsertOne {
 func (u *ContractUpsertOne) UpdateSymbol() *ContractUpsertOne {
 	return u.Update(func(s *ContractUpsert) {
 		s.UpdateSymbol()
+	})
+}
+
+// SetDecimals sets the "decimals" field.
+func (u *ContractUpsertOne) SetDecimals(v uint32) *ContractUpsertOne {
+	return u.Update(func(s *ContractUpsert) {
+		s.SetDecimals(v)
+	})
+}
+
+// AddDecimals adds v to the "decimals" field.
+func (u *ContractUpsertOne) AddDecimals(v uint32) *ContractUpsertOne {
+	return u.Update(func(s *ContractUpsert) {
+		s.AddDecimals(v)
+	})
+}
+
+// UpdateDecimals sets the "decimals" field to the value that was provided on create.
+func (u *ContractUpsertOne) UpdateDecimals() *ContractUpsertOne {
+	return u.Update(func(s *ContractUpsert) {
+		s.UpdateDecimals()
 	})
 }
 
@@ -1610,6 +1678,27 @@ func (u *ContractUpsertBulk) SetSymbol(v string) *ContractUpsertBulk {
 func (u *ContractUpsertBulk) UpdateSymbol() *ContractUpsertBulk {
 	return u.Update(func(s *ContractUpsert) {
 		s.UpdateSymbol()
+	})
+}
+
+// SetDecimals sets the "decimals" field.
+func (u *ContractUpsertBulk) SetDecimals(v uint32) *ContractUpsertBulk {
+	return u.Update(func(s *ContractUpsert) {
+		s.SetDecimals(v)
+	})
+}
+
+// AddDecimals adds v to the "decimals" field.
+func (u *ContractUpsertBulk) AddDecimals(v uint32) *ContractUpsertBulk {
+	return u.Update(func(s *ContractUpsert) {
+		s.AddDecimals(v)
+	})
+}
+
+// UpdateDecimals sets the "decimals" field to the value that was provided on create.
+func (u *ContractUpsertBulk) UpdateDecimals() *ContractUpsertBulk {
+	return u.Update(func(s *ContractUpsert) {
+		s.UpdateDecimals()
 	})
 }
 

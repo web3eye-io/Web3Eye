@@ -151,8 +151,8 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []types.Log) ([]*ch
 	return transfers, nil
 }
 
-func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*chains.TokenTransfer, error) {
-	outTransfer := []*chains.TokenTransfer{}
+func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*ContractMeta, error) {
+	outContractMetas := []*ContractMeta{}
 	for _, transfer := range inTransfers {
 		identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
@@ -230,14 +230,22 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			fmt.Println(tokenURI)
 			return nil, fmt.Errorf("create token record failed, %v", err)
 		}
-		outTransfer = append(outTransfer, transfer)
+		outContractMetas = append(outContractMetas, &ContractMeta{
+			TokenType: transfer.TokenType,
+			Contract:  transfer.Contract,
+		})
 	}
-	return outTransfer, nil
+	return outContractMetas, nil
 }
 
-func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.TokenTransfer, findContractCreator bool) error {
-	for _, transfer := range inTransfers {
-		identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
+type ContractMeta struct {
+	TokenType basetype.TokenType
+	Contract  string
+}
+
+func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractMeta, findContractCreator bool) error {
+	for _, contract := range inContracts {
+		identifier := contractIdentifier(e.ChainType, e.ChainID, contract.Contract)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
 			return fmt.Errorf("lock the token indentifier failed, err: %v", err)
@@ -256,7 +264,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 				Op:    "eq",
 			},
 			Address: &ctMessage.StringVal{
-				Value: transfer.Contract,
+				Value: contract.Contract,
 				Op:    "eq",
 			},
 		}
@@ -274,19 +282,30 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 		if err != nil {
 			return fmt.Errorf("cannot get eth client,err: %v", err)
 		}
+		contractMeta := &eth.EthCurrencyMetadata{}
 
-		contractMeta, err := cli.GetERC721Metadata(ctx, transfer.Contract)
+		switch contract.TokenType {
+		case basetype.TokenType_Native:
+			contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
+		case basetype.TokenType_ERC20:
+			contractMeta, err = cli.GetERC20Metadata(ctx, contract.Contract)
+		case basetype.TokenType_ERC721 &
+			basetype.TokenType_ERC721_WITH_CRITERIA &
+			basetype.TokenType_ERC1155 &
+			basetype.TokenType_ERC1155_WITH_CRITERIA:
+			contractMeta, err = cli.GetERC721Metadata(ctx, contract.Contract)
+		}
+
 		if err != nil {
 			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get contrcact metadata,err: %v", err)
-			contractMeta = &eth.ERC721Metadata{}
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
 		creator := &eth.ContractCreator{}
 		// stop get info for creator
-		if findContractCreator {
-			creator, err = cli.GetContractCreator(ctx, transfer.Contract)
+		if findContractCreator && contract.TokenType != basetype.TokenType_Native {
+			creator, err = cli.GetContractCreator(ctx, contract.Contract)
 			if err != nil {
 				e.checkErr(ctx, err)
 				remark = err.Error()
@@ -302,9 +321,10 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 			Info: &contractProto.ContractReq{
 				ChainType: &e.ChainType,
 				ChainID:   &e.ChainID,
-				Address:   &transfer.Contract,
+				Address:   &contract.Contract,
 				Name:      &contractMeta.Name,
 				Symbol:    &contractMeta.Symbol,
+				Decimals:  &contractMeta.Decimals,
 				Creator:   &from,
 				BlockNum:  &blockNum,
 				TxHash:    &txHash,

@@ -64,6 +64,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldAddress:     {Type: field.TypeString, Column: contract.FieldAddress},
 			contract.FieldName:        {Type: field.TypeString, Column: contract.FieldName},
 			contract.FieldSymbol:      {Type: field.TypeString, Column: contract.FieldSymbol},
+			contract.FieldDecimals:    {Type: field.TypeUint32, Column: contract.FieldDecimals},
 			contract.FieldCreator:     {Type: field.TypeString, Column: contract.FieldCreator},
 			contract.FieldBlockNum:    {Type: field.TypeUint64, Column: contract.FieldBlockNum},
 			contract.FieldTxHash:      {Type: field.TypeString, Column: contract.FieldTxHash},
@@ -428,6 +429,11 @@ func (f *ContractFilter) WhereName(p entql.StringP) {
 // WhereSymbol applies the entql string predicate on the symbol field.
 func (f *ContractFilter) WhereSymbol(p entql.StringP) {
 	f.Where(p.Field(contract.FieldSymbol))
+}
+
+// WhereDecimals applies the entql uint32 predicate on the decimals field.
+func (f *ContractFilter) WhereDecimals(p entql.Uint32P) {
+	f.Where(p.Field(contract.FieldDecimals))
 }
 
 // WhereCreator applies the entql string predicate on the creator field.
