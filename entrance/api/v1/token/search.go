@@ -67,7 +67,7 @@ func init() {
 
 type SearchResponse struct {
 	Msg         string
-	Infos       []byte
+	Infos       json.RawMessage
 	Page        uint32
 	StorageKey  string
 	TotalPages  uint32
@@ -79,6 +79,7 @@ type SearchResponse struct {
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
 	respBody := SearchResponse{}
+	var err error
 	defer func() {
 		_respBody, err := json.Marshal(respBody)
 		if err != nil {
@@ -138,6 +139,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	buff := bytes.NewBuffer([]byte{})
 	err = pbJsonMarshaler.Marshal(buff, resp)
+	if err != nil {
+		respBody.Msg = fmt.Sprintf("marshal result fail, %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	respBody.Msg = fmt.Sprintf("have %v infos", len(resp.Infos))
 	respBody.Infos = buff.Bytes()
