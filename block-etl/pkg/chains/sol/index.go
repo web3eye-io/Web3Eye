@@ -237,12 +237,11 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 
 			infos := make([]*transferProto.TransferReq, len(transfers))
 			for i := range transfers {
-				tokenType := string(transfers[i].TokenType)
 				infos[i] = &transferProto.TransferReq{
 					ChainType:   &e.ChainType,
 					ChainID:     &e.ChainID,
 					Contract:    &transfers[i].Contract,
-					TokenType:   &tokenType,
+					TokenType:   &transfers[i].TokenType,
 					TokenID:     &transfers[i].TokenID,
 					From:        &transfers[i].From,
 					To:          &transfers[i].To,

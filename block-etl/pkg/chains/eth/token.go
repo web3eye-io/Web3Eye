@@ -127,12 +127,11 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []types.Log) ([]*ch
 		}
 		transfersMap[transIdentifier] = struct{}{}
 
-		tokenType := string(transfers[i].TokenType)
 		infos[i] = &transferProto.TransferReq{
 			ChainType:   &e.ChainType,
 			ChainID:     &e.ChainID,
 			Contract:    &transfers[i].Contract,
-			TokenType:   &tokenType,
+			TokenType:   &transfers[i].TokenType,
 			TokenID:     &transfers[i].TokenID,
 			From:        &transfers[i].From,
 			To:          &transfers[i].To,
@@ -227,7 +226,6 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		})
 
 		if err != nil {
-			fmt.Println(tokenURI)
 			return nil, fmt.Errorf("create token record failed, %v", err)
 		}
 		outContractMetas = append(outContractMetas, &ContractMeta{
@@ -289,10 +287,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 			contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
 		case basetype.TokenType_ERC20:
 			contractMeta, err = cli.GetERC20Metadata(ctx, contract.Contract)
-		case basetype.TokenType_ERC721 &
-			basetype.TokenType_ERC721_WITH_CRITERIA &
-			basetype.TokenType_ERC1155 &
-			basetype.TokenType_ERC1155_WITH_CRITERIA:
+		default:
 			contractMeta, err = cli.GetERC721Metadata(ctx, contract.Contract)
 		}
 

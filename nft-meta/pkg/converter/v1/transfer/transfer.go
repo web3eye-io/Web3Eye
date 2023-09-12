@@ -16,7 +16,7 @@ func Ent2Grpc(row *ent.Transfer) *npool.Transfer {
 		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
 		Contract:    row.Contract,
-		TokenType:   row.TokenType,
+		TokenType:   basetype.TokenType(basetype.TokenType_value[row.TokenType]),
 		TokenID:     row.TokenID,
 		From:        row.From,
 		To:          row.To,

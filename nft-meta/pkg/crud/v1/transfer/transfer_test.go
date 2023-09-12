@@ -57,13 +57,14 @@ func prepareData() {
 
 	id = entTransfer.ID.String()
 	chainType := basetype.ChainType(basetype.ChainType_value[entTransfer.ChainType])
+	tokenType := basetype.TokenType(basetype.TokenType_value[entTransfer.TokenType])
 	transferReq = npool.TransferReq{
 		ID: &id,
 
 		ChainType:   &chainType,
 		ChainID:     &entTransfer.ChainID,
 		Contract:    &entTransfer.Contract,
-		TokenType:   &entTransfer.TokenType,
+		TokenType:   &tokenType,
 		TokenID:     &entTransfer.TokenID,
 		From:        &entTransfer.From,
 		To:          &entTransfer.To,
@@ -148,12 +149,14 @@ func createBulk(t *testing.T) {
 	for key := range entTransfer {
 		id := entTransfer[key].ID.String()
 		chainType := basetype.ChainType(basetype.ChainType_value[entTransfer[key].ChainType])
+		tokenType := basetype.TokenType(basetype.TokenType_value[entTransfer[key].TokenType])
+
 		transfers = append(transfers, &npool.TransferReq{
 			ID:          &id,
 			ChainType:   &chainType,
 			ChainID:     &entTransfer[key].ChainID,
 			Contract:    &entTransfer[key].Contract,
-			TokenType:   &entTransfer[key].TokenType,
+			TokenType:   &tokenType,
 			TokenID:     &entTransfer[key].TokenID,
 			From:        &entTransfer[key].From,
 			To:          &entTransfer[key].To,

@@ -72,7 +72,7 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 		c.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType())
+		c.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		c.SetTokenID(in.GetTokenID())
@@ -170,7 +170,7 @@ func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpd
 		u.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		u.SetTokenType(in.GetTokenType())
+		u.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		u.SetTokenID(in.GetTokenID())

@@ -28,7 +28,7 @@ message SearchToken{
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
-  string TokenType = 50;
+  chain.TokenType TokenType = 50;
   string TokenID = 60;
   string Owner = 70;
   string URI = 80;
