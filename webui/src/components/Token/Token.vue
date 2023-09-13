@@ -44,7 +44,7 @@
                 <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
                 <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
               </div>
-              <div class="chain-logo">{{ 'Ethereum' }}</div>
+              <div class="chain-logo">{{ token.ChainType }}</div>
           </div>
           <div class="name">
               <span>{{ token.Name }}</span>
@@ -164,7 +164,8 @@ const onContractClick = (token: SearchToken) => {
   void router.push({
     path: '/contract',
     query: {
-      contract: token.Contract
+      contract: token.Contract,
+      tokenID: token.TokenID
     }
   })
 }

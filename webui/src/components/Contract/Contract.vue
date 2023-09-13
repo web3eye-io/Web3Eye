@@ -19,6 +19,7 @@
         </div>
         <div class="description">
           {{ current.Description }}
+          Spesh is looking for his best friend throughout Coolman's Universe. To travel through this universe, Spesh uses a surfboard and a magical compass.
         </div>
       </div>
       <div class="content">
@@ -31,6 +32,7 @@
             indicator-color="primary"
             align="justify"
             narrow-indicator
+            @update:model-value="onChangeTab"
           >
             <q-tab name="Collections" label="Collections" />
             <q-tab name="Transfers" label="Transfers" />
@@ -79,6 +81,7 @@ import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
 import { Transfer } from 'src/teststore/transfer/types';
+import { useTransferStore } from 'src/teststore/transfer';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
 const tab = ref("Collections")
@@ -88,11 +91,13 @@ const current = computed(() => contract.Contract)
 
 interface Query {
   contract: string;
+  tokenID: string;
 }
 
 const route = useRoute()
 const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
+const tokenID = computed(() => query.value.tokenID)
 
 const getImageUrl = computed(() => (url: string) => {
   if(url.startsWith('ipfs://')) {
@@ -121,8 +126,13 @@ const getContract = () => {
   })
 }
 
-const transfers = ref([] as Array<Transfer>) 
 const columns = computed(() => [
+  {
+    name: 'Item',
+    label: 'Item',
+    align: 'center',
+    field: () => ""
+  },
   {
     name: 'Block',
     label: 'BLOCK',
@@ -154,6 +164,33 @@ const columns = computed(() => [
     field: (row: Transfer) => row.To
   },
 ])
+
+const transfer = useTransferStore()
+const transfers = computed(() => transfer.Transfers.Transfers)
+
+const onChangeTab = () => {
+  if (transfers.value?.length == 0) {
+    getTransfers(0, 500)
+  }
+}
+
+const getTransfers = (offset: number, limit: number) => {
+  transfer.getTransfers({
+    ChainType: current.value.ChainType,
+    ChainID: current.value.ChainID,
+    Contract: current.value.Address,
+    TokenID: tokenID.value,
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error:boolean, rows: Transfer[]) => {
+    if (error || rows.length < limit) {
+      return
+    }
+    getTransfers(offset, offset + limit)
+  })
+}
+
 </script>
 <style lang="sass" scoped>
 .q-avatar
@@ -166,6 +203,17 @@ const columns = computed(() => [
 .name
   color: #F5841F
   font-size: 40px
+.description
+  width: 480px
+  margin: 0 auto
+  padding-top: 10px
+  opacity: 0.8
+  text-align: center
+.q-tab
+  text-transform: none
+  margin-top: 20px
+::v-deep .q-tab__label
+  font-size: 24px
 .collection
   .table
     margin-top: 15px
