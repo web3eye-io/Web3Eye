@@ -61,5 +61,5 @@ const imageUrl = computed(() => {
 .q-img__content > div
   background: none
 ::v-deep .q-img__image
-  border-radius: 6px
+  border-radius: 8px
 </style>

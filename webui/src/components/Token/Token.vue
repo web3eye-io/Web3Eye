@@ -206,12 +206,16 @@ onMounted(() => {
       height: 230px
       border: 1px solid #EFEFEF
       border-radius: 4px
-      margin-top: 30px
+      margin-top: 40px
       background-color: #fcfbfb
       border-radius: 16px
+      .content-left
+        position: relative
+        top: -20px
+        left: 20px
       .content-right
         flex-grow: 1
-        padding-left: 25px
+        padding-left: 40px
         opacity: 0.9
         .line-top
           padding-top: 15px
