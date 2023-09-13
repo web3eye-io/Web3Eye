@@ -17,16 +17,6 @@ type Server struct {
 	entrancepool.UnimplementedManagerServer
 }
 
-func (s *Server) GetTransfer(ctx context.Context, in *transferpool.GetTransferRequest) (*transferpool.GetTransferResponse, error) {
-	client.UseCloudProxyCC()
-	return client.GetTransfer(ctx, in)
-}
-
-func (s *Server) GetTransferOnly(ctx context.Context, in *transferpool.GetTransferOnlyRequest) (*transferpool.GetTransferOnlyResponse, error) {
-	client.UseCloudProxyCC()
-	return client.GetTransferOnly(ctx, in)
-}
-
 func (s *Server) GetTransfers(ctx context.Context, in *rankerpool.GetTransfersRequest) (*transferpool.GetTransfersResponse, error) {
 	ret := `{
 		"Infos": [

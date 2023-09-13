@@ -15,16 +15,6 @@ type Server struct {
 	transfer.Server
 }
 
-func (s *Server) GetTransfer(ctx context.Context, in *nftmetanpool.GetTransferRequest) (*nftmetanpool.GetTransferResponse, error) {
-	return s.Server.GetTransfer(ctx, in)
-}
-
-func (s *Server) GetTransferOnly(
-	ctx context.Context,
-	in *nftmetanpool.GetTransferOnlyRequest) (*nftmetanpool.GetTransferOnlyResponse, error) {
-	return s.Server.GetTransferOnly(ctx, in)
-}
-
 func (s *Server) GetTransfers(ctx context.Context, in *rankernpool.GetTransfersRequest) (*nftmetanpool.GetTransfersResponse, error) {
 	_conds := &nftmetanpool.Conds{
 		ChainType: &web3eye.StringVal{

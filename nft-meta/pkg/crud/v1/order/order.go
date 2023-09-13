@@ -46,7 +46,7 @@ func Create(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 		if err != nil {
 			return err
 		}
-		offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemTarget)
+		offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
 		offerItems, err = tx.OrderItem.CreateBulk(offerBulk...).Save(ctx)
 		if err != nil {
 			return err
@@ -117,7 +117,7 @@ func CreateBulk(ctx context.Context, infos []*npool.OrderReq) ([]*OrderDetail, e
 			if err != nil {
 				return err
 			}
-			offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemTarget)
+			offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
 			offerItems, err := tx.OrderItem.CreateBulk(offerBulk...).Save(ctx)
 			if err != nil {
 				return err

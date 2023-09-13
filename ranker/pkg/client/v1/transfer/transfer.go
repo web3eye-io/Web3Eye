@@ -55,22 +55,6 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetTransfer(ctx context.Context, in *nftmetaproto.GetTransferRequest) (resp *nftmetaproto.GetTransferResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.GetTransfer(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func GetTransferOnly(ctx context.Context, in *nftmetaproto.GetTransferOnlyRequest) (resp *nftmetaproto.GetTransferOnlyResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.GetTransferOnly(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (resp *nftmetaproto.GetTransfersResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetTransfers(ctx, in)

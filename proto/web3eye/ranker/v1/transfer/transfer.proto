@@ -7,9 +7,6 @@ import "web3eye/nftmeta/v1/transfer/transfer.proto";
 import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
-  rpc GetTransfer(nftmeta.v1.transfer.GetTransferRequest) returns (nftmeta.v1.transfer.GetTransferResponse) {}
-  rpc GetTransferOnly(nftmeta.v1.transfer.GetTransferOnlyRequest)
-      returns (nftmeta.v1.transfer.GetTransferOnlyResponse) {}
   rpc GetTransfers(GetTransfersRequest) returns (nftmeta.v1.transfer.GetTransfersResponse) {}
   rpc CountTransfers(CountTransfersRequest) returns (nftmeta.v1.transfer.CountTransfersResponse) {}
 }

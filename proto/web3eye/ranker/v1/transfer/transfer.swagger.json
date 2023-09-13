@@ -68,78 +68,12 @@
         }
       }
     },
-    "transferConds": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Contract": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "From": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "To": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Amount": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "BlockNumber": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "TxHash": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "BlockHash": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TxTime": {
-          "$ref": "#/definitions/web3eyeUint32Val"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
     "transferCountTransfersResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "transferGetTransferOnlyResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/transferTransfer"
-        }
-      }
-    },
-    "transferGetTransferResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/transferTransfer"
         }
       }
     },
@@ -205,55 +139,6 @@
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string"
-        }
-      }
-    },
-    "web3eyeUint32Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "web3eyeUint64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string",
-          "format": "uint64"
         }
       }
     }
