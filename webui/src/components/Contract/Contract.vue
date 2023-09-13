@@ -38,9 +38,11 @@
         </div>
       </div>
       <div id="contract">
-        <div class="inner row" v-if="tab == 'Collections'">
-          <div class="box column" v-for="token in tokens" :key="token.ID">
-            <MyImage :url="token.ImageURL" :height="'180px'" :width="'180px'" />
+        <div class="inner grid-container" v-if="tab == 'Collections'">
+          <div class="box" v-for="token in tokens" :key="token.ID">
+            <div class="box-img">
+              <MyImage :url="token.ImageURL" :height="'220px'" />
+            </div>
             <div class="content">
               <div class="line row justify-between">
                 <span class="title">#{{token.TokenID}}</span>
@@ -70,7 +72,6 @@
       </div>
     </div>
   </div>
-  
 </template>
 <script lang="ts" setup>
 import { useContractStore } from 'src/teststore/contract'
@@ -155,7 +156,6 @@ const columns = computed(() => [
 ])
 </script>
 <style lang="sass" scoped>
-
 .q-avatar
   top: -40px
   height: 1.5em
@@ -180,30 +180,29 @@ const columns = computed(() => [
       &:last-child
         border-right: none
 #contract
-  margin: 0 auto
   padding: 10px
+  padding-right: 0
   padding-left: 0
-  .right
-    padding: 0 15px 15px 15px
-    .header,.title
-      font-weight: bolder
-      font-size: 16px
-      padding: 5px 0
-    .contract
-      padding: 2px 0
-      span
-        padding-right: 20px
-  .box
-    width: 180px
-    border-radius: 10px
-    border: 1px solid #efefef
-    margin: 0 15px 15px 0
-    .content
-      .line
-        padding: 5px
-      .super
-        padding: 0 5px 2px 5px
-      .transfers
-        min-width: 20px
-
+  
+  .grid-container
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(auto, 220px))
+    grid-gap: 12px  
+    justify-content: space-between
+    .box
+      width: 220px
+      max-width: 280px
+      height: 308px
+      border-radius: 10px
+      border: 1px solid #efefef
+      background-color: #FAFAFA
+      .box-img
+        padding: 8px
+      .content
+        .line
+          padding: 5px
+        .super
+          padding: 0 5px 2px 5px
+        .transfers
+          min-width: 20px
 </style>
