@@ -73,7 +73,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
-import { SearchToken, Token } from 'src/teststore/token/types';
+import { SearchToken } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';

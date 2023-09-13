@@ -84,7 +84,7 @@ import { Transfer } from 'src/teststore/transfer/types';
 import { useTransferStore } from 'src/teststore/transfer';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 
-const tab = ref("Collections")
+const tab = ref('Collections')
 const contract = useContractStore()
 const tokens = computed(() => contract.ShotTokens.ShotTokens)
 const current = computed(() => contract.Contract)
@@ -99,6 +99,7 @@ const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
 const tokenID = computed(() => query.value.tokenID)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getImageUrl = computed(() => (url: string) => {
   if(url.startsWith('ipfs://')) {
       return url.replace('ipfs://', 'https://ipfs.io/ipfs/')
@@ -131,7 +132,7 @@ const columns = computed(() => [
     name: 'Item',
     label: 'Item',
     align: 'center',
-    field: () => ""
+    field: () => ''
   },
   {
     name: 'Block',
