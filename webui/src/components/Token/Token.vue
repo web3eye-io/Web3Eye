@@ -2,81 +2,71 @@
   <div class="outer-bg">
     <div class="outer-container">
       <div class="token row nowrap">
-    <div class="left">
-      <q-list bordered class="rounded-borders">
-        <q-expansion-item
-          expand-separator
-          default-opened
-          label="Chains"
-        >
-          <q-card>
-            <q-card-section>
-              <q-option-group
-                v-model="group"
-                :options="options"
-                color="blue"
-                type="checkbox"
-              >
-              <template v-slot:label="row">
-                <div class="row justify-between">
-                  <div>{{ row.label }}</div>
-                  <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
-                </div>
-              </template>
-            </q-option-group>
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
-      </q-list>
-    </div>
-    <div class="right">
-      <div class="title">Collections</div>
-      <div class="row box" v-for="token in tokens" :key="token.ID">
-        <div class="content-left">
-          <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" :title="token.TokenID" />
+        <div class="left">
+          <q-list bordered class="rounded-borders">
+            <q-expansion-item expand-separator default-opened label="Chains">
+              <q-card>
+                <q-card-section>
+                  <q-option-group v-model="group" :options="options" color="blue" type="checkbox">
+                    <template v-slot:label="row">
+                      <div class="row justify-between">
+                        <div>{{ row.label }}</div>
+                        <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
+                      </div>
+                    </template>
+                  </q-option-group>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-list>
         </div>
-        <div class="content-right column">
-          <div class="line-top row space-between items-center">
-            <div class="distance">Distance: {{ token.Distance }}</div>
-            <div class="block1">Block: {{ token.SiblingsNum }}</div>
-            <q-space />
-            <div>
-                <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
-                <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
+        <div class="right">
+          <div class="title">Collections</div>
+          <div class="row box" v-for="token in tokens" :key="token.ID">
+            <div class="content-left">
+              <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" :title="token.TokenID" />
+            </div>
+            <div class="content-right column">
+              <div class="line-top row space-between items-center">
+                <div class="distance">Distance: {{ token.Distance }}</div>
+                <div class="block1">Block: {{ token.SiblingsNum }}</div>
+                <q-space />
+                <div>
+                  <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
+                  <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
+                </div>
+                <div class="chain-logo">{{ token.ChainType }}</div>
               </div>
-              <div class="chain-logo">{{ token.ChainType }}</div>
-          </div>
-          <div class="name">
-              <span>{{ token.Name }}</span>
-          </div>
-          <div class="contract row">
-              <a href="#" @click.prevent @click="onContractClick(token)">
-                <span>Contract: {{ token.Contract }}</span>
-              </a>
-              <div class="copy">
-                <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)"/>
+              <div class="name">
+                <span>{{ token.Name }}</span>
               </div>
-          </div>
-          <div class="total-transfers">
-            <a href="#" @click.prevent @click="onTransferClick(token)">
-              <span>Transfers: {{token?.TransfersNum}}</span>
-            </a>
-          </div>
-          <div class="transfers row">
-            <div v-for="item in token.SiblingTokens" :key="item.ID">
-              <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
+              <div class="contract row">
+                <a href="#" @click.prevent @click="onContractClick(token)">
+                  <span>Contract: {{ token.Contract }}</span>
+                </a>
+                <div class="copy">
+                  <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)" />
+                </div>
+              </div>
+              <div class="total-transfers">
+                <a href="#" @click.prevent @click="onTransferClick(token)">
+                  <span>Transfers: {{ token?.TransfersNum }}</span>
+                </a>
+              </div>
+              <div class="transfers row">
+                <div v-for="item in token.SiblingTokens" :key="item.ID">
+                  <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
     </div>
-    </div>
-  </div>
-    </div>
-    
   </div>
   <q-dialog v-model="showing" id="transfer-card">
     <q-card style="width: 860px;">
-      <TransferCard :transfers="targetTransfers" :token="target"  />
+      <TransferCard :transfers="targetTransfers" :token="target" />
     </q-card>
   </q-dialog>
 </template>
@@ -129,7 +119,7 @@ const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
 const onTransferClick = (token: SearchToken) => {
-  target.value = {...token}
+  target.value = { ...token }
   showing.value = true
 }
 
@@ -149,7 +139,7 @@ const getTransfers = (offset: number, limit: number) => {
     Offset: offset,
     Limit: limit,
     Message: {}
-  }, (error:boolean, rows: Transfer[]) => {
+  }, (error: boolean, rows: Transfer[]) => {
     if (error || rows.length < limit) {
       targetTransfers.value = rows
       return
@@ -175,14 +165,14 @@ const getTokens = (page: number) => {
     StorageKey: token.SearchTokens.StorageKey,
     Page: page,
     Message: {}
-  }, (error:boolean) => {
+  }, (error: boolean) => {
     if (error || page >= token.SearchTokens.TotalPages) return
     page += 1
     getTokens(page)
   })
 }
 
-const onCopyClick = (token: SearchToken) =>  {
+const onCopyClick = (token: SearchToken) => {
   void copyToClipboard(token.Contract)
 }
 
