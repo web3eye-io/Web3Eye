@@ -3,9 +3,13 @@
     <div class="outer-container">
       <div class="top row">
         <div class="left">
-
+          <MyImage 
+            :url="'https://ipfs.io/ipfs/QmR9sexEQLMxVNzjDpYphXKmi2cACfzdCM1afXh6e6cDL4/1109.png'" 
+            :height="'460px'" 
+            :width="'460px'"
+        />
         </div>
-        <div class="right col">
+        <div class="right col justify-between">
           <div class="name">
             Coolman's Universe
           </div>
@@ -52,14 +56,24 @@
   </div>
 </template>
 <script lang='ts' setup>
+import { defineAsyncComponent } from 'vue';
+
+const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 </script>
 
 <style lang="sass" scoped>
   .top
-    height: 620px
     .left
-      width: 620px
+      width: 500px
+      height: 500px
+      border: 1px solid #f7f7f7
+      border-radius: 16px
+      padding-left: 20px
+      padding-top: 20px
+      box-shadow: 5px 5px 5px #f7f7f7
     .right
+      margin-left: 30px
+      padding-top: 20px
       .name
         font-size: 20px
         color: #1772f8

@@ -24,7 +24,7 @@
           <div class="title">Collections</div>
           <div class="row box" v-for="token in tokens" :key="token.ID">
             <div class="content-left">
-              <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" :title="token.TokenID" />
+              <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
             </div>
             <div class="content-right column">
               <div class="line-top row space-between items-center">
