@@ -213,6 +213,7 @@ const getTransfers = (offset: number, limit: number) => {
 .q-tab
   text-transform: none
   margin-top: 20px
+  margin-bottom: 15px
 ::v-deep .q-tab__label
   font-size: 24px
 .collection
