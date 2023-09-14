@@ -41,9 +41,7 @@
                 <span>{{ token.Name }}</span>
               </div>
               <div class="contract row">
-                <a href="#" @click.prevent @click="onContractClick(token)">
                   <span>Contract: {{ token.Contract }}</span>
-                </a>
                 <div class="copy">
                   <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)" />
                 </div>
@@ -120,7 +118,7 @@ const targetTransfers = ref([] as Array<Transfer>)
 const showing = ref(false)
 const onTransferClick = (token: SearchToken) => {
   target.value = { ...token }
-  showing.value = true
+  showing.value = false
 }
 
 const onImageClick = () => {
@@ -156,6 +154,7 @@ const getTransfers = (offset: number, limit: number) => {
 
 const router = useRouter()
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onContractClick = (token: SearchToken) => {
   void router.push({
     path: '/contract',
