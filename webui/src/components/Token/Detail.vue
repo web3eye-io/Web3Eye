@@ -51,14 +51,89 @@
           <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
         </div>
       </div>
-
+      <div class="transfer">Transfer</div>
+      <q-table
+        row-key="Block" 
+        flat 
+        bordered
+        :columns="(columns as any)"
+        :rows="transfers"
+      />
+      <div class="collections">More from this collection</div>
+      <div class="inner grid-container">
+          <div class="box" v-for="token in tokens" :key="token.ID">
+            <TokenCard :token="token" />
+          </div>
+        </div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { defineAsyncComponent } from 'vue';
-
+import { useContractStore } from 'src/teststore/contract';
+import { useTransferStore } from 'src/teststore/transfer';
+import { Transfer } from 'src/teststore/transfer/types';
+import { computed, defineAsyncComponent } from 'vue';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
+const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
+
+const transfer = useTransferStore()
+const transfers = computed(() => transfer.Transfers.Transfers)
+
+const columns = computed(() => [
+  {
+    name: 'Block',
+    label: 'BLOCK',
+    align: 'center',
+    field: (row: Transfer) => row.BlockNumber
+  },
+  {
+    name: 'Time',
+    label: 'Time',
+    align: 'center',
+    field: (row: Transfer) => row.TxTime
+  },
+  {
+    name: 'Value',
+    label: 'Value',
+    align: 'center',
+    field: (row: Transfer) => row.Amount
+  },
+  {
+    name: 'From',
+    label: 'From',
+    align: 'center',
+    field: (row: Transfer) => row.From
+  },
+  {
+    name: 'To',
+    label: 'To',
+    align: 'center',
+    field: (row: Transfer) => row.To
+  },
+])
+
+const contract = useContractStore()
+const tokens = computed(() => contract.ShotTokens.ShotTokens)
+
+
+const current = computed(() => contract.Contract)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getTransfers = (offset: number, limit: number) => {
+  transfer.getTransfers({
+    ChainType: current.value.ChainType,
+    ChainID: current.value.ChainID,
+    Contract: current.value.Address,
+    TokenID: '',
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error:boolean, rows: Transfer[]) => {
+    if (error || rows.length < limit) {
+      return
+    }
+    getTransfers(offset, offset + limit)
+  })
+}
 </script>
 
 <style lang="sass" scoped>
@@ -88,6 +163,7 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
         font-weight: 500
         line-height: 20px
         opacity: 0.8
+        height: 26px
       .author
         padding-top: 40px
       .contract
@@ -125,4 +201,14 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
       .buy
         margin: 10px 0
         width: 100%
+.transfer,.collections
+  margin-top: 40px
+  font-size: 36px
+  font-weight: 700
+.grid-container
+  margin-top: 20px
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(auto, 220px))
+  grid-gap: 12px  
+  justify-content: space-between
 </style>

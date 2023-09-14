@@ -32,44 +32,20 @@
             indicator-color="primary"
             align="justify"
             narrow-indicator
-            @update:model-value="onChangeTab"
           >
             <q-tab name="Collections" label="Collections" />
-            <q-tab name="Transfers" label="Transfers" />
+            <q-tab name="Transfers" label="Activity" />
           </q-tabs>
         </div>
       </div>
       <div id="contract">
         <div class="inner grid-container" v-if="tab == 'Collections'">
           <div class="box" v-for="token in tokens" :key="token.ID">
-            <div class="box-img">
-              <MyImage :url="token.ImageURL" :height="'220px'" />
-            </div>
-            <div class="content">
-              <div class="line row justify-between">
-                <span class="title">#{{token.TokenID}}</span>
-                <div class="row fee">
-                  <span>4.75</span>
-                  <q-icon name="img:icons/ethereum-eth-logo.png" style="padding-top: 3px;" />
-                </div>
-              </div>
-              <div class="super row justify-between">
-                <div>{{token.Name}}</div>
-                <div class="transfers">
-                  {{token.TransfersNum}}
-                  <q-icon name="img:icons/transfers.png" />
-                </div>
-              </div>
-            </div>
+            <TokenCard :token="token" />
           </div>
         </div>
         <div v-else>
-          <q-table
-          row-key="Block" 
-          flat bordered
-          :columns="(columns as any)"
-          :rows="transfers"
-        />
+          Coming Soon
         </div>
       </div>
     </div>
@@ -80,9 +56,8 @@ import { useContractStore } from 'src/teststore/contract'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
-import { Transfer } from 'src/teststore/transfer/types';
-import { useTransferStore } from 'src/teststore/transfer';
-const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
+const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
+
 
 const tab = ref('Collections')
 const contract = useContractStore()
@@ -97,7 +72,6 @@ interface Query {
 const route = useRoute()
 const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
-const tokenID = computed(() => query.value.tokenID)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getImageUrl = computed(() => (url: string) => {
@@ -126,72 +100,6 @@ const getContract = () => {
     // TODO
   })
 }
-
-const columns = computed(() => [
-  {
-    name: 'Item',
-    label: 'Item',
-    align: 'center',
-    field: () => ''
-  },
-  {
-    name: 'Block',
-    label: 'BLOCK',
-    align: 'center',
-    field: (row: Transfer) => row.BlockNumber
-  },
-  {
-    name: 'Time',
-    label: 'Time',
-    align: 'center',
-    field: (row: Transfer) => row.TxTime
-  },
-  {
-    name: 'Value',
-    label: 'Value',
-    align: 'center',
-    field: (row: Transfer) => row.Amount
-  },
-  {
-    name: 'From',
-    label: 'From',
-    align: 'center',
-    field: (row: Transfer) => row.From
-  },
-  {
-    name: 'To',
-    label: 'To',
-    align: 'center',
-    field: (row: Transfer) => row.To
-  },
-])
-
-const transfer = useTransferStore()
-const transfers = computed(() => transfer.Transfers.Transfers)
-
-const onChangeTab = () => {
-  if (transfers.value?.length == 0) {
-    getTransfers(0, 500)
-  }
-}
-
-const getTransfers = (offset: number, limit: number) => {
-  transfer.getTransfers({
-    ChainType: current.value.ChainType,
-    ChainID: current.value.ChainID,
-    Contract: current.value.Address,
-    TokenID: tokenID.value,
-    Offset: offset,
-    Limit: limit,
-    Message: {}
-  }, (error:boolean, rows: Transfer[]) => {
-    if (error || rows.length < limit) {
-      return
-    }
-    getTransfers(offset, offset + limit)
-  })
-}
-
 </script>
 <style lang="sass" scoped>
 .q-avatar
@@ -214,6 +122,7 @@ const getTransfers = (offset: number, limit: number) => {
   text-transform: none
   margin-top: 20px
   margin-bottom: 15px
+  padding-left: 0px
 ::v-deep .q-tab__label
   font-size: 24px
 .collection
