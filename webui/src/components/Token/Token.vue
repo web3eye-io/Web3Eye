@@ -23,7 +23,7 @@
         <div class="right">
           <div class="title">Collections</div>
           <div class="row box" v-for="token in tokens" :key="token.ID">
-            <div class="content-left">
+            <div class="content-left" @click="onImageClick">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
             </div>
             <div class="content-right column">
@@ -54,7 +54,7 @@
                 </a>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onImageClick" class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
               </div>
@@ -121,6 +121,12 @@ const showing = ref(false)
 const onTransferClick = (token: SearchToken) => {
   target.value = { ...token }
   showing.value = true
+}
+
+const onImageClick = () => {
+  void router.push({
+    path: '/token/detail',
+  })
 }
 
 watch(() => target.value?.ID, () => {
@@ -211,6 +217,7 @@ onMounted(() => {
       border-radius: 16px
       .content-left
         position: relative
+        cursor: pointer
         top: -20px
         left: 20px
       .content-right
@@ -237,6 +244,8 @@ onMounted(() => {
         .transfers
           padding-top: 12px
           gap: 8px
+          .split-token
+            cursor: pointer
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%
