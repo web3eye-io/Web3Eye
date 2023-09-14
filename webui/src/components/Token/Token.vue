@@ -41,15 +41,15 @@
                 <span>{{ token.Name }}</span>
               </div>
               <div class="contract row">
+                <a href="#" @click.prevent @click="onContractClick(token)">
                   <span>Contract: {{ token.Contract }}</span>
+                </a>
                 <div class="copy">
                   <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)" />
                 </div>
               </div>
               <div class="total-transfers">
-                <a href="#" @click.prevent @click="onTransferClick(token)">
                   <span>Transfers: {{ token?.TransfersNum }}</span>
-                </a>
               </div>
               <div class="transfers row">
                 <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onImageClick" class="split-token">
@@ -116,9 +116,10 @@ const transfer = useTransferStore()
 const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onTransferClick = (token: SearchToken) => {
   target.value = { ...token }
-  showing.value = false
+  showing.value = true
 }
 
 const onImageClick = () => {
@@ -154,7 +155,6 @@ const getTransfers = (offset: number, limit: number) => {
 
 const router = useRouter()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const onContractClick = (token: SearchToken) => {
   void router.push({
     path: '/contract',

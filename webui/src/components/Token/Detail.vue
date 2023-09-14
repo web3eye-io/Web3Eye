@@ -205,6 +205,8 @@ const getTransfers = (offset: number, limit: number) => {
   margin-top: 40px
   font-size: 36px
   font-weight: 700
+.transfer
+  padding-bottom: 20px
 .grid-container
   margin-top: 20px
   display: grid
