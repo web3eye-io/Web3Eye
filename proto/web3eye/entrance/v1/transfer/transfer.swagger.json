@@ -16,38 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/count/transfers": {
-      "post": {
-        "operationId": "Manager_CountTransfers",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/transferCountTransfersResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/rankerv1transferCountTransfersRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/get/transfers": {
       "post": {
         "operationId": "Manager_GetTransfers",
@@ -55,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/transferGetTransfersResponse"
+              "$ref": "#/definitions/rankerv1transferGetTransfersResponse"
             }
           },
           "default": {
@@ -115,31 +83,6 @@
       },
       "additionalProperties": {}
     },
-    "rankerv1transferCountTransfersRequest": {
-      "type": "object",
-      "properties": {
-        "ChainType": {
-          "$ref": "#/definitions/chainChainType"
-        },
-        "ChainID": {
-          "type": "string"
-        },
-        "Contract": {
-          "type": "string"
-        },
-        "TokenID": {
-          "type": "string"
-        },
-        "Offset": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Limit": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "rankerv1transferGetTransfersRequest": {
       "type": "object",
       "properties": {
@@ -165,40 +108,13 @@
         }
       }
     },
-    "rpcStatus": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
-        }
-      }
-    },
-    "transferCountTransfersResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "transferGetTransfersResponse": {
+    "rankerv1transferGetTransfersResponse": {
       "type": "object",
       "properties": {
         "Infos": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/transferTransfer"
+            "$ref": "#/definitions/rankerv1transferTransfer"
           }
         },
         "Total": {
@@ -207,7 +123,7 @@
         }
       }
     },
-    "transferTransfer": {
+    "rankerv1transferTransfer": {
       "type": "object",
       "properties": {
         "ID": {
@@ -253,6 +169,70 @@
           "format": "int64"
         },
         "Remark": {
+          "type": "string"
+        },
+        "TargetItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1transferOrderItem"
+          }
+        },
+        "OfferItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1transferOrderItem"
+          }
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1transferOrderItem": {
+      "type": "object",
+      "properties": {
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Remark": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Symbol": {
+          "type": "string"
+        },
+        "Decimals": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "OrderItemType": {
           "type": "string"
         }
       }

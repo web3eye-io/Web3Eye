@@ -46,8 +46,8 @@ func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
 			}
 
 			result = append(result, &chains.TokenTransfer{
-				From:        pLog.Topics[1].Hex(),
-				To:          pLog.Topics[2].Hex(),
+				From:        common.HexToAddress(pLog.Topics[1].Hex()).String(),
+				To:          common.HexToAddress(pLog.Topics[2].Hex()).String(),
 				Contract:    pLog.Address.Hex(),
 				TokenID:     pLog.Topics[3].Big().String(),
 				BlockNumber: pLog.BlockNumber,
@@ -76,8 +76,8 @@ func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
 				panic("Failed to unpack TransferSingle event, value not found")
 			}
 			result = append(result, &chains.TokenTransfer{
-				From:        pLog.Topics[2].Hex(),
-				To:          pLog.Topics[3].Hex(),
+				From:        common.HexToAddress(pLog.Topics[2].Hex()).String(),
+				To:          common.HexToAddress(pLog.Topics[3].Hex()).String(),
 				Contract:    pLog.Address.Hex(),
 				TokenID:     id.String(),
 				Amount:      value.Uint64(),
@@ -109,8 +109,8 @@ func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
 
 			for j := 0; j < len(ids); j++ {
 				result = append(result, &chains.TokenTransfer{
-					From:        pLog.Topics[2].Hex(),
-					To:          pLog.Topics[3].Hex(),
+					From:        common.HexToAddress(pLog.Topics[2].Hex()).String(),
+					To:          common.HexToAddress(pLog.Topics[3].Hex()).String(),
 					Contract:    pLog.Address.Hex(),
 					TokenID:     ids[j].String(),
 					Amount:      values[j].Uint64(),

@@ -8,15 +8,9 @@ import "web3eye/nftmeta/v1/transfer/transfer.proto";
 import "web3eye/ranker/v1/transfer/transfer.proto";
 
 service Manager {
-  rpc GetTransfers(ranker.v1.transfer.GetTransfersRequest) returns (nftmeta.v1.transfer.GetTransfersResponse) {
+  rpc GetTransfers(ranker.v1.transfer.GetTransfersRequest) returns (ranker.v1.transfer.GetTransfersResponse) {
     option (google.api.http) = {
       post : "/v1/get/transfers"
-      body : "*"
-    };
-  }
-  rpc CountTransfers(ranker.v1.transfer.CountTransfersRequest) returns (nftmeta.v1.transfer.CountTransfersResponse) {
-    option (google.api.http) = {
-      post : "/v1/count/transfers"
       body : "*"
     };
   }

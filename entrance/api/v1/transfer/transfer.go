@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	entrancepool "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/transfer"
-	transferpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	rankerpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
 	client "github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/transfer"
 
@@ -17,7 +16,7 @@ type Server struct {
 	entrancepool.UnimplementedManagerServer
 }
 
-func (s *Server) GetTransfers(ctx context.Context, in *rankerpool.GetTransfersRequest) (*transferpool.GetTransfersResponse, error) {
+func (s *Server) GetTransfers(ctx context.Context, in *rankerpool.GetTransfersRequest) (*rankerpool.GetTransfersResponse, error) {
 	ret := `{
 		"Infos": [
 			{
@@ -55,16 +54,11 @@ func (s *Server) GetTransfers(ctx context.Context, in *rankerpool.GetTransfersRe
 		],
 		"Total": 2
 	}`
-	resp := &transferpool.GetTransfersResponse{}
+	resp := &rankerpool.GetTransfersResponse{}
 	json.Unmarshal([]byte(ret), resp)
 	return resp, nil
 	client.UseCloudProxyCC()
 	return client.GetTransfers(ctx, in)
-}
-
-func (s *Server) CountTransfers(ctx context.Context, in *rankerpool.CountTransfersRequest) (*transferpool.CountTransfersResponse, error) {
-	client.UseCloudProxyCC()
-	return client.CountTransfers(ctx, in)
 }
 
 func Register(server grpc.ServiceRegistrar) {

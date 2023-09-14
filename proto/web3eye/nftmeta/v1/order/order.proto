@@ -24,11 +24,11 @@ service Manager {
 }
 
 message OrderItem{
-  string Contract = 40;
-  chain.TokenType TokenType = 50;
-  string TokenID = 60;
-  int64 Amount = 70;
-  string Remark = 80;
+  string Contract = 10;
+  chain.TokenType TokenType = 20;
+  string TokenID = 30;
+  int64 Amount = 40;
+  string Remark = 50;
 }
 
 message OrderReq {

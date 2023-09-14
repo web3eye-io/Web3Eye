@@ -8,7 +8,6 @@ package transfer
 
 import (
 	context "context"
-	transfer1 "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	transfer "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -24,8 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
-	GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer1.GetTransfersResponse, error)
-	CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer1.CountTransfersResponse, error)
+	GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error)
 }
 
 type managerClient struct {
@@ -36,18 +34,9 @@ func NewManagerClient(cc grpc.ClientConnInterface) ManagerClient {
 	return &managerClient{cc}
 }
 
-func (c *managerClient) GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer1.GetTransfersResponse, error) {
-	out := new(transfer1.GetTransfersResponse)
+func (c *managerClient) GetTransfers(ctx context.Context, in *transfer.GetTransfersRequest, opts ...grpc.CallOption) (*transfer.GetTransfersResponse, error) {
+	out := new(transfer.GetTransfersResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.transfer.Manager/GetTransfers", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) CountTransfers(ctx context.Context, in *transfer.CountTransfersRequest, opts ...grpc.CallOption) (*transfer1.CountTransfersResponse, error) {
-	out := new(transfer1.CountTransfersResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.transfer.Manager/CountTransfers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +47,7 @@ func (c *managerClient) CountTransfers(ctx context.Context, in *transfer.CountTr
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
 type ManagerServer interface {
-	GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer1.GetTransfersResponse, error)
-	CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer1.CountTransfersResponse, error)
+	GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -67,11 +55,8 @@ type ManagerServer interface {
 type UnimplementedManagerServer struct {
 }
 
-func (UnimplementedManagerServer) GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer1.GetTransfersResponse, error) {
+func (UnimplementedManagerServer) GetTransfers(context.Context, *transfer.GetTransfersRequest) (*transfer.GetTransfersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransfers not implemented")
-}
-func (UnimplementedManagerServer) CountTransfers(context.Context, *transfer.CountTransfersRequest) (*transfer1.CountTransfersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountTransfers not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -104,24 +89,6 @@ func _Manager_GetTransfers_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(transfer.CountTransfersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountTransfers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.transfer.Manager/CountTransfers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTransfers(ctx, req.(*transfer.CountTransfersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,10 +99,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTransfers",
 			Handler:    _Manager_GetTransfers_Handler,
-		},
-		{
-			MethodName: "CountTransfers",
-			Handler:    _Manager_CountTransfers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
