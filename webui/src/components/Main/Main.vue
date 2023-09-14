@@ -171,8 +171,10 @@ const onFailed = () => {
 .logo
   margin: 10px 0 20px 0
 
+.icontainer,.upload-box
+  width: 850px
 .icontainer
-  width: 650px
+  margin-top: 50px
 .looking
   margin: 10px 0 10px 0
   color: $grey-8
@@ -184,10 +186,13 @@ const onFailed = () => {
   padding-bottom: 5px
 
 .upload-box
-  width: 650px
+  background: none
   flex-direction: row
 .search-container
   ::v-deep > div.q-uploader
     width: auto
     max-height: 160px
+.q-uploader 
+  ::v-deep .bg-white
+    background: none !important
 </style>
