@@ -9,13 +9,10 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/gogo/protobuf/jsonpb"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
-	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-
-	rankernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
-	"github.com/web3eye-io/Web3Eye/ranker/pkg/crud/v1/transfer"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 )
 
 type Ss struct {
@@ -27,18 +24,19 @@ func main() {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	db.Init()
+	pbJsonMarshaler := jsonpb.Marshaler{
+		EmitDefaults: false,
+	}
 
-	ret, n, err := transfer.Rows(context.Background(), &rankernpool.GetTransfersRequest{
-		ChainType: basetype.ChainType_Ethereum,
-		ChainID:   "1",
-		Contract:  "0x880644ddF208E471C6f2230d31f9027578FA6FcC",
-		// TokenID:   "4205",
-	})
+	b := block.Block{
+		ID:          "sss",
+		BlockNumber: 1222,
+	}
 
-	fmt.Println(utils.PrettyStruct(ret))
-	fmt.Println(n)
+	ss, err := pbJsonMarshaler.MarshalToString(&b)
 	fmt.Println(err)
+	fmt.Println(string(ss))
+
 	<-sigchan
 	os.Exit(1)
 }
