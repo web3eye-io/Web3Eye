@@ -52,9 +52,6 @@ var (
 )
 
 func init() {
-	pbJsonMarshaler = jsonpb.Marshaler{
-		EmitDefaults: true,
-	}
 	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
 
@@ -126,6 +123,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	inT = time.Now()
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
+	pbJsonMarshaler.EmitDefaults = true
 	buff := bytes.NewBuffer([]byte{})
 	err = pbJsonMarshaler.Marshal(buff, resp)
 	if err != nil {

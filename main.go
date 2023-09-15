@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -12,7 +13,7 @@ import (
 	"github.com/gogo/protobuf/jsonpb"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
+	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 )
 
 type Ss struct {
@@ -25,18 +26,19 @@ func main() {
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	pbJsonMarshaler := jsonpb.Marshaler{
-		EmitDefaults: false,
+		EmitDefaults: true,
 	}
 
-	b := block.Block{
-		ID:          "sss",
-		BlockNumber: 1222,
-	}
+	b := rankerproto.SearchToken{}
 
-	ss, err := pbJsonMarshaler.MarshalToString(&b)
+	// ss, err := pbJsonMarshaler.MarshalToString(&b)
+	// fmt.Println(err)
+	// fmt.Println(string(ss))
+
+	buff := bytes.NewBuffer([]byte{})
+	err := pbJsonMarshaler.Marshal(buff, &b)
 	fmt.Println(err)
-	fmt.Println(string(ss))
-
+	fmt.Println(string(buff.Bytes()))
 	<-sigchan
 	os.Exit(1)
 }
