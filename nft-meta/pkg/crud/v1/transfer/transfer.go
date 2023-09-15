@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -87,7 +88,8 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 		c.SetBlockNumber(in.GetBlockNumber())
 	}
 	if in.Amount != nil {
-		c.SetAmount(in.GetAmount())
+		amount := utils.Uint64ToDecStr(in.GetAmount())
+		c.SetAmount(amount)
 	}
 	if in.TxHash != nil {
 		c.SetTxHash(in.GetTxHash())
@@ -185,7 +187,7 @@ func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpd
 		u.SetBlockNumber(in.GetBlockNumber())
 	}
 	if in.Amount != nil {
-		u.SetAmount(in.GetAmount())
+		u.SetAmount(utils.Uint64ToDecStr(in.GetAmount()))
 	}
 	if in.TxHash != nil {
 		u.SetTxHash(in.GetTxHash())
@@ -315,7 +317,7 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TransferQuery, err
 	if conds.Amount != nil {
 		switch conds.GetAmount().GetOp() {
 		case cruder.EQ:
-			stm.Where(transfer.Amount(conds.GetAmount().GetValue()))
+			stm.Where(transfer.Amount(utils.Uint64ToDecStr(conds.GetAmount().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid transfer field")
 		}

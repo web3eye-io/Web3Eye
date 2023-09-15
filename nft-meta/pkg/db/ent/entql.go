@@ -140,7 +140,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderitem.FieldContract:      {Type: field.TypeString, Column: orderitem.FieldContract},
 			orderitem.FieldTokenType:     {Type: field.TypeString, Column: orderitem.FieldTokenType},
 			orderitem.FieldTokenID:       {Type: field.TypeString, Column: orderitem.FieldTokenID},
-			orderitem.FieldAmount:        {Type: field.TypeUint64, Column: orderitem.FieldAmount},
+			orderitem.FieldAmount:        {Type: field.TypeString, Column: orderitem.FieldAmount},
 			orderitem.FieldRemark:        {Type: field.TypeString, Column: orderitem.FieldRemark},
 		},
 	}
@@ -244,7 +244,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldTokenID:     {Type: field.TypeString, Column: transfer.FieldTokenID},
 			transfer.FieldFrom:        {Type: field.TypeString, Column: transfer.FieldFrom},
 			transfer.FieldTo:          {Type: field.TypeString, Column: transfer.FieldTo},
-			transfer.FieldAmount:      {Type: field.TypeUint64, Column: transfer.FieldAmount},
+			transfer.FieldAmount:      {Type: field.TypeString, Column: transfer.FieldAmount},
 			transfer.FieldBlockNumber: {Type: field.TypeUint64, Column: transfer.FieldBlockNumber},
 			transfer.FieldTxHash:      {Type: field.TypeString, Column: transfer.FieldTxHash},
 			transfer.FieldBlockHash:   {Type: field.TypeString, Column: transfer.FieldBlockHash},
@@ -736,8 +736,8 @@ func (f *OrderItemFilter) WhereTokenID(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldTokenID))
 }
 
-// WhereAmount applies the entql uint64 predicate on the amount field.
-func (f *OrderItemFilter) WhereAmount(p entql.Uint64P) {
+// WhereAmount applies the entql string predicate on the amount field.
+func (f *OrderItemFilter) WhereAmount(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldAmount))
 }
 
@@ -1156,8 +1156,8 @@ func (f *TransferFilter) WhereTo(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldTo))
 }
 
-// WhereAmount applies the entql uint64 predicate on the amount field.
-func (f *TransferFilter) WhereAmount(p entql.Uint64P) {
+// WhereAmount applies the entql string predicate on the amount field.
+func (f *TransferFilter) WhereAmount(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldAmount))
 }
 

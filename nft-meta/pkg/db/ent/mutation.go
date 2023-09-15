@@ -4580,8 +4580,7 @@ type OrderItemMutation struct {
 	contract        *string
 	token_type      *string
 	token_id        *string
-	amount          *uint64
-	addamount       *int64
+	amount          *string
 	remark          *string
 	clearedFields   map[string]struct{}
 	done            bool
@@ -5042,13 +5041,12 @@ func (m *OrderItemMutation) ResetTokenID() {
 }
 
 // SetAmount sets the "amount" field.
-func (m *OrderItemMutation) SetAmount(u uint64) {
-	m.amount = &u
-	m.addamount = nil
+func (m *OrderItemMutation) SetAmount(s string) {
+	m.amount = &s
 }
 
 // Amount returns the value of the "amount" field in the mutation.
-func (m *OrderItemMutation) Amount() (r uint64, exists bool) {
+func (m *OrderItemMutation) Amount() (r string, exists bool) {
 	v := m.amount
 	if v == nil {
 		return
@@ -5059,7 +5057,7 @@ func (m *OrderItemMutation) Amount() (r uint64, exists bool) {
 // OldAmount returns the old "amount" field's value of the OrderItem entity.
 // If the OrderItem object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderItemMutation) OldAmount(ctx context.Context) (v uint64, err error) {
+func (m *OrderItemMutation) OldAmount(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
 	}
@@ -5073,28 +5071,9 @@ func (m *OrderItemMutation) OldAmount(ctx context.Context) (v uint64, err error)
 	return oldValue.Amount, nil
 }
 
-// AddAmount adds u to the "amount" field.
-func (m *OrderItemMutation) AddAmount(u int64) {
-	if m.addamount != nil {
-		*m.addamount += u
-	} else {
-		m.addamount = &u
-	}
-}
-
-// AddedAmount returns the value that was added to the "amount" field in this mutation.
-func (m *OrderItemMutation) AddedAmount() (r int64, exists bool) {
-	v := m.addamount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetAmount resets all changes to the "amount" field.
 func (m *OrderItemMutation) ResetAmount() {
 	m.amount = nil
-	m.addamount = nil
 }
 
 // SetRemark sets the "remark" field.
@@ -5319,7 +5298,7 @@ func (m *OrderItemMutation) SetField(name string, value ent.Value) error {
 		m.SetTokenID(v)
 		return nil
 	case orderitem.FieldAmount:
-		v, ok := value.(uint64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -5349,9 +5328,6 @@ func (m *OrderItemMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, orderitem.FieldDeletedAt)
 	}
-	if m.addamount != nil {
-		fields = append(fields, orderitem.FieldAmount)
-	}
 	return fields
 }
 
@@ -5366,8 +5342,6 @@ func (m *OrderItemMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case orderitem.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case orderitem.FieldAmount:
-		return m.AddedAmount()
 	}
 	return nil, false
 }
@@ -5397,13 +5371,6 @@ func (m *OrderItemMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case orderitem.FieldAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderItem numeric field %s", name)
@@ -9273,8 +9240,7 @@ type TransferMutation struct {
 	token_id        *string
 	from            *string
 	to              *string
-	amount          *uint64
-	addamount       *int64
+	amount          *string
 	block_number    *uint64
 	addblock_number *int64
 	tx_hash         *string
@@ -9813,13 +9779,12 @@ func (m *TransferMutation) ResetTo() {
 }
 
 // SetAmount sets the "amount" field.
-func (m *TransferMutation) SetAmount(u uint64) {
-	m.amount = &u
-	m.addamount = nil
+func (m *TransferMutation) SetAmount(s string) {
+	m.amount = &s
 }
 
 // Amount returns the value of the "amount" field in the mutation.
-func (m *TransferMutation) Amount() (r uint64, exists bool) {
+func (m *TransferMutation) Amount() (r string, exists bool) {
 	v := m.amount
 	if v == nil {
 		return
@@ -9830,7 +9795,7 @@ func (m *TransferMutation) Amount() (r uint64, exists bool) {
 // OldAmount returns the old "amount" field's value of the Transfer entity.
 // If the Transfer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransferMutation) OldAmount(ctx context.Context) (v uint64, err error) {
+func (m *TransferMutation) OldAmount(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
 	}
@@ -9844,28 +9809,9 @@ func (m *TransferMutation) OldAmount(ctx context.Context) (v uint64, err error) 
 	return oldValue.Amount, nil
 }
 
-// AddAmount adds u to the "amount" field.
-func (m *TransferMutation) AddAmount(u int64) {
-	if m.addamount != nil {
-		*m.addamount += u
-	} else {
-		m.addamount = &u
-	}
-}
-
-// AddedAmount returns the value that was added to the "amount" field in this mutation.
-func (m *TransferMutation) AddedAmount() (r int64, exists bool) {
-	v := m.addamount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetAmount resets all changes to the "amount" field.
 func (m *TransferMutation) ResetAmount() {
 	m.amount = nil
-	m.addamount = nil
 }
 
 // SetBlockNumber sets the "block_number" field.
@@ -10344,7 +10290,7 @@ func (m *TransferMutation) SetField(name string, value ent.Value) error {
 		m.SetTo(v)
 		return nil
 	case transfer.FieldAmount:
-		v, ok := value.(uint64)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -10402,9 +10348,6 @@ func (m *TransferMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, transfer.FieldDeletedAt)
 	}
-	if m.addamount != nil {
-		fields = append(fields, transfer.FieldAmount)
-	}
 	if m.addblock_number != nil {
 		fields = append(fields, transfer.FieldBlockNumber)
 	}
@@ -10425,8 +10368,6 @@ func (m *TransferMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case transfer.FieldDeletedAt:
 		return m.AddedDeletedAt()
-	case transfer.FieldAmount:
-		return m.AddedAmount()
 	case transfer.FieldBlockNumber:
 		return m.AddedBlockNumber()
 	case transfer.FieldTxTime:
@@ -10460,13 +10401,6 @@ func (m *TransferMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
-		return nil
-	case transfer.FieldAmount:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAmount(v)
 		return nil
 	case transfer.FieldBlockNumber:
 		v, ok := value.(int64)

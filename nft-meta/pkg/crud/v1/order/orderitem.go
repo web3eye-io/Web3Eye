@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
@@ -17,7 +18,7 @@ func ItemCreateSet(c *ent.OrderItemCreate, orderID uuid.UUID, in *npool.OrderIte
 	c.SetContract(in.GetContract())
 	c.SetTokenType(in.GetTokenType().String())
 	c.SetTokenID(in.GetTokenID())
-	c.SetAmount(in.GetAmount())
+	c.SetAmount(utils.Uint64ToDecStr(in.GetAmount()))
 	c.SetRemark(in.GetRemark())
 	return c
 }

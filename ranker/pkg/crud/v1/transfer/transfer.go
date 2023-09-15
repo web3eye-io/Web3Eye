@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
@@ -97,12 +98,11 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 		if err != nil {
 			return err
 		}
-
 		rowID_orderID := make(map[string]string, len(rows))
 		for _, row := range rows {
 			orderItem, err := queryOrderItemAndOrder(row, cli).Only(ctx)
 			if err != nil {
-				return err
+				continue
 			}
 			if orderItem != nil {
 				rowID_orderID[row.ID.String()] = orderItem.OrderID
@@ -119,9 +119,9 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 			}
 			infos = append(infos, ent2rpcTransfer(row, qOrderItems))
 		}
-
 		return nil
 	})
+
 	if err != nil {
 		return nil, 0, err
 	}
@@ -130,6 +130,7 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 }
 
 func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Transfer {
+	amount, _ := utils.DecStr2uint64(row.Amount)
 	transfer := &rankernpool.Transfer{
 		ID:          row.ID.String(),
 		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
@@ -139,7 +140,7 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 		TokenID:     row.TokenID,
 		From:        row.From,
 		To:          row.To,
-		Amount:      row.Amount,
+		Amount:      amount,
 		BlockNumber: row.BlockNumber,
 		TxHash:      row.TxHash,
 		BlockHash:   row.BlockHash,
@@ -150,10 +151,10 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 	}
 	for _, v := range orderItems {
 		orderItem := &rankernpool.OrderItem{
-			Contract:  v.Contract,
-			TokenType: basetype.TokenType(basetype.TokenType_value[v.TokenType]),
-			TokenID:   v.TokenID,
-			// Amount:        v.Amount,
+			Contract:      v.Contract,
+			TokenType:     basetype.TokenType(basetype.TokenType_value[v.TokenType]),
+			TokenID:       v.TokenID,
+			Amount:        v.Amount,
 			Remark:        v.Remark,
 			Name:          v.Name,
 			Symbol:        v.Symbol,

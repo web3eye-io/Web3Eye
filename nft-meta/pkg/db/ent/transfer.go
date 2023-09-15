@@ -37,7 +37,7 @@ type Transfer struct {
 	// To holds the value of the "to" field.
 	To string `json:"to,omitempty"`
 	// Amount holds the value of the "amount" field.
-	Amount uint64 `json:"amount,omitempty"`
+	Amount string `json:"amount,omitempty"`
 	// BlockNumber holds the value of the "block_number" field.
 	BlockNumber uint64 `json:"block_number,omitempty"`
 	// TxHash holds the value of the "tx_hash" field.
@@ -55,9 +55,9 @@ func (*Transfer) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldAmount, transfer.FieldBlockNumber, transfer.FieldTxTime:
+		case transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldBlockNumber, transfer.FieldTxTime:
 			values[i] = new(sql.NullInt64)
-		case transfer.FieldChainType, transfer.FieldChainID, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
+		case transfer.FieldChainType, transfer.FieldChainID, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldAmount, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
 			values[i] = new(sql.NullString)
 		case transfer.FieldID:
 			values[i] = new(uuid.UUID)
@@ -143,10 +143,10 @@ func (t *Transfer) assignValues(columns []string, values []interface{}) error {
 				t.To = value.String
 			}
 		case transfer.FieldAmount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				t.Amount = uint64(value.Int64)
+				t.Amount = value.String
 			}
 		case transfer.FieldBlockNumber:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -237,7 +237,7 @@ func (t *Transfer) String() string {
 	builder.WriteString(t.To)
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", t.Amount))
+	builder.WriteString(t.Amount)
 	builder.WriteString(", ")
 	builder.WriteString("block_number=")
 	builder.WriteString(fmt.Sprintf("%v", t.BlockNumber))

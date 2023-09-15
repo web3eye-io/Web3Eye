@@ -33,7 +33,7 @@ type OrderItem struct {
 	// TokenID holds the value of the "token_id" field.
 	TokenID string `json:"token_id,omitempty"`
 	// Amount holds the value of the "amount" field.
-	Amount uint64 `json:"amount,omitempty"`
+	Amount string `json:"amount,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -43,9 +43,9 @@ func (*OrderItem) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt, orderitem.FieldAmount:
+		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderitem.FieldOrderID, orderitem.FieldOrderItemType, orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldRemark:
+		case orderitem.FieldOrderID, orderitem.FieldOrderItemType, orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldAmount, orderitem.FieldRemark:
 			values[i] = new(sql.NullString)
 		case orderitem.FieldID:
 			values[i] = new(uuid.UUID)
@@ -119,10 +119,10 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 				oi.TokenID = value.String
 			}
 		case orderitem.FieldAmount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				oi.Amount = uint64(value.Int64)
+				oi.Amount = value.String
 			}
 		case orderitem.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -183,7 +183,7 @@ func (oi *OrderItem) String() string {
 	builder.WriteString(oi.TokenID)
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", oi.Amount))
+	builder.WriteString(oi.Amount)
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(oi.Remark)

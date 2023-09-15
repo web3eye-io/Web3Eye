@@ -31,7 +31,7 @@ func (Transfer) Fields() []ent.Field {
 		field.String("token_id"),
 		field.String("from").MaxLen(100),
 		field.String("to").MaxLen(100),
-		field.Uint64("amount"),
+		field.String("amount"),
 		field.Uint64("block_number"),
 		field.String("tx_hash"),
 		field.String("block_hash"),

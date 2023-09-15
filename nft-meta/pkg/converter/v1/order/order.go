@@ -1,6 +1,7 @@
 package order
 
 import (
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/order"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
@@ -13,22 +14,24 @@ func Ent2Grpc(row *order.OrderDetail) *npool.Order {
 
 	targetItems := make([]*npool.OrderItem, len(row.TargetItems))
 	for i, v := range row.TargetItems {
+		amount, _ := utils.DecStr2uint64(v.Amount)
 		targetItems[i] = &npool.OrderItem{
 			Contract:  v.Contract,
 			TokenType: basetype.TokenType(basetype.TokenType_value[v.TokenType]),
 			TokenID:   v.TokenID,
-			Amount:    v.Amount,
+			Amount:    amount,
 			Remark:    v.Remark,
 		}
 	}
 
 	offerItems := make([]*npool.OrderItem, len(row.OfferItems))
 	for i, v := range row.OfferItems {
+		amount, _ := utils.DecStr2uint64(v.Amount)
 		offerItems[i] = &npool.OrderItem{
 			Contract:  v.Contract,
 			TokenType: basetype.TokenType(basetype.TokenType_value[v.TokenType]),
 			TokenID:   v.TokenID,
-			Amount:    v.Amount,
+			Amount:    amount,
 			Remark:    v.Remark,
 		}
 	}

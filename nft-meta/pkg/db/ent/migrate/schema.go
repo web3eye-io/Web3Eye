@@ -127,7 +127,7 @@ var (
 		{Name: "contract", Type: field.TypeString},
 		{Name: "token_type", Type: field.TypeString},
 		{Name: "token_id", Type: field.TypeString},
-		{Name: "amount", Type: field.TypeUint64},
+		{Name: "amount", Type: field.TypeString},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// OrderItemsTable holds the schema information for the "order_items" table.
@@ -247,7 +247,7 @@ var (
 		{Name: "token_id", Type: field.TypeString},
 		{Name: "from", Type: field.TypeString, Size: 100},
 		{Name: "to", Type: field.TypeString, Size: 100},
-		{Name: "amount", Type: field.TypeUint64},
+		{Name: "amount", Type: field.TypeString},
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "tx_hash", Type: field.TypeString},
 		{Name: "block_hash", Type: field.TypeString},

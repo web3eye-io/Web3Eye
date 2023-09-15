@@ -114,15 +114,8 @@ func (oiu *OrderItemUpdate) SetTokenID(s string) *OrderItemUpdate {
 }
 
 // SetAmount sets the "amount" field.
-func (oiu *OrderItemUpdate) SetAmount(u uint64) *OrderItemUpdate {
-	oiu.mutation.ResetAmount()
-	oiu.mutation.SetAmount(u)
-	return oiu
-}
-
-// AddAmount adds u to the "amount" field.
-func (oiu *OrderItemUpdate) AddAmount(u int64) *OrderItemUpdate {
-	oiu.mutation.AddAmount(u)
+func (oiu *OrderItemUpdate) SetAmount(s string) *OrderItemUpdate {
+	oiu.mutation.SetAmount(s)
 	return oiu
 }
 
@@ -323,14 +316,7 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := oiu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiu.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
@@ -455,15 +441,8 @@ func (oiuo *OrderItemUpdateOne) SetTokenID(s string) *OrderItemUpdateOne {
 }
 
 // SetAmount sets the "amount" field.
-func (oiuo *OrderItemUpdateOne) SetAmount(u uint64) *OrderItemUpdateOne {
-	oiuo.mutation.ResetAmount()
-	oiuo.mutation.SetAmount(u)
-	return oiuo
-}
-
-// AddAmount adds u to the "amount" field.
-func (oiuo *OrderItemUpdateOne) AddAmount(u int64) *OrderItemUpdateOne {
-	oiuo.mutation.AddAmount(u)
+func (oiuo *OrderItemUpdateOne) SetAmount(s string) *OrderItemUpdateOne {
+	oiuo.mutation.SetAmount(s)
 	return oiuo
 }
 
@@ -694,14 +673,7 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	}
 	if value, ok := oiuo.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiuo.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})

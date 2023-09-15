@@ -150,7 +150,7 @@ func To(v string) predicate.Transfer {
 }
 
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
-func Amount(v uint64) predicate.Transfer {
+func Amount(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldAmount), v))
 	})
@@ -1077,21 +1077,21 @@ func ToContainsFold(v string) predicate.Transfer {
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.
-func AmountEQ(v uint64) predicate.Transfer {
+func AmountEQ(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldAmount), v))
 	})
 }
 
 // AmountNEQ applies the NEQ predicate on the "amount" field.
-func AmountNEQ(v uint64) predicate.Transfer {
+func AmountNEQ(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldAmount), v))
 	})
 }
 
 // AmountIn applies the In predicate on the "amount" field.
-func AmountIn(vs ...uint64) predicate.Transfer {
+func AmountIn(vs ...string) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1102,7 +1102,7 @@ func AmountIn(vs ...uint64) predicate.Transfer {
 }
 
 // AmountNotIn applies the NotIn predicate on the "amount" field.
-func AmountNotIn(vs ...uint64) predicate.Transfer {
+func AmountNotIn(vs ...string) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1113,30 +1113,65 @@ func AmountNotIn(vs ...uint64) predicate.Transfer {
 }
 
 // AmountGT applies the GT predicate on the "amount" field.
-func AmountGT(v uint64) predicate.Transfer {
+func AmountGT(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldAmount), v))
 	})
 }
 
 // AmountGTE applies the GTE predicate on the "amount" field.
-func AmountGTE(v uint64) predicate.Transfer {
+func AmountGTE(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldAmount), v))
 	})
 }
 
 // AmountLT applies the LT predicate on the "amount" field.
-func AmountLT(v uint64) predicate.Transfer {
+func AmountLT(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldAmount), v))
 	})
 }
 
 // AmountLTE applies the LTE predicate on the "amount" field.
-func AmountLTE(v uint64) predicate.Transfer {
+func AmountLTE(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldAmount), v))
+	})
+}
+
+// AmountContains applies the Contains predicate on the "amount" field.
+func AmountContains(v string) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAmount), v))
+	})
+}
+
+// AmountHasPrefix applies the HasPrefix predicate on the "amount" field.
+func AmountHasPrefix(v string) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAmount), v))
+	})
+}
+
+// AmountHasSuffix applies the HasSuffix predicate on the "amount" field.
+func AmountHasSuffix(v string) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAmount), v))
+	})
+}
+
+// AmountEqualFold applies the EqualFold predicate on the "amount" field.
+func AmountEqualFold(v string) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAmount), v))
+	})
+}
+
+// AmountContainsFold applies the ContainsFold predicate on the "amount" field.
+func AmountContainsFold(v string) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAmount), v))
 	})
 }
 

@@ -136,7 +136,7 @@ func TokenID(v string) predicate.OrderItem {
 }
 
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
-func Amount(v uint64) predicate.OrderItem {
+func Amount(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldAmount), v))
 	})
@@ -837,21 +837,21 @@ func TokenIDContainsFold(v string) predicate.OrderItem {
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.
-func AmountEQ(v uint64) predicate.OrderItem {
+func AmountEQ(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldAmount), v))
 	})
 }
 
 // AmountNEQ applies the NEQ predicate on the "amount" field.
-func AmountNEQ(v uint64) predicate.OrderItem {
+func AmountNEQ(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldAmount), v))
 	})
 }
 
 // AmountIn applies the In predicate on the "amount" field.
-func AmountIn(vs ...uint64) predicate.OrderItem {
+func AmountIn(vs ...string) predicate.OrderItem {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -862,7 +862,7 @@ func AmountIn(vs ...uint64) predicate.OrderItem {
 }
 
 // AmountNotIn applies the NotIn predicate on the "amount" field.
-func AmountNotIn(vs ...uint64) predicate.OrderItem {
+func AmountNotIn(vs ...string) predicate.OrderItem {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -873,30 +873,65 @@ func AmountNotIn(vs ...uint64) predicate.OrderItem {
 }
 
 // AmountGT applies the GT predicate on the "amount" field.
-func AmountGT(v uint64) predicate.OrderItem {
+func AmountGT(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldAmount), v))
 	})
 }
 
 // AmountGTE applies the GTE predicate on the "amount" field.
-func AmountGTE(v uint64) predicate.OrderItem {
+func AmountGTE(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldAmount), v))
 	})
 }
 
 // AmountLT applies the LT predicate on the "amount" field.
-func AmountLT(v uint64) predicate.OrderItem {
+func AmountLT(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldAmount), v))
 	})
 }
 
 // AmountLTE applies the LTE predicate on the "amount" field.
-func AmountLTE(v uint64) predicate.OrderItem {
+func AmountLTE(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldAmount), v))
+	})
+}
+
+// AmountContains applies the Contains predicate on the "amount" field.
+func AmountContains(v string) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldAmount), v))
+	})
+}
+
+// AmountHasPrefix applies the HasPrefix predicate on the "amount" field.
+func AmountHasPrefix(v string) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldAmount), v))
+	})
+}
+
+// AmountHasSuffix applies the HasSuffix predicate on the "amount" field.
+func AmountHasSuffix(v string) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldAmount), v))
+	})
+}
+
+// AmountEqualFold applies the EqualFold predicate on the "amount" field.
+func AmountEqualFold(v string) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldAmount), v))
+	})
+}
+
+// AmountContainsFold applies the ContainsFold predicate on the "amount" field.
+func AmountContainsFold(v string) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldAmount), v))
 	})
 }
 
