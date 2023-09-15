@@ -15,8 +15,8 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
-	token_1 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
+	token_1 "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -34,7 +34,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Manager_GetToken_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq token.GetTokenRequest
+	var protoReq token_1.GetTokenRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -51,7 +51,7 @@ func request_Manager_GetToken_0(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func local_request_Manager_GetToken_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq token.GetTokenRequest
+	var protoReq token_1.GetTokenRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -68,7 +68,7 @@ func local_request_Manager_GetToken_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func request_Manager_SearchPage_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq token_1.SearchPageRequest
+	var protoReq token.SearchPageRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -85,7 +85,7 @@ func request_Manager_SearchPage_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 func local_request_Manager_SearchPage_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq token_1.SearchPageRequest
+	var protoReq token.SearchPageRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

@@ -127,7 +127,7 @@ var (
 		{Name: "contract", Type: field.TypeString},
 		{Name: "token_type", Type: field.TypeString},
 		{Name: "token_id", Type: field.TypeString},
-		{Name: "amount", Type: field.TypeInt64},
+		{Name: "amount", Type: field.TypeUint64},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// OrderItemsTable holds the schema information for the "order_items" table.

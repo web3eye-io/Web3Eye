@@ -29,7 +29,7 @@ func (OrderItem) Fields() []ent.Field {
 		field.String("contract"),
 		field.String("token_type"),
 		field.String("token_id"),
-		field.Int64("amount"),
+		field.Uint64("amount"),
 		field.Text("remark").
 			Optional(),
 	}

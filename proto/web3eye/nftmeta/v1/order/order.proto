@@ -27,7 +27,7 @@ message OrderItem{
   string Contract = 10;
   chain.TokenType TokenType = 20;
   string TokenID = 30;
-  int64 Amount = 40;
+  uint64 Amount = 40;
   string Remark = 50;
 }
 

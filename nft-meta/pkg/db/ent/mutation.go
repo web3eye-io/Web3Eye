@@ -4580,7 +4580,7 @@ type OrderItemMutation struct {
 	contract        *string
 	token_type      *string
 	token_id        *string
-	amount          *int64
+	amount          *uint64
 	addamount       *int64
 	remark          *string
 	clearedFields   map[string]struct{}
@@ -5042,13 +5042,13 @@ func (m *OrderItemMutation) ResetTokenID() {
 }
 
 // SetAmount sets the "amount" field.
-func (m *OrderItemMutation) SetAmount(i int64) {
-	m.amount = &i
+func (m *OrderItemMutation) SetAmount(u uint64) {
+	m.amount = &u
 	m.addamount = nil
 }
 
 // Amount returns the value of the "amount" field in the mutation.
-func (m *OrderItemMutation) Amount() (r int64, exists bool) {
+func (m *OrderItemMutation) Amount() (r uint64, exists bool) {
 	v := m.amount
 	if v == nil {
 		return
@@ -5059,7 +5059,7 @@ func (m *OrderItemMutation) Amount() (r int64, exists bool) {
 // OldAmount returns the old "amount" field's value of the OrderItem entity.
 // If the OrderItem object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderItemMutation) OldAmount(ctx context.Context) (v int64, err error) {
+func (m *OrderItemMutation) OldAmount(ctx context.Context) (v uint64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
 	}
@@ -5073,12 +5073,12 @@ func (m *OrderItemMutation) OldAmount(ctx context.Context) (v int64, err error) 
 	return oldValue.Amount, nil
 }
 
-// AddAmount adds i to the "amount" field.
-func (m *OrderItemMutation) AddAmount(i int64) {
+// AddAmount adds u to the "amount" field.
+func (m *OrderItemMutation) AddAmount(u int64) {
 	if m.addamount != nil {
-		*m.addamount += i
+		*m.addamount += u
 	} else {
-		m.addamount = &i
+		m.addamount = &u
 	}
 }
 
@@ -5319,7 +5319,7 @@ func (m *OrderItemMutation) SetField(name string, value ent.Value) error {
 		m.SetTokenID(v)
 		return nil
 	case orderitem.FieldAmount:
-		v, ok := value.(int64)
+		v, ok := value.(uint64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

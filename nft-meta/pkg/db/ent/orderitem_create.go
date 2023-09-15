@@ -96,8 +96,8 @@ func (oic *OrderItemCreate) SetTokenID(s string) *OrderItemCreate {
 }
 
 // SetAmount sets the "amount" field.
-func (oic *OrderItemCreate) SetAmount(i int64) *OrderItemCreate {
-	oic.mutation.SetAmount(i)
+func (oic *OrderItemCreate) SetAmount(u uint64) *OrderItemCreate {
+	oic.mutation.SetAmount(u)
 	return oic
 }
 
@@ -371,7 +371,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := oic.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
@@ -552,7 +552,7 @@ func (u *OrderItemUpsert) UpdateTokenID() *OrderItemUpsert {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsert) SetAmount(v int64) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetAmount(v uint64) *OrderItemUpsert {
 	u.Set(orderitem.FieldAmount, v)
 	return u
 }
@@ -564,7 +564,7 @@ func (u *OrderItemUpsert) UpdateAmount() *OrderItemUpsert {
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsert) AddAmount(v int64) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddAmount(v uint64) *OrderItemUpsert {
 	u.Add(orderitem.FieldAmount, v)
 	return u
 }
@@ -769,14 +769,14 @@ func (u *OrderItemUpsertOne) UpdateTokenID() *OrderItemUpsertOne {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsertOne) SetAmount(v int64) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetAmount(v uint64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetAmount(v)
 	})
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsertOne) AddAmount(v int64) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddAmount(v uint64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddAmount(v)
 	})
@@ -1156,14 +1156,14 @@ func (u *OrderItemUpsertBulk) UpdateTokenID() *OrderItemUpsertBulk {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsertBulk) SetAmount(v int64) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetAmount(v uint64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetAmount(v)
 	})
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsertBulk) AddAmount(v int64) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddAmount(v uint64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddAmount(v)
 	})

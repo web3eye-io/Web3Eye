@@ -140,7 +140,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderitem.FieldContract:      {Type: field.TypeString, Column: orderitem.FieldContract},
 			orderitem.FieldTokenType:     {Type: field.TypeString, Column: orderitem.FieldTokenType},
 			orderitem.FieldTokenID:       {Type: field.TypeString, Column: orderitem.FieldTokenID},
-			orderitem.FieldAmount:        {Type: field.TypeInt64, Column: orderitem.FieldAmount},
+			orderitem.FieldAmount:        {Type: field.TypeUint64, Column: orderitem.FieldAmount},
 			orderitem.FieldRemark:        {Type: field.TypeString, Column: orderitem.FieldRemark},
 		},
 	}
@@ -736,8 +736,8 @@ func (f *OrderItemFilter) WhereTokenID(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldTokenID))
 }
 
-// WhereAmount applies the entql int64 predicate on the amount field.
-func (f *OrderItemFilter) WhereAmount(p entql.Int64P) {
+// WhereAmount applies the entql uint64 predicate on the amount field.
+func (f *OrderItemFilter) WhereAmount(p entql.Uint64P) {
 	f.Where(p.Field(orderitem.FieldAmount))
 }
 
