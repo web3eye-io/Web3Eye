@@ -33,7 +33,7 @@ func main() {
 		ChainType: basetype.ChainType_Ethereum,
 		ChainID:   "1",
 		Contract:  "0x880644ddF208E471C6f2230d31f9027578FA6FcC",
-		TokenID:   "4205",
+		// TokenID:   "4205",
 	})
 
 	fmt.Println(utils.PrettyStruct(ret))

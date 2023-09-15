@@ -35,12 +35,14 @@ type OrderItem struct {
 }
 
 // nolint
-func setQueryConds(conds *rankernpool.GetTransfersRequest, cli *ent.Client) (*ent.TransferQuery, error) {
+func setQueryConds(in *rankernpool.GetTransfersRequest, cli *ent.Client) (*ent.TransferQuery, error) {
 	stm := cli.Transfer.Query()
-	stm.Where(transfer.ChainType(conds.GetChainType().String()))
-	stm.Where(transfer.ChainID(conds.ChainID))
-	// stm.Where(transfer.Contract(conds.Contract))
-	// stm.Where(transfer.TokenID(conds.TokenID))
+	stm.Where(transfer.ChainType(in.GetChainType().String()))
+	stm.Where(transfer.ChainID(in.ChainID))
+	stm.Where(transfer.Contract(in.Contract))
+	if in.TokenID != nil {
+		stm.Where(transfer.TokenID(*in.TokenID))
+	}
 	return stm, nil
 }
 

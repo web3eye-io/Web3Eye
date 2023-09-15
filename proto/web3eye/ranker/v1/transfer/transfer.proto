@@ -46,7 +46,7 @@ message GetTransfersRequest{
   chain.ChainType ChainType = 10;
   string ChainID = 20;
   string Contract = 30;
-  string TokenID = 40;
+  optional string TokenID = 40;
   int32 Offset = 50;
   int32 Limit = 60;
 }
