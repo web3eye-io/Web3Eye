@@ -80,21 +80,7 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 
-const groups = ref([])
-const options = ref(
-  [
-    {
-      label: 'Ethereum',
-      value: 'ethereum',
-      amount: 100,
-    },
-    {
-      label: 'Solana',
-      value: 'solana',
-      amount: 10,
-    }
-  ]
-)
+
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -103,7 +89,15 @@ const tokens = computed(() => {
   return rows
 })
 
+const ethereums = ref(0)
+const solanas = ref(0)
 const displayTokens = computed(() => tokens.value.filter((el) => {
+  if (el.ChainType === ChainType.Ethereum) {
+    ethereums.value += 1
+  }
+  if (el.ChainType === ChainType.Solana) {
+    solanas.value += 1
+  }
   if (groups.value?.length === 0) {
     return true
   }
@@ -115,6 +109,22 @@ const displayTokens = computed(() => tokens.value.filter((el) => {
   }
   return false
 }))
+
+const groups = ref([])
+const options = ref(
+  [
+    {
+      label: 'Ethereum',
+      value: 'ethereum',
+      amount: ethereums.value,
+    },
+    {
+      label: 'Solana',
+      value: 'solana',
+      amount: solanas.value,
+    }
+  ]
+)
 
 const target = ref({} as SearchToken)
 const targetTransfers = ref([] as Array<Transfer>)
