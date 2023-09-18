@@ -53,12 +53,32 @@
       </div>
       <div class="transfer">Transfer</div>
       <q-table
-        row-key="Block" 
         flat 
         bordered
-        :columns="(columns as any)"
         :rows="transfers"
-      />
+        :columns="(columns as any)"
+        row-key="name"
+      >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="Block" :props="props">
+              {{ props.row.Block }}
+            </q-td>
+            <q-td key="Time" :props="props">
+                {{ props.row.Time }}
+            </q-td>
+            <q-td key="Value" :props="props">
+                {{ props.row.Value }}
+            </q-td>
+            <q-td key="From" :props="props">
+              <ToolTip :address="props.row.From" />
+            </q-td>
+            <q-td key="To" :props="props">
+              <ToolTip :address="props.row.To" />
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
       <div class="collections">More from this collection</div>
       <div class="inner grid-container">
           <div class="box" v-for="token in tokens" :key="token.ID">
@@ -78,6 +98,7 @@ import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, onMounted, toRef } from 'vue';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
+const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 
 interface Props {
   chainID: string;
