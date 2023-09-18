@@ -4,7 +4,6 @@ package entrance.v1.transfer;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/transfer";
 import "google/api/annotations.proto";
-import "web3eye/nftmeta/v1/transfer/transfer.proto";
 import "web3eye/ranker/v1/transfer/transfer.proto";
 
 service Manager {
