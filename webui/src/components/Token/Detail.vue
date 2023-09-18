@@ -48,9 +48,7 @@
             <div class="title">TokenType</div>
             <div class="amount">{{ target?.TokenType }}</div>
           </div>
-          <div class="btn-container">
-            <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
-          </div>
+          <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
         </div>
       </div>
       <div class="transfer">Transfer</div>
@@ -251,7 +249,6 @@ onMounted(() => {
         .amount
           font-weight: 700
           font-size: 24px
-      .btn-container
         .buy
           margin: 10px 0
           width: 100%
