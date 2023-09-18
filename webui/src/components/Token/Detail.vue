@@ -14,7 +14,7 @@
             {{ target?.Name }}
           </div>
           <div class="content">
-            {{target?.Name}} {{target?.TokenID}}
+            {{target?.Name}} #{{target?.TokenID}}
           </div>
           <div class="description">
             {{ target?.Description }}
@@ -24,7 +24,7 @@
               <div class="creator-title">Creator</div>
               <div class="row items-center">
                 <q-avatar size="40px">
-                  <img src="https://cdn.quasar.dev/img/avatar.png">
+                  <!-- <img src="https://cdn.quasar.dev/img/avatar.png"> -->
                 </q-avatar> 
                 <div class="creator-name">
                   {{ target?.Owner }}
@@ -106,6 +106,7 @@ interface Query {
   chainType: ChainType;
   contract: string;
   tokenID: string;
+  id: string
 }
 
 const route = useRoute()
@@ -114,6 +115,7 @@ const _contract = computed(() => query.value.contract)
 const _chainID = computed(() => query.value.chainID)
 const _chainType = computed(() => query.value.chainType)
 const _tokenID = computed(() => query.value.tokenID)
+const _id = computed(() => query.value.id)
 
 const transfer = useTransferStore()
 const transferKey = computed(() => transfer.setKey(_chainID.value, _tokenID.value))
@@ -176,7 +178,7 @@ const target = computed(() => token.getTokenByID(_tokenID.value) as Token)
 
 const getToken = () => {
   token.getToken({
-    ID: _tokenID.value,
+    ID: _id.value,
     Message: {}
   }, () => {
     // TODO
@@ -254,7 +256,6 @@ onMounted(() => {
           line-height: 20px
           font-weight: 700
       .author
-        gap: 50px
         .creator-title,.chain-title
           padding: 5px 0
           opacity: 0.8

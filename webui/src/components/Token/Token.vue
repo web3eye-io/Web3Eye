@@ -141,7 +141,8 @@ const onImageClick = (token: SearchToken) => {
       chainID: token.ChainID,
       chainType: token.ChainType,
       contract: token.Contract,
-      tokenID: token.TokenID
+      tokenID: token.TokenID,
+      id: token.ID,
     }
   })
 }
