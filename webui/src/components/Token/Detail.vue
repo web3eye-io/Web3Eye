@@ -9,6 +9,7 @@
             :width="'460px'"
           />
         </div>
+        <div class="gap" />
         <div class="right column justify-between">
           <div class="name">
             {{ target?.Name }}
@@ -62,10 +63,10 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="Block" :props="props">
-              {{ props.row.Block }}
+              {{ props.row.BlockNumber }}
             </q-td>
-            <q-td key="Time" :props="props">
-                {{ props.row.Time }}
+            <q-td key="TxTime" :props="props">
+                {{ formatTime(props.row.TxTime)}}
             </q-td>
             <q-td key="Value" :props="props">
                 {{ props.row.Value }}
@@ -94,6 +95,7 @@ import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
 import { Token } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
+import { formatTime } from 'src/teststore/util'
 import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
@@ -113,6 +115,7 @@ const route = useRoute()
 const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
 const _chainID = computed(() => query.value.chainID)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _chainType = computed(() => query.value.chainType)
 const _tokenID = computed(() => query.value.tokenID)
 const _id = computed(() => query.value.id)
@@ -126,37 +129,32 @@ const columns = computed(() => [
     name: 'Block',
     label: 'BLOCK',
     align: 'center',
-    field: (row: Transfer) => row.BlockNumber
   },
   {
-    name: 'Time',
+    name: 'TxTime',
     label: 'Time',
     align: 'center',
-    field: (row: Transfer) => row.TxTime
   },
   {
     name: 'Value',
     label: 'Value',
     align: 'center',
-    field: (row: Transfer) => row.Amount
   },
   {
     name: 'From',
     label: 'From',
     align: 'center',
-    field: (row: Transfer) => row.From
   },
   {
     name: 'To',
     label: 'To',
     align: 'center',
-    field: (row: Transfer) => row.To
   },
 ])
 
 const getTransfers = (offset: number, limit: number) => {
   transfer.getTransfers({
-    ChainType: _chainType.value,
+    ChainType: ChainType.Ethereum,//TODO
     ChainID: _chainID.value,
     Contract: _contract.value,
     TokenID: _tokenID.value,
@@ -169,7 +167,7 @@ const getTransfers = (offset: number, limit: number) => {
     if (error || rows.length === 0) {
       return
     }
-    getTransfers(offset, offset + limit)
+    getTransfers(offset+limit, limit)
   })
 }
 
@@ -202,9 +200,7 @@ onMounted(() => {
   if (!target.value) {
     getToken()
   }
-  if (transfers.value?.length === 0) {
-    getTransfers(0, 100)
-  }
+  getTransfers(0, 100)
   if (_contract?.value?.length > 0) {
     getContract()
   }
@@ -221,9 +217,10 @@ onMounted(() => {
       padding-left: 20px
       padding-top: 20px
       box-shadow: 5px 5px 5px #f7f7f7
+    .gap
+      width: 30px
     .right
       flex-grow: 1
-      margin-left: 30px
       padding-top: 20px
       .name
         font-size: 20px

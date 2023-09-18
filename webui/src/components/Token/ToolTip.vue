@@ -1,7 +1,7 @@
 <template>
     <q-btn :label="displayLabel" flat @click="onUpdate">
-        <q-tooltip>
-          Some text as content of Tooltip
+        <q-tooltip anchor="top middle" self="center middle">
+          {{ displayMessage }}
         </q-tooltip>
     </q-btn>
 </template>
@@ -30,3 +30,9 @@ const onUpdate = () => {
     }, 2000)
 }
 </script>
+<style lang="sass" scoped>
+button
+  ::v-deep .q-hoverable
+    &:hover   
+      background-color: none
+</style>
