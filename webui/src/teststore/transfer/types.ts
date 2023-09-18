@@ -30,7 +30,7 @@ export interface GetTransfersRequest extends BaseRequest {
   ChainType: ChainType
   ChainID: string
   Contract: string
-  TokenID: string
+  TokenID?: string
   Offset: number
   Limit: number
 }
