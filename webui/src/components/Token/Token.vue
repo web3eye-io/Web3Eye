@@ -23,7 +23,7 @@
         <div class="right">
           <div class="title">Collections</div>
           <div class="row box" v-for="token in tokens" :key="token.ID">
-            <div class="content-left" @click="onImageClick">
+            <div class="content-left" @click="onImageClick(token)">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
             </div>
             <div class="content-right column">
@@ -52,7 +52,7 @@
                   <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onImageClick" class="split-token">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onImageClick(token)" class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
               </div>
@@ -72,9 +72,8 @@
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken } from 'src/teststore/token/types';
-import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { ChainType } from 'src/teststore/basetypes/const';
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
@@ -111,8 +110,6 @@ const tokens = computed(() => {
 })
 
 const target = ref({} as SearchToken)
-
-const transfer = useTransferStore()
 const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
@@ -122,34 +119,15 @@ const onTransferClick = (token: SearchToken) => {
   showing.value = true
 }
 
-const onImageClick = () => {
+const onImageClick = (token: SearchToken) => {
   void router.push({
     path: '/token/detail',
-  })
-}
-
-watch(() => target.value?.ID, () => {
-  if (!target.value) return
-  if (!transfer.getTransferByToken(target.value?.ChainID, target?.value?.ChainType, target.value?.Contract, target.value?.TokenID)) {
-    getTransfers(0, 100)
-  }
-})
-
-const getTransfers = (offset: number, limit: number) => {
-  transfer.getTransfers({
-    ChainType: target.value.ChainType,
-    ChainID: target.value.ChainID,
-    Contract: target.value.Contract,
-    TokenID: target.value.TokenID,
-    Offset: offset,
-    Limit: limit,
-    Message: {}
-  }, (error: boolean, rows: Transfer[]) => {
-    if (error || rows.length < limit) {
-      targetTransfers.value = rows
-      return
+    query: {
+      chainID: token.ChainID,
+      chainType: token.ChainType,
+      contract: token.Contract,
+      tokenID: token.TokenID
     }
-    getTransfers(offset, offset + limit)
   })
 }
 
@@ -160,7 +138,7 @@ const onContractClick = (token: SearchToken) => {
     path: '/contract',
     query: {
       contract: token.Contract,
-      tokenID: token.TokenID
+      chainID: token.ChainID
     }
   })
 }

@@ -56,8 +56,11 @@ import { useContractStore } from 'src/teststore/contract'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
-const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
+import { useTransferStore } from 'src/teststore/transfer';
+import { ChainType } from 'src/teststore/basetypes/const';
+import { Transfer } from 'src/teststore/transfer/types';
 
+const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 
 const tab = ref('Collections')
 const contract = useContractStore()
@@ -66,12 +69,15 @@ const current = computed(() => contract.Contract)
 
 interface Query {
   contract: string;
-  tokenID: string;
+  chainID: string;
+  chainType: ChainType;
 }
 
 const route = useRoute()
 const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
+const _chainID = computed(() => query.value.chainID)
+const _chainType = computed(() => query.value.chainType)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getImageUrl = computed(() => (url: string) => {
@@ -100,6 +106,34 @@ const getContract = () => {
     // TODO
   })
 }
+
+const transfer = useTransferStore()
+const key = computed(() => transfer.setKey(_chainID.value, _contract.value))
+const transfers = computed(() => transfer.getTransfersByKey(key.value))
+
+const getTransfers = (offset: number, limit: number) => {
+  transfer.getTransfers({
+    ChainID: _chainID.value,
+    ChainType: _chainType.value,
+    Contract: _contract.value,
+    Offset: offset, 
+    Limit: limit,
+    Message: {}
+  },
+  key.value, 
+  (err: boolean, rows: Array<Transfer>) => {
+    if (err || rows.length === 0) {
+      return 
+    }
+    getTransfers(offset + limit, limit)
+  })
+}
+
+onMounted(() => {
+  if (transfers.value?.length === 0) {
+    getTransfers(0, 100)
+  }
+})
 </script>
 <style lang="sass" scoped>
 .q-avatar

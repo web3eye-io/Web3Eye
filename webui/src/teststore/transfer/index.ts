@@ -11,34 +11,35 @@ export const useTransferStore = defineStore('Transfer', {
     }
   }),
   getters: {
-    getKey() {
-      return (chainID: string, chainType: string) => {
-        return `${chainID}-${chainType}`
+    setKey() {
+      return (chainID: string, tokenID: string) => {
+        // when get contract transfers, TokenID is Contract
+        return `${chainID}-${tokenID}`
       }
     },
-    getTransfers() {
-      return (chainID: string, chainType: string) => {
-        const key = this.getKey(chainID, chainType)
+    getTransfersByKey() {
+      return (key: string) => {
         const transfers = this.Transfers.Transfers.get(key)
         return !transfers? [] : transfers
       }
     },
   },
   actions: {
-    getTransfers (req: GetTransfersRequest, done: (error: boolean, rows: Transfer[]) => void) {
+    getTransfers (req: GetTransfersRequest, key: string, done: (error: boolean, rows: Transfer[]) => void) {
       doActionWithError<GetTransfersRequest, GetTransfersResponse>(
         API.GET_TRANSFERS,
         req,
         req.Message,
         (resp: GetTransfersResponse): void => {
           resp.Infos.forEach((el) => {
-            // key: ChainID-ChainType
-            let transfers = this.Transfers.Transfers.get(`${el.ChainID}-${el.ChainType}`)
+            // key: ChainID-TokenID
+            // key: ChainID-Contract
+            let transfers = this.Transfers.Transfers.get(key)
             if (!transfers) {
                 transfers = [] as Array<Transfer>
             }
             transfers.push(el)
-            this.Transfers.Transfers.set(`${el.ChainID}-${el.ChainType}`, transfers)
+            this.Transfers.Transfers.set(key, transfers)
           })
           this.Transfers.Total = resp.Total
           done(false, resp.Infos)

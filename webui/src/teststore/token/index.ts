@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { doActionWithError } from '../action'
 import { API } from './const'
-import { GetTokensRequest, GetTokensResponse, SearchToken } from './types' 
+import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, Token } from './types' 
 
 export const useTokenStore = defineStore('token', {
   state: () => ({
@@ -11,12 +11,15 @@ export const useTokenStore = defineStore('token', {
       Current: '',
       StorageKey: '',
       TotalPages: 0
+    },
+    Token: {
+      Token: new Map<string, Token>(),
     }
   }),
   getters: {
-    setToken () {
-      return (rows: Array<SearchToken>) => {
-        this.SearchTokens.SearchTokens = rows
+    getTokenByID () {
+      return (tokenID: string) => {
+        return this.Token.Token.get(tokenID)
       }
     }
   },
@@ -31,6 +34,19 @@ export const useTokenStore = defineStore('token', {
           done(false, resp.Infos)
         }, () => {
           done(true, [])
+      })
+    },
+    getToken (req: GetTokenRequest, done: (error: boolean, row: Token) => void) {
+      doActionWithError<GetTokenRequest, GetTokenResponse>(
+        API.SEARCH_PAGE,
+        req,
+        req.Message,
+        (resp: GetTokenResponse): void => {
+          const tokenID = resp.Info.TokenID
+          this.Token.Token.set(tokenID, resp.Info)
+          done(false, resp.Info)
+        }, () => {
+          done(true, {} as Token)
       })
     },
   }

@@ -4,20 +4,20 @@
       <div class="top row">
         <div class="left">
           <MyImage 
-            :url="'https://ipfs.io/ipfs/QmR9sexEQLMxVNzjDpYphXKmi2cACfzdCM1afXh6e6cDL4/1109.png'" 
+            :url="target?.ImageURL" 
             :height="'460px'" 
             :width="'460px'"
-        />
+          />
         </div>
         <div class="right col justify-between">
           <div class="name">
-            Coolman's Universe
+            {{ target.Name }}
           </div>
           <div class="content">
-            Coolman's Universe #8149
+            {{target.Name}} {{target.TokenID}}
           </div>
           <div class="description">
-            Spesh is looking for his best friend throughout Coolman's Universe. To travel through this universe, Spesh uses a surfboard and a magical compass, and find...
+            {{ target.Description }}
           </div>
           <div class="author row justify-between">
             <div class="column">
@@ -27,7 +27,7 @@
                   <img src="https://cdn.quasar.dev/img/avatar.png">
                 </q-avatar> 
                 <div class="creator-name">
-                  @CoolmansUniverseDeployer
+                  {{ target.Owner }}
                 </div>
               </div>
             </div>
@@ -35,14 +35,14 @@
               <div class="chain-title">Blockchain</div>
               <div class="row items-center justify-center">
                   <q-icon name="img:icons/ethereum-eth-logo.png" />
-                  <div class="chain-name">Ethereum</div>
+                  <div class="chain-name">{{ target.ChainType }}</div>
               </div>
             </div>
             <div class="col-2"></div>
           </div>
           <div class="contract column">
               <div class="title">Contract</div>
-              <div class="address">0xe525FAE3fC6fBB23Af05E54Ff413613A6573CFf2</div>
+              <div class="address">{{ target.Contract }}</div>
           </div>
           <div class="price column">
             <div class="title">Best Price</div>
@@ -64,20 +64,37 @@
           <div class="box" v-for="token in tokens" :key="token.ID">
             <TokenCard :token="token" />
           </div>
-        </div>
+      </div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
+import { ChainType } from 'src/teststore/basetypes/const';
 import { useContractStore } from 'src/teststore/contract';
+import { useTokenStore } from 'src/teststore/token';
+import { Token } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent, onMounted, toRef } from 'vue';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 
+interface Props {
+  chainID: string;
+  chainType: ChainType;
+  contract: string;
+  tokenID: string;
+}
+
+const props = defineProps<Props>()
+const _chainID = toRef(props, 'chainID')
+const _chainType = toRef(props, 'chainType')
+const _contract = toRef(props, 'contract')
+const _tokenID = toRef(props, 'tokenID')
+
 const transfer = useTransferStore()
-const transfers = computed(() => transfer.Transfers.Transfers)
+const transferKey = computed(() => transfer.setKey(_chainID.value, _tokenID.value))
+const transfers = computed(() => transfer.Transfers.Transfers.get(transferKey.value))
 
 const columns = computed(() => [
   {
@@ -112,28 +129,61 @@ const columns = computed(() => [
   },
 ])
 
-const contract = useContractStore()
-const tokens = computed(() => contract.ShotTokens.ShotTokens)
-
-
-const current = computed(() => contract.Contract)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getTransfers = (offset: number, limit: number) => {
   transfer.getTransfers({
-    ChainType: current.value.ChainType,
-    ChainID: current.value.ChainID,
-    Contract: current.value.Address,
-    TokenID: '',
+    ChainType: _chainType.value,
+    ChainID: _chainID.value,
+    Contract: _contract.value,
+    TokenID: _tokenID.value,
     Offset: offset,
     Limit: limit,
     Message: {}
-  }, (error:boolean, rows: Transfer[]) => {
-    if (error || rows.length < limit) {
+  },
+  transferKey.value,
+  (error:boolean, rows: Transfer[]) => {
+    if (error || rows.length === 0) {
       return
     }
     getTransfers(offset, offset + limit)
   })
 }
+
+const token = useTokenStore()
+const target = computed(() => token.getTokenByID(_tokenID.value) as Token)
+
+const getToken = () => {
+  token.getToken({
+    ID: _tokenID.value,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
+
+const contract = useContractStore()
+const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const getContract = () => {
+  contract.getContractAndTokens({
+    Contract: _contract.value,
+    Offset: 0, 
+    Limit: 100,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
+
+onMounted(() => {
+  if (!target.value) {
+    getToken()
+  }
+  if (transfers.value?.length === 0) {
+    getTransfers(0, 100)
+  }
+  if (_contract?.value?.length > 0) {
+    getContract()
+  }
+})
 </script>
 
 <style lang="sass" scoped>
