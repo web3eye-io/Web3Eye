@@ -128,7 +128,7 @@ const onUploaded = (info: {
     token.SearchTokens.Current = window.URL.createObjectURL(info.files[0] as Blob)
 	}
   const response = JSON.parse(info.xhr.response as string) as GetTokensResponse
-  token.setToken(response.Infos)
+  token.setSearchToken(response.Infos)
   token.SearchTokens.Total = response.TotalTokens
   token.SearchTokens.StorageKey = response.StorageKey
   token.SearchTokens.TotalPages = response.TotalPages

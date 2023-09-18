@@ -95,23 +95,25 @@ import { useTokenStore } from 'src/teststore/token';
 import { Token } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, onMounted, toRef } from 'vue';
+import { computed, defineAsyncComponent, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 
-interface Props {
+interface Query {
   chainID: string;
   chainType: ChainType;
   contract: string;
   tokenID: string;
 }
 
-const props = defineProps<Props>()
-const _chainID = toRef(props, 'chainID')
-const _chainType = toRef(props, 'chainType')
-const _contract = toRef(props, 'contract')
-const _tokenID = toRef(props, 'tokenID')
+const route = useRoute()
+const query = computed(() => route.query as unknown as Query)
+const _contract = computed(() => query.value.contract)
+const _chainID = computed(() => query.value.chainID)
+const _chainType = computed(() => query.value.chainType)
+const _tokenID = computed(() => query.value.tokenID)
 
 const transfer = useTransferStore()
 const transferKey = computed(() => transfer.setKey(_chainID.value, _tokenID.value))
@@ -270,19 +272,13 @@ onMounted(() => {
         .amount
           font-weight: 700
           font-size: 24px
-        .buy
-          margin: 10px 0
-          width: 100%
+      .buy
+        margin: 10px 0
+        width: 450px
 .transfer,.collections
   margin-top: 40px
   font-size: 36px
   font-weight: 700
 .transfer
   padding-bottom: 20px
-.grid-container
-  margin-top: 20px
-  display: grid
-  grid-template-columns: repeat(auto-fill, minmax(auto, 220px))
-  grid-gap: 12px  
-  justify-content: space-between
 </style>

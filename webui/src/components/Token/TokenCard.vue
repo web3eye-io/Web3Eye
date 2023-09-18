@@ -1,6 +1,6 @@
 <template>
     <div class="box-img">
-        <MyImage :url="token.ImageURL" :height="'220px'" :width="'220px'" />
+        <MyImage :url="token.ImageURL" :height="'200px'" :width="'202px'" />
     </div>
     <div class="content">
         <div class="line row justify-between">

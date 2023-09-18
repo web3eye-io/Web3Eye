@@ -80,8 +80,6 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 
-
-
 const token = useTokenStore()
 const tokens = computed(() => {
   const rows = token.SearchTokens.SearchTokens

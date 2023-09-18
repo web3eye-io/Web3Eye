@@ -1,7 +1,7 @@
 <template>
   <q-icon
     v-if='imageType === ImageType.ICON'
-    size='300px' 
+    :size="width"
     :name='imageUrl'
   />
   <q-img

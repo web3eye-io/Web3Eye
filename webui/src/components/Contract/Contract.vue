@@ -177,25 +177,5 @@ onMounted(() => {
   padding-right: 0
   padding-left: 0
   
-  .grid-container
-    display: grid
-    grid-template-columns: repeat(auto-fill, minmax(auto, 220px))
-    grid-gap: 12px  
-    justify-content: space-between
-    .box
-      width: 220px
-      max-width: 280px
-      height: 308px
-      border-radius: 10px
-      border: 1px solid #efefef
-      background-color: #FAFAFA
-      .box-img
-        padding: 8px
-      .content
-        .line
-          padding: 5px
-        .super
-          padding: 0 5px 2px 5px
-        .transfers
-          min-width: 20px
+
 </style>

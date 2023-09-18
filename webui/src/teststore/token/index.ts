@@ -17,6 +17,11 @@ export const useTokenStore = defineStore('token', {
     }
   }),
   getters: {
+    setSearchToken () {
+      return (rows: Array<SearchToken>) => {
+        this.SearchTokens.SearchTokens = rows
+      }
+    },
     getTokenByID () {
       return (tokenID: string) => {
         return this.Token.Token.get(tokenID)
@@ -38,7 +43,7 @@ export const useTokenStore = defineStore('token', {
     },
     getToken (req: GetTokenRequest, done: (error: boolean, row: Token) => void) {
       doActionWithError<GetTokenRequest, GetTokenResponse>(
-        API.SEARCH_PAGE,
+        API.GET_TOKEN,
         req,
         req.Message,
         (resp: GetTokenResponse): void => {
