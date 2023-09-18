@@ -7,7 +7,7 @@
             <q-expansion-item expand-separator default-opened label="Chains">
               <q-card>
                 <q-card-section>
-                  <q-option-group v-model="group" :options="options" color="blue" type="checkbox">
+                  <q-option-group v-model="groups" :options="options" color="blue" type="checkbox">
                     <template v-slot:label="row">
                       <div class="row justify-between">
                         <div>{{ row.label }}</div>
@@ -22,7 +22,7 @@
         </div>
         <div class="right">
           <div class="title">Collections</div>
-          <div class="row box" v-for="token in tokens" :key="token.ID">
+          <div class="row box" v-for="token in displayTokens" :key="token.ID">
             <div class="content-left" @click="onImageClick(token)">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
             </div>
@@ -80,27 +80,21 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 
-const group = ref(['op1'])
+const groups = ref([])
 const options = ref(
   [
     {
       label: 'Ethereum',
-      value: 'op1',
+      value: 'ethereum',
       amount: 100,
     },
     {
-      label: 'Flow',
-      value: 'op2',
+      label: 'Solana',
+      value: 'solana',
       amount: 10,
-    },
-    {
-      label: 'Tezos',
-      value: 'op3',
-      amount: 21,
     }
   ]
 )
-
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -108,6 +102,19 @@ const tokens = computed(() => {
   rows.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
   return rows
 })
+
+const displayTokens = computed(() => tokens.value.filter((el) => {
+  if (groups.value?.length === 0) {
+    return true
+  }
+  if (groups.value?.length > 0) {
+    if (el.ChainType.includes(groups.value[0])) return true
+  }
+  if (groups.value?.length > 1) {
+    if (el.ChainType.includes(groups.value[1])) return true
+  }
+  return false
+}))
 
 const target = ref({} as SearchToken)
 const targetTransfers = ref([] as Array<Transfer>)
