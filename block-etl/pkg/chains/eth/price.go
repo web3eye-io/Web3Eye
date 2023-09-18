@@ -8,11 +8,10 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	orderNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/order"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
-	orderhead "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
 )
 
 // index blocks [start,start+limit]
-func (e *EthIndexer) IndexOrder(ctx context.Context, logs []types.Log) ([]*ContractMeta, error) {
+func (e *EthIndexer) IndexOrder(ctx context.Context, logs []*types.Log) ([]*ContractMeta, error) {
 	orders := eth.LogsToOrders(logs)
 	if len(orders) == 0 {
 		return nil, nil
@@ -36,15 +35,17 @@ func (e *EthIndexer) IndexOrder(ctx context.Context, logs []types.Log) ([]*Contr
 		}
 	}
 
-	_, err := orderNMCli.CreateOrders(ctx, &orderhead.CreateOrdersRequest{Infos: ordersReq})
+	_, err := orderNMCli.CreateOrders(ctx, &order.CreateOrdersRequest{Infos: ordersReq})
 	if err != nil {
 		return nil, fmt.Errorf("failed store orders to db,err: %v", err)
 	}
 
 	contractSet := make(map[string]struct{})
 	contractList := []*ContractMeta{}
-	for _, order := range orders {
-		items := append(order.TargetItems, order.OfferItems...)
+	for _, item := range orders {
+		items := []*order.OrderItem{}
+		copy(items, item.TargetItems)
+		items = append(items, item.OfferItems...)
 		for _, item := range items {
 			if _, ok := contractSet[item.Contract]; ok {
 				continue

@@ -35,7 +35,7 @@ var (
 )
 
 //nolint:gocritic
-func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
+func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 	result := make([]*chains.TokenTransfer, 0)
 	for _, pLog := range pLogs {
 		switch {
@@ -131,7 +131,7 @@ func LogsToTransfer(pLogs []types.Log) ([]*chains.TokenTransfer, error) {
 // if topics={{A}} retrun {{A logs}}
 // if topics={{A,B,C}} return {{A or B or C logs}}
 // if topics={{A,B,C},{D}} return {{A or B or C logs},{D logs}}
-func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, toBlock int64, topics [][]common.Hash) ([][]types.Log, error) {
+func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, toBlock int64, topics [][]common.Hash) ([][]*types.Log, error) {
 	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock),
 		ToBlock:   big.NewInt(toBlock),
@@ -143,16 +143,16 @@ func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, to
 	}
 
 	if len(topics) == 0 {
-		return [][]types.Log{logs}, err
+		return [][]*types.Log{logs}, err
 	}
 
 	// init topicSets
 	topicSets := make([]map[common.Hash]struct{}, len(topics))
-	topicLogs := make([][]types.Log, len(topics))
+	topicLogs := make([][]*types.Log, len(topics))
 	allSets := make(map[common.Hash]struct{})
 	for i, items := range topics {
 		topicSets[i] = make(map[common.Hash]struct{}, len(items))
-		topicLogs[i] = make([]types.Log, 0)
+		topicLogs[i] = make([]*types.Log, 0)
 		for _, item := range items {
 			topicSets[i][item] = struct{}{}
 			allSets[item] = struct{}{}

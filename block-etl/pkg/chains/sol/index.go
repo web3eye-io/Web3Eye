@@ -161,7 +161,11 @@ func (e *SolIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 				continue
 			}
 			outBlockNum <- blockNum
-			consumer.Ack(msg)
+			err = consumer.Ack(msg)
+			if err != nil {
+				logger.Sugar().Errorf("ask SyncTask msg failed ,err: %v", err)
+				continue
+			}
 			retries = 0
 		case <-time.NewTicker(CheckTopicInterval).C:
 			if retries > maxRetries {
@@ -327,7 +331,6 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 					if err != nil {
 						tokenURIInfo = &token.TokenURIInfo{}
 						remark = fmt.Sprintf("%v,%v", remark, err)
-
 					}
 				}
 
@@ -417,16 +420,8 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			}
 
+			// TODO: support find creator
 			creator := &eth.ContractCreator{}
-			// // stop get info for creator
-			// if findContractCreator {
-			// 	contractMeta.
-			// 	creator, err = cli.GetContractCreator(ctx, transfer.Contract)
-			// 	if err != nil {
-			// 		e.checkErr(ctx, err)
-			// 		remark = err.Error()
-			// 	}
-			// }
 
 			from := creator.From.String()
 			txHash := creator.TxHash.Hex()

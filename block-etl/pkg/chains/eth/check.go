@@ -20,7 +20,7 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	for _, v := range e.Endpoints {
 		_, inspectErr := eth.GetEndpointChainID(ctx, v)
 		if inspectErr != nil {
-			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, inspectErr)
+			logger.Sugar().Warnf("check the endpoint %v is unavailable,err: %v,has been removed", v, inspectErr)
 			conds := &endpoint.Conds{
 				ChainType: &web3eye.StringVal{
 					Op:    "eq",
@@ -68,8 +68,8 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	}
 }
 
-// check if endpoints should be stoped by the err
-func (e *EthIndexer) checkErr(ctx context.Context, err error) (retry bool) {
+// check if endpoints should be stoped by the err,and return weather to retry again
+func (e *EthIndexer) checkErrForRetry(ctx context.Context, err error) bool {
 	retryErrs := []string{"context deadline exceeded"}
 	for _, v := range retryErrs {
 		if strings.Contains(err.Error(), v) {

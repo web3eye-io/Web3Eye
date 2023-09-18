@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	transferEventArgsLen = 4
-	BaseTextNum          = 16
+	BaseTextNum = 16
 )
 
 // eventHash represents an event keccak256 hash

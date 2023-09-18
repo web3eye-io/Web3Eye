@@ -46,7 +46,6 @@ type S3Config struct {
 	Bucket    string `json:"bucket,omitempty"`
 }
 
-// nolint
 func Init(region, bucket string) error {
 	s3Config := S3Config{
 		Region:    region,
@@ -84,7 +83,6 @@ func Init(region, bucket string) error {
 
 	s3Client = s3.NewFromConfig(cfg, func(o *s3.Options) {
 		o.UsePathStyle = true
-		// o.EndpointOptions.DisableHTTPS = true
 	})
 
 	return nil

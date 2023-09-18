@@ -34,8 +34,7 @@ type OrderItem struct {
 	Decimals      uint32    `json:"decimals,omitempty"`
 }
 
-// nolint
-func setQueryConds(in *rankernpool.GetTransfersRequest, cli *ent.Client) (*ent.TransferQuery, error) {
+func setQueryConds(in *rankernpool.GetTransfersRequest, cli *ent.Client) *ent.TransferQuery {
 	stm := cli.Transfer.Query()
 	stm.Where(transfer.ChainType(in.GetChainType().String()))
 	stm.Where(transfer.ChainID(in.ChainID))
@@ -43,7 +42,7 @@ func setQueryConds(in *rankernpool.GetTransfersRequest, cli *ent.Client) (*ent.T
 	if in.TokenID != nil {
 		stm.Where(transfer.TokenID(*in.TokenID))
 	}
-	return stm, nil
+	return stm
 }
 
 func queryOrderItemAndOrder(row *ent.Transfer, cli *ent.Client) *ent.OrderItemSelect {
@@ -84,10 +83,7 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 	var total int
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(in, cli)
-		if err != nil {
-			return err
-		}
+		stm := setQueryConds(in, cli)
 		total, err = stm.Count(_ctx)
 		if err != nil {
 			return err
@@ -133,7 +129,7 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 
 func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Transfer {
 	amount, _ := utils.DecStr2uint64(row.Amount)
-	transfer := &rankernpool.Transfer{
+	rpctransfer := &rankernpool.Transfer{
 		ID:          row.ID.String(),
 		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
@@ -164,10 +160,10 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 			OrderItemType: v.OrderItemType,
 		}
 		if v.OrderItemType == basetype.OrderItemType_OrderItemOffer.String() {
-			transfer.OfferItems = append(transfer.OfferItems, orderItem)
+			rpctransfer.OfferItems = append(rpctransfer.OfferItems, orderItem)
 		} else {
-			transfer.TargetItems = append(transfer.TargetItems, orderItem)
+			rpctransfer.TargetItems = append(rpctransfer.TargetItems, orderItem)
 		}
 	}
-	return transfer
+	return rpctransfer
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/transform/pkg/model"
 )
 
-func (s *Server) UrlToVector(ctx context.Context, in *transformnpool.UrlToVectorReq) (*transformnpool.UrlToVectorResp, error) {
+func (s *Server) URLToVector(ctx context.Context, in *transformnpool.UrlToVectorReq) (*transformnpool.UrlToVectorResp, error) {
 	dataDir := config.GetConfig().Transform.DataDir
 	fileName := uuid.NewString()
 	path, err := filegetter.GetFileFromURL(in.GetUrl(), dataDir, fileName)
@@ -22,7 +22,7 @@ func (s *Server) UrlToVector(ctx context.Context, in *transformnpool.UrlToVector
 	}
 	defer os.Remove(*path)
 
-	vector, err := model.ToImageVector(*path)
+	vector, err := model.ToImageVector(ctx, *path)
 	if err != nil {
 		logger.Sugar().Errorf("failed to transform url to vector", err)
 		return nil, err

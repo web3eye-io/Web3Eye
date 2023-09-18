@@ -24,8 +24,9 @@ import (
 	transferProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 )
 
+// TODO:checkErrForRetry will be delete or rewrite,it`s stupid
 type BlockLogs struct {
-	TransferLogs, OrderLogs []types.Log
+	TransferLogs, OrderLogs []*types.Log
 }
 
 func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockProto.Block, error) {
@@ -52,7 +53,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	block, err := cli.BlockByNumber(ctx, inBlockNum)
 	if err != nil {
-		e.checkErr(ctx, err)
+		e.checkErrForRetry(ctx, err)
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
@@ -89,7 +90,7 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 		eth.OrderFulfilledTopics,
 	})
 	if err != nil {
-		e.checkErr(ctx, err)
+		e.checkErrForRetry(ctx, err)
 		return nil, fmt.Errorf("cannot parse logs: %v", err)
 	}
 	transferLogs := topicsLogs[0]
@@ -101,10 +102,10 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 	}, nil
 }
 
-func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []types.Log) ([]*chains.TokenTransfer, error) {
+func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*chains.TokenTransfer, error) {
 	transfers, err := eth.LogsToTransfer(logs)
 	if err != nil {
-		e.checkErr(ctx, err)
+		e.checkErrForRetry(ctx, err)
 		return nil, fmt.Errorf("failed to get transfer logs, err: %v", err)
 	}
 	if len(transfers) == 0 {
@@ -196,7 +197,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
-			e.checkErr(ctx, err)
+			e.checkErrForRetry(ctx, err)
 			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -292,7 +293,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		}
 
 		if err != nil {
-			e.checkErr(ctx, err)
+			e.checkErrForRetry(ctx, err)
 			logger.Sugar().Warnf("cannot get contrcact metadata,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -302,7 +303,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		if findContractCreator && contract.TokenType != basetype.TokenType_Native {
 			creator, err = cli.GetContractCreator(ctx, contract.Contract)
 			if err != nil {
-				e.checkErr(ctx, err)
+				e.checkErrForRetry(ctx, err)
 				remark = err.Error()
 			}
 		}
@@ -346,7 +347,7 @@ func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 
 			blockNum, err := cli.CurrentBlockNum(ctx)
 			if err != nil {
-				e.checkErr(ctx, err)
+				e.checkErrForRetry(ctx, err)
 				logger.Sugar().Errorf("failed to get current block number: %v", err)
 				return
 			}

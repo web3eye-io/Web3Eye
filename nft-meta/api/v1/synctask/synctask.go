@@ -74,7 +74,6 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 	}, nil
 }
 
-//nolint:gocyclo
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
 	// TODO: will be rewrite,too long
 
@@ -174,83 +173,6 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 
 	return &npool.TriggerSyncTaskResponse{
 		Info: converter.Ent2Grpc(info),
-	}, nil
-}
-
-//nolint:gocyclo
-func (s *Server) TriggerSyncTask_v1(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
-	// query synctask
-	conds := npool.Conds{
-		Topic: &web3eye.StringVal{
-			Value: in.Topic,
-			Op:    "eq",
-		},
-	}
-	info, err := crud.RowOnly(ctx, &conds)
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	// lock
-	lockKey := "TriggerSyncTask_Lock"
-	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
-	if err != nil {
-		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, err
-	}
-
-	defer func() {
-		err := ctredis.Unlock(lockKey, lockID)
-		if err != nil {
-			logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		}
-	}()
-
-	// check state
-	if info.SyncState != cttype.SyncState_Start.String() {
-		return &npool.TriggerSyncTaskResponse{
-			Info: converter.Ent2Grpc(info),
-		}, nil
-	}
-
-	// check sync state
-	if info.End != 0 && info.Current >= info.End {
-		info.SyncState = cttype.SyncState_Finish.String()
-		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
-		if err != nil {
-			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-		}
-		return &npool.TriggerSyncTaskResponse{Info: converter.Ent2Grpc(info)}, nil
-	}
-
-	syncEnd := info.End
-	if syncEnd == 0 || syncEnd > in.CurrentBlockNum {
-		syncEnd = in.CurrentBlockNum
-	}
-
-	lastNum := info.Current
-	info.Current += MaxPutTaskNumOnce
-	if info.Current > syncEnd {
-		info.Current = syncEnd
-	}
-
-	nums := []uint64{}
-	for ; lastNum < info.Current; lastNum++ {
-		nums = append(nums, lastNum)
-	}
-
-	info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
-
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	return &npool.TriggerSyncTaskResponse{
-		Info: converter.Ent2Grpc(info),
-		// BlockNums: nums,
 	}, nil
 }
 

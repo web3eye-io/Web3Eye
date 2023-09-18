@@ -60,7 +60,7 @@ type OrderPriceDetails struct {
 }
 
 //nolint:gocritic
-func LogsToOrders(pLogs []types.Log) []*npool.Order {
+func LogsToOrders(pLogs []*types.Log) []*npool.Order {
 	result := make([]*npool.Order, 0)
 	for _, pLog := range pLogs {
 		orderObj, err := LogToOrderFulfilled(pLog)
@@ -86,7 +86,7 @@ func LogsToOrders(pLogs []types.Log) []*npool.Order {
 	return result
 }
 
-func LogToOrderFulfilled(orderLog types.Log) (*contracts.OpenseaOrderFulfilled, error) {
+func LogToOrderFulfilled(orderLog *types.Log) (*contracts.OpenseaOrderFulfilled, error) {
 	orderObj := contracts.OpenseaOrderFulfilled{}
 	err := openseaABI.UnpackIntoInterface(&orderObj, "OrderFulfilled", orderLog.Data)
 	if err != nil {
@@ -98,7 +98,7 @@ func LogToOrderFulfilled(orderLog types.Log) (*contracts.OpenseaOrderFulfilled, 
 	}
 
 	orderObj.Offerer = common.HexToAddress(orderLog.Topics[1].Hex())
-	orderObj.Zone = common.HexToAddress(string(orderLog.Topics[2].Hex()))
+	orderObj.Zone = common.HexToAddress(orderLog.Topics[2].Hex())
 	orderObj.Raw.TxHash = orderLog.TxHash
 	orderObj.Raw.BlockHash = orderLog.BlockHash
 	orderObj.Raw.BlockNumber = orderLog.BlockNumber

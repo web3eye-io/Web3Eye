@@ -16,9 +16,9 @@ import (
 
 var timeout = 10 * time.Second
 
-type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
+type handlerFunc func(context.Context, npool.ManagerClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func withCRUD(ctx context.Context, handler handlerFunc) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	conn, err := grpc.Dial(

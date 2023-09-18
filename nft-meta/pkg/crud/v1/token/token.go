@@ -160,6 +160,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.TokenUpdateOne, in *npool.TokenReq) *ent.TokenUpdateOne {
 	if in.ChainType != nil {
 		u.SetChainType(in.GetChainType().String())

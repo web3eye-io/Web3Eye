@@ -55,7 +55,6 @@ func Upsert(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 	return info, err
 }
 
-//nolint:gocyclo
 func CreateSet(c *ent.BlockCreate, in *npool.BlockReq) *ent.BlockCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -103,7 +102,6 @@ func CreateBulk(ctx context.Context, in []*npool.BlockReq) ([]*ent.Block, error)
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")

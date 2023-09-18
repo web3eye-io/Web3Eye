@@ -29,7 +29,7 @@ fi
 
 
 sudo n v16.14.0
-npm install @typescript-eslint/eslint-plugin@latest --save-dev
+npm install @typescript-eslint/eslint-plugin --save-dev
 yarn lint
 
 done

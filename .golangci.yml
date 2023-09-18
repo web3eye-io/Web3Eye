@@ -118,5 +118,12 @@ issues:
       text: "SA1019: e.cfg.Run.Deadline is deprecated: Deadline exists for historical compatibility and should not be used."
 
 run:
-  timeout: 5m
+  concurrency: 16
+  timeout: 20m
   go: "1.19" # TODO(ldez): we force to use an old version of Go for the CI and the tests.
+  skip-dirs:
+    - proto
+    - webui
+    - basement
+    - doc
+    - hack

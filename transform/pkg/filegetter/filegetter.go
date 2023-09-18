@@ -17,18 +17,19 @@ import (
 )
 
 const (
-	ArUrlHead        = "ar://"
-	ArUrlHttpGateway = "https://arweave.net"
+	ArURLHead        = "ar://"
+	ArURLHTTPGateway = "https://arweave.net"
 	IPFSUrlHead      = "ipfs://"
 	IPFSHttpGateway  = "https://ipfs.io/ipfs"
 	HTTPUrlHead      = "http://"
 	HTTPSUrlHead     = "https://"
 	Base64SVGPrefix  = "data:image/svg+xml;base64,"
+	whBitsize        = 32
 )
 
-func GetFileFromURL(url string, dirPath string, fileName string) (path *string, err error) {
+func GetFileFromURL(url, dirPath, fileName string) (path *string, err error) {
 	switch {
-	case strings.HasPrefix(url, ArUrlHead):
+	case strings.HasPrefix(url, ArURLHead):
 		return DownloadAreaveFile(url, dirPath, fileName)
 	case strings.HasPrefix(url, IPFSUrlHead):
 		return DownloadIPFSFile(url, dirPath, fileName)
@@ -39,27 +40,27 @@ func GetFileFromURL(url string, dirPath string, fileName string) (path *string, 
 	}
 }
 
-func DownloadAreaveFile(url string, dirPath string, fileName string) (path *string, err error) {
-	if !strings.HasPrefix(url, ArUrlHead) {
+func DownloadAreaveFile(url, dirPath, fileName string) (path *string, err error) {
+	if !strings.HasPrefix(url, ArURLHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
-	noHeadUrl := strings.TrimPrefix(url, ArUrlHead)
-	httpUrl := fmt.Sprintf("%v/%v", ArUrlHttpGateway, noHeadUrl)
-	return DownloadHttpFile(httpUrl, dirPath, fileName)
+	noHeadURL := strings.TrimPrefix(url, ArURLHead)
+	httpURL := fmt.Sprintf("%v/%v", ArURLHTTPGateway, noHeadURL)
+	return DownloadHttpFile(httpURL, dirPath, fileName)
 }
 
-func DownloadIPFSFile(url string, dirPath string, fileName string) (path *string, err error) {
+func DownloadIPFSFile(url, dirPath, fileName string) (path *string, err error) {
 	if !strings.HasPrefix(url, IPFSUrlHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
-	noHeadUrl := strings.TrimPrefix(url, IPFSUrlHead)
-	httpUrl := fmt.Sprintf("%v/%v", IPFSHttpGateway, noHeadUrl)
-	return DownloadHttpFile(httpUrl, dirPath, fileName)
+	noHeadURL := strings.TrimPrefix(url, IPFSUrlHead)
+	httpURL := fmt.Sprintf("%v/%v", IPFSHttpGateway, noHeadURL)
+	return DownloadHttpFile(httpURL, dirPath, fileName)
 }
 
-func DownloadHttpFile(url string, dirPath string, fileName string) (path *string, err error) {
+func DownloadHttpFile(url, dirPath, fileName string) (path *string, err error) {
 	if !strings.HasPrefix(url, HTTPUrlHead) && !strings.HasPrefix(url, HTTPSUrlHead) {
 		return nil, errors.New("url format is not http")
 	}
@@ -77,8 +78,12 @@ func DownloadHttpFile(url string, dirPath string, fileName string) (path *string
 	var formatDetect []byte
 	// if not get right current format,detect content type
 	if typeTree[len(typeTree)-1] == "octet-stream" {
-		formatDetect = make([]byte, 512)
-		resp.Body.Read(formatDetect)
+		formatDataLen := 512
+		formatDetect = make([]byte, formatDataLen)
+		_, err = resp.Body.Read(formatDetect)
+		if err != nil {
+			return nil, err
+		}
 
 		contentType := http.DetectContentType(formatDetect)
 		typeTree = strings.Split(contentType, "/")
@@ -133,7 +138,7 @@ func SVGToPng(svgPath, pngPath string) error {
 	return nil
 }
 
-func Base64SVGToSVG(base64data string, svgPath string) (err error) {
+func Base64SVGToSVG(base64data, svgPath string) (err error) {
 	if !strings.HasPrefix(base64data, Base64SVGPrefix) {
 		return errors.New("url format is not base64 svg")
 	}
@@ -159,7 +164,7 @@ func Base64SVGToSVG(base64data string, svgPath string) (err error) {
 	return nil
 }
 
-func ReadSVGSizeByViewBox(filePath string) (float64, float64, error) {
+func ReadSVGSizeByViewBox(filePath string) (w float64, h float64, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return 0, 0, err
@@ -167,11 +172,7 @@ func ReadSVGSizeByViewBox(filePath string) (float64, float64, error) {
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
-	r, err := regexp.Compile("viewBox=\"([^\"]*)\"")
-	if err != nil {
-		return 0, 0, err
-	}
-
+	r := regexp.MustCompile("viewBox=\"([^\"]*)\"")
 	maxW, maxH := 0.0, 0.0
 	for {
 		lineBytes, _, err := reader.ReadLine()
@@ -185,14 +186,18 @@ func ReadSVGSizeByViewBox(filePath string) (float64, float64, error) {
 				v = strings.Trim(v, "viewBox=")
 				v = strings.Trim(v, "\"")
 				nums := strings.Split(v, " ")
-				if len(nums) < 4 {
+
+				viewBoxItemsLen := 4
+				wIndex := 2
+				hIndex := 3
+				if len(nums) < viewBoxItemsLen {
 					continue
 				}
-				width, err := strconv.ParseFloat(nums[2], 32)
+				width, err := strconv.ParseFloat(nums[wIndex], whBitsize)
 				if err != nil {
 					continue
 				}
-				height, err := strconv.ParseFloat(nums[3], 32)
+				height, err := strconv.ParseFloat(nums[hIndex], whBitsize)
 				if err != nil {
 					continue
 				}
@@ -208,7 +213,7 @@ func ReadSVGSizeByViewBox(filePath string) (float64, float64, error) {
 	return maxW, maxH, nil
 }
 
-func ReadSVGSizeByWH(filePath string) (float64, float64, error) {
+func ReadSVGSizeByWH(filePath string) (w float64, h float64, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return 0, 0, err
@@ -216,11 +221,7 @@ func ReadSVGSizeByWH(filePath string) (float64, float64, error) {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	r, err := regexp.Compile(" width=\"([^\"]*)\"| height=\"([^\"]*)\"")
-	if err != nil {
-		return 0, 0, err
-	}
-
+	r := regexp.MustCompile(" width=\"([^\"]*)\"| height=\"([^\"]*)\"")
 	maxW, maxH := 0.0, 0.0
 	for scanner.Scan() {
 		if items := r.FindAllString(scanner.Text(), -1); len(items) > 0 {
@@ -229,12 +230,12 @@ func ReadSVGSizeByWH(filePath string) (float64, float64, error) {
 			for _, v := range items {
 				v = strings.ReplaceAll(v, "\"", "")
 				v = strings.TrimSpace(v)
-				width, err := strconv.ParseFloat(strings.TrimPrefix(v, "width="), 32)
+				width, err := strconv.ParseFloat(strings.TrimPrefix(v, "width="), whBitsize)
 				if err == nil && maxW < width {
 					maxW = width
 				}
 
-				height, err := strconv.ParseFloat(strings.TrimPrefix(v, "height="), 32)
+				height, err := strconv.ParseFloat(strings.TrimPrefix(v, "height="), whBitsize)
 				if err == nil && maxH < height {
 					maxH = height
 				}

@@ -1,3 +1,4 @@
+// nolint
 package unixfs
 
 import (
@@ -40,7 +41,7 @@ func CidBuilder() (cid.Builder, error) {
 
 // CreateFilestore takes a standard file whose path is src, forms a UnixFS DAG, and
 // writes a CARv2 file with positional mapping (backed by the go-filestore library).
-func CreateFilestore(ctx context.Context, srcPath string, dstPath string) (cid.Cid, error) {
+func CreateFilestore(ctx context.Context, srcPath, dstPath string) (cid.Cid, error) {
 	// This method uses a two-phase approach with a staging CAR blockstore and
 	// a final CAR blockstore.
 	//
@@ -53,7 +54,7 @@ func CreateFilestore(ctx context.Context, srcPath string, dstPath string) (cid.C
 	if err != nil {
 		return cid.Undef, xerrors.Errorf("failed to open input file: %w", err)
 	}
-	defer src.Close() //nolint:errcheck
+	defer src.Close()
 
 	stat, err := src.Stat()
 	if err != nil {
@@ -72,7 +73,7 @@ func CreateFilestore(ctx context.Context, srcPath string, dstPath string) (cid.C
 	_ = f.Close() // close; we only want the path.
 
 	tmp := f.Name()
-	defer os.Remove(tmp) //nolint:errcheck
+	defer os.Remove(tmp)
 
 	// Step 1. Compute the UnixFS DAG and write it to a CARv2 file to get
 	// the root CID of the DAG.

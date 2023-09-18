@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,6 +21,7 @@ import (
 
 const (
 	UploadFileFeild = "UploadFile"
+	ToVectorTimeout = time.Second * 3
 )
 
 type TransformResp struct {
@@ -87,7 +89,8 @@ func TransformFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer os.Remove(filePath)
 
-	vector, err := model.ToImageVector(filePath)
+	ctx, _ := context.WithTimeout(context.Background(), ToVectorTimeout)
+	vector, err := model.ToImageVector(ctx, filePath)
 	if err != nil {
 		errStr := err.Error()
 		logger.Sugar().Errorf("failed to get file info ,err: %v", err)

@@ -44,6 +44,7 @@ func NewBackupKV(ctx context.Context, odb orbitiface.OrbitDB) (*BackupKV, error)
 
 	backups := kv.kvBackup.All()
 	for index, state := range backups {
+		//nolint:gomnd
 		_index, err := strconv.ParseUint(index, 10, 64)
 		if err != nil {
 			return nil, err
@@ -92,7 +93,7 @@ func (kv *BackupKV) Create(ctx context.Context, index uint64) error {
 
 func (kv *BackupKV) Creates(ctx context.Context) ([]uint64, error) {
 	creates := []uint64{}
-	for index, _ := range kv.creates {
+	for index := range kv.creates {
 		creates = append(creates, index)
 	}
 	return creates, nil
@@ -125,7 +126,7 @@ func (kv *BackupKV) Wait(ctx context.Context, index uint64) error {
 
 func (kv *BackupKV) Waits(ctx context.Context) ([]uint64, error) {
 	waits := []uint64{}
-	for index, _ := range kv.waits {
+	for index := range kv.waits {
 		waits = append(waits, index)
 	}
 	return waits, nil

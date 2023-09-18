@@ -24,7 +24,7 @@ type OrderDetail struct {
 }
 
 func Create(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
-	var order *ent.Order
+	var entorder *ent.Order
 	var targetItems []*ent.OrderItem
 	var offerItems []*ent.OrderItem
 	var err error
@@ -37,16 +37,16 @@ func Create(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 		id := uuid.NewString()
 		in.ID = &id
 		// Create
-		order, err = CreateSet(tx.Order.Create(), in).Save(ctx)
+		entorder, err = CreateSet(tx.Order.Create(), in).Save(ctx)
 		if err != nil {
 			return err
 		}
-		targetBulk := ItemCreateBulkSet(tx, order.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
+		targetBulk := ItemCreateBulkSet(tx, entorder.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
 		targetItems, err = tx.OrderItem.CreateBulk(targetBulk...).Save(ctx)
 		if err != nil {
 			return err
 		}
-		offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
+		offerBulk := ItemCreateBulkSet(tx, entorder.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
 		offerItems, err = tx.OrderItem.CreateBulk(offerBulk...).Save(ctx)
 		if err != nil {
 			return err
@@ -58,7 +58,7 @@ func Create(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 	}
 
 	return &OrderDetail{
-		Order:       order,
+		Order:       entorder,
 		TargetItems: targetItems,
 		OfferItems:  offerItems,
 	}, nil
@@ -137,10 +137,9 @@ func CreateBulk(ctx context.Context, infos []*npool.OrderReq) ([]*OrderDetail, e
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 	var err error
-	var order *ent.Order
+	var entorder *ent.Order
 	var targetItems []*ent.OrderItem
 	var offerItems []*ent.OrderItem
 	if _, err := uuid.Parse(in.GetID()); err != nil {
@@ -148,17 +147,17 @@ func Update(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 	}
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		u := tx.Order.UpdateOneID(uuid.MustParse(in.GetID()))
-		order, err = UpdateSet(u, in).Save(_ctx)
+		entorder, err = UpdateSet(u, in).Save(_ctx)
 		if err != nil {
 			return err
 		}
 
-		targetItems, err = ItemsUpdate(ctx, tx, order.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
+		targetItems, err = ItemsUpdate(ctx, tx, entorder.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
 		if err != nil {
 			return err
 		}
 
-		offerItems, err = ItemsUpdate(ctx, tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
+		offerItems, err = ItemsUpdate(ctx, tx, entorder.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
 		if err != nil {
 			return err
 		}
@@ -170,7 +169,7 @@ func Update(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
 	}
 
 	return &OrderDetail{
-		Order:       order,
+		Order:       entorder,
 		TargetItems: targetItems,
 		OfferItems:  offerItems,
 	}, nil
@@ -504,7 +503,7 @@ func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 }
 
 func Delete(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
-	var order *ent.Order
+	var entorder *ent.Order
 	var err error
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
@@ -515,7 +514,7 @@ func Delete(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
 		if err != nil {
 			return err
 		}
-		order, err = tx.Order.UpdateOneID(id).
+		entorder, err = tx.Order.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(_ctx)
 		return err
@@ -525,6 +524,6 @@ func Delete(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
 	}
 
 	return &OrderDetail{
-		Order: order,
+		Order: entorder,
 	}, nil
 }

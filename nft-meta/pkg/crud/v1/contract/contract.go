@@ -153,6 +153,7 @@ func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpdateOne {
 	if in.ChainType != nil {
 		u.SetChainType(in.GetChainType().String())

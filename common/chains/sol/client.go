@@ -14,7 +14,6 @@ const (
 	MinNodeNum       = 1
 	MaxRetries       = 3
 	retriesSleepTime = 200 * time.Millisecond
-	dialTimeout      = 3 * time.Second
 )
 
 type solClients struct {

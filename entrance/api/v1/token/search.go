@@ -48,7 +48,7 @@ type SearchToken struct {
 }
 
 var (
-	pbJsonMarshaler jsonpb.Marshaler
+	pbJSONMarshaler jsonpb.Marshaler
 )
 
 func init() {
@@ -123,9 +123,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	inT = time.Now()
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
-	pbJsonMarshaler.EmitDefaults = true
+	pbJSONMarshaler.EmitDefaults = true
 	buff := bytes.NewBuffer([]byte{})
-	err = pbJsonMarshaler.Marshal(buff, resp)
+	err = pbJSONMarshaler.Marshal(buff, resp)
 	if err != nil {
 		errMsg = fmt.Sprintf("marshal result fail, %v", err)
 		return

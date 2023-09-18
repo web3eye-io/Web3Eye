@@ -21,8 +21,7 @@ const (
 	TaskCheckInterval = time.Second
 	// this mean MaxTaskCheckInterval=TaskCheckInterval*2^MaxTCIIndex
 	// If TaskCheckInterval start as 1 second and MaxTCIIndex is 10,the max TaskCheckInterval is 1024=1*2^10
-	MaxTCIIndex  = 10
-	ItemsPreTask = 10
+	MaxTCIIndex = 10
 )
 
 func Run() {
@@ -31,7 +30,7 @@ func Run() {
 	index := 0
 	for {
 		<-time.NewTicker(taskCheckInterval).C
-		if err := autoToTensor(context.Background(), ItemsPreTask); err != nil && index < MaxTCIIndex {
+		if err := autoToTensor(context.Background()); err != nil && index < MaxTCIIndex {
 			index++
 		} else if err == nil && index > 0 {
 			index = 0
@@ -41,7 +40,7 @@ func Run() {
 	}
 }
 
-func autoToTensor(ctx context.Context, limit int32) error {
+func autoToTensor(ctx context.Context) error {
 	// check the token service can be reached,then continue
 	if _, err := token.LookupHost(); err != nil {
 		return err
@@ -54,22 +53,25 @@ func autoToTensor(ctx context.Context, limit int32) error {
 	defer pulsarCli.Close()
 
 	output := make(chan pulsar.ConsumerMessage)
-	pulsarCli.Subscribe(pulsar.ConsumerOptions{
+	_, err = pulsarCli.Subscribe(pulsar.ConsumerOptions{
 		Topic:            config.GetConfig().Pulsar.TopicTransformImage,
 		SubscriptionName: "TransformImageConsummer",
 		Type:             pulsar.Shared,
 		MessageChannel:   output,
 	})
+	if err != nil {
+		return err
+	}
 
 	for msg := range output {
 		id := msg.Key()
-		imgUrl := string(msg.Message.Payload())
+		imgURL := string(msg.Message.Payload())
 		errRecord := ""
 		var vector []float32
 
 		func() {
 			filename := uuid.NewString()
-			path, err := filegetter.GetFileFromURL(imgUrl, config.GetConfig().Transform.DataDir, filename)
+			path, err := filegetter.GetFileFromURL(imgURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
@@ -77,7 +79,7 @@ func autoToTensor(ctx context.Context, limit int32) error {
 			}
 			defer os.Remove(*path)
 
-			vector, err = model.ToImageVector(*path)
+			vector, err = model.ToImageVector(ctx, *path)
 			if err != nil {
 				logger.Sugar().Errorf("failed to transform url to vector, err %v", err)
 				errRecord = err.Error()

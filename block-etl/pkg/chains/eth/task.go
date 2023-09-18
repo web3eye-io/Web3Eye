@@ -155,7 +155,11 @@ func (e *EthIndexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Clien
 			}
 			outBlockNum <- blockNum
 
-			consumer.Ack(msg)
+			err = consumer.Ack(msg)
+			if err != nil {
+				logger.Sugar().Errorf("ack SyncTask msg failed ,err: %v", err)
+				continue
+			}
 			retries = 0
 		case <-time.NewTicker(CheckTopicInterval).C:
 			if retries > maxRetries {
@@ -232,13 +236,16 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
 
-			blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
+			_, err = blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
 				Info: &blockProto.BlockReq{
 					ID:         &block.ID,
 					ParseState: &parseState,
 					Remark:     &remark,
 				},
 			})
+			if err != nil {
+				logger.Sugar().Error(err)
+			}
 		case <-ctx.Done():
 			return
 		}

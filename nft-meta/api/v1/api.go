@@ -33,11 +33,11 @@ func Register(server grpc.ServiceRegistrar) {
 	order.Register(server)
 }
 
-func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
+func RegisterGateway(mux *runtime.ServeMux, e string, opts []grpc.DialOption) error {
+	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, e, opts); err != nil {
 		return err
 	}
-	if err := token.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := token.RegisterGateway(mux, e, opts); err != nil {
 		return err
 	}
 	return nil

@@ -16,18 +16,21 @@ import (
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
 
-func (ethCli ethClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
-	logs := []types.Log{}
+func (ethCli ethClients) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]*types.Log, error) {
+	_logs := []types.Log{}
 
 	var err error
 	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
-		logs, err = c.FilterLogs(ctx, query)
+		_logs, err = c.FilterLogs(ctx, query)
 		if err != nil {
 			return false, err
 		}
 		return false, nil
 	})
-
+	logs := make([]*types.Log, len(_logs))
+	for i := range _logs {
+		logs[i] = &_logs[i]
+	}
 	return logs, err
 }
 
@@ -110,7 +113,6 @@ type ContractCreator struct {
 }
 
 func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr string) (*ContractCreator, error) {
-
 	var creator *ContractCreator
 	var err error
 	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {

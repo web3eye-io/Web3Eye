@@ -76,7 +76,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		}
 		pBone := &PageBone{
 			TokenBones:  ToTokenBones(infos[start:end]),
-			Page:        uint32(i + 1),
+			Page:        i + 1,
 			TotalPages:  totalPages,
 			TotalTokens: totalTokens,
 			Limit:       in.Limit,

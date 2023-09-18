@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/config"
 )
 
@@ -23,9 +23,12 @@ func Run() {
 		cmd := exec.Command("python3", modelStartFile)
 		err := cmd.Start()
 		if err != nil {
-			logger.Sugar().Errorf("failed to start image transform model")
+			panic(fmt.Sprintf("failed to start image transform model,err %v", err))
 		}
-		cmd.Wait()
+		err = cmd.Wait()
+		if err != nil {
+			panic(fmt.Sprintf("failed to start image transform model,err %v", err))
+		}
 	}
 	panic(fmt.Sprintf("retry to start image transform model %v times, stop retry", modelRestartRetries))
 }
@@ -38,7 +41,7 @@ type VectorRep struct {
 	ImgPath string `json:"ImgPath"`
 }
 
-func ToImageVector(imgPath string) ([]float32, error) {
+func ToImageVector(ctx context.Context, imgPath string) ([]float32, error) {
 	if _, err := os.Stat(imgPath); err != nil {
 		return nil, err
 	}
@@ -48,10 +51,16 @@ func ToImageVector(imgPath string) ([]float32, error) {
 		return nil, err
 	}
 	body := bytes.NewBuffer(jsonBody)
-	resp, err := http.Post("http://127.0.0.1:8888", "application/json", body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "http://127.0.0.1:8888", body)
 	if err != nil {
 		return nil, err
 	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {

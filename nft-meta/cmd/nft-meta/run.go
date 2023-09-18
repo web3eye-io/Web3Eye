@@ -21,7 +21,6 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	api "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
 
-	api_v1 "github.com/web3eye-io/Web3Eye/nft-meta/api/v1"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -71,7 +70,7 @@ func runGRPCServer(grpcPort int) {
 	}
 
 	server := grpc.NewServer()
-	api_v1.Register(server)
+	api.Register(server)
 	reflection.Register(server)
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

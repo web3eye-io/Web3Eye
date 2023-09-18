@@ -9,6 +9,10 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/mixin"
 )
 
+var (
+	MaxAddressLen = 128
+)
+
 type Transfer struct {
 	ent.Schema
 }
@@ -26,11 +30,11 @@ func (Transfer) Fields() []ent.Field {
 			Unique(),
 		field.String("chain_type"),
 		field.String("chain_id"),
-		field.String("contract").MaxLen(100),
+		field.String("contract").MaxLen(MaxAddressLen),
 		field.String("token_type"),
 		field.String("token_id"),
-		field.String("from").MaxLen(100),
-		field.String("to").MaxLen(100),
+		field.String("from").MaxLen(MaxAddressLen),
+		field.String("to").MaxLen(MaxAddressLen),
 		field.String("amount"),
 		field.Uint64("block_number"),
 		field.String("tx_hash"),
