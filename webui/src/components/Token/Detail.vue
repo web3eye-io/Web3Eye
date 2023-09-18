@@ -9,15 +9,15 @@
             :width="'460px'"
           />
         </div>
-        <div class="right col justify-between">
+        <div class="right column justify-between">
           <div class="name">
-            {{ target.Name }}
+            {{ target?.Name }}
           </div>
           <div class="content">
-            {{target.Name}} {{target.TokenID}}
+            {{target?.Name}} {{target?.TokenID}}
           </div>
           <div class="description">
-            {{ target.Description }}
+            {{ target?.Description }}
           </div>
           <div class="author row justify-between">
             <div class="column">
@@ -27,7 +27,7 @@
                   <img src="https://cdn.quasar.dev/img/avatar.png">
                 </q-avatar> 
                 <div class="creator-name">
-                  {{ target.Owner }}
+                  {{ target?.Owner }}
                 </div>
               </div>
             </div>
@@ -35,20 +35,22 @@
               <div class="chain-title">Blockchain</div>
               <div class="row items-center justify-center">
                   <q-icon name="img:icons/ethereum-eth-logo.png" />
-                  <div class="chain-name">{{ target.ChainType }}</div>
+                  <div class="chain-name">{{ target?.ChainType }}</div>
               </div>
             </div>
             <div class="col-2"></div>
           </div>
           <div class="contract column">
-              <div class="title">Contract</div>
-              <div class="address">{{ target.Contract }}</div>
+            <div class="title">Contract</div>
+            <div class="address">{{ target?.Contract }}</div>
           </div>
           <div class="price column">
-            <div class="title">Best Price</div>
-            <div class="amount">0.03ETH</div>
+            <div class="title">TokenType</div>
+            <div class="amount">{{ target?.TokenType }}</div>
           </div>
-          <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
+          <div class="btn-container">
+            <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
+          </div>
         </div>
       </div>
       <div class="transfer">Transfer</div>
@@ -197,6 +199,7 @@ onMounted(() => {
       padding-top: 20px
       box-shadow: 5px 5px 5px #f7f7f7
     .right
+      flex-grow: 1
       margin-left: 30px
       padding-top: 20px
       .name
@@ -248,9 +251,10 @@ onMounted(() => {
         .amount
           font-weight: 700
           font-size: 24px
-      .buy
-        margin: 10px 0
-        width: 100%
+      .btn-container
+        .buy
+          margin: 10px 0
+          width: 100%
 .transfer,.collections
   margin-top: 40px
   font-size: 36px
