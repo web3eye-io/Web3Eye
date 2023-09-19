@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package entrance.v1.synctask;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/synctask";
+import "google/api/annotations.proto";
+import "web3eye/nftmeta/v1/synctask/synctask.proto";
+
+service Manager {
+  rpc CreateSyncTask(nftmeta.v1.synctask.CreateSyncTaskRequest) returns (nftmeta.v1.synctask.CreateSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/create/synctask"
+      body:"*"
+    };
+  }
+  rpc UpdateSyncTask(nftmeta.v1.synctask.UpdateSyncTaskRequest) returns (nftmeta.v1.synctask.UpdateSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/update/synctask"
+      body:"*"
+    };
+  }
+  rpc GetSyncTask(nftmeta.v1.synctask.GetSyncTaskRequest) returns (nftmeta.v1.synctask.GetSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/synctask"
+      body:"*"
+    };
+  }
+  rpc GetSyncTaskOnly(nftmeta.v1.synctask.GetSyncTaskOnlyRequest) returns (nftmeta.v1.synctask.GetSyncTaskOnlyResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/synctask/only"
+      body:"*"
+    };
+  }
+  rpc GetSyncTasks(nftmeta.v1.synctask.GetSyncTasksRequest) returns (nftmeta.v1.synctask.GetSyncTasksResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/synctasks"
+      body:"*"
+    };
+  }
+  rpc ExistSyncTask(nftmeta.v1.synctask.ExistSyncTaskRequest) returns (nftmeta.v1.synctask.ExistSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/exist/synctask"
+      body:"*"
+    };
+  }
+  rpc ExistSyncTaskConds(nftmeta.v1.synctask.ExistSyncTaskCondsRequest) returns (nftmeta.v1.synctask.ExistSyncTaskCondsResponse) {
+    option (google.api.http) = {
+      post:"/v1/exist/synctask/conds"
+      body:"*"
+    };
+  }
+  rpc CountSyncTasks(nftmeta.v1.synctask.CountSyncTasksRequest) returns (nftmeta.v1.synctask.CountSyncTasksResponse) {
+    option (google.api.http) = {
+      post:"/v1/count/synctasks"
+      body:"*"
+    };
+  }
+  rpc DeleteSyncTask(nftmeta.v1.synctask.DeleteSyncTaskRequest) returns (nftmeta.v1.synctask.DeleteSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/delete/synctask"
+      body:"*"
+    };
+  }
+}

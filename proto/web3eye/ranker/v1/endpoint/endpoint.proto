@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ranker.v1.endpoint;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/endpoint";
+import "web3eye/nftmeta/v1/endpoint/endpoint.proto";
+
+service Manager {
+  rpc CreateEndpoint(nftmeta.v1.endpoint.CreateEndpointRequest) returns (nftmeta.v1.endpoint.CreateEndpointResponse) {}
+  rpc CreateEndpoints(nftmeta.v1.endpoint.CreateEndpointsRequest) returns (nftmeta.v1.endpoint.CreateEndpointsResponse) {}
+  rpc UpdateEndpoint(nftmeta.v1.endpoint.UpdateEndpointRequest) returns (nftmeta.v1.endpoint.UpdateEndpointResponse) {}
+  rpc UpdateEndpoints(nftmeta.v1.endpoint.UpdateEndpointsRequest) returns (nftmeta.v1.endpoint.UpdateEndpointsResponse) {}
+  rpc GetEndpoint(nftmeta.v1.endpoint.GetEndpointRequest) returns (nftmeta.v1.endpoint.GetEndpointResponse) {}
+  rpc GetEndpointOnly(nftmeta.v1.endpoint.GetEndpointOnlyRequest) returns (nftmeta.v1.endpoint.GetEndpointOnlyResponse) {}
+  rpc GetEndpoints(nftmeta.v1.endpoint.GetEndpointsRequest) returns (nftmeta.v1.endpoint.GetEndpointsResponse) {}
+  rpc ExistEndpoint(nftmeta.v1.endpoint.ExistEndpointRequest) returns (nftmeta.v1.endpoint.ExistEndpointResponse) {}
+  rpc ExistEndpointConds(nftmeta.v1.endpoint.ExistEndpointCondsRequest) returns (nftmeta.v1.endpoint.ExistEndpointCondsResponse) {}
+  rpc CountEndpoints(nftmeta.v1.endpoint.CountEndpointsRequest) returns (nftmeta.v1.endpoint.CountEndpointsResponse) {}
+  rpc DeleteEndpoint(nftmeta.v1.endpoint.DeleteEndpointRequest) returns (nftmeta.v1.endpoint.DeleteEndpointResponse) {}
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ranker.v1.synctask;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/synctask";
+import "web3eye/nftmeta/v1/synctask/synctask.proto";
+
+service Manager {
+  rpc CreateSyncTask(nftmeta.v1.synctask.CreateSyncTaskRequest) returns (nftmeta.v1.synctask.CreateSyncTaskResponse) {}
+  rpc UpdateSyncTask(nftmeta.v1.synctask.UpdateSyncTaskRequest) returns (nftmeta.v1.synctask.UpdateSyncTaskResponse) {}
+  rpc GetSyncTask(nftmeta.v1.synctask.GetSyncTaskRequest) returns (nftmeta.v1.synctask.GetSyncTaskResponse) {}
+  rpc GetSyncTaskOnly(nftmeta.v1.synctask.GetSyncTaskOnlyRequest) returns (nftmeta.v1.synctask.GetSyncTaskOnlyResponse) {}
+  rpc GetSyncTasks(nftmeta.v1.synctask.GetSyncTasksRequest) returns (nftmeta.v1.synctask.GetSyncTasksResponse) {}
+  rpc ExistSyncTask(nftmeta.v1.synctask.ExistSyncTaskRequest) returns (nftmeta.v1.synctask.ExistSyncTaskResponse) {}
+  rpc ExistSyncTaskConds(nftmeta.v1.synctask.ExistSyncTaskCondsRequest) returns (nftmeta.v1.synctask.ExistSyncTaskCondsResponse) {}
+  rpc CountSyncTasks(nftmeta.v1.synctask.CountSyncTasksRequest) returns (nftmeta.v1.synctask.CountSyncTasksResponse) {}
+  rpc DeleteSyncTask(nftmeta.v1.synctask.DeleteSyncTaskRequest) returns (nftmeta.v1.synctask.DeleteSyncTaskResponse) {}
+}
