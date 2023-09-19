@@ -71,7 +71,7 @@ func autoToTensor(ctx context.Context) error {
 
 		func() {
 			filename := uuid.NewString()
-			path, err := filegetter.GetFileFromURL(imgURL, config.GetConfig().Transform.DataDir, filename)
+			path, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()

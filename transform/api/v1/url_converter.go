@@ -15,7 +15,7 @@ import (
 func (s *Server) URLToVector(ctx context.Context, in *transformnpool.UrlToVectorReq) (*transformnpool.UrlToVectorResp, error) {
 	dataDir := config.GetConfig().Transform.DataDir
 	fileName := uuid.NewString()
-	path, err := filegetter.GetFileFromURL(in.GetUrl(), dataDir, fileName)
+	path, err := filegetter.GetFileFromURL(ctx, in.GetUrl(), dataDir, fileName)
 	if err != nil {
 		logger.Sugar().Errorf("failed to download file form url", err)
 		return nil, err

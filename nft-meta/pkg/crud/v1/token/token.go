@@ -137,7 +137,6 @@ func CreateBulk(ctx context.Context, in []*npool.TokenReq) ([]*ent.Token, error)
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -231,7 +230,6 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	return info, nil
 }
 
-// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error) {
 	stm := cli.Token.Query()
 	if conds == nil {

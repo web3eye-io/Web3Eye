@@ -2,6 +2,8 @@ package filegetter
 
 import (
 	"bufio"
+	"bytes"
+	"context"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -27,46 +29,51 @@ const (
 	whBitsize        = 32
 )
 
-func GetFileFromURL(url, dirPath, fileName string) (path *string, err error) {
+func GetFileFromURL(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
 	switch {
 	case strings.HasPrefix(url, ArURLHead):
-		return DownloadAreaveFile(url, dirPath, fileName)
+		return DownloadAreaveFile(ctx, url, dirPath, fileName)
 	case strings.HasPrefix(url, IPFSUrlHead):
-		return DownloadIPFSFile(url, dirPath, fileName)
+		return DownloadIPFSFile(ctx, url, dirPath, fileName)
 	case strings.HasPrefix(url, Base64SVGPrefix):
 		return Base64SVGToPng(url, dirPath, fileName)
 	default:
-		return DownloadHttpFile(url, dirPath, fileName)
+		return DownloadHTTPFile(ctx, url, dirPath, fileName)
 	}
 }
 
-func DownloadAreaveFile(url, dirPath, fileName string) (path *string, err error) {
+func DownloadAreaveFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
 	if !strings.HasPrefix(url, ArURLHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
 	noHeadURL := strings.TrimPrefix(url, ArURLHead)
 	httpURL := fmt.Sprintf("%v/%v", ArURLHTTPGateway, noHeadURL)
-	return DownloadHttpFile(httpURL, dirPath, fileName)
+	return DownloadHTTPFile(ctx, httpURL, dirPath, fileName)
 }
 
-func DownloadIPFSFile(url, dirPath, fileName string) (path *string, err error) {
+func DownloadIPFSFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
 	if !strings.HasPrefix(url, IPFSUrlHead) {
 		return nil, errors.New("url format is not areave")
 	}
 
 	noHeadURL := strings.TrimPrefix(url, IPFSUrlHead)
 	httpURL := fmt.Sprintf("%v/%v", IPFSHttpGateway, noHeadURL)
-	return DownloadHttpFile(httpURL, dirPath, fileName)
+	return DownloadHTTPFile(ctx, httpURL, dirPath, fileName)
 }
 
-func DownloadHttpFile(url, dirPath, fileName string) (path *string, err error) {
+func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
 	if !strings.HasPrefix(url, HTTPUrlHead) && !strings.HasPrefix(url, HTTPSUrlHead) {
 		return nil, errors.New("url format is not http")
 	}
 
-	// get the data
-	resp, err := http.Get(url)
+	body := bytes.NewBuffer([]byte{})
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +171,7 @@ func Base64SVGToSVG(base64data, svgPath string) (err error) {
 	return nil
 }
 
-func ReadSVGSizeByViewBox(filePath string) (w float64, h float64, err error) {
+func ReadSVGSizeByViewBox(filePath string) (w, h float64, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return 0, 0, err
@@ -213,7 +220,7 @@ func ReadSVGSizeByViewBox(filePath string) (w float64, h float64, err error) {
 	return maxW, maxH, nil
 }
 
-func ReadSVGSizeByWH(filePath string) (w float64, h float64, err error) {
+func ReadSVGSizeByWH(filePath string) (w, h float64, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return 0, 0, err

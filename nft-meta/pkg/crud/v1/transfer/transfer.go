@@ -138,7 +138,6 @@ func CreateBulk(ctx context.Context, in []*npool.TransferReq) ([]*ent.Transfer, 
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -219,7 +218,6 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
 	return info, nil
 }
 
-// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TransferQuery, error) {
 	stm := cli.Transfer.Query()
 	if conds == nil {

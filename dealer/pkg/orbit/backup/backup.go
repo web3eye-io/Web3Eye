@@ -167,7 +167,7 @@ func (kv *BackupKV) Done(ctx context.Context, index uint64, fail bool) error {
 
 func (kv *BackupKV) Dones(ctx context.Context) ([]uint64, error) {
 	dones := []uint64{}
-	for index, _ := range kv.dones {
+	for index := range kv.dones {
 		dones = append(dones, index)
 	}
 	return dones, nil

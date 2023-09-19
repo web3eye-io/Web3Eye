@@ -59,7 +59,6 @@ type OrderPriceDetails struct {
 	OrderPricePairs []OrderPricePair
 }
 
-//nolint:gocritic
 func LogsToOrders(pLogs []*types.Log) []*npool.Order {
 	result := make([]*npool.Order, 0)
 	for _, pLog := range pLogs {
@@ -68,10 +67,11 @@ func LogsToOrders(pLogs []*types.Log) []*npool.Order {
 			logger.Sugar().Warnf("failed to parse OrderFulfilled log,err %v", err)
 			continue
 		}
+
 		orderAD := TidyOrderAccount(orderObj)
 		orderPD := CalOrderPrice(orderAD)
-		for _, v := range orderPD.OrderPricePairs {
 
+		for _, v := range orderPD.OrderPricePairs {
 			result = append(result, &npool.Order{
 				TxHash:      pLog.TxHash.String(),
 				BlockNumber: pLog.BlockNumber,

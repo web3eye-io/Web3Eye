@@ -163,7 +163,6 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.SyncTask, error) {
 	return info, nil
 }
 
-// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SyncTaskQuery, error) {
 	stm := cli.SyncTask.Query()
 	if conds == nil {

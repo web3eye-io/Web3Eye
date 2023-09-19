@@ -3,6 +3,7 @@ package eth
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -51,7 +52,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
-	block, err := cli.BlockByNumber(ctx, inBlockNum)
+	block, err := cli.BlockByNumber(ctx, big.NewInt(0).SetUint64(inBlockNum))
 	if err != nil {
 		e.checkErrForRetry(ctx, err)
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
@@ -116,7 +117,6 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*c
 	infos := make([]*transferProto.TransferReq, len(transfers))
 
 	for i := range transfers {
-
 		transIdentifier := transferIdentifier(
 			transfers[i].Contract,
 			transfers[i].TokenID,
@@ -281,8 +281,8 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		if err != nil {
 			return fmt.Errorf("cannot get eth client,err: %v", err)
 		}
-		contractMeta := &eth.EthCurrencyMetadata{}
 
+		contractMeta := &eth.EthCurrencyMetadata{}
 		switch contract.TokenType {
 		case basetype.TokenType_Native:
 			contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)

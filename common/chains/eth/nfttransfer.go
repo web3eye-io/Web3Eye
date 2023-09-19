@@ -34,7 +34,6 @@ var (
 	}
 )
 
-//nolint:gocritic
 func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 	result := make([]*chains.TokenTransfer, 0)
 	for _, pLog := range pLogs {

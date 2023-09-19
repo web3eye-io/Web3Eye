@@ -316,7 +316,7 @@ func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata
 		}
 		return json.Unmarshal(result, into)
 	case URITypeHTTP:
-		req, err := http.NewRequestWithContext(ctx, "GET", asString, http.NoBody)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, asString, http.NoBody)
 		if err != nil {
 			return fmt.Errorf("error creating request: %s", err)
 		}

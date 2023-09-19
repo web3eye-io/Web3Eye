@@ -49,19 +49,18 @@ func (ethCli ethClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	return num, err
 }
 
-func (e ethClients) TokenURI(ctx context.Context, tokenType basetype.TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
-
+func (ethCli ethClients) TokenURI(ctx context.Context, tokenType basetype.TokenType, contractAddr, tokenID string, blockNum uint64) (string, error) {
 	var uri string
 	var err error
-	err = e.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
-		uri, err = e.tokenURI(c, tokenType, contractAddr, tokenID, blockNum)
+	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+		uri, err = tokenURI(c, tokenType, contractAddr, tokenID, blockNum)
 		return false, err
 	})
-	uri = e.ReplaceID(uri, tokenID)
+	uri = ethCli.ReplaceID(uri, tokenID)
 	return uri, err
 }
 
-func (ethCli ethClients) tokenURI(
+func tokenURI(
 	ethClient *ethclient.Client,
 	tokenType basetype.TokenType, contractAddr,
 	tokenID string,
@@ -95,11 +94,11 @@ func (ethCli ethClients) tokenURI(
 	return "", nil
 }
 
-func (ethCli ethClients) BlockByNumber(ctx context.Context, blockNum uint64) (*types.Block, error) {
+func (ethCli ethClients) BlockByNumber(ctx context.Context, blockNum *big.Int) (*types.Block, error) {
 	var block *types.Block
 	var err error
 	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
-		block, err = c.BlockByNumber(ctx, big.NewInt(int64(blockNum)))
+		block, err = c.BlockByNumber(ctx, blockNum)
 		return false, err
 	})
 	return block, err

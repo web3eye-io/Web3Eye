@@ -58,7 +58,6 @@ func Upsert(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, err
 }
 
-// nolint
 func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -129,7 +128,6 @@ func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, 
 	return rows, nil
 }
 
-// nolint
 func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -218,7 +216,6 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
 	return info, nil
 }
 
-// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, error) {
 	stm := cli.Contract.Query()
 	if conds == nil {

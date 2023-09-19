@@ -59,7 +59,6 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
-// nolint
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
 	respBody := []byte{}
@@ -68,18 +67,19 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if errMsg != "" {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(errMsg))
-			return
+			respBody = []byte(errMsg)
 		}
 
 		_, err = w.Write(respBody)
 		if err != nil {
-			w.Write([]byte(fmt.Sprintf("write response body fail, %v", err)))
+			logger.Sugar().Errorf("failed to write response,err %v", err)
 		}
 	}()
 
 	_limit := r.FormValue(LimitFeild)
-	limit, err := strconv.ParseUint(_limit, 10, 32)
+	baseNum := 10
+	bitSize := 32
+	limit, err := strconv.ParseUint(_limit, baseNum, bitSize)
 
 	if err != nil {
 		errMsg = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
@@ -97,7 +97,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	logger.Sugar().Infof("check params %v ms", inT.UnixMilli()-startT.UnixMilli())
 
 	// convert to vector
-	vector, err := ImgReqConvertVector(r)
+	vector, err := ImgReqConvertVector(r.Context(), r)
 	if err != nil {
 		errMsg = fmt.Sprintf("image convert fail, %v", err)
 		return
@@ -133,7 +133,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 // TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
 // converte http request with image file to vector
-func ImgReqConvertVector(r *http.Request) ([]float32, error) {
+func ImgReqConvertVector(ctx context.Context, r *http.Request) ([]float32, error) {
 	// get file info
 	file, handler, err := r.FormFile(UploadFileFeild)
 	if err != nil {
@@ -161,26 +161,31 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	)
 	icURL := fmt.Sprintf("http://%v/v1/transform/file", ICServer)
 
-	res, err := http.Post(icURL, bodyWriter.FormDataContentType(), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, icURL, body)
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Set("Content-Type", bodyWriter.FormDataContentType())
+	resp, err := http.DefaultClient.Do(req)
 
-	defer res.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
-	body1, err := io.ReadAll(res.Body)
+	body1, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	// parse response
-	resp := &Img2VectorResp{}
+	vectorResp := &Img2VectorResp{}
 	err = json.Unmarshal(body1, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Vector, nil
+	return vectorResp.Vector, nil
 }
 
 func (s *Server) SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {

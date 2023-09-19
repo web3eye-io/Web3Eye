@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -89,8 +88,7 @@ func TransformFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer os.Remove(filePath)
 
-	ctx, _ := context.WithTimeout(context.Background(), ToVectorTimeout)
-	vector, err := model.ToImageVector(ctx, filePath)
+	vector, err := model.ToImageVector(r.Context(), filePath)
 	if err != nil {
 		errStr := err.Error()
 		logger.Sugar().Errorf("failed to get file info ,err: %v", err)

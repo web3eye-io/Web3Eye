@@ -241,7 +241,6 @@ func Row(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
 	}, nil
 }
 
-// nolint
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.OrderQuery, error) {
 	stm := cli.Order.Query()
 	if conds == nil {

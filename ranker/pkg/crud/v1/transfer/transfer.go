@@ -96,20 +96,20 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 		if err != nil {
 			return err
 		}
-		rowID_orderID := make(map[string]string, len(rows))
+		rowIDOrderID := make(map[string]string, len(rows))
 		for _, row := range rows {
 			orderItem, err := queryOrderItemAndOrder(row, cli).Only(ctx)
 			if err != nil {
 				continue
 			}
 			if orderItem != nil {
-				rowID_orderID[row.ID.String()] = orderItem.OrderID
+				rowIDOrderID[row.ID.String()] = orderItem.OrderID
 			}
 		}
 
 		for _, row := range rows {
 			var qOrderItems []*OrderItem
-			if id, ok := rowID_orderID[row.ID.String()]; ok {
+			if id, ok := rowIDOrderID[row.ID.String()]; ok {
 				qOrderItems, err = queryOrderItemsAndContract(ctx, id, cli)
 				if err != nil {
 					return err
