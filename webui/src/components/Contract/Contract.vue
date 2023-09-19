@@ -33,7 +33,7 @@
       <div id="contract">
         <div class="inner grid-container" v-if="tab == 'Collections'">
           <template class="box" v-for="token in tokens" :key="token.ID">
-            <TokenCard :token="token" />
+            <TokenCard :token="token" @click="onTokenClick(token)" />
           </template>
         </div>
         <div v-else>
@@ -66,12 +66,13 @@
 <script lang="ts" setup>
 import { useContractStore } from 'src/teststore/contract'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import contractbg from '../../assets/material/contract-bg.png'
 import { useTransferStore } from 'src/teststore/transfer';
 import { ChainType } from 'src/teststore/basetypes/const';
 import { Transfer } from 'src/teststore/transfer/types';
 import { formatTime } from 'src/teststore/util'
+import { ShotToken } from 'src/teststore/contract/types';
 const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 
@@ -163,6 +164,20 @@ const columns = computed(() => [
     align: 'center',
   },
 ])
+
+const router = useRouter()
+const onTokenClick = (token: ShotToken) => {
+  void router.push({
+    path: '/token/detail',
+    query: {
+      chainID: _chainID.value,
+      chainType: token.ChainType,
+      contract: _contract.value,
+      tokenID: token.TokenID,
+      id: token.ID,
+    }
+  })
+}
 
 onMounted(() => {
   if (transfers.value?.length === 0) {

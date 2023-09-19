@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" @click="onTokenClick">
     <div class="box-img">
         <MyImage :url="token.ImageURL" :height="'200px'" :width="'202px'" />
     </div>
@@ -32,6 +32,10 @@ interface Props {
 
 const props = defineProps<Props>()
 const token = toRef(props, 'token')
+
+const onTokenClick = () => {
+  // TODO
+}
 
 </script>
 <style lang="sass" scoped>

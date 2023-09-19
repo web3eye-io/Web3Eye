@@ -167,7 +167,8 @@ const onContractClick = (token: SearchToken) => {
     path: '/contract',
     query: {
       contract: token.Contract,
-      chainID: token.ChainID
+      chainID: token.ChainID,
+      chainType: token.ChainType
     }
   })
 }
