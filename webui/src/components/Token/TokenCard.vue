@@ -38,7 +38,7 @@ const token = toRef(props, 'token')
 .box
   width: 220px
   max-width: 280px
-  height: 308px
+  height: 290px
   border-radius: 10px
   border: 1px solid #efefef
   background-color: #FAFAFA
