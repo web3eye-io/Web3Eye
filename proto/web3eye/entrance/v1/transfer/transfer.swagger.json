@@ -219,6 +219,9 @@
           "type": "string",
           "format": "uint64"
         },
+        "AmountStr": {
+          "type": "string"
+        },
         "Remark": {
           "type": "string"
         },

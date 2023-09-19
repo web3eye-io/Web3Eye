@@ -5,7 +5,9 @@ import (
 
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1"
 	"github.com/web3eye-io/Web3Eye/ranker/api/v1/contract"
+	"github.com/web3eye-io/Web3Eye/ranker/api/v1/endpoint"
 	"github.com/web3eye-io/Web3Eye/ranker/api/v1/snapshot"
+	"github.com/web3eye-io/Web3Eye/ranker/api/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/ranker/api/v1/token"
 	"github.com/web3eye-io/Web3Eye/ranker/api/v1/transfer"
 
@@ -23,6 +25,8 @@ func Register(server grpc.ServiceRegistrar) {
 	transfer.Register(server)
 	contract.Register(server)
 	snapshot.Register(server)
+	endpoint.Register(server)
+	synctask.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

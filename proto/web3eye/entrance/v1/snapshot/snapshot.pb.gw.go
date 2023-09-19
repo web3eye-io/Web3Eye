@@ -15,8 +15,8 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
-	snapshot_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
+	v1_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/snapshot"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -34,7 +34,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Manager_GetSnapshot_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotRequest
+	var protoReq snapshot.GetSnapshotRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -51,7 +51,7 @@ func request_Manager_GetSnapshot_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_Manager_GetSnapshot_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotRequest
+	var protoReq snapshot.GetSnapshotRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -68,7 +68,7 @@ func local_request_Manager_GetSnapshot_0(ctx context.Context, marshaler runtime.
 }
 
 func request_Manager_GetSnapshotOnly_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotOnlyRequest
+	var protoReq snapshot.GetSnapshotOnlyRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -85,7 +85,7 @@ func request_Manager_GetSnapshotOnly_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func local_request_Manager_GetSnapshotOnly_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotOnlyRequest
+	var protoReq snapshot.GetSnapshotOnlyRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -102,7 +102,7 @@ func local_request_Manager_GetSnapshotOnly_0(ctx context.Context, marshaler runt
 }
 
 func request_Manager_GetSnapshots_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotsRequest
+	var protoReq snapshot.GetSnapshotsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -119,7 +119,7 @@ func request_Manager_GetSnapshots_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_GetSnapshots_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.GetSnapshotsRequest
+	var protoReq snapshot.GetSnapshotsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -136,7 +136,7 @@ func local_request_Manager_GetSnapshots_0(ctx context.Context, marshaler runtime
 }
 
 func request_Manager_CountSnapshots_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.CountSnapshotsRequest
+	var protoReq snapshot.CountSnapshotsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -153,7 +153,7 @@ func request_Manager_CountSnapshots_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Manager_CountSnapshots_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq snapshot_0.CountSnapshotsRequest
+	var protoReq snapshot.CountSnapshotsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -170,7 +170,7 @@ func local_request_Manager_CountSnapshots_0(ctx context.Context, marshaler runti
 }
 
 func request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq v1.CreateBackupRequest
+	var protoReq v1_0.CreateBackupRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -187,7 +187,7 @@ func request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_CreateBackup_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq v1.CreateBackupRequest
+	var protoReq v1_0.CreateBackupRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

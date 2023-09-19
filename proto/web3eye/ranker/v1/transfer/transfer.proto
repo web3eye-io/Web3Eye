@@ -16,6 +16,7 @@ message OrderItem{
   chain.TokenType TokenType = 20;
   string TokenID = 30;
   uint64 Amount = 40;
+  string AmountStr = 41;
   string Remark = 50;
   string Name = 60;
   string Symbol = 70;
