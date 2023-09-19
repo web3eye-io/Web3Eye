@@ -128,6 +128,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Endpoint, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.EndpointQuery, error) {
 	stm := cli.Endpoint.Query()
 	if conds == nil {

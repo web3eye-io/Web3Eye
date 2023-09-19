@@ -164,6 +164,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Block, error) {
 	return info, nil
 }
 
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.BlockQuery, error) {
 	stm := cli.Block.Query()
 	if conds == nil {

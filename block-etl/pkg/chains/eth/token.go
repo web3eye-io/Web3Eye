@@ -244,69 +244,15 @@ type ContractMeta struct {
 
 func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractMeta, findContractCreator bool) error {
 	for _, contract := range inContracts {
-		identifier := contractIdentifier(e.ChainType, e.ChainID, contract.Contract)
-		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+		exist, err := e.checkContract(ctx, contract.Contract)
 		if err != nil {
-			return fmt.Errorf("lock the token indentifier failed, err: %v", err)
-		}
-		if !locked {
+			logger.Sugar().Error(err)
 			continue
 		}
-		// check if the record exist
-		conds := &contractProto.Conds{
-			ChainType: &ctMessage.StringVal{
-				Value: e.ChainType.String(),
-				Op:    "eq",
-			},
-			ChainID: &ctMessage.StringVal{
-				Value: e.ChainID,
-				Op:    "eq",
-			},
-			Address: &ctMessage.StringVal{
-				Value: contract.Contract,
-				Op:    "eq",
-			},
-		}
-		if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
-			Conds: conds,
-		}); err == nil && resp != nil && resp.GetExist() {
+		if exist {
 			continue
-		} else if err != nil {
-			return fmt.Errorf("check if the contract exist failed, err: %v", err)
 		}
-
-		// parse the token metadata
-		remark := ""
-		cli, err := eth.Client(e.Endpoints)
-		if err != nil {
-			return fmt.Errorf("cannot get eth client,err: %v", err)
-		}
-
-		contractMeta := &eth.EthCurrencyMetadata{}
-		switch contract.TokenType {
-		case basetype.TokenType_Native:
-			contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
-		case basetype.TokenType_ERC20:
-			contractMeta, err = cli.GetERC20Metadata(ctx, contract.Contract)
-		default:
-			contractMeta, err = cli.GetERC721Metadata(ctx, contract.Contract)
-		}
-
-		if err != nil {
-			e.checkErrForRetry(ctx, err)
-			logger.Sugar().Warnf("cannot get contrcact metadata,err: %v", err)
-			remark = fmt.Sprintf("%v,%v", remark, err)
-		}
-
-		creator := &eth.ContractCreator{}
-		// stop get info for creator
-		if findContractCreator && contract.TokenType != basetype.TokenType_Native {
-			creator, err = cli.GetContractCreator(ctx, contract.Contract)
-			if err != nil {
-				e.checkErrForRetry(ctx, err)
-				remark = err.Error()
-			}
-		}
+		contractMeta, creator, remark := e.getContractInfo(ctx, contract, findContractCreator)
 
 		// store the result
 		from := creator.From.String()
@@ -334,6 +280,74 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 	}
 
 	return nil
+}
+
+func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist bool, err error) {
+	identifier := contractIdentifier(e.ChainType, e.ChainID, contract)
+	locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+	if err != nil {
+		return false, fmt.Errorf("lock the token indentifier failed, err: %v", err)
+	}
+	if !locked {
+		return true, nil
+	}
+	// check if the record exist
+	conds := &contractProto.Conds{
+		ChainType: &ctMessage.StringVal{
+			Value: e.ChainType.String(),
+			Op:    "eq",
+		},
+		ChainID: &ctMessage.StringVal{
+			Value: e.ChainID,
+			Op:    "eq",
+		},
+		Address: &ctMessage.StringVal{
+			Value: contract,
+			Op:    "eq",
+		},
+	}
+	if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
+		Conds: conds,
+	}); err == nil && resp != nil && resp.GetExist() {
+		return true, nil
+	} else if err != nil {
+		return false, fmt.Errorf("check if the contract exist failed, err: %v", err)
+	}
+	return false, nil
+}
+
+func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *eth.ContractCreator, string) {
+	contractMeta := &eth.EthCurrencyMetadata{}
+	creator := &eth.ContractCreator{}
+	cli, err := eth.Client(e.Endpoints)
+	remark := ""
+	if err != nil {
+		return contractMeta, creator, fmt.Sprintf("cannot get eth client,err: %v", err)
+	}
+
+	switch contract.TokenType {
+	case basetype.TokenType_Native:
+		contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
+	case basetype.TokenType_ERC20:
+		contractMeta, err = cli.GetERC20Metadata(ctx, contract.Contract)
+	default:
+		contractMeta, err = cli.GetERC721Metadata(ctx, contract.Contract)
+	}
+
+	if err != nil {
+		e.checkErrForRetry(ctx, err)
+		remark = err.Error()
+	}
+
+	// stop get info for creator
+	if findContractCreator && contract.TokenType != basetype.TokenType_Native {
+		creator, err = cli.GetContractCreator(ctx, contract.Contract)
+		if err != nil {
+			e.checkErrForRetry(ctx, err)
+			remark = fmt.Sprintf("%v,%v", remark, err.Error())
+		}
+	}
+	return contractMeta, creator, remark
 }
 
 func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {

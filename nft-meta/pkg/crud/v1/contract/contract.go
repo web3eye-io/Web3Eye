@@ -58,6 +58,7 @@ func Upsert(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, err
 }
 
+//nolint:gocyclo
 func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -216,6 +217,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
 	return info, nil
 }
 
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, error) {
 	stm := cli.Contract.Query()
 	if conds == nil {

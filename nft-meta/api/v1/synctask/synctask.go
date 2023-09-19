@@ -74,6 +74,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 	}, nil
 }
 
+//nolint:funlen,gocyclo
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
 	// TODO: will be rewrite,too long
 

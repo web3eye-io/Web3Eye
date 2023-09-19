@@ -230,6 +230,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	return info, nil
 }
 
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error) {
 	stm := cli.Token.Query()
 	if conds == nil {
