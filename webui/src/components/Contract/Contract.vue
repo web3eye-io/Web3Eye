@@ -23,15 +23,8 @@
       </div>
       <div class="content">
         <div class="nav row">
-          <q-tabs
-            v-model="tab"
-            dense
-            class="text-grey"
-            active-color="primary"
-            indicator-color="primary"
-            align="justify"
-            narrow-indicator
-          >
+          <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify"
+            narrow-indicator>
             <q-tab name="Collections" label="Collections" />
             <q-tab name="Transfers" label="Activity" />
           </q-tabs>
@@ -44,33 +37,27 @@
           </template>
         </div>
         <div v-else>
-          <q-table
-        flat 
-        bordered
-        :rows="transfers"
-        :columns="(columns as any)"
-        row-key="name"
-      >
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="Block" :props="props">
-              {{ props.row.BlockNumber }}
-            </q-td>
-            <q-td key="TxTime" :props="props">
-                {{ formatTime(props.row.TxTime)}}
-            </q-td>
-            <q-td key="Value" :props="props">
-                {{ props.row.Value }}
-            </q-td>
-            <q-td key="From" :props="props">
-              <ToolTip :address="props.row.From" />
-            </q-td>
-            <q-td key="To" :props="props">
-              <ToolTip :address="props.row.To" />
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
+          <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name">
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="Block" :props="props">
+                  {{ props.row.BlockNumber }}
+                </q-td>
+                <q-td key="TxTime" :props="props">
+                  {{ formatTime(props.row.TxTime) }}
+                </q-td>
+                <q-td key="Value" :props="props">
+                  {{ props.row.Value }}
+                </q-td>
+                <q-td key="From" :props="props">
+                  <ToolTip :address="props.row.From" />
+                </q-td>
+                <q-td key="To" :props="props">
+                  <ToolTip :address="props.row.To" />
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
         </div>
       </div>
     </div>
@@ -107,8 +94,8 @@ const _chainType = computed(() => query.value.chainType)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getImageUrl = computed(() => (url: string) => {
-  if(url.startsWith('ipfs://')) {
-      return url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+  if (url.startsWith('ipfs://')) {
+    return url.replace('ipfs://', 'https://ipfs.io/ipfs/')
   }
   if (url.startsWith('data:image')) {
     return `img:${url}`
@@ -119,7 +106,7 @@ const getImageUrl = computed(() => (url: string) => {
 const getContract = () => {
   contract.getContractAndTokens({
     Contract: _contract.value,
-    Offset: 0, 
+    Offset: 0,
     Limit: 100,
     Message: {}
   }, () => {
@@ -134,21 +121,20 @@ const transfers = computed(() => transfer.getTransfersByKey(key.value))
 const getTransfers = (offset: number, limit: number) => {
   transfer.getTransfers({
     ChainID: _chainID.value,
-    ChainType: ChainType.Ethereum,
+    ChainType: _chainType.value,
     Contract: _contract.value,
-    Offset: offset, 
+    Offset: offset,
     Limit: limit,
     Message: {}
   },
-  key.value, 
-  (err: boolean, rows: Array<Transfer>) => {
-    if (err || rows.length === 0) {
-      return 
-    }
-    getTransfers(offset + limit, limit)
-  })
+    key.value,
+    (err: boolean, rows: Array<Transfer>) => {
+      if (err || rows.length === 0) {
+        return
+      }
+      getTransfers(offset + limit, limit)
+    })
 }
-
 
 const columns = computed(() => [
   {

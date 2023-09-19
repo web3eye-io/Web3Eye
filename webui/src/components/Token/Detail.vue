@@ -1,10 +1,10 @@
 <template>
   <div class="outer-bg">
     <div class="outer-container">
-      <div class="top row">
+      <div class="top row no-wrap">
         <div class="left">
           <MyImage 
-            :url="target?.ImageURL" 
+            :url="(target?.ImageURL as string)" 
             :height="'460px'" 
             :width="'460px'"
           />
@@ -65,6 +65,7 @@
         :rows="transfers"
         :columns="(columns as any)"
         row-key="name"
+        :rows-per-page-options='[20]'
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -89,7 +90,7 @@
       <div class="collections">More from this collection</div>
       <div class="inner grid-container">
           <template v-for="token in tokens" :key="token.ID">
-            <TokenCard :token="token" />
+            <TokenCard :token="token" @click="onShotTokenClick(token)" />
           </template>
       </div>
     </div>
@@ -99,12 +100,12 @@
 import { ChainType } from 'src/teststore/basetypes/const';
 import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
-import { Token } from 'src/teststore/token/types';
 import { useTransferStore } from 'src/teststore/transfer';
 import { formatTime } from 'src/teststore/util'
 import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, onMounted } from 'vue';
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { ShotToken } from 'src/teststore/contract/types';
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
@@ -121,13 +122,15 @@ const route = useRoute()
 const query = computed(() => route.query as unknown as Query)
 const _contract = computed(() => query.value.contract)
 const _chainID = computed(() => query.value.chainID)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _chainType = computed(() => query.value.chainType)
 const _tokenID = computed(() => query.value.tokenID)
 const _id = computed(() => query.value.id)
 
+const tokenID1 = ref(_tokenID.value)
+const id1 = ref(_id.value)
+
 const transfer = useTransferStore()
-const transferKey = computed(() => transfer.setKey(_chainID.value, _tokenID.value))
+const transferKey = computed(() => transfer.setKey(_chainID.value, tokenID1.value))
 const transfers = computed(() => transfer.Transfers.Transfers.get(transferKey.value))
 
 const columns = computed(() => [
@@ -160,10 +163,10 @@ const columns = computed(() => [
 
 const getTransfers = (offset: number, limit: number) => {
   transfer.getTransfers({
-    ChainType: ChainType.Ethereum,//TODO
+    ChainType: _chainType.value,
     ChainID: _chainID.value,
     Contract: _contract.value,
-    TokenID: _tokenID.value,
+    TokenID: tokenID1.value,
     Offset: offset,
     Limit: limit,
     Message: {}
@@ -178,11 +181,11 @@ const getTransfers = (offset: number, limit: number) => {
 }
 
 const token = useTokenStore()
-const target = computed(() => token.getTokenByID(_tokenID.value) as Token)
+const target = computed(() => token.getTokenByID(tokenID1.value))
 
 const getToken = () => {
   token.getToken({
-    ID: _id.value,
+    ID: id1.value,
     Message: {}
   }, () => {
     // TODO
@@ -202,11 +205,24 @@ const getContract = () => {
   })
 }
 
+const onShotTokenClick = (token: ShotToken) => {
+  tokenID1.value = token.TokenID
+  id1.value = token.ID
+  if (!target.value) {
+    getToken()
+  }
+  if (!transfers.value || transfers.value?.length === 0) {
+    getTransfers(0, 100)
+  }
+}
+
 onMounted(() => {
   if (!target.value) {
     getToken()
   }
-  getTransfers(0, 100)
+  if (!transfers.value || transfers.value?.length === 0) {
+    getTransfers(0, 100)
+  }
   if (_contract?.value?.length > 0) {
     getContract()
   }

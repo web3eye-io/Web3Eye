@@ -1,7 +1,7 @@
 <template>
   <div class="outer-bg">
     <div class="outer-container">
-      <div class="token row nowrap">
+      <div class="token row wrap">
         <div class="left">
           <q-list bordered class="rounded-borders">
             <q-expansion-item expand-separator default-opened label="Chains">
@@ -23,13 +23,13 @@
         <div class="right">
           <div class="title">Collections</div>
           <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
-            <div class="content-left" @click="onImageClick(token)">
+            <div class="content-left" @click="onTokenClick(token)">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
             </div>
             <div class="content-right column">
               <div class="line-top row space-between items-center">
                 <div class="distance">Distance: {{ token.Distance }}</div>
-                <div class="block1">Block: {{ token.SiblingsNum }}</div>
+                <!-- <div class="block1">Block: {{ token.SiblingsNum }}</div> -->
                 <q-space />
                 <div>
                   <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
@@ -52,7 +52,7 @@
                   <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onImageClick(token)" class="split-token">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token,item)" class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
               </div>
@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
-import { SearchToken } from 'src/teststore/token/types';
+import { SearchToken, SiblingToken } from 'src/teststore/token/types';
 import { Transfer } from 'src/teststore/transfer/types';
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { ChainType } from 'src/teststore/basetypes/const';
@@ -134,7 +134,7 @@ const onTransferClick = (token: SearchToken) => {
   showing.value = true
 }
 
-const onImageClick = (token: SearchToken) => {
+const onTokenClick = (token: SearchToken) => {
   void router.push({
     path: '/token/detail',
     query: {
@@ -143,6 +143,19 @@ const onImageClick = (token: SearchToken) => {
       contract: token.Contract,
       tokenID: token.TokenID,
       id: token.ID,
+    }
+  })
+}
+
+const onShotTokenClick = (token: SearchToken, shotToken: SiblingToken) => {
+  void router.push({
+    path: '/token/detail',
+    query: {
+      chainID: token.ChainID,
+      chainType: token.ChainType,
+      contract: token.Contract,
+      tokenID: shotToken.TokenID,
+      id: shotToken.ID,
     }
   })
 }

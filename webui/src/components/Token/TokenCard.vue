@@ -42,6 +42,8 @@ const token = toRef(props, 'token')
   border-radius: 10px
   border: 1px solid #efefef
   background-color: #FAFAFA
+  &:hover
+    cursor: pointer
   .box-img
     padding: 8px
   .content
