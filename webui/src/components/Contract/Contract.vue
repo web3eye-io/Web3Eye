@@ -37,7 +37,7 @@
           </template>
         </div>
         <div v-else>
-          <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name">
+          <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name" :rows-per-page-options='[20]'>
             <template v-slot:body="props">
               <q-tr :props="props">
                 <q-td key="Block" :props="props">
@@ -59,6 +59,7 @@
             </template>
           </q-table>
         </div>
+        <div style="height: 150px;"></div>
       </div>
     </div>
   </div>

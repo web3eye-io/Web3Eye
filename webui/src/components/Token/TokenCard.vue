@@ -7,12 +7,12 @@
         <div class="line row justify-between">
             <span class="title">#{{ token.TokenID }}</span>
             <div class="row fee">
-                <span>4.75</span>
+                <span></span>
                 <q-icon name="img:icons/ethereum-eth-logo.png" style="padding-top: 3px;" />
             </div>
         </div>
         <div class="super row justify-between">
-            <div>{{ token.Name }}</div>
+            <div class="token-name">{{ token.Name }}</div>
             <div class="transfers">
                 {{ token.TransfersNum }}
                 <q-icon name="img:icons/transfers.png" />
@@ -55,6 +55,11 @@ const onTokenClick = () => {
       padding: 5px
     .super
       padding: 0 5px 2px 5px
+      .token-name
+        max-width: 160px
+        overflow: hidden
+        text-overflow: ellipsis
+        height: 20px
     .transfers
       min-width: 20px
 </style>
