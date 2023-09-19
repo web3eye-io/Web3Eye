@@ -39,16 +39,22 @@
                   <div class="chain-name">{{ target?.ChainType }}</div>
               </div>
             </div>
-            <div class="col-2"></div>
+            <div class="column">
+              <div class="chain-title">TokenType</div>
+              <div class="row items-center justify-center">
+                  <div class="chain-name">{{ target?.TokenType }}</div>
+              </div>
+            </div>
+            <div class="col-2" />
           </div>
           <div class="contract column">
             <div class="title">Contract</div>
             <div class="address">{{ target?.Contract }}</div>
           </div>
-          <div class="price column">
+          <!-- <div class="price column">
             <div class="title">TokenType</div>
             <div class="amount">{{ target?.TokenType }}</div>
-          </div>
+          </div> -->
           <q-btn class="buy" disable unelevated rounded color="primary" label="BUY NOW" />
         </div>
       </div>
@@ -82,9 +88,9 @@
       </q-table>
       <div class="collections">More from this collection</div>
       <div class="inner grid-container">
-          <div class="box" v-for="token in tokens" :key="token.ID">
+          <template v-for="token in tokens" :key="token.ID">
             <TokenCard :token="token" />
-          </div>
+          </template>
       </div>
     </div>
   </div>
@@ -221,7 +227,6 @@ onMounted(() => {
       width: 30px
     .right
       flex-grow: 1
-      padding-top: 20px
       .name
         font-size: 20px
         color: #1772f8
@@ -238,8 +243,9 @@ onMounted(() => {
         opacity: 0.8
         height: 26px
       .author
-        padding-top: 40px
+        padding-top: 20px
       .contract
+        width: 500px
         margin-top: 25px
         border: 1px solid #efefef
         background-color: #f7f7f7
@@ -272,11 +278,12 @@ onMounted(() => {
           font-size: 24px
       .buy
         margin: 10px 0
-        width: 450px
+        width: 500px
+        margin-bottom: 20px
 .transfer,.collections
   margin-top: 40px
   font-size: 36px
   font-weight: 700
-.transfer
+.transfer,.collections
   padding-bottom: 20px
 </style>

@@ -4,7 +4,7 @@
       <q-img :src="contractbg" />
       <div class="row items-center justify-center">
         <q-avatar>
-          <img src="https://cdn.quasar.dev/img/avatar.png">
+          <img :src="current.ProfileURL">
         </q-avatar>
       </div>
       <div class="collection column items-center justify-center">
@@ -19,7 +19,6 @@
         </div>
         <div class="description">
           {{ current.Description }}
-          Spesh is looking for his best friend throughout Coolman's Universe. To travel through this universe, Spesh uses a surfboard and a magical compass.
         </div>
       </div>
       <div class="content">
@@ -40,9 +39,9 @@
       </div>
       <div id="contract">
         <div class="inner grid-container" v-if="tab == 'Collections'">
-          <div class="box" v-for="token in tokens" :key="token.ID">
+          <template class="box" v-for="token in tokens" :key="token.ID">
             <TokenCard :token="token" />
-          </div>
+          </template>
         </div>
         <div v-else>
           Coming Soon
@@ -90,12 +89,6 @@ const getImageUrl = computed(() => (url: string) => {
   return url
 })
 
-onMounted(() => {
-  if (_contract?.value?.length > 0) {
-    getContract()
-  }
-})
-
 const getContract = () => {
   contract.getContractAndTokens({
     Contract: _contract.value,
@@ -114,7 +107,7 @@ const transfers = computed(() => transfer.getTransfersByKey(key.value))
 const getTransfers = (offset: number, limit: number) => {
   transfer.getTransfers({
     ChainID: _chainID.value,
-    ChainType: _chainType.value,
+    ChainType: ChainType.Ethereum,
     Contract: _contract.value,
     Offset: offset, 
     Limit: limit,
@@ -132,6 +125,9 @@ const getTransfers = (offset: number, limit: number) => {
 onMounted(() => {
   if (transfers.value?.length === 0) {
     getTransfers(0, 100)
+  }
+  if (_contract?.value?.length > 0) {
+    getContract()
   }
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
     <q-btn :label="displayLabel" flat @click="onUpdate">
-        <q-tooltip anchor="top middle" self="center middle">
+        <q-tooltip anchor="top middle" self="center middle" class="bg-white text-black shadow-2">
           {{ displayMessage }}
         </q-tooltip>
     </q-btn>
@@ -24,10 +24,10 @@ const displayLabel = computed(() => {
 
 const onUpdate = () => {
     void copyToClipboard(address.value)
-    displayMessage.value = 'copied!'
+    displayMessage.value = 'Copied!'
     setInterval(() => {
         displayMessage.value = address.value
-    }, 2000)
+    }, 3000)
 }
 </script>
 <style lang="sass" scoped>
@@ -35,4 +35,6 @@ button
   ::v-deep .q-hoverable
     &:hover   
       background-color: none
+.tooltip-background
+    background: $white
 </style>

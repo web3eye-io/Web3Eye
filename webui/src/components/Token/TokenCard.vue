@@ -1,4 +1,5 @@
 <template>
+  <div class="box">
     <div class="box-img">
         <MyImage :url="token.ImageURL" :height="'200px'" :width="'202px'" />
     </div>
@@ -18,6 +19,7 @@
             </div>
         </div>
     </div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ShotToken } from 'src/teststore/contract/types';
