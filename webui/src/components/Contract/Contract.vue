@@ -44,7 +44,33 @@
           </template>
         </div>
         <div v-else>
-          Coming Soon
+          <q-table
+        flat 
+        bordered
+        :rows="transfers"
+        :columns="(columns as any)"
+        row-key="name"
+      >
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="Block" :props="props">
+              {{ props.row.BlockNumber }}
+            </q-td>
+            <q-td key="TxTime" :props="props">
+                {{ formatTime(props.row.TxTime)}}
+            </q-td>
+            <q-td key="Value" :props="props">
+                {{ props.row.Value }}
+            </q-td>
+            <q-td key="From" :props="props">
+              <ToolTip :address="props.row.From" />
+            </q-td>
+            <q-td key="To" :props="props">
+              <ToolTip :address="props.row.To" />
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
         </div>
       </div>
     </div>
@@ -58,7 +84,8 @@ import contractbg from '../../assets/material/contract-bg.png'
 import { useTransferStore } from 'src/teststore/transfer';
 import { ChainType } from 'src/teststore/basetypes/const';
 import { Transfer } from 'src/teststore/transfer/types';
-
+import { formatTime } from 'src/teststore/util'
+const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 
 const tab = ref('Collections')
@@ -121,6 +148,35 @@ const getTransfers = (offset: number, limit: number) => {
     getTransfers(offset + limit, limit)
   })
 }
+
+
+const columns = computed(() => [
+  {
+    name: 'Block',
+    label: 'BLOCK',
+    align: 'center',
+  },
+  {
+    name: 'TxTime',
+    label: 'Time',
+    align: 'center',
+  },
+  {
+    name: 'Value',
+    label: 'Value',
+    align: 'center',
+  },
+  {
+    name: 'From',
+    label: 'From',
+    align: 'center',
+  },
+  {
+    name: 'To',
+    label: 'To',
+    align: 'center',
+  },
+])
 
 onMounted(() => {
   if (transfers.value?.length === 0) {
