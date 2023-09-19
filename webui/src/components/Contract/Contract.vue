@@ -11,12 +11,12 @@
         <div class="name">
           {{ current.Name }}
         </div>
-        <div class="table row">
+        <!-- <div class="table row">
           <div class="listed">1.4 <span>%</span></div>
           <div class="owner">11 <span>K</span></div>
           <div class="price">0.03 <span>ETH</span></div>
           <div class="volume">0.03 <span>ETH</span></div>
-        </div>
+        </div> -->
         <div class="description">
           {{ current.Description }}
         </div>
