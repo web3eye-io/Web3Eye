@@ -29,8 +29,8 @@ func Register(server grpc.ServiceRegistrar) {
 	synctask.Register(server)
 }
 
-func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
+func RegisterGateway(mux *runtime.ServeMux, end string, opts []grpc.DialOption) error {
+	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, end, opts); err != nil {
 		return err
 	}
 	return nil
