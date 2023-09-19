@@ -109,9 +109,9 @@ func CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (resp *npool
 }
 
 func DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) (resp *npool.DeleteOrderResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteOrder(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteOrderResponse), err
 }

@@ -125,9 +125,9 @@ func CountTransfers(ctx context.Context, in *npool.CountTransfersRequest) (resp 
 }
 
 func DeleteTransfer(ctx context.Context, in *npool.DeleteTransferRequest) (resp *npool.DeleteTransferResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteTransfer(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteTransferResponse), err
 }

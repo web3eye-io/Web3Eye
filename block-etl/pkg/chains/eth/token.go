@@ -54,7 +54,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	block, err := cli.BlockByNumber(ctx, big.NewInt(0).SetUint64(inBlockNum))
 	if err != nil {
-		e.checkErrForRetry(ctx, err)
+		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
@@ -91,7 +91,7 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 		eth.OrderFulfilledTopics,
 	})
 	if err != nil {
-		e.checkErrForRetry(ctx, err)
+		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot parse logs: %v", err)
 	}
 	transferLogs := topicsLogs[0]
@@ -106,7 +106,7 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*chains.TokenTransfer, error) {
 	transfers, err := eth.LogsToTransfer(logs)
 	if err != nil {
-		e.checkErrForRetry(ctx, err)
+		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("failed to get transfer logs, err: %v", err)
 	}
 	if len(transfers) == 0 {
@@ -197,7 +197,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
-			e.checkErrForRetry(ctx, err)
+			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -335,7 +335,7 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	}
 
 	if err != nil {
-		e.checkErrForRetry(ctx, err)
+		e.checkErr(ctx, err)
 		remark = err.Error()
 	}
 
@@ -343,7 +343,7 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	if findContractCreator && contract.TokenType != basetype.TokenType_Native {
 		creator, err = cli.GetContractCreator(ctx, contract.Contract)
 		if err != nil {
-			e.checkErrForRetry(ctx, err)
+			e.checkErr(ctx, err)
 			remark = fmt.Sprintf("%v,%v", remark, err.Error())
 		}
 	}
@@ -361,7 +361,7 @@ func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 
 			blockNum, err := cli.CurrentBlockNum(ctx)
 			if err != nil {
-				e.checkErrForRetry(ctx, err)
+				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("failed to get current block number: %v", err)
 				return
 			}

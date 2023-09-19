@@ -69,11 +69,11 @@ func (e *EthIndexer) CheckEndpointAndDeal(ctx context.Context) {
 }
 
 // check if endpoints should be stoped by the err,and return weather to retry again
-func (e *EthIndexer) checkErrForRetry(ctx context.Context, err error) bool {
+func (e *EthIndexer) checkErr(ctx context.Context, err error) {
 	retryErrs := []string{"context deadline exceeded"}
 	for _, v := range retryErrs {
 		if strings.Contains(err.Error(), v) {
-			return true
+			return
 		}
 	}
 
@@ -83,11 +83,8 @@ func (e *EthIndexer) checkErrForRetry(ctx context.Context, err error) bool {
 			e.CheckEndpointAndDeal(ctx)
 			if len(e.Endpoints) == 0 {
 				e.StopIndex()
-				return false
 			}
-			return true
+			return
 		}
 	}
-
-	return false
 }

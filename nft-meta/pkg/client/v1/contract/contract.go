@@ -118,9 +118,9 @@ func CountContracts(ctx context.Context, in *npool.CountContractsRequest) (resp 
 }
 
 func DeleteContract(ctx context.Context, in *npool.DeleteContractRequest) (resp *npool.DeleteContractResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteContract(_ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteContractResponse), err
 }

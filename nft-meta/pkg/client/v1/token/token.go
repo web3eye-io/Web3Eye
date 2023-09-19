@@ -130,9 +130,9 @@ func CountTokens(ctx context.Context, in *npool.CountTokensRequest) (resp *npool
 }
 
 func DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) (resp *npool.DeleteTokenResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteToken(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteTokenResponse), err
 }

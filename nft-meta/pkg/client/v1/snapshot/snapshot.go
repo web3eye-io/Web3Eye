@@ -109,9 +109,9 @@ func CountSnapshots(ctx context.Context, in *npool.CountSnapshotsRequest) (resp 
 }
 
 func DeleteSnapshot(ctx context.Context, in *npool.DeleteSnapshotRequest) (resp *npool.DeleteSnapshotResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteSnapshot(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteSnapshotResponse), err
 }

@@ -117,9 +117,9 @@ func CountEndpoints(ctx context.Context, in *npool.CountEndpointsRequest) (resp 
 }
 
 func DeleteEndpoint(ctx context.Context, in *npool.DeleteEndpointRequest) (resp *npool.DeleteEndpointResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteEndpoint(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteEndpointResponse), err
 }

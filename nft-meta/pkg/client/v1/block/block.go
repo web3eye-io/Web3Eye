@@ -117,9 +117,9 @@ func CountBlocks(ctx context.Context, in *npool.CountBlocksRequest) (resp *npool
 }
 
 func DeleteBlock(ctx context.Context, in *npool.DeleteBlockRequest) (resp *npool.DeleteBlockResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteBlock(ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteBlockResponse), err
 }
