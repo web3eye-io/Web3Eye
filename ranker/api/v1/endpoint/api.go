@@ -66,14 +66,7 @@ func (s *Server) GetEndpoint(ctx context.Context, in *rankernpool.GetEndpointReq
 }
 
 func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsRequest) (*rankernpool.GetEndpointsResponse, error) {
-	conds := &nftmetanpool.Conds{
-		ID:        &web3eye.StringVal{Op: "eq", Value: *in.ID},
-		ChainType: &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()},
-		ChainID:   &web3eye.StringVal{Op: "eq", Value: *in.ChainID},
-		Address:   &web3eye.StringVal{Op: "eq", Value: *in.Address},
-		State:     &web3eye.StringVal{Op: "eq", Value: in.State.String()},
-		Remark:    &web3eye.StringVal{Op: "eq", Value: *in.Remark},
-	}
+	conds := buildConds(in)
 	resp, err := s.Server.GetEndpoints(ctx,
 		&nftmetanpool.GetEndpointsRequest{
 			Conds:  conds,
@@ -85,6 +78,34 @@ func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsR
 		return nil, err
 	}
 	return &rankernpool.GetEndpointsResponse{Infos: resp.Infos}, nil
+}
+
+func buildConds(in *rankernpool.GetEndpointsRequest) *nftmetanpool.Conds {
+	conds := &nftmetanpool.Conds{}
+	if in.ID != nil {
+		conds.ID = &web3eye.StringVal{Op: "eq", Value: *in.ID}
+	}
+
+	if in.ChainType != nil {
+		conds.ChainType = &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()}
+	}
+
+	if in.ChainID != nil {
+		conds.ChainID = &web3eye.StringVal{Op: "eq", Value: *in.ChainID}
+	}
+
+	if in.Address != nil {
+		conds.Address = &web3eye.StringVal{Op: "eq", Value: *in.Address}
+	}
+
+	if in.State != nil {
+		conds.State = &web3eye.StringVal{Op: "eq", Value: in.State.String()}
+	}
+
+	if in.Remark != nil {
+		conds.Remark = &web3eye.StringVal{Op: "eq", Value: *in.Remark}
+	}
+	return conds
 }
 
 func (s *Server) DeleteEndpoint(ctx context.Context, in *rankernpool.DeleteEndpointRequest) (*rankernpool.DeleteEndpointResponse, error) {

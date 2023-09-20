@@ -75,18 +75,7 @@ func (s *Server) GetSyncTask(ctx context.Context, in *rankernpool.GetSyncTaskReq
 }
 
 func (s *Server) GetSyncTasks(ctx context.Context, in *rankernpool.GetSyncTasksRequest) (*rankernpool.GetSyncTasksResponse, error) {
-	conds := &nftmetanpool.Conds{
-		ID:          &web3eye.StringVal{Op: "eq", Value: *in.ID},
-		ChainType:   &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()},
-		ChainID:     &web3eye.StringVal{Op: "eq", Value: *in.ChainID},
-		Start:       &web3eye.Uint64Val{Op: "eq", Value: *in.Start},
-		End:         &web3eye.Uint64Val{Op: "eq", Value: *in.End},
-		Current:     &web3eye.Uint64Val{Op: "eq", Value: *in.Current},
-		Topic:       &web3eye.StringVal{Op: "eq", Value: *in.Topic},
-		Description: &web3eye.StringVal{Op: "eq", Value: *in.Description},
-		SyncState:   &web3eye.StringVal{Op: "eq", Value: in.SyncState.String()},
-		Remark:      &web3eye.StringVal{Op: "eq", Value: *in.Remark},
-	}
+	conds := buildConds(in)
 	resp, err := s.Server.GetSyncTasks(ctx,
 		&nftmetanpool.GetSyncTasksRequest{
 			Conds:  conds,
@@ -98,6 +87,51 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *rankernpool.GetSyncTasksR
 		return nil, err
 	}
 	return &rankernpool.GetSyncTasksResponse{Infos: resp.Infos}, nil
+}
+
+func buildConds(in *rankernpool.GetSyncTasksRequest) *nftmetanpool.Conds {
+	conds := &nftmetanpool.Conds{}
+	if in.ID != nil {
+		conds.ID = &web3eye.StringVal{Op: "eq", Value: *in.ID}
+	}
+
+	if in.ChainType != nil {
+		conds.ChainType = &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()}
+	}
+
+	if in.ChainID != nil {
+		conds.ChainID = &web3eye.StringVal{Op: "eq", Value: *in.ChainID}
+	}
+
+	if in.Start != nil {
+		conds.Start = &web3eye.Uint64Val{Op: "eq", Value: *in.Start}
+	}
+
+	if in.End != nil {
+		conds.End = &web3eye.Uint64Val{Op: "eq", Value: *in.End}
+	}
+
+	if in.Current != nil {
+		conds.Current = &web3eye.Uint64Val{Op: "eq", Value: *in.Current}
+	}
+
+	if in.Topic != nil {
+		conds.Topic = &web3eye.StringVal{Op: "eq", Value: *in.Topic}
+	}
+
+	if in.Description != nil {
+		conds.Description = &web3eye.StringVal{Op: "eq", Value: *in.Description}
+	}
+
+	if in.SyncState != nil {
+		conds.SyncState = &web3eye.StringVal{Op: "eq", Value: in.SyncState.String()}
+	}
+
+	if in.Remark != nil {
+		conds.Remark = &web3eye.StringVal{Op: "eq", Value: *in.Remark}
+	}
+
+	return conds
 }
 
 func (s *Server) DeleteSyncTask(ctx context.Context, in *rankernpool.DeleteSyncTaskRequest) (*rankernpool.DeleteSyncTaskResponse, error) {
