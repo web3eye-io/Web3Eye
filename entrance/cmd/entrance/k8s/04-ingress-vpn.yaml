@@ -15,7 +15,7 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "*api.testnet.web3eye.io"
+        - "*.api.testnet.web3eye.io"
         - api.testnet.web3eye.io
       secretName: api.testnet-web3eye-io-tls
   rules:
