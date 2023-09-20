@@ -16,11 +16,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - '*.testnet.web3eye.io'
-        - testnet.web3eye.io
-      secretName: testnet-web3eye-io-tls
+        - '*.vpn.testnet.web3eye.io'
+        - vpn.testnet.web3eye.io
+      secretName: vpn.testnet-web3eye-io-tls
   rules:
-    - host: testnet.web3eye.io
+    - host: vpn.testnet.web3eye.io
       http:
         paths:
           - path: /
