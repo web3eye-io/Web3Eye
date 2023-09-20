@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: kube-system
-  name: webui
+  name: dashboard
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: webui
+      app: dashboard
   template:
     metadata:
       labels:
-        app: webui
+        app: dashboard
     spec:
       containers:
-        - name: webui
-          image: coastlinesss/webui:latest
+        - name: dashboard
+          image: coastlinesss/dashboard:latest
           imagePullPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: webui
+  name: dashboard
   namespace: kube-system
 spec:
   ports:
@@ -30,4 +30,4 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: webui
+    app: dashboard
