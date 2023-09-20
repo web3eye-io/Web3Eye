@@ -15,11 +15,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "*.api.testnet.web3eye.io"
-        - api.testnet.web3eye.io
-      secretName: api.testnet-web3eye-io-tls
+        - "*.vpn.testnet.web3eye.io"
+        - vpn.testnet.web3eye.io
+      secretName: vpn.testnet-web3eye-io-tls
   rules:
-    - host: api.testnet.web3eye.io
+    - host: vpn.testnet.web3eye.io
       http:
         paths:
           - path: /api/entrance
