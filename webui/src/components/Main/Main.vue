@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="column input-container">
-      <input class="upload" id="drop-area" v-model="contract" />
+      <input class="upload" id="drop-area" placeholder="search contract address or drag an image here" v-model="contract" />
       <q-icon name="img:icons/search.png" size="18px" class="search" />
     </div>
   </div>
@@ -29,7 +29,6 @@ import largelogo from '../../assets/logo/large-logo.png'
 import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract';
 import { useTokenStore } from 'src/teststore/token';
-import { Cookies } from "quasar"
 const contract = ref('')
 const _contract = useContractStore()
 
