@@ -25,7 +25,7 @@ import (
 	transferProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 )
 
-// TODO:checkErrForRetry will be delete or rewrite,it`s stupid
+// TODO:checkErr will be delete or rewrite,it`s stupid
 type BlockLogs struct {
 	TransferLogs, OrderLogs []*types.Log
 }

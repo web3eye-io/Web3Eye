@@ -120,7 +120,7 @@ issues:
 run:
   concurrency: 16
   timeout: 20m
-  go: "1.19" # TODO(ldez): we force to use an old version of Go for the CI and the tests.
+  go: "1.19" 
   skip-dirs:
     - proto
     - webui

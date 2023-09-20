@@ -14,7 +14,6 @@ type TokenURIInfo struct {
 }
 
 // TODO: support special nft project
-// TODO: support context
 func GetTokenURIInfo(ctx context.Context, uri string) (*TokenURIInfo, error) {
 	into := &TokenMetadata{}
 

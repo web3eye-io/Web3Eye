@@ -151,7 +151,7 @@ func UploadFile(ctx context.Context, filePath, key string) error {
 	}
 
 	uploader := manager.NewUploader(s3Client)
-	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
+	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 		Body:   file,
@@ -170,7 +170,7 @@ func DownloadFile(ctx context.Context, filePath, key string) error {
 	}
 
 	downloader := manager.NewDownloader(s3Client)
-	_, err = downloader.Download(context.TODO(), downloadFile, &s3.GetObjectInput{
+	_, err = downloader.Download(ctx, downloadFile, &s3.GetObjectInput{
 		Bucket: aws.String(GetS3Bucket()),
 		Key:    aws.String(key),
 	})

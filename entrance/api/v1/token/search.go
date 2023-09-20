@@ -131,7 +131,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	respBody = buff.Bytes()
 }
 
-// TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
 // converte http request with image file to vector
 func ImgReqConvertVector(ctx context.Context, r *http.Request) ([]float32, error) {
 	// get file info

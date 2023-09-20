@@ -1,6 +1,5 @@
 package milvusdb
 
-// TODO: should use milvus-sdk-go to generate structure
 import (
 	"context"
 	"fmt"
@@ -14,8 +13,7 @@ const (
 	FieldsID         = "ID"
 	FieldsVector     = "Vector"
 	DefaultPartition = "default"
-	// TODO: verify rationality
-	VectorDim = 2048
+	VectorDim        = 2048
 )
 
 var (
