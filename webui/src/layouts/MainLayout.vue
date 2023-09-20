@@ -4,7 +4,7 @@
       <q-header>
         <q-toolbar>
         <div class='search row'>
-          <q-img :src='logobottom' class='logo' fit="contain" />
+          <q-img :src='logobottom' class='logo' fit="contain" @click="onLogoClick" />
           <q-input
             v-model='search'
             rounded
@@ -70,7 +70,7 @@ import logobottom from '../assets/logo/logo-bottom.png'
 import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
 import { Cookies } from 'quasar'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 // const setting = useLocalSettingStore()
 // const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
@@ -125,6 +125,10 @@ const getChainID = async() => {
   console.log('web3: ', web3js.getAccount())
 }
 
+const router = useRouter()
+const onLogoClick = () => {
+  void router.push({path: '/'})
+}
 // const onLogout = () => {
 //   // TODO
 // }
@@ -183,6 +187,7 @@ const getChainID = async() => {
   width: 120px
   margin-right: 10px
   line-height: 72px
+  cursor: pointer
   @media (max-width: 660px)
     display: none
 
