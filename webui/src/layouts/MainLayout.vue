@@ -62,13 +62,14 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useWeb3jsStore } from 'src/localstore'
 
 import logobottom from '../assets/logo/logo-bottom.png'
 // import metamask from '../assets/icon/metamask.webp'
 import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
+import { Cookies } from 'quasar'
 // import { useRouter } from 'vue-router'
 
 // const setting = useLocalSettingStore()
@@ -80,8 +81,15 @@ const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
 let web3 = new Web3(window.ethereum)
 
-const logined = ref(false)
-
+const login = ref(false)
+const logined = computed(() => {
+  if(!login.value) {
+    if (Cookies.get('Logined')) {
+      return true
+    }
+  }
+  return false
+})
 const onMetaMaskClick = () => {
   web3.eth.requestAccounts((_, accounts) => {
     if (accounts?.length > 0) {
@@ -90,7 +98,8 @@ const onMetaMaskClick = () => {
   })
   .then((result) => {
     console.log('result: ', result)
-    logined.value = true
+    login.value = true
+    Cookies.set('Logined', 'true')
     web3js.setWeb3(web3)
     void getBalance()
   })
