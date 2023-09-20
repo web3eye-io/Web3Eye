@@ -306,7 +306,7 @@ func DecodeMetadataFromURI(ctx context.Context, turi string, into *TokenMetadata
 	case URITypeArweave:
 		path := strings.ReplaceAll(asString, "arweave://", "")
 		path = strings.ReplaceAll(path, "ar://", "")
-		// TODO: support ipfs node,now is useing http gateway
+		// TODO: support ipfs node,now is using http gateway
 		result, err := netutils.GetArweaveDataHTTP(ctx, path)
 		if err != nil {
 			return err
