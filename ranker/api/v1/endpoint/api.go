@@ -3,6 +3,7 @@ package endpoint
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/endpoint"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
@@ -29,6 +30,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *rankernpool.CreateEndpo
 		},
 	})
 	if err != nil {
+		logger.Sugar().Errorw("CreateEndpoint", "error", err)
 		return nil, err
 	}
 	return &rankernpool.CreateEndpointResponse{
@@ -46,6 +48,7 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *rankernpool.UpdateEndpo
 		},
 	})
 	if err != nil {
+		logger.Sugar().Errorw("UpdateEndpoint", "error", err)
 		return nil, err
 	}
 	return &rankernpool.UpdateEndpointResponse{Info: resp.Info}, nil
@@ -56,6 +59,7 @@ func (s *Server) GetEndpoint(ctx context.Context, in *rankernpool.GetEndpointReq
 		ID: in.ID,
 	})
 	if err != nil {
+		logger.Sugar().Errorw("GetEndpoint", "error", err)
 		return nil, err
 	}
 	return &rankernpool.GetEndpointResponse{Info: resp.Info}, nil
@@ -77,6 +81,7 @@ func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsR
 			Limit:  in.Limit,
 		})
 	if err != nil {
+		logger.Sugar().Errorw("GetEndpoints", "error", err)
 		return nil, err
 	}
 	return &rankernpool.GetEndpointsResponse{Infos: resp.Infos}, nil
@@ -87,6 +92,7 @@ func (s *Server) DeleteEndpoint(ctx context.Context, in *rankernpool.DeleteEndpo
 		ID: in.ID,
 	})
 	if err != nil {
+		logger.Sugar().Errorw("DeleteEndpoint", "error", err)
 		return nil, err
 	}
 	return &rankernpool.DeleteEndpointResponse{Info: resp.Info}, nil

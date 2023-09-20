@@ -3,6 +3,7 @@ package synctask
 import (
 	"context"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
@@ -33,6 +34,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *rankernpool.CreateSyncT
 		},
 	})
 	if err != nil {
+		logger.Sugar().Errorw("CreateSyncTask", "error", err)
 		return nil, err
 	}
 	return &rankernpool.CreateSyncTaskResponse{
@@ -55,6 +57,7 @@ func (s *Server) UpdateSyncTask(ctx context.Context, in *rankernpool.UpdateSyncT
 		},
 	})
 	if err != nil {
+		logger.Sugar().Errorw("UpdateSyncTask", "error", err)
 		return nil, err
 	}
 	return &rankernpool.UpdateSyncTaskResponse{Info: resp.Info}, nil
@@ -65,6 +68,7 @@ func (s *Server) GetSyncTask(ctx context.Context, in *rankernpool.GetSyncTaskReq
 		ID: in.ID,
 	})
 	if err != nil {
+		logger.Sugar().Errorw("GetSyncTask", "error", err)
 		return nil, err
 	}
 	return &rankernpool.GetSyncTaskResponse{Info: resp.Info}, nil
@@ -90,6 +94,7 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *rankernpool.GetSyncTasksR
 			Limit:  in.Limit,
 		})
 	if err != nil {
+		logger.Sugar().Errorw("GetSyncTasks", "error", err)
 		return nil, err
 	}
 	return &rankernpool.GetSyncTasksResponse{Infos: resp.Infos}, nil
@@ -100,6 +105,7 @@ func (s *Server) DeleteSyncTask(ctx context.Context, in *rankernpool.DeleteSyncT
 		ID: in.ID,
 	})
 	if err != nil {
+		logger.Sugar().Errorw("DeleteSyncTask", "error", err)
 		return nil, err
 	}
 	return &rankernpool.DeleteSyncTaskResponse{Info: resp.Info}, nil
