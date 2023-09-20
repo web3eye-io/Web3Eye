@@ -9,7 +9,6 @@
             :width="'460px'"
           />
         </div>
-        <div class="gap" />
         <div class="right column justify-between">
           <div class="name">
             {{ target?.Name }}
@@ -239,9 +238,8 @@ onMounted(() => {
       padding-left: 20px
       padding-top: 20px
       box-shadow: 5px 5px 5px #f7f7f7
-    .gap
-      width: 30px
     .right
+      margin-left: 25px
       flex-grow: 1
       .name
         font-size: 20px
@@ -251,13 +249,20 @@ onMounted(() => {
         line-height: 48px
         font-weight: 800
         color: #F5841F
+        height: 50px
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: wrap
       .description
+        height: 60px
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: wrap
         margin-top: 16px
         font-size: 16px
         font-weight: 500
         line-height: 20px
         opacity: 0.8
-        height: 26px
       .author
         padding-top: 20px
       .contract
