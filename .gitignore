@@ -9,5 +9,7 @@ tmp
 ./deploy.sh
 ./main.go
 webui/node_modules
+dashboard/node_modules
 !webui/*.json
+!dashboard/*.json
 extern
