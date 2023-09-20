@@ -13,10 +13,10 @@
           <div class="name">
             {{ target?.Name }}
           </div>
-          <div class="content">
-            {{target?.Name}} #{{target?.TokenID}}
+          <div class="content row">
+            <div>{{target?.Name}} #{{target?.TokenID}}</div>
           </div>
-          <div class="description">
+          <div class="description row">
             {{ target?.Description }}
           </div>
           <div class="author row justify-between">
