@@ -26,8 +26,10 @@
         <a  href='#/blog'>Blog</a>
         <a  href='#/daily'>Daily</a>
         <a  href='#/schedule'>Schedule</a>
-        <q-btn size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
-
+        <q-btn v-if="!logined" size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
+        <q-avatar v-if="logined">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar>
         <!-- <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
           <q-menu auto-close>
             <q-list>
@@ -78,6 +80,7 @@ const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
 let web3 = new Web3(window.ethereum)
 
+const logined = ref(false)
 
 const onMetaMaskClick = () => {
   web3.eth.requestAccounts((_, accounts) => {
@@ -87,6 +90,7 @@ const onMetaMaskClick = () => {
   })
   .then((result) => {
     console.log('result: ', result)
+    logined.value = true
     web3js.setWeb3(web3)
     void getBalance()
   })
