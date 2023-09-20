@@ -43,6 +43,13 @@ spec:
                 name: entrance
                 port:
                   number: 30150
+          - path: /api/entrance/search/file
+            pathType: Prefix
+            backend:
+              service:
+                name: entrance
+                port:
+                  number: 30150
           - path: /api/entrance/v1/get/transfers
             pathType: Prefix
             backend:
