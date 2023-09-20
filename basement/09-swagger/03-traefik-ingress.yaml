@@ -17,7 +17,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.middlewares: default-strip-swagger-ui-prefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-strip-swagger-ui-prefix@kubernetescrd
 
 spec:
   rules:
