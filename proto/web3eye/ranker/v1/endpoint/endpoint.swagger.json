@@ -36,68 +36,6 @@
       ],
       "default": "EndpointDefault"
     },
-    "endpointConds": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Address": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "State": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "endpointCountEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "endpointCreateEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
-    "endpointCreateEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointEndpoint"
-          }
-        }
-      }
-    },
-    "endpointDeleteEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
     "endpointEndpoint": {
       "type": "object",
       "properties": {
@@ -121,57 +59,16 @@
         }
       }
     },
-    "endpointEndpointReq": {
+    "protobufAny": {
       "type": "object",
       "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/chainChainType"
-        },
-        "ChainID": {
-          "type": "string"
-        },
-        "Address": {
-          "type": "string"
-        },
-        "State": {
-          "$ref": "#/definitions/cttypeEndpointState"
-        },
-        "Remark": {
+        "@type": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": {}
     },
-    "endpointExistEndpointCondsResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "endpointExistEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "endpointFailedInfo": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "MSG": {
-          "type": "string"
-        }
-      }
-    },
-    "endpointGetEndpointOnlyResponse": {
+    "rankerv1endpointCreateEndpointResponse": {
       "type": "object",
       "properties": {
         "Info": {
@@ -179,7 +76,7 @@
         }
       }
     },
-    "endpointGetEndpointResponse": {
+    "rankerv1endpointDeleteEndpointResponse": {
       "type": "object",
       "properties": {
         "Info": {
@@ -187,7 +84,15 @@
         }
       }
     },
-    "endpointGetEndpointsResponse": {
+    "rankerv1endpointGetEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointsResponse": {
       "type": "object",
       "properties": {
         "Infos": {
@@ -202,33 +107,13 @@
         }
       }
     },
-    "endpointUpdateEndpointResponse": {
+    "rankerv1endpointUpdateEndpointResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "$ref": "#/definitions/endpointEndpoint"
         }
       }
-    },
-    "endpointUpdateEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointFailedInfo"
-          }
-        }
-      }
-    },
-    "protobufAny": {
-      "type": "object",
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": {}
     },
     "rpcStatus": {
       "type": "object",
@@ -245,31 +130,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string"
         }
       }
     }

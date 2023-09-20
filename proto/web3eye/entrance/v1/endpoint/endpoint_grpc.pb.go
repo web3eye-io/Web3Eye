@@ -8,7 +8,7 @@ package endpoint
 
 import (
 	context "context"
-	endpoint "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
+	endpoint "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/endpoint"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,15 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagerClient interface {
 	CreateEndpoint(ctx context.Context, in *endpoint.CreateEndpointRequest, opts ...grpc.CallOption) (*endpoint.CreateEndpointResponse, error)
-	CreateEndpoints(ctx context.Context, in *endpoint.CreateEndpointsRequest, opts ...grpc.CallOption) (*endpoint.CreateEndpointsResponse, error)
 	UpdateEndpoint(ctx context.Context, in *endpoint.UpdateEndpointRequest, opts ...grpc.CallOption) (*endpoint.UpdateEndpointResponse, error)
-	UpdateEndpoints(ctx context.Context, in *endpoint.UpdateEndpointsRequest, opts ...grpc.CallOption) (*endpoint.UpdateEndpointsResponse, error)
 	GetEndpoint(ctx context.Context, in *endpoint.GetEndpointRequest, opts ...grpc.CallOption) (*endpoint.GetEndpointResponse, error)
-	GetEndpointOnly(ctx context.Context, in *endpoint.GetEndpointOnlyRequest, opts ...grpc.CallOption) (*endpoint.GetEndpointOnlyResponse, error)
 	GetEndpoints(ctx context.Context, in *endpoint.GetEndpointsRequest, opts ...grpc.CallOption) (*endpoint.GetEndpointsResponse, error)
-	ExistEndpoint(ctx context.Context, in *endpoint.ExistEndpointRequest, opts ...grpc.CallOption) (*endpoint.ExistEndpointResponse, error)
-	ExistEndpointConds(ctx context.Context, in *endpoint.ExistEndpointCondsRequest, opts ...grpc.CallOption) (*endpoint.ExistEndpointCondsResponse, error)
-	CountEndpoints(ctx context.Context, in *endpoint.CountEndpointsRequest, opts ...grpc.CallOption) (*endpoint.CountEndpointsResponse, error)
 	DeleteEndpoint(ctx context.Context, in *endpoint.DeleteEndpointRequest, opts ...grpc.CallOption) (*endpoint.DeleteEndpointResponse, error)
 }
 
@@ -53,27 +47,9 @@ func (c *managerClient) CreateEndpoint(ctx context.Context, in *endpoint.CreateE
 	return out, nil
 }
 
-func (c *managerClient) CreateEndpoints(ctx context.Context, in *endpoint.CreateEndpointsRequest, opts ...grpc.CallOption) (*endpoint.CreateEndpointsResponse, error) {
-	out := new(endpoint.CreateEndpointsResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/CreateEndpoints", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) UpdateEndpoint(ctx context.Context, in *endpoint.UpdateEndpointRequest, opts ...grpc.CallOption) (*endpoint.UpdateEndpointResponse, error) {
 	out := new(endpoint.UpdateEndpointResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/UpdateEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) UpdateEndpoints(ctx context.Context, in *endpoint.UpdateEndpointsRequest, opts ...grpc.CallOption) (*endpoint.UpdateEndpointsResponse, error) {
-	out := new(endpoint.UpdateEndpointsResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/UpdateEndpoints", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,45 +65,9 @@ func (c *managerClient) GetEndpoint(ctx context.Context, in *endpoint.GetEndpoin
 	return out, nil
 }
 
-func (c *managerClient) GetEndpointOnly(ctx context.Context, in *endpoint.GetEndpointOnlyRequest, opts ...grpc.CallOption) (*endpoint.GetEndpointOnlyResponse, error) {
-	out := new(endpoint.GetEndpointOnlyResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/GetEndpointOnly", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) GetEndpoints(ctx context.Context, in *endpoint.GetEndpointsRequest, opts ...grpc.CallOption) (*endpoint.GetEndpointsResponse, error) {
 	out := new(endpoint.GetEndpointsResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/GetEndpoints", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) ExistEndpoint(ctx context.Context, in *endpoint.ExistEndpointRequest, opts ...grpc.CallOption) (*endpoint.ExistEndpointResponse, error) {
-	out := new(endpoint.ExistEndpointResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/ExistEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) ExistEndpointConds(ctx context.Context, in *endpoint.ExistEndpointCondsRequest, opts ...grpc.CallOption) (*endpoint.ExistEndpointCondsResponse, error) {
-	out := new(endpoint.ExistEndpointCondsResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/ExistEndpointConds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) CountEndpoints(ctx context.Context, in *endpoint.CountEndpointsRequest, opts ...grpc.CallOption) (*endpoint.CountEndpointsResponse, error) {
-	out := new(endpoint.CountEndpointsResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.endpoint.Manager/CountEndpoints", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,15 +88,9 @@ func (c *managerClient) DeleteEndpoint(ctx context.Context, in *endpoint.DeleteE
 // for forward compatibility
 type ManagerServer interface {
 	CreateEndpoint(context.Context, *endpoint.CreateEndpointRequest) (*endpoint.CreateEndpointResponse, error)
-	CreateEndpoints(context.Context, *endpoint.CreateEndpointsRequest) (*endpoint.CreateEndpointsResponse, error)
 	UpdateEndpoint(context.Context, *endpoint.UpdateEndpointRequest) (*endpoint.UpdateEndpointResponse, error)
-	UpdateEndpoints(context.Context, *endpoint.UpdateEndpointsRequest) (*endpoint.UpdateEndpointsResponse, error)
 	GetEndpoint(context.Context, *endpoint.GetEndpointRequest) (*endpoint.GetEndpointResponse, error)
-	GetEndpointOnly(context.Context, *endpoint.GetEndpointOnlyRequest) (*endpoint.GetEndpointOnlyResponse, error)
 	GetEndpoints(context.Context, *endpoint.GetEndpointsRequest) (*endpoint.GetEndpointsResponse, error)
-	ExistEndpoint(context.Context, *endpoint.ExistEndpointRequest) (*endpoint.ExistEndpointResponse, error)
-	ExistEndpointConds(context.Context, *endpoint.ExistEndpointCondsRequest) (*endpoint.ExistEndpointCondsResponse, error)
-	CountEndpoints(context.Context, *endpoint.CountEndpointsRequest) (*endpoint.CountEndpointsResponse, error)
 	DeleteEndpoint(context.Context, *endpoint.DeleteEndpointRequest) (*endpoint.DeleteEndpointResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -168,32 +102,14 @@ type UnimplementedManagerServer struct {
 func (UnimplementedManagerServer) CreateEndpoint(context.Context, *endpoint.CreateEndpointRequest) (*endpoint.CreateEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEndpoint not implemented")
 }
-func (UnimplementedManagerServer) CreateEndpoints(context.Context, *endpoint.CreateEndpointsRequest) (*endpoint.CreateEndpointsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateEndpoints not implemented")
-}
 func (UnimplementedManagerServer) UpdateEndpoint(context.Context, *endpoint.UpdateEndpointRequest) (*endpoint.UpdateEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEndpoint not implemented")
-}
-func (UnimplementedManagerServer) UpdateEndpoints(context.Context, *endpoint.UpdateEndpointsRequest) (*endpoint.UpdateEndpointsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateEndpoints not implemented")
 }
 func (UnimplementedManagerServer) GetEndpoint(context.Context, *endpoint.GetEndpointRequest) (*endpoint.GetEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEndpoint not implemented")
 }
-func (UnimplementedManagerServer) GetEndpointOnly(context.Context, *endpoint.GetEndpointOnlyRequest) (*endpoint.GetEndpointOnlyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEndpointOnly not implemented")
-}
 func (UnimplementedManagerServer) GetEndpoints(context.Context, *endpoint.GetEndpointsRequest) (*endpoint.GetEndpointsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEndpoints not implemented")
-}
-func (UnimplementedManagerServer) ExistEndpoint(context.Context, *endpoint.ExistEndpointRequest) (*endpoint.ExistEndpointResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExistEndpoint not implemented")
-}
-func (UnimplementedManagerServer) ExistEndpointConds(context.Context, *endpoint.ExistEndpointCondsRequest) (*endpoint.ExistEndpointCondsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExistEndpointConds not implemented")
-}
-func (UnimplementedManagerServer) CountEndpoints(context.Context, *endpoint.CountEndpointsRequest) (*endpoint.CountEndpointsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountEndpoints not implemented")
 }
 func (UnimplementedManagerServer) DeleteEndpoint(context.Context, *endpoint.DeleteEndpointRequest) (*endpoint.DeleteEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEndpoint not implemented")
@@ -229,24 +145,6 @@ func _Manager_CreateEndpoint_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CreateEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.CreateEndpointsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CreateEndpoints(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/CreateEndpoints",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CreateEndpoints(ctx, req.(*endpoint.CreateEndpointsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_UpdateEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(endpoint.UpdateEndpointRequest)
 	if err := dec(in); err != nil {
@@ -261,24 +159,6 @@ func _Manager_UpdateEndpoint_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).UpdateEndpoint(ctx, req.(*endpoint.UpdateEndpointRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_UpdateEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.UpdateEndpointsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).UpdateEndpoints(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/UpdateEndpoints",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).UpdateEndpoints(ctx, req.(*endpoint.UpdateEndpointsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -301,24 +181,6 @@ func _Manager_GetEndpoint_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_GetEndpointOnly_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.GetEndpointOnlyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).GetEndpointOnly(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/GetEndpointOnly",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetEndpointOnly(ctx, req.(*endpoint.GetEndpointOnlyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_GetEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(endpoint.GetEndpointsRequest)
 	if err := dec(in); err != nil {
@@ -333,60 +195,6 @@ func _Manager_GetEndpoints_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).GetEndpoints(ctx, req.(*endpoint.GetEndpointsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_ExistEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.ExistEndpointRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).ExistEndpoint(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/ExistEndpoint",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).ExistEndpoint(ctx, req.(*endpoint.ExistEndpointRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_ExistEndpointConds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.ExistEndpointCondsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).ExistEndpointConds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/ExistEndpointConds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).ExistEndpointConds(ctx, req.(*endpoint.ExistEndpointCondsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_CountEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(endpoint.CountEndpointsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountEndpoints(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.endpoint.Manager/CountEndpoints",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountEndpoints(ctx, req.(*endpoint.CountEndpointsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -421,40 +229,16 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_CreateEndpoint_Handler,
 		},
 		{
-			MethodName: "CreateEndpoints",
-			Handler:    _Manager_CreateEndpoints_Handler,
-		},
-		{
 			MethodName: "UpdateEndpoint",
 			Handler:    _Manager_UpdateEndpoint_Handler,
-		},
-		{
-			MethodName: "UpdateEndpoints",
-			Handler:    _Manager_UpdateEndpoints_Handler,
 		},
 		{
 			MethodName: "GetEndpoint",
 			Handler:    _Manager_GetEndpoint_Handler,
 		},
 		{
-			MethodName: "GetEndpointOnly",
-			Handler:    _Manager_GetEndpointOnly_Handler,
-		},
-		{
 			MethodName: "GetEndpoints",
 			Handler:    _Manager_GetEndpoints_Handler,
-		},
-		{
-			MethodName: "ExistEndpoint",
-			Handler:    _Manager_ExistEndpoint_Handler,
-		},
-		{
-			MethodName: "ExistEndpointConds",
-			Handler:    _Manager_ExistEndpointConds_Handler,
-		},
-		{
-			MethodName: "CountEndpoints",
-			Handler:    _Manager_CountEndpoints_Handler,
 		},
 		{
 			MethodName: "DeleteEndpoint",

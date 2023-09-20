@@ -4,70 +4,35 @@ package entrance.v1.endpoint;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/endpoint";
 import "google/api/annotations.proto";
-import "web3eye/nftmeta/v1/endpoint/endpoint.proto";
+import "web3eye/ranker/v1/endpoint/endpoint.proto";
+
 
 service Manager {
-  rpc CreateEndpoint(nftmeta.v1.endpoint.CreateEndpointRequest) returns (nftmeta.v1.endpoint.CreateEndpointResponse) {
+  rpc CreateEndpoint(ranker.v1.endpoint.CreateEndpointRequest) returns (ranker.v1.endpoint.CreateEndpointResponse) {
     option (google.api.http) = {
       post:"/v1/create/endpoint"
       body:"*"
     };
   }
-  rpc CreateEndpoints(nftmeta.v1.endpoint.CreateEndpointsRequest) returns (nftmeta.v1.endpoint.CreateEndpointsResponse) {
-    option (google.api.http) = {
-      post:"/v1/create/endpoints"
-      body:"*"
-    };
-  }
-  rpc UpdateEndpoint(nftmeta.v1.endpoint.UpdateEndpointRequest) returns (nftmeta.v1.endpoint.UpdateEndpointResponse) {
+  rpc UpdateEndpoint(ranker.v1.endpoint.UpdateEndpointRequest) returns (ranker.v1.endpoint.UpdateEndpointResponse) {
     option (google.api.http) = {
       post:"/v1/update/endpoint"
       body:"*"
     };
   }
-  rpc UpdateEndpoints(nftmeta.v1.endpoint.UpdateEndpointsRequest) returns (nftmeta.v1.endpoint.UpdateEndpointsResponse) {
-    option (google.api.http) = {
-      post:"/v1/update/endpoints"
-      body:"*"
-    };
-  }
-  rpc GetEndpoint(nftmeta.v1.endpoint.GetEndpointRequest) returns (nftmeta.v1.endpoint.GetEndpointResponse) {
+  rpc GetEndpoint(ranker.v1.endpoint.GetEndpointRequest) returns (ranker.v1.endpoint.GetEndpointResponse) {
     option (google.api.http) = {
       post:"/v1/get/endpoint"
       body:"*"
     };
   }
-  rpc GetEndpointOnly(nftmeta.v1.endpoint.GetEndpointOnlyRequest) returns (nftmeta.v1.endpoint.GetEndpointOnlyResponse) {
-    option (google.api.http) = {
-      post:"/v1/get/endpoint/only"
-      body:"*"
-    };
-  }
-  rpc GetEndpoints(nftmeta.v1.endpoint.GetEndpointsRequest) returns (nftmeta.v1.endpoint.GetEndpointsResponse) {
+  rpc GetEndpoints(ranker.v1.endpoint.GetEndpointsRequest) returns (ranker.v1.endpoint.GetEndpointsResponse) {
     option (google.api.http) = {
       post:"/v1/get/endpoints"
       body:"*"
     };
   }
-  rpc ExistEndpoint(nftmeta.v1.endpoint.ExistEndpointRequest) returns (nftmeta.v1.endpoint.ExistEndpointResponse) {
-    option (google.api.http) = {
-      post:"/v1/exist/endpoint"
-      body:"*"
-    };
-  }
-  rpc ExistEndpointConds(nftmeta.v1.endpoint.ExistEndpointCondsRequest) returns (nftmeta.v1.endpoint.ExistEndpointCondsResponse) {
-    option (google.api.http) = {
-      post:"/v1/exist/endpoint/conds"
-      body:"*"
-    };
-  }
-  rpc CountEndpoints(nftmeta.v1.endpoint.CountEndpointsRequest) returns (nftmeta.v1.endpoint.CountEndpointsResponse) {
-    option (google.api.http) = {
-      post:"/v1/count/endpoints"
-      body:"*"
-    };
-  }
-  rpc DeleteEndpoint(nftmeta.v1.endpoint.DeleteEndpointRequest) returns (nftmeta.v1.endpoint.DeleteEndpointResponse) {
+  rpc DeleteEndpoint(ranker.v1.endpoint.DeleteEndpointRequest) returns (ranker.v1.endpoint.DeleteEndpointResponse) {
     option (google.api.http) = {
       post:"/v1/delete/endpoint"
       body:"*"

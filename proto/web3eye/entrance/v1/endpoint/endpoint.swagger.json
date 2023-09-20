@@ -16,38 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/count/endpoints": {
-      "post": {
-        "operationId": "Manager_CountEndpoints",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointCountEndpointsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointCountEndpointsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/create/endpoint": {
       "post": {
         "operationId": "Manager_CreateEndpoint",
@@ -55,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/endpointCreateEndpointResponse"
+              "$ref": "#/definitions/rankerv1endpointCreateEndpointResponse"
             }
           },
           "default": {
@@ -71,39 +39,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/endpointCreateEndpointRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/create/endpoints": {
-      "post": {
-        "operationId": "Manager_CreateEndpoints",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointCreateEndpointsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointCreateEndpointsRequest"
+              "$ref": "#/definitions/rankerv1endpointCreateEndpointRequest"
             }
           }
         ],
@@ -119,7 +55,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/endpointDeleteEndpointResponse"
+              "$ref": "#/definitions/rankerv1endpointDeleteEndpointResponse"
             }
           },
           "default": {
@@ -135,71 +71,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/endpointDeleteEndpointRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/exist/endpoint": {
-      "post": {
-        "operationId": "Manager_ExistEndpoint",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointExistEndpointResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointExistEndpointRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/exist/endpoint/conds": {
-      "post": {
-        "operationId": "Manager_ExistEndpointConds",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointExistEndpointCondsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointExistEndpointCondsRequest"
+              "$ref": "#/definitions/rankerv1endpointDeleteEndpointRequest"
             }
           }
         ],
@@ -215,7 +87,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/endpointGetEndpointResponse"
+              "$ref": "#/definitions/rankerv1endpointGetEndpointResponse"
             }
           },
           "default": {
@@ -231,39 +103,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/endpointGetEndpointRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/get/endpoint/only": {
-      "post": {
-        "operationId": "Manager_GetEndpointOnly",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointGetEndpointOnlyResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointGetEndpointOnlyRequest"
+              "$ref": "#/definitions/rankerv1endpointGetEndpointRequest"
             }
           }
         ],
@@ -279,7 +119,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/endpointGetEndpointsResponse"
+              "$ref": "#/definitions/rankerv1endpointGetEndpointsResponse"
             }
           },
           "default": {
@@ -295,7 +135,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/endpointGetEndpointsRequest"
+              "$ref": "#/definitions/rankerv1endpointGetEndpointsRequest"
             }
           }
         ],
@@ -311,7 +151,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/endpointUpdateEndpointResponse"
+              "$ref": "#/definitions/rankerv1endpointUpdateEndpointResponse"
             }
           },
           "default": {
@@ -327,39 +167,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/endpointUpdateEndpointRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/update/endpoints": {
-      "post": {
-        "operationId": "Manager_UpdateEndpoints",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/endpointUpdateEndpointsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/endpointUpdateEndpointsRequest"
+              "$ref": "#/definitions/rankerv1endpointUpdateEndpointRequest"
             }
           }
         ],
@@ -389,103 +197,6 @@
       ],
       "default": "EndpointDefault"
     },
-    "endpointConds": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Address": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "State": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "endpointCountEndpointsRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/endpointConds"
-        }
-      }
-    },
-    "endpointCountEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "endpointCreateEndpointRequest": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpointReq"
-        }
-      }
-    },
-    "endpointCreateEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
-    "endpointCreateEndpointsRequest": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointEndpointReq"
-          }
-        }
-      }
-    },
-    "endpointCreateEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointEndpoint"
-          }
-        }
-      }
-    },
-    "endpointDeleteEndpointRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        }
-      }
-    },
-    "endpointDeleteEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
     "endpointEndpoint": {
       "type": "object",
       "properties": {
@@ -509,7 +220,70 @@
         }
       }
     },
-    "endpointEndpointReq": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rankerv1endpointCreateEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointCreateEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointDeleteEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointDeleteEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointsRequest": {
       "type": "object",
       "properties": {
         "ID": {
@@ -529,89 +303,6 @@
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "endpointExistEndpointCondsRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/endpointConds"
-        }
-      }
-    },
-    "endpointExistEndpointCondsResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "endpointExistEndpointRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        }
-      }
-    },
-    "endpointExistEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "endpointFailedInfo": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "MSG": {
-          "type": "string"
-        }
-      }
-    },
-    "endpointGetEndpointOnlyRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/endpointConds"
-        }
-      }
-    },
-    "endpointGetEndpointOnlyResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
-    "endpointGetEndpointRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        }
-      }
-    },
-    "endpointGetEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpoint"
-        }
-      }
-    },
-    "endpointGetEndpointsRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/endpointConds"
         },
         "Offset": {
           "type": "integer",
@@ -623,7 +314,7 @@
         }
       }
     },
-    "endpointGetEndpointsResponse": {
+    "rankerv1endpointGetEndpointsResponse": {
       "type": "object",
       "properties": {
         "Infos": {
@@ -638,52 +329,30 @@
         }
       }
     },
-    "endpointUpdateEndpointRequest": {
+    "rankerv1endpointUpdateEndpointRequest": {
       "type": "object",
       "properties": {
-        "Info": {
-          "$ref": "#/definitions/endpointEndpointReq"
+        "ID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
         }
       }
     },
-    "endpointUpdateEndpointResponse": {
+    "rankerv1endpointUpdateEndpointResponse": {
       "type": "object",
       "properties": {
         "Info": {
           "$ref": "#/definitions/endpointEndpoint"
         }
       }
-    },
-    "endpointUpdateEndpointsRequest": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointEndpointReq"
-          }
-        }
-      }
-    },
-    "endpointUpdateEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/endpointFailedInfo"
-          }
-        }
-      }
-    },
-    "protobufAny": {
-      "type": "object",
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": {}
     },
     "rpcStatus": {
       "type": "object",
@@ -700,31 +369,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string"
         }
       }
     }

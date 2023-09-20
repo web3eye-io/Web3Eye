@@ -9,7 +9,6 @@ import (
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/config"
-	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/synctask"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -54,7 +53,7 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func CreateSyncTask(ctx context.Context, in *nftmetaproto.CreateSyncTaskRequest) (resp *nftmetaproto.CreateSyncTaskResponse, err error) {
+func CreateSyncTask(ctx context.Context, in *rankerproto.CreateSyncTaskRequest) (resp *rankerproto.CreateSyncTaskResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.CreateSyncTask(ctx, in)
 		return resp, err
@@ -62,7 +61,7 @@ func CreateSyncTask(ctx context.Context, in *nftmetaproto.CreateSyncTaskRequest)
 	return resp, err
 }
 
-func UpdateSyncTask(ctx context.Context, in *nftmetaproto.UpdateSyncTaskRequest) (resp *nftmetaproto.UpdateSyncTaskResponse, err error) {
+func UpdateSyncTask(ctx context.Context, in *rankerproto.UpdateSyncTaskRequest) (resp *rankerproto.UpdateSyncTaskResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.UpdateSyncTask(ctx, in)
 		return resp, err
@@ -70,7 +69,7 @@ func UpdateSyncTask(ctx context.Context, in *nftmetaproto.UpdateSyncTaskRequest)
 	return resp, err
 }
 
-func GetSyncTask(ctx context.Context, in *nftmetaproto.GetSyncTaskRequest) (resp *nftmetaproto.GetSyncTaskResponse, err error) {
+func GetSyncTask(ctx context.Context, in *rankerproto.GetSyncTaskRequest) (resp *rankerproto.GetSyncTaskResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetSyncTask(ctx, in)
 		return resp, err
@@ -78,15 +77,7 @@ func GetSyncTask(ctx context.Context, in *nftmetaproto.GetSyncTaskRequest) (resp
 	return resp, err
 }
 
-func GetSyncTaskOnly(ctx context.Context, in *nftmetaproto.GetSyncTaskOnlyRequest) (resp *nftmetaproto.GetSyncTaskOnlyResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.GetSyncTaskOnly(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func GetSyncTasks(ctx context.Context, in *nftmetaproto.GetSyncTasksRequest) (resp *nftmetaproto.GetSyncTasksResponse, err error) {
+func GetSyncTasks(ctx context.Context, in *rankerproto.GetSyncTasksRequest) (resp *rankerproto.GetSyncTasksResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetSyncTasks(ctx, in)
 		return resp, err
@@ -94,31 +85,7 @@ func GetSyncTasks(ctx context.Context, in *nftmetaproto.GetSyncTasksRequest) (re
 	return resp, err
 }
 
-func ExistSyncTask(ctx context.Context, in *nftmetaproto.ExistSyncTaskRequest) (resp *nftmetaproto.ExistSyncTaskResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.ExistSyncTask(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func ExistSyncTaskConds(ctx context.Context, in *nftmetaproto.ExistSyncTaskCondsRequest) (resp *nftmetaproto.ExistSyncTaskCondsResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.ExistSyncTaskConds(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func CountSyncTasks(ctx context.Context, in *nftmetaproto.CountSyncTasksRequest) (resp *nftmetaproto.CountSyncTasksResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountSyncTasks(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func DeleteSyncTask(ctx context.Context, in *nftmetaproto.DeleteSyncTaskRequest) (resp *nftmetaproto.DeleteSyncTaskResponse, err error) {
+func DeleteSyncTask(ctx context.Context, in *rankerproto.DeleteSyncTaskRequest) (resp *rankerproto.DeleteSyncTaskResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteSyncTask(ctx, in)
 		return resp, err

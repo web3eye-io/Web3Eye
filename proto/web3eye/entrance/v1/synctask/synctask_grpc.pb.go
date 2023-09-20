@@ -8,7 +8,7 @@ package synctask
 
 import (
 	context "context"
-	synctask "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
+	synctask "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/synctask"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -26,11 +26,7 @@ type ManagerClient interface {
 	CreateSyncTask(ctx context.Context, in *synctask.CreateSyncTaskRequest, opts ...grpc.CallOption) (*synctask.CreateSyncTaskResponse, error)
 	UpdateSyncTask(ctx context.Context, in *synctask.UpdateSyncTaskRequest, opts ...grpc.CallOption) (*synctask.UpdateSyncTaskResponse, error)
 	GetSyncTask(ctx context.Context, in *synctask.GetSyncTaskRequest, opts ...grpc.CallOption) (*synctask.GetSyncTaskResponse, error)
-	GetSyncTaskOnly(ctx context.Context, in *synctask.GetSyncTaskOnlyRequest, opts ...grpc.CallOption) (*synctask.GetSyncTaskOnlyResponse, error)
 	GetSyncTasks(ctx context.Context, in *synctask.GetSyncTasksRequest, opts ...grpc.CallOption) (*synctask.GetSyncTasksResponse, error)
-	ExistSyncTask(ctx context.Context, in *synctask.ExistSyncTaskRequest, opts ...grpc.CallOption) (*synctask.ExistSyncTaskResponse, error)
-	ExistSyncTaskConds(ctx context.Context, in *synctask.ExistSyncTaskCondsRequest, opts ...grpc.CallOption) (*synctask.ExistSyncTaskCondsResponse, error)
-	CountSyncTasks(ctx context.Context, in *synctask.CountSyncTasksRequest, opts ...grpc.CallOption) (*synctask.CountSyncTasksResponse, error)
 	DeleteSyncTask(ctx context.Context, in *synctask.DeleteSyncTaskRequest, opts ...grpc.CallOption) (*synctask.DeleteSyncTaskResponse, error)
 }
 
@@ -69,45 +65,9 @@ func (c *managerClient) GetSyncTask(ctx context.Context, in *synctask.GetSyncTas
 	return out, nil
 }
 
-func (c *managerClient) GetSyncTaskOnly(ctx context.Context, in *synctask.GetSyncTaskOnlyRequest, opts ...grpc.CallOption) (*synctask.GetSyncTaskOnlyResponse, error) {
-	out := new(synctask.GetSyncTaskOnlyResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.synctask.Manager/GetSyncTaskOnly", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) GetSyncTasks(ctx context.Context, in *synctask.GetSyncTasksRequest, opts ...grpc.CallOption) (*synctask.GetSyncTasksResponse, error) {
 	out := new(synctask.GetSyncTasksResponse)
 	err := c.cc.Invoke(ctx, "/entrance.v1.synctask.Manager/GetSyncTasks", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) ExistSyncTask(ctx context.Context, in *synctask.ExistSyncTaskRequest, opts ...grpc.CallOption) (*synctask.ExistSyncTaskResponse, error) {
-	out := new(synctask.ExistSyncTaskResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.synctask.Manager/ExistSyncTask", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) ExistSyncTaskConds(ctx context.Context, in *synctask.ExistSyncTaskCondsRequest, opts ...grpc.CallOption) (*synctask.ExistSyncTaskCondsResponse, error) {
-	out := new(synctask.ExistSyncTaskCondsResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.synctask.Manager/ExistSyncTaskConds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managerClient) CountSyncTasks(ctx context.Context, in *synctask.CountSyncTasksRequest, opts ...grpc.CallOption) (*synctask.CountSyncTasksResponse, error) {
-	out := new(synctask.CountSyncTasksResponse)
-	err := c.cc.Invoke(ctx, "/entrance.v1.synctask.Manager/CountSyncTasks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -130,11 +90,7 @@ type ManagerServer interface {
 	CreateSyncTask(context.Context, *synctask.CreateSyncTaskRequest) (*synctask.CreateSyncTaskResponse, error)
 	UpdateSyncTask(context.Context, *synctask.UpdateSyncTaskRequest) (*synctask.UpdateSyncTaskResponse, error)
 	GetSyncTask(context.Context, *synctask.GetSyncTaskRequest) (*synctask.GetSyncTaskResponse, error)
-	GetSyncTaskOnly(context.Context, *synctask.GetSyncTaskOnlyRequest) (*synctask.GetSyncTaskOnlyResponse, error)
 	GetSyncTasks(context.Context, *synctask.GetSyncTasksRequest) (*synctask.GetSyncTasksResponse, error)
-	ExistSyncTask(context.Context, *synctask.ExistSyncTaskRequest) (*synctask.ExistSyncTaskResponse, error)
-	ExistSyncTaskConds(context.Context, *synctask.ExistSyncTaskCondsRequest) (*synctask.ExistSyncTaskCondsResponse, error)
-	CountSyncTasks(context.Context, *synctask.CountSyncTasksRequest) (*synctask.CountSyncTasksResponse, error)
 	DeleteSyncTask(context.Context, *synctask.DeleteSyncTaskRequest) (*synctask.DeleteSyncTaskResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -152,20 +108,8 @@ func (UnimplementedManagerServer) UpdateSyncTask(context.Context, *synctask.Upda
 func (UnimplementedManagerServer) GetSyncTask(context.Context, *synctask.GetSyncTaskRequest) (*synctask.GetSyncTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSyncTask not implemented")
 }
-func (UnimplementedManagerServer) GetSyncTaskOnly(context.Context, *synctask.GetSyncTaskOnlyRequest) (*synctask.GetSyncTaskOnlyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSyncTaskOnly not implemented")
-}
 func (UnimplementedManagerServer) GetSyncTasks(context.Context, *synctask.GetSyncTasksRequest) (*synctask.GetSyncTasksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSyncTasks not implemented")
-}
-func (UnimplementedManagerServer) ExistSyncTask(context.Context, *synctask.ExistSyncTaskRequest) (*synctask.ExistSyncTaskResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExistSyncTask not implemented")
-}
-func (UnimplementedManagerServer) ExistSyncTaskConds(context.Context, *synctask.ExistSyncTaskCondsRequest) (*synctask.ExistSyncTaskCondsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExistSyncTaskConds not implemented")
-}
-func (UnimplementedManagerServer) CountSyncTasks(context.Context, *synctask.CountSyncTasksRequest) (*synctask.CountSyncTasksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountSyncTasks not implemented")
 }
 func (UnimplementedManagerServer) DeleteSyncTask(context.Context, *synctask.DeleteSyncTaskRequest) (*synctask.DeleteSyncTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSyncTask not implemented")
@@ -237,24 +181,6 @@ func _Manager_GetSyncTask_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_GetSyncTaskOnly_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(synctask.GetSyncTaskOnlyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).GetSyncTaskOnly(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.synctask.Manager/GetSyncTaskOnly",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).GetSyncTaskOnly(ctx, req.(*synctask.GetSyncTaskOnlyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_GetSyncTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(synctask.GetSyncTasksRequest)
 	if err := dec(in); err != nil {
@@ -269,60 +195,6 @@ func _Manager_GetSyncTasks_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).GetSyncTasks(ctx, req.(*synctask.GetSyncTasksRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_ExistSyncTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(synctask.ExistSyncTaskRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).ExistSyncTask(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.synctask.Manager/ExistSyncTask",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).ExistSyncTask(ctx, req.(*synctask.ExistSyncTaskRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_ExistSyncTaskConds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(synctask.ExistSyncTaskCondsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).ExistSyncTaskConds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.synctask.Manager/ExistSyncTaskConds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).ExistSyncTaskConds(ctx, req.(*synctask.ExistSyncTaskCondsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Manager_CountSyncTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(synctask.CountSyncTasksRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountSyncTasks(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entrance.v1.synctask.Manager/CountSyncTasks",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountSyncTasks(ctx, req.(*synctask.CountSyncTasksRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -365,24 +237,8 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Manager_GetSyncTask_Handler,
 		},
 		{
-			MethodName: "GetSyncTaskOnly",
-			Handler:    _Manager_GetSyncTaskOnly_Handler,
-		},
-		{
 			MethodName: "GetSyncTasks",
 			Handler:    _Manager_GetSyncTasks_Handler,
-		},
-		{
-			MethodName: "ExistSyncTask",
-			Handler:    _Manager_ExistSyncTask_Handler,
-		},
-		{
-			MethodName: "ExistSyncTaskConds",
-			Handler:    _Manager_ExistSyncTaskConds_Handler,
-		},
-		{
-			MethodName: "CountSyncTasks",
-			Handler:    _Manager_CountSyncTasks_Handler,
 		},
 		{
 			MethodName: "DeleteSyncTask",

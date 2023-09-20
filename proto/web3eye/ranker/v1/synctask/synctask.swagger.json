@@ -46,6 +46,53 @@
       },
       "additionalProperties": {}
     },
+    "rankerv1synctaskCreateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskDeleteSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTasksResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/synctaskSyncTask"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "rankerv1synctaskUpdateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
     "rpcStatus": {
       "type": "object",
       "properties": {
@@ -61,116 +108,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "synctaskConds": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Start": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "End": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "Current": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "Topic": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Description": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "SyncState": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "synctaskCountSyncTasksResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "synctaskCreateSyncTaskResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "synctaskDeleteSyncTaskResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "synctaskExistSyncTaskCondsResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "synctaskExistSyncTaskResponse": {
-      "type": "object",
-      "properties": {
-        "Exist": {
-          "type": "boolean"
-        }
-      }
-    },
-    "synctaskGetSyncTaskOnlyResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "synctaskGetSyncTaskResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "synctaskGetSyncTasksResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/synctaskSyncTask"
-          }
-        },
-        "Total": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -209,89 +146,6 @@
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "synctaskSyncTaskReq": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/chainChainType"
-        },
-        "ChainID": {
-          "type": "string"
-        },
-        "Start": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "End": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Current": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "Topic": {
-          "type": "string"
-        },
-        "Description": {
-          "type": "string"
-        },
-        "SyncState": {
-          "$ref": "#/definitions/cttypeSyncState"
-        },
-        "Remark": {
-          "type": "string"
-        }
-      }
-    },
-    "synctaskUpdateSyncTaskResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/synctaskSyncTask"
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string"
-        }
-      }
-    },
-    "web3eyeUint64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string",
-          "format": "uint64"
         }
       }
     }
