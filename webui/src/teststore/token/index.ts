@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { doActionWithError } from '../action'
 import { API } from './const'
-import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, Token } from './types' 
+import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokensRequest, SearchTokensResponse, Token } from './types' 
 
 export const useTokenStore = defineStore('token', {
   state: () => ({
     SearchTokens: {
       SearchTokens: [] as Array<SearchToken>,
-      Total: 0,
+      TotalTokens: 0,
       Current: '',
       StorageKey: '',
       TotalPages: 0
@@ -16,6 +16,7 @@ export const useTokenStore = defineStore('token', {
       Token: new Map<string, Token>(),
     }
   }),
+
   getters: {
     setSearchToken () {
       return (rows: Array<SearchToken>) => {
@@ -29,6 +30,23 @@ export const useTokenStore = defineStore('token', {
     }
   },
   actions: {
+    searchTokens (req: FormData, done: (error: boolean, rows?: SearchToken[]) => void) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open('POST', '/api/entrance/search/file');
+        xhttp.send(req)
+        xhttp.onload = () => {
+          const response = JSON.parse(xhttp.responseText) as SearchTokensResponse
+          this.SearchTokens.SearchTokens = response.Infos
+          this.SearchTokens.TotalPages = response.TotalPages
+          this.SearchTokens.TotalTokens = response.TotalTokens
+          this.SearchTokens.StorageKey = response.StorageKey
+        }
+        if (xhttp.status === 0) {
+          done(false)
+          return
+        }
+        done(true)
+    },
     getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[]) => void) {
       doActionWithError<GetTokensRequest, GetTokensResponse>(
         API.SEARCH_PAGE,
