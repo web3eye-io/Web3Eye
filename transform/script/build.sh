@@ -19,16 +19,28 @@ PLATFORMS=(
 )
 OUTPUT=$PROJECT_FOLDER/output
 
-ONNX_URL="https://cyber-tracer-public.s3.ap-southeast-1.amazonaws.com/resnet50_v2.onnx"
-ONNX_FILE=$PROJECT_FOLDER/model/resnet50_v2.onnx
+function GetOnnxFile(){
+    ONNX_URL="https://cyber-tracer-public.s3.ap-southeast-1.amazonaws.com/resnet50_v2.onnx"
+    ONNX_FILE=$PROJECT_FOLDER/model/resnet50_v2.onnx
+    ONNX_MD5SUM="7fae99a20c1b51aeb5bb2c04b6613642"
+    md5sum=""
+    if [ -f "$ONNX_FILE" ]; then
+        md5sum=$(md5sum $ONNX_FILE | awk '{ print $1 }')
+    fi
+
+    if [ "$md5sum" != "$ONNX_MD5SUM" ]; then
+        curl $ONNX_URL -o $ONNX_FILE
+    fi
+}
+
+GetOnnxFile
 
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
-service_name=$(
-    cd $PROJECT_FOLDER
-    basename $(pwd)
-)
+    service_name=$(
+        cd $PROJECT_FOLDER
+        basename $(pwd)
+    )
 
-curl $ONNX_URL -o $ONNX_FILE
 
 for PLATFORM in "${PLATFORMS[@]}"; do
     OS="${PLATFORM%/*}"
