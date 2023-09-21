@@ -28,7 +28,7 @@ service_name=$(
     basename $(pwd)
 )
 
-wget $ONNX_URL -O $ONNX_FILE
+curl $ONNX_URL -o $ONNX_FILE
 
 for PLATFORM in "${PLATFORMS[@]}"; do
     OS="${PLATFORM%/*}"
