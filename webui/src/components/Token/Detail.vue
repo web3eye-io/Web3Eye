@@ -237,6 +237,7 @@ onMounted(() => {
       border-radius: 16px
       padding-left: 20px
       padding-top: 20px
+      padding-right: 20px
       box-shadow: 5px 5px 5px #f7f7f7
     .right
       margin-left: 25px
