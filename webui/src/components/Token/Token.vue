@@ -83,6 +83,14 @@ import { copyToClipboard } from 'quasar'
 const token = useTokenStore()
 const tokens = computed(() => {
   const rows = token.SearchTokens.SearchTokens
+  rows.forEach((el) => {
+    if (el.ChainType === ChainType.Ethereum) {
+      ethereums.value += 1
+    }
+    if (el.ChainType === ChainType.Solana) {
+      solanas.value += 1
+    }
+  })
   rows.sort((a, b) => a.Distance > b.Distance ? 1 : -1)
   return rows
 })
@@ -90,12 +98,6 @@ const tokens = computed(() => {
 const ethereums = ref(0)
 const solanas = ref(0)
 const displayTokens = computed(() => tokens.value.filter((el) => {
-  if (el.ChainType === ChainType.Ethereum) {
-    ethereums.value += 1
-  }
-  if (el.ChainType === ChainType.Solana) {
-    solanas.value += 1
-  }
   if (groups.value?.length === 0) {
     return true
   }
@@ -109,30 +111,23 @@ const displayTokens = computed(() => tokens.value.filter((el) => {
 }))
 
 const groups = ref([])
-const options = ref(
-  [
-    {
-      label: 'Ethereum',
-      value: 'ethereum',
-      amount: ethereums.value,
-    },
-    {
-      label: 'Solana',
-      value: 'solana',
-      amount: solanas.value,
-    }
-  ]
-)
+const options = computed(() => [
+  {
+    label: 'Ethereum',
+    value: 'Ethereum',
+    amount: ethereums.value,
+  },
+  {
+    label: 'Solana',
+    value: 'Solana',
+    amount: solanas.value,
+  }
+])
 
 const target = ref({} as SearchToken)
 const targetTransfers = ref([] as Array<Transfer>)
 
 const showing = ref(false)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const onTransferClick = (token: SearchToken) => {
-  target.value = { ...token }
-  showing.value = true
-}
 
 const onTokenClick = (token: SearchToken) => {
   void router.push({
@@ -190,7 +185,7 @@ const onCopyClick = (token: SearchToken) => {
 }
 
 onMounted(() => {
-  if (token.SearchTokens.SearchTokens.length < token.SearchTokens.Total) {
+  if (token.SearchTokens.SearchTokens.length < token.SearchTokens.TotalTokens) {
     getTokens(2)
   }
 })
