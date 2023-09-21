@@ -146,10 +146,19 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 
 // if the VectorState is waiting,then will auto to transform imageUrl
 func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
-	if inInfo.VectorState != npool.ConvertState_Waiting.Enum() {
+	if inInfo.VectorState.String() != npool.ConvertState_Waiting.String() {
 		return nil
 	}
+
 	inInfo.VectorState = npool.ConvertState_Failed.Enum()
+	if inInfo.ImageURL == nil {
+		return nil
+	}
+
+	if inInfo.ID == nil {
+		id := uuid.New().String()
+		inInfo.ID = &id
+	}
 
 	pProducer, err := getPulsar()
 	if err != nil {
@@ -160,10 +169,11 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		Payload: []byte(*inInfo.ImageURL),
 		Key:     *inInfo.ID,
 	})
+	fmt.Println(inInfo.VectorState)
+
 	if err != nil {
 		return err
 	}
-
 	inInfo.VectorState = npool.ConvertState_Processing.Enum()
 	return nil
 }
