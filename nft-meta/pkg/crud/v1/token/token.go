@@ -58,8 +58,11 @@ func Upsert(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 
 //nolint:gocyclo
 func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
-	if in.ID != nil {
+	id, err := uuid.Parse(*in.ID)
+	if err != nil {
 		c.SetID(uuid.New())
+	} else {
+		c.SetID(id)
 	}
 	if in.ChainType != nil {
 		c.SetChainType(in.GetChainType().String())
