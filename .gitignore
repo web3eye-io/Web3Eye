@@ -3,6 +3,7 @@ output/
 *__pycache__*
 tmp
 *.json
+*.onnx
 !*.swagger.json
 .apollo-base-config
 *.log

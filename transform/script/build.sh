@@ -19,11 +19,16 @@ PLATFORMS=(
 )
 OUTPUT=$PROJECT_FOLDER/output
 
+ONNX_URL="https://cyber-tracer-public.s3.ap-southeast-1.amazonaws.com/resnet50_v2.onnx"
+ONNX_FILE=$PROJECT_FOLDER/model/resnet50_v2.onnx
+
 pkg=github.com/NpoolPlatform/go-service-framework/pkg/version
 service_name=$(
     cd $PROJECT_FOLDER
     basename $(pwd)
 )
+
+wget $ONNX_URL -O $ONNX_FILE
 
 for PLATFORM in "${PLATFORMS[@]}"; do
     OS="${PLATFORM%/*}"
