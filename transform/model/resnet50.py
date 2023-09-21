@@ -14,7 +14,8 @@ class Resnet50(object):
             onnx_file=os.path.join(current_work_dir,'resnet50_v2.onnx')
             if not os.path.exists(onnx_file):
                 print("onnx file not exist")
-            cls.ort_sess=ort.InferenceSession(onnx_file)
+            # TODO: support set cpu or gpu
+            cls.ort_sess=ort.InferenceSession(onnx_file, providers=['CPUExecutionProvider'])
             cls._instance = object.__new__(cls, *args, **kw)
         return cls._instance
     def __init__(self):
@@ -30,7 +31,6 @@ class Resnet50(object):
         features = outputs[0][0]/np.linalg.norm(outputs[0][0])
 
         return features.tolist()
-
 
 def preprocess(image: Image.Image) -> ndarray:
     w,h=256,256
