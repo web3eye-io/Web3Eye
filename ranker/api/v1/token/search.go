@@ -11,6 +11,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
@@ -154,6 +155,7 @@ func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32,
 
 func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*rankernpool.SearchToken, error) {
 	vIDs := []int64{}
+	fmt.Println(utils.PrettyStruct(scores))
 	for i := range scores {
 		vIDs = append(vIDs, i)
 	}
