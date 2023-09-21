@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/config"
 )
 
@@ -27,6 +28,8 @@ func Run() {
 		}
 		err = cmd.Wait()
 		if err != nil {
+			logger.Sugar().Infow("Run Model", "model start file", modelStartFile)
+			logger.Sugar().Infow("Run Model", "model start cmd", cmd.String())
 			panic(fmt.Sprintf("failed to start image transform model,err %v", err))
 		}
 	}
