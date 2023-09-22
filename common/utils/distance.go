@@ -10,9 +10,9 @@ func EDistance(v1, v2 []float32) float32 {
 	return float32(ret)
 }
 
-func subtract(v1 []float32, v2 []float32) []float32 {
+func subtract(v1, v2 []float32) []float32 {
 	var res []float32
-	var n int = len(v2)
+	var n = len(v2)
 	for i := 0; i < n; i++ {
 		res = append(res, v1[i]-v2[i])
 	}
@@ -21,7 +21,7 @@ func subtract(v1 []float32, v2 []float32) []float32 {
 
 func square(v []float32) []float32 {
 	var res []float32
-	var n int = len(v)
+	var n = len(v)
 	for i := 0; i < n; i++ {
 		res = append(res, v[i]*v[i])
 	}

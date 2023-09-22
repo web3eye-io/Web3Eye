@@ -53,7 +53,7 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func UrlToVector(ctx context.Context, in *transformproto.UrlToVectorReq) (resp *transformproto.UrlToVectorResp, err error) {
+func URLToVector(ctx context.Context, in *transformproto.UrlToVectorReq) (resp *transformproto.UrlToVectorResp, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli transformproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.UrlToVector(ctx, in)
 		return resp, err
