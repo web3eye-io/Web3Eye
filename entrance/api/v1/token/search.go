@@ -111,7 +111,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Vector: vector,
 		Limit:  uint32(limit),
 	})
-
 	if err != nil {
 		errMsg = fmt.Sprintf("search fail, %v", err)
 		return
@@ -164,9 +163,9 @@ func ImgReqConvertVector(ctx context.Context, r *http.Request) ([]float32, error
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header.Set("Content-Type", bodyWriter.FormDataContentType())
 	resp, err := http.DefaultClient.Do(req)
-
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +178,7 @@ func ImgReqConvertVector(ctx context.Context, r *http.Request) ([]float32, error
 
 	// parse response
 	vectorResp := &Img2VectorResp{}
-	err = json.Unmarshal(body1, resp)
+	err = json.Unmarshal(body1, vectorResp)
 	if err != nil {
 		return nil, err
 	}

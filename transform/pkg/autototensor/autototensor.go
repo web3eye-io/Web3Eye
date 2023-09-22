@@ -2,7 +2,6 @@ package autototensor
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -69,7 +68,6 @@ func autoToTensor(ctx context.Context) error {
 		imgURL := string(msg.Message.Payload())
 		errRecord := ""
 		var vector []float32
-		fmt.Println("sssss", imgURL)
 		func() {
 			filename := uuid.NewString()
 			path, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)

@@ -61,5 +61,3 @@ def preprocess(image: Image.Image) -> ndarray:
     # normalized_image_ndarrayfloat32 = normalized_image_ndarray.astype(
     #     np.float32)
     return transposed_image_ndarrayfloat32
-
-

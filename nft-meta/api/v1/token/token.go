@@ -169,7 +169,6 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		Payload: []byte(*inInfo.ImageURL),
 		Key:     *inInfo.ID,
 	})
-	fmt.Println(inInfo.VectorState)
 
 	if err != nil {
 		return err
