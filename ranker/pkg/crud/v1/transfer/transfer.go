@@ -2,6 +2,7 @@ package transfer
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
@@ -32,6 +34,7 @@ type OrderItem struct {
 	Name          string    `json:"name,omitempty"`
 	Symbol        string    `json:"symbol,omitempty"`
 	Decimals      uint32    `json:"decimals,omitempty"`
+	ImageURL      string    `json:"image_url,omitempty"`
 }
 
 func setQueryConds(in *rankernpool.GetTransfersRequest, cli *ent.Client) *ent.TransferQuery {
@@ -67,12 +70,28 @@ func queryOrderItemsAndContract(ctx context.Context, orderID string, cli *ent.Cl
 		t := sql.Table(contract.Table)
 		s.LeftJoin(t).
 			On(s.C(orderitem.FieldContract), t.C(contract.FieldAddress)).
-			Where(sql.EQ(orderitem.FieldOrderID, orderID)).
-			AppendSelect(contract.FieldSymbol, contract.FieldName, contract.FieldDecimals)
+			AppendSelect(contract.FieldSymbol, contract.FieldName, contract.FieldDecimals).
+			Where(sql.EQ(orderitem.FieldOrderID, orderID))
 	}).Scan(ctx, &qOrderItems)
 	if err != nil {
 		return nil, err
 	}
+
+	for _, v := range qOrderItems {
+		fmt.Println(v.TokenType)
+		if v.TokenType == basetype.TokenType_ERC1155.String() ||
+			v.TokenType == basetype.TokenType_ERC1155_WITH_CRITERIA.String() ||
+			v.TokenType == basetype.TokenType_ERC721.String() ||
+			v.TokenType == basetype.TokenType_ERC721_WITH_CRITERIA.String() {
+			ret, err := cli.Token.Query().Select(token.FieldImageURL).Where(token.Contract(v.Contract), token.TokenID(v.TokenID)).First(ctx)
+			if err != nil {
+				return nil, err
+			}
+			v.ImageURL = ret.ImageURL
+		}
+
+	}
+
 	return qOrderItems, nil
 }
 
@@ -158,6 +177,7 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 			Symbol:        v.Symbol,
 			Decimals:      v.Decimals,
 			OrderItemType: v.OrderItemType,
+			ImageURL:      v.ImageURL,
 		}
 		if v.OrderItemType == basetype.OrderItemType_OrderItemOffer.String() {
 			rpctransfer.OfferItems = append(rpctransfer.OfferItems, orderItem)

@@ -22,6 +22,7 @@ message OrderItem{
   string Symbol = 70;
   uint32 Decimals = 80;
   string OrderItemType = 90;
+  string ImageURL = 100;
 }
 
 message Transfer {

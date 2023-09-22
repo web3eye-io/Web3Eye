@@ -237,6 +237,9 @@
         },
         "OrderItemType": {
           "type": "string"
+        },
+        "ImageURL": {
+          "type": "string"
         }
       }
     }
