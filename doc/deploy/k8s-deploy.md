@@ -1,30 +1,59 @@
-# k8s-deploy
+## 安装说明
 
-用K8S部署是比较推荐的方式，但同时比较耗资源。以下从机器配置
+每个小节请阅读完成再操作，以免理解错误上下文意思，同时欢迎提Issue帮助改进。
 
-## 服务器集群配置
+## 机器准备
 
-机器最低配置及规模:
+主机规划表
 
-主机硬件最小配置：CPU-8核 内存-16G 存储-100G， 三台linux服务器组成k8s集群；
+| IP           | hostname | 硬件配置                           | 角色                             | 位置 |
+|--------------|----------|--------------------------------|----------------------------------|------|
+| 172.23.10.29 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet) | IDC  |
+| 172.23.10.31 | node1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master,jenkins               | IDC  |
+| 172.23.10.32 | node2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
+| 172.23.10.33 | node3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
+| 172.23.10.34 | node4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server            | IDC  |
+| 172.16.10.85 | node1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker            | AWS  |
 
-本次测试使用3台主机：IP分配如下
+系统全选：Ubuntu20.04 or Ubuntu22.04
 
-| IP           | 硬件配置                       | 角色              |
-| ------------ | ------------------------------ | ----------------- |
-| 172.23.10.31 | CPU:16核  内存：32G  磁盘：100G | master,nfs-client |
-| 172.23.10.32 | CPU:16核  内存：32G  磁盘：100G | node32,nfs-client |
-| 172.23.10.33 | CPU:16核  内存：32G  磁盘：160G | node33,nfs-server |
+## 安装系统
 
-以上仅为测试配置，正式环境需要搜集数据后进行评估。
+按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
 
-## 安装docker和kubernetes
+初始化：按照规划修改IP和hostname、设置root密码（可选）、开启root的ssh登录（可选）
 
-### 安装
+### 安装V2rayA
 
-安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低。
+Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方式实现，主要为了更好的科学上网，如果没有科学上网的需求可不要gateway节点。
 
-在3台机器上安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。另外集群中主机名不能重复，否则k8s网络可能会出现问题。
+选择V2rayA主要考虑代理能力强，模式多且设置便捷，而且可用Web操作，在无图形化服务器非常好用。
+
+安装方法：https://v2raya.org/docs/prologue/installation/debian/
+
+建议直接下载deb文件进行安装。
+
+安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网了。
+
+### 安装Docker及K8s
+
+安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低，需要按照官方教程卸载后装最新版本或指定版本安装。
+
+安装方法：https://docs.docker.com/engine/install/ubuntu/
+
+为了顺畅安装K8s，在k8s-master上设置与其他机器的免密登录：
+
+```Shell
+ssh-keygen ## 可一路回车
+ssh-copy-id 172.23.10.31 ##本机IP
+ssh-copy-id 172.23.10.32 ##node1 IP
+ssh-copy-id 172.23.10.33 ##node2 IP
+ssh-copy-id 172.23.10.34 ##node3 IP
+```
+
+安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。另外集群中主机名不能重复，否则k8s网络可能会出现问题。
+
+安装方法：https://github.com/easzlab/kubeasz/blob/master/docs/setup/00-planning_and_overall_intro.md
 
 安装完成后把/etc/kubeasz/bin添加到PATH环境变量。
 
@@ -243,7 +272,7 @@ whoami-58b8d4f6f6-sh2cc                                           1/1     Runnin
 #### 安装/卸载组件任务
 
 | 参数名    | install | uninstall |
-| --------- | ------- | --------- |
+|-----------|---------|-----------|
 | INSTALL   | true    | false     |
 | UNINSTALL | false   | true      |
 | TARGET    | all     | all       |
@@ -257,7 +286,7 @@ TARGET可选值：all、traefik、milvus、redis-cluster、kafka、mysql
 </p>
 
 | 参数名         | build  | tag        | r-dev  | r-test/prod | d-dev  | d-test/prod |
-| -------------- | ------ | ---------- | ------ | ----------- | ------ | ----------- |
+|----------------|--------|------------|--------|-------------|--------|-------------|
 | BRANCH_NAME    | 分支名 | 分支名     | 分支名 | none        | none   | none        |
 | BUILD_TARGET   | true   | false      | false  | false       | false  | false       |
 | DEPLOY_TARGET  | false  | false      | false  | false       | true   | true        |
