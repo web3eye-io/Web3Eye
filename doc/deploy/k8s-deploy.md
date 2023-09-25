@@ -15,13 +15,7 @@
 | 172.23.10.34 | node4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server            | IDC  |
 | 172.16.10.85 | node1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker            | AWS  |
 
-系统全选：Ubuntu20.04 or Ubuntu22.04
-
-## 安装系统
-
-按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
-
-初始化：按照规划修改IP和hostname、设置root密码（可选）、开启root的ssh登录（可选）
+系统：Ubuntu20.04 or Ubuntu22.04
 
 ### 安装V2rayA
 
@@ -35,27 +29,162 @@ Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方�
 
 安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网了。
 
-### 安装Docker及K8s
+## 初始化系统配置
 
-安装Docker到Linux服务器，本教程使用Docker版本为20.10.16。安装完成后请检查docker版本，很多linux发行版直接安装的docker版本过低，需要按照官方教程卸载后装最新版本或指定版本安装。
+按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
 
-安装方法：https://docs.docker.com/engine/install/ubuntu/
-
-为了顺畅安装K8s，在k8s-master上设置与其他机器的免密登录：
+设置root密码、开启root的ssh登录、设置gateway（可选）
 
 ```Shell
-ssh-keygen ## 可一路回车
-ssh-copy-id 172.23.10.31 ##本机IP
-ssh-copy-id 172.23.10.32 ##node1 IP
-ssh-copy-id 172.23.10.33 ##node2 IP
-ssh-copy-id 172.23.10.34 ##node3 IP
+# 切换到root用户
+su root
+# 设置密码
+passwd
+
+PermitRootLogin yes #允许root登录
+PasswordAuthentication yes #允许密码登录
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+systemctl restart sshd
+
+# 设置gateway
+vim /etc/netplan/00-installer-config.yaml
+## 修改gateway配置成安装了V2rayA的机器IP
+netplan apply
 ```
+
+初始化系统配置内容如下，配置好后执行脚本即可
+
+1.按照规划修改IP和hostname
+2.Master免密登录其他机器
+3.清理已安装的docker
+4.安装python3
+
+复制脚本到.sh文件中，并配置后执行
+
+```Shell
+#!/bin/bash
+
+# a host info like:
+# IP hostname
+hosts=(
+    172.16.29.51 node1
+    172.16.29.52 node2
+    172.16.29.53 node3
+    172.16.29.54 node4
+)
+
+# ssh-keygen in me
+# value: true or false
+enableSSHKeygen=true
+
+# clear old docker in me
+# value: true or false
+clearOldDocker=true
+
+if [ $enableSSHKeygen ];then
+    echo "start ssh-keygen" 
+    ssh-keygen
+    echo "end ssh-keygen" 
+fi
+
+
+
+
+rem=0
+for index in "${!hosts[@]}";   
+do   
+    if [ $rem != 0 ];then
+        rem=0
+        continue
+    fi
+    rem=1
+
+    ssh-copy-id "${hosts[$index]}"
+done  
+
+
+rem=0
+for index in "${!hosts[@]}";   
+do   
+    if [ $rem != 0 ];then
+        rem=0
+        continue
+    fi
+    rem=1
+    
+    if [ $clearOldDocker ];then
+        echo "start clear old-docker" 
+        ssh "${arr[$index]}" "for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove \$pkg; done"
+        echo "end clear old-docker" 
+    fi
+
+    index1=`expr $index + 1`
+    ssh "${arr[$index]}" "hostnamectl set-hostname \"\${hosts[\$index1]}\""
+    ssh "${arr[$index]}" "apt install python3 -y"
+done  
+
+```
+
+### 安装K8s
 
 安装K8s集群(版本为1.24)，可选择kubeasz快速安装(项目链接:<https://github.com/easzlab/kubeasz>)。另外集群中主机名不能重复，否则k8s网络可能会出现问题。
 
+完整的安装指导如下链接，也可参考浓缩版安装指导
+
 安装方法：https://github.com/easzlab/kubeasz/blob/master/docs/setup/00-planning_and_overall_intro.md
 
+#### 浓缩版安装指导
+
+提供快速安装步骤，如有问题请参考官方文档
+
+```Shell
+# 下载指定版本工具
+export release=3.5.0
+wget https://github.com/easzlab/kubeasz/releases/download/${release}/ezdown
+chmod +x ./ezdown
+./ezdown -D -m standard
+./ezdown -S
+
+# 在docker中启动工具
+docker exec -it kubeasz ezctl new k8s-01
+
+# 需要进行配置，主机配置示例在下方
+vim /etc/kubeasz/clusters/k8s-01/hosts 
+
+# 配置环境变量
+echo "alias dk='docker exec -it kubeasz'" >> /etc/profile
+source /etc/profile
+
+# 安装
+dk ezctl setup k8s-01 all
+```
+
+主机配置示例（配置时请在官方提供的配置文件内编辑，此处之给出主机规划部分的配置）：
+
+```ini
+# 'etcd' cluster should have odd member(s) (1,3,5,...)
+[etcd]
+172.16.29.51
+
+# master node(s)
+[kube_master]
+172.16.29.51
+
+# work node(s)
+[kube_node]
+172.16.29.52
+172.16.29.53
+172.16.29.54
+```
+
 安装完成后把/etc/kubeasz/bin添加到PATH环境变量。
+```Shell
+echo "export PATH=\$PATH:/etc/kubeasz/bin" >> /etc/profile
+source /etc/profile
+
+kubectl get node -A
+```
 
 还需要在Master节点安装Helm(安装介绍<https://helm.sh/docs/intro/install/>)。
 
