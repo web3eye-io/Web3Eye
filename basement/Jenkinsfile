@@ -1,12 +1,6 @@
 pipeline {
   agent any
 
-   environment {
-        INSTALL = 'false'
-        UNINSTALL = 'false'
-        TARGET    = 'all'
-    }
-
   stages {
     // -------install tasks----------
     stage('install traefik') {
@@ -77,6 +71,8 @@ pipeline {
 
     stage('install helm') {
       when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
         expression { TARGET == 'helm' }
       }
       steps {
