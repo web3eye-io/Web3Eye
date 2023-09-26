@@ -68,6 +68,15 @@ pipeline {
       }
     }
 
+    stage('install mysql') {
+      when {
+        expression { TARGET == 'helm' }
+      }
+      steps {
+        sh 'bash basement/00-helm/install.sh'
+      }
+    }
+
     // -------uninstall tasks----------
     stage('uninstall traefik') {
       when {
