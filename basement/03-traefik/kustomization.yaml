@@ -1,7 +1,7 @@
 resources:
   - 01-ingress-rbac.yaml
   - 02-ingress.yaml
-  - 03-middlewares.yaml
-  - 04-traefik.yaml
-  - 05-traefik-vpn.yaml
-  - 06-whoami.yaml
+  # - 03-middlewares.yaml
+  - 03-traefik.yaml
+  - 04-traefik-vpn.yaml
+  - 05-whoami.yaml
