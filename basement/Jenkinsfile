@@ -1,5 +1,12 @@
 pipeline {
   agent any
+
+   environment {
+        INSTALL = 'false'
+        UNINSTALL = 'false'
+        TARGET    = 'all'
+    }
+
   stages {
     // -------install tasks----------
     stage('install traefik') {
