@@ -8,16 +8,16 @@
 
 | IP           | hostname | 硬件配置                           | 角色                             | 位置 |
 |--------------|----------|--------------------------------|----------------------------------|------|
-| 172.23.10.29 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet) | IDC  |
-| 172.23.10.31 | node1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master,jenkins               | IDC  |
-| 172.23.10.32 | node2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
-| 172.23.10.33 | node3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
-| 172.23.10.34 | node4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server            | IDC  |
-| 172.16.10.85 | node1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker            | AWS  |
+| 172.16.29.49 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet) | IDC  |
+| 172.16.29.51 | node1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master,jenkins               | IDC  |
+| 172.16.29.52 | node2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
+| 172.16.29.53 | node3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
+| 172.16.29.54 | node4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server            | IDC  |
+| 172.23.10.87 | node1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker            | AWS  |
 
 系统：Ubuntu20.04 or Ubuntu22.04
 
-### 安装V2rayA
+### 安装V2rayA（可选）
 
 Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方式实现，主要为了更好的科学上网，如果没有科学上网的需求可不要gateway节点。
 
@@ -33,7 +33,13 @@ Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方�
 
 按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
 
-设置root密码、开启root的ssh登录、设置gateway（可选）
+**K8s集群内的所有机器**
+
+- 设置root密码
+
+- 开启root的ssh登录
+
+- 设置gateway（可选）
 
 ```Shell
 # 切换到root用户
@@ -41,23 +47,27 @@ su root
 # 设置密码
 passwd
 
-PermitRootLogin yes #允许root登录
-PasswordAuthentication yes #允许密码登录
+#允许root登录
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+#允许密码登录
 sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
 
-# 设置gateway
+# 设置gateway，修改gateway配置成安装了V2rayA的机器IP
 vim /etc/netplan/00-installer-config.yaml
-## 修改gateway配置成安装了V2rayA的机器IP
 netplan apply
 ```
+
+初始化K8s集群机器，一般在**master**执行。
 
 初始化系统配置内容如下，配置好后执行脚本即可
 
 1.按照规划修改IP和hostname
+
 2.Master免密登录其他机器
+
 3.清理已安装的docker
+
 4.安装python3
 
 复制脚本到.sh文件中，并配置后执行
@@ -87,8 +97,6 @@ if [ $enableSSHKeygen ];then
     ssh-keygen
     echo "end ssh-keygen" 
 fi
-
-
 
 
 rem=0
@@ -186,63 +194,25 @@ source /etc/profile
 kubectl get node -A
 ```
 
-还需要在Master节点安装Helm(安装介绍<https://helm.sh/docs/intro/install/>)。
-
-### 配置nfs为默认存储类
-
-本示例使用NFS作为存储类，也可以替换成其他存储方案。
-
-在k8s集群中的一台服务器上安装nfs客户端（可以选择k8s的master节点，主要是为了找一台方便的节点完成主要的安装操作）。
-
-首先选择一台主机安装nfs-server并配置一个路径提供NFS服务。
-
-在k8s集群的master机器上把web3eye-io/Web3Eye项目clone到服务器并配置NFS。
-
-```shell
-git clone https://github.com/web3eye-io/Web3Eye.git
-cd Web3Eye/basement
-cat 02-nfs-storage/value.yaml
-```
-
-主要关注server和path，修改成NFS服务的地址和路径即可
-
-```yaml
-nfs:
-  server: 172.23.10.83
-  path: /data/k8s_storage
-```
-
-确认好配置后执行install.sh
-
-```shell
-bash install.sh
-```
-
-脚本运行完毕后须看到以下输出结果：
-
-```shell
-root@k8s-master:~/Web3Eye/basement/02-nfs-storage# kubectl get pods  -o wide  | egrep nfs 
-default-nfs-provisioner-nfs-subdir-external-provisioner-7fx2pwz   1/1     Running     6 (5h21m ago)   19h     172.20.144.99    172.23.10.33   <none>           <none>
-```
 
 ## 安装Jenkins及配置Jenkins环境
 
 ### 使用docker直接起一个jenkins
 
+由于需要在Jenkins中使用Docker和K8s，所以需要将K8s的配置以及Docker的.sock映射到Jenkins容器中。
+
 需要按照实际情况配置端口映射关系以及文件映射关系，这里需要明确好docker.sock和.kube配置的路径。
 
-这里需要注意.kube中的kube-apiserver要指向的docker能访问的IP不能指向127.0.0.1
-
-示例如下：
+这里需要注意.kube中的kube-api server要指向的docker能访问的IP不能指向127.0.0.1，需要指定能被访问到的IP，若不对请修改并让配置生效。
 
 ```shell
-root@k8s-master:~/.kube# cat config
-apiVersion: v1
-clusters:
-- cluster:
-    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURsRENDQW55Z0F3SUJBZ0lVRXFXVjZHQ2JkWVZHMWhsVmRZYkhyMTRpcnNrd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1lURUxNQWtHQTFVRUJoTUNRMDR4RVRBUEJnTlZCQWdUQ0VoaGJtZGFhRzkxTVFzd0NRWURWUVFIRXdKWQpVekVNTUFvR0ExVUVDaE1EYXpoek1ROHdEUVlEVlFRTEV3WlRlWE4wWlcweEV6QVJCZ05WQkFNVENtdDFZbVZ5CmJtVjBaWE13SUJjTk1qTXdNVEV3TVRBek9EQXdXaGdQTWpFeU1qRXlNVGN4TURNNE1EQmFNR0V4Q3pBSkJnTlYKQkFZVEFrTk9NUkV3RHdZRFZRUUlFd2hJWVc1bldtaHZkVEVMTUFrR0ExVUVCeE1DV0ZNeEREQUtCZ05WQkFvVApBMnM0Y3pFUE1BMEdBMVVFQ3hNR1UzbHpkR1Z0TVJNd0VRWURWUVFERXdwcmRXSmxjbTVsZEdWek1JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTA1MHFDN0hYZzZGQWFKN3Z1ZUJvQlRENEN5aU8KSjJiYitUZ2V3NDN6ekNtRmdSZ1ZUdmxsejJjd0cxWGNCdnBTMzlsdEd3TGRUSEhGNHBuNFhVOTlnKzJGaEhqbgpMZDE5UzZXZFBMRk5PLy9maU0vNGx2enYzN21zUFhhQVNZTHRidjQwV0xuSmYwTDhzeUxSV1VkMkp3Nm1VMTVWCjVEeEU1RG9WYS9Ib3lGSlhnc0xrc0hJQmt0T1QxM0FUZ09nL1V3STdGcGt4aXFhelYzUjBUNU5WcXEzaW1JS20KYlFaYUNVdFdtRHVXTk5uOGJ2Vno0U21vb0N4ejUybDVUdEZXN0E4SzRKK0JXRDhYcFV1dkIvRy9IZVhESFpQKwpIeVJSTDZNemVLYVAwaVNSOVlIbUwyZklZc0hrb0ozcHhJWXFjcStvR2pGUzVaZUZRa01kVS9EU2xRSURBUUFCCm8wSXdRREFPQmdOVkhROEJBZjhFQkFNQ0FRWXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVUKaU9yeUUzWXlqdFhFY3JYNDZnS0V2OENYVTZRd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFGaDBlb0N4d2VaTQpzang2b0FXR280Z0JNSEpxbW43YmUybENmc21CMjJBYndsRWVpWjJRWkJ4WWRERHJGTXNHc1Z3RjVxNjZiT3QxCm5xWjBTVS9CY0dISGFnTU9vWmwxRzVyRVJFempoeUJpNWsrajZ2NG5LTWxnSXdoaWw0Qzg5UUhyM0I3QkhYVEMKQTd1dCt1YVYxenVFVitsZGEvYVJGTllOVGZ0d0dSdDFQeWMvL2dVVm50QzlabU9ISHlPU280a1ZiMFNKVk5mZgpNTEdBWGJGdEp5ekc0OUtjVDBQWFVvNjZhTTlCMHZZYWZzTWs1OTR5OGhsRmJiUnJ5elpFTENNZ
-    server: https://172.23.10.31:6443
-  name: cluster1
+## 检查K8s server地址
+root@k8s-master:~/.kube# cat /root/.kube/config |grep server
+    server: https://172.16.29.51:6443
+
+## 确认docker.sock文件地址
+root@test:~# ls /var/run/docker.sock 
+/var/run/docker.sock
 ```
 
 运行jenkins容器
@@ -265,17 +235,15 @@ docker run \
 
 ### 初始化Jenkins
 
+获取jenkins初始密码
+
 ```shell
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-访问jenkins web页面(172.23.10.31:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
-
-## 安装依赖组件
+访问jenkins web页面(172.16.29.51:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
 
 ### 配置Jenkins环境
-
-**安装Git插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Git并安装）
 
 **配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
 
@@ -284,6 +252,27 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 **安装Go插件**（Dashboard > 系统管理 > 插件管理 > Available plugins > 搜索Go并安装）
 
 **配置Go插件**（Dashboard > 系统管理 > 全局工具配置 > 找到Go）,设置别名为go, 安装一个Go 1.19
+
+还需要在Master节点安装Helm(安装介绍<https://helm.sh/docs/intro/install/>)。
+
+### 为K8s提供默认存储
+
+本示例使用NFS作为存储类，也可以替换成其他存储方案。
+
+首先选择一台主机安装nfs-server并配置一个路径提供NFS服务，后续通过Jenkins Job为K8s设置默认存储类。
+
+nfs-server安装示例：
+
+```Shell
+apt update
+apt install nfs-kernel-server -y
+
+# 本例子/scratch为提供存储的目录
+echo '/scratch *(rw,async,no_subtree_check,no_root_squash)' >> /etc/exports
+systemctl start nfs-kernel-server.service
+
+exportfs -a
+```
 
 ### 新建安装任务
 
