@@ -68,7 +68,7 @@ pipeline {
       }
     }
 
-    stage('install mysql') {
+    stage('install helm') {
       when {
         expression { TARGET == 'helm' }
       }
