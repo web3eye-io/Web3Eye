@@ -15,7 +15,7 @@ set -o pipefail
 kubectl apply -k $SHELL_FOLDER
 sleep 5
 
-kubectl apply -f $SHELL_FOLDER/03-middlewares.yaml
+kubectl apply -f $SHELL_FOLDER/06-middlewares.yaml
 sleep 5
 
 kubectl get pods -n kube-system | grep traefik
