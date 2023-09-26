@@ -1,0 +1,168 @@
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-appid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-App-ID
+
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-userid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-User-ID
+
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-langid-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-Lang-ID
+
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: headers-app-login-token-to-body
+#   namespace: kube-system
+# spec:
+#   headersToBody:
+#     headerNames:
+#       - X-App-Login-Token
+
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: app-rbac-auth
+#   namespace: kube-system
+# spec:
+#   rbacAuth:
+#     headerNames:
+#       - X-App-ID
+
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: app-user-role-rbac-auth
+#   namespace: kube-system
+# spec:
+#   rbacAuth:
+#     headerNames:
+#       - X-App-ID
+#       - X-User-ID
+#       - X-App-Login-Token
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: common-headers
+  namespace: kube-system
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowHeaders:
+      - X-App-ID
+      - X-Lang-ID
+      - X-User-ID
+      - X-App-Login-Token
+      - X-Locale
+      - X-Login-Verify
+      - DNT
+      - X-CustomHeader
+      - Keep-Alive
+      - User-Agent
+      - X-Requested-With
+      - If-Modified-Since
+      - Cache-Control
+      - Content-Type
+      - Authorization
+    accessControlExposeHeaders:
+      - X-App-ID
+      - X-Lang-ID
+      - X-User-ID
+      - X-App-Login-Token
+      - X-Locale
+      - X-Login-Verify
+      - DNT
+      - X-CustomHeader
+      - Keep-Alive
+      - User-Agent
+      - X-Requested-With
+      - If-Modified-Since
+      - Cache-Control
+      - Content-Type
+      - Authorization
+    accessControlAllowMethods:
+      - GET
+      - POST
+      - OPTIONS
+      - HEAD
+      - PUT
+      - DELETE
+      - TRACE
+      - PATCH
+    accessControlAllowOriginList:
+      - https://genesis.development.npool.top
+      - https://genesis.japan-procyon-production.npool.top
+      - https://admin.development.npool.top
+      - https://www.procyon.xpool.top
+      - https://dashboard.procyon.xpool.top
+      - https://www.procyon.vip
+      - https://procyon.vip
+      - https://dashboard.procyon.vip
+      - https://admin.japan-procyon-production.npool.top
+      - https://dashboard.procyon.npool.top:20402
+      - https://admin.jh-testing.npool.top:20402
+      - https://www.procyon.npool.top:20402
+      - https://www.ohhash.xpool.top
+      - https://dashboard.ohhash.xpool.top
+      - https://ohhash.com
+      - https://www.ohhash.com
+      - https://www.ohhash.npool.top:20402
+      - https://dashboard.ohhash.com
+      - https://dashboard.ohhash.npool.top:20402
+      - https://admin.ohhash-production.npool.top
+      - https://admin.singapore-testing.npool.top
+      - http://swagger-ui.internal-devops.development.npool.top
+      - http://traefik-webui.internal-devops.development.npool.top
+      - https://www.lpsecretbase.com
+      - https://lpsecretbase.com
+      - https://dashboard.lpsecretbase.com
+    accessControlMaxAge: 100
+    addVaryHeader: true
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: http-redirect-https-testing
+  namespace: kube-system
+spec:
+  redirectRegex:
+    regex: ^http://([-a-zA-Z0-9|.]*):20401/(.*)
+    replacement: https://${1}:20402/${2}
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: http-redirect-https
+  namespace: kube-system
+spec:
+  redirectRegex:
+    regex: ^http://([-a-zA-Z0-9|.]*)/(.*)
+    replacement: https://${1}/${2}
