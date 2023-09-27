@@ -28,6 +28,13 @@ const routes: RouteRecordRaw[] = [
           DisplayToolbarSearchBox: true 
         } 
       },
+      { 
+        path: 'detail', 
+        component: () => import('components/Token/Detail.vue'), 
+        meta: {
+          DisplayToolbarSearchBox: false 
+        } 
+      },
       // { path: 'whitepaper', component: () => import('pages/Whitepaper.vue'), meta: { DisplayToolbarSearchBox: true } },
       // { path: 'transaction', component: () => import('pages/Transaction.vue'), meta: { DisplayToolbarSearchBox: true } },
       // { path: 'deck', component: () => import('pages/Deck.vue'), meta: { DisplayToolbarSearchBox: true } }

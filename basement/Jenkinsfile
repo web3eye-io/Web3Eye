@@ -1,5 +1,6 @@
 pipeline {
   agent any
+
   stages {
     // -------install tasks----------
     stage('install traefik') {
@@ -68,6 +69,32 @@ pipeline {
       }
     }
 
+    stage('install helm') {
+      when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'helm' }
+      }
+      steps {
+        sh 'bash basement/00-helm/install.sh'
+      }
+    }
+
+    stage('set nfs-storage') {
+      when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'nfs-storage' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          export NFS_SERVER=$NFS_SERVER
+          export NFS_PATH=$NFS_PATH
+          bash basement/02-nfs-storage/install.sh
+        '''.stripIndent())
+      }
+    }
+
     // -------uninstall tasks----------
     stage('uninstall traefik') {
       when {
@@ -132,6 +159,18 @@ pipeline {
       }
       steps {
         sh 'bash basement/07-mysql/uninstall.sh'
+      }
+    }
+
+    stage('uninstall nfs-storage') {
+      when {
+        expression { UNINSTALL   ==  'true' }
+        expression { TARGET == 'nfs-storage' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          bash basement/02-nfs-storage/uninstall.sh
+        '''.stripIndent())
       }
     }
   }

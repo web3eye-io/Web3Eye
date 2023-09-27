@@ -5,6 +5,6 @@ storageClass:
   archiveOnDelete: false
   defaultClass: true
 nfs:
-  server: 172.16.30.32
-  path: /mnt/k8s_nfs_storage
+  server: NFS_SERVER
+  path: NFS_PATH
 nodeSelector: {}

@@ -1,0 +1,3 @@
+resources:
+  - 01-dashboard.yaml
+  - 02-ingress-vpn.yaml

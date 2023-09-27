@@ -12,4 +12,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+kubectl delete -f $SHELL_FOLDER/06-middlewares.yaml
+
 kubectl delete -k $SHELL_FOLDER

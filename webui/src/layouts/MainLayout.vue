@@ -1,11 +1,10 @@
 <template>
-  <q-layout view='lHh Lpr lFf'>
-    <q-header elevated>
-      <q-toolbar>
-        <div class='search row' v-if='displaySearchBox'>
-          <a href='#'>
-            <q-img :src='logobottom' class='logo' fit='contain' />
-          </a>
+  <div class="outer">
+    <q-layout view='lHh Lpr lFf'>
+      <q-header>
+        <q-toolbar>
+        <div class='search row'>
+          <q-img :src='logobottom' class='logo' fit="contain" @click="onLogoClick" />
           <q-input
             v-model='search'
             rounded
@@ -14,6 +13,7 @@
             dense
             class='search-box'
             placeholder='Coming soon'
+            v-if='false'
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -21,12 +21,16 @@
           </q-input>
         </div>
         <q-space />
-        <a class='tools' href='#/whitepaper'>White Paper</a>
-        <a class='tools' href='#/deck'>Deck</a>
-        <a class='tools' href='#/blog'>Blog</a>
-        <a class='tools' href='#/daily'>Daily</a>
-        <a class='tools' href='#/schedule'>Schedule</a>
-        <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
+        <a href='#/whitepaper'>White Paper</a>
+        <a  href='#/deck'>Deck</a>
+        <a  href='#/blog'>Blog</a>
+        <a  href='#/daily'>Daily</a>
+        <a  href='#/schedule'>Schedule</a>
+        <q-btn v-if="!logined" size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
+        <q-avatar v-if="logined">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar>
+        <!-- <q-btn avatar :icon='"img:" + metamask' flat dense round size='18px'>
           <q-menu auto-close>
             <q-list>
               <q-item clickable>
@@ -40,34 +44,36 @@
               </q-item>
             </q-list>
           </q-menu>
-        </q-btn>
+        </q-btn> -->
       </q-toolbar>
     </q-header>
-
+  
     <q-page-container>
       <router-view />
     </q-page-container>
 
-    <q-footer elevated>
-      <q-toolbar>
+    <q-footer>
+      <q-toolbar class="justify-center">
         <div class='footer'>© 2022 - Cyber Tracer</div>
       </q-toolbar>
     </q-footer>
   </q-layout>
+  </div>
 </template>
 
 <script setup lang='ts'>
-import { ref, computed, reactive } from 'vue'
-import { useLocalSettingStore, useWeb3jsStore } from 'src/localstore'
+import { ref, reactive, computed } from 'vue'
+import { useWeb3jsStore } from 'src/localstore'
 
 import logobottom from '../assets/logo/logo-bottom.png'
-import metamask from '../assets/icon/metamask.webp'
+// import metamask from '../assets/icon/metamask.webp'
 import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
+import { Cookies } from 'quasar'
 import { useRouter } from 'vue-router'
 
-const setting = useLocalSettingStore()
-const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
+// const setting = useLocalSettingStore()
+// const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
 
 const search = ref('')
 
@@ -75,6 +81,15 @@ const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
 let web3 = new Web3(window.ethereum)
 
+const login = ref(false)
+const logined = computed(() => {
+  if(!login.value) {
+    if (Cookies.get('Logined')) {
+      return true
+    }
+  }
+  return false
+})
 const onMetaMaskClick = () => {
   web3.eth.requestAccounts((_, accounts) => {
     if (accounts?.length > 0) {
@@ -83,6 +98,8 @@ const onMetaMaskClick = () => {
   })
   .then((result) => {
     console.log('result: ', result)
+    login.value = true
+    Cookies.set('Logined', 'true')
     web3js.setWeb3(web3)
     void getBalance()
   })
@@ -108,45 +125,77 @@ const getChainID = async() => {
   console.log('web3: ', web3js.getAccount())
 }
 
-const onLogout = () => {
-  // TODO
-}
-
 const router = useRouter()
-const onTxClick = () => {
-  void router.push({path: '/transaction'})
+const onLogoClick = () => {
+  void router.push({path: '/'})
 }
+// const onLogout = () => {
+//   // TODO
+// }
+
+// const router = useRouter()
+// const onTxClick = () => {
+//   void router.push({path: '/transaction'})
+// }
 
 </script>
 
 <style scoped lang='sass'>
-.q-layout__section--marginal
-  background-color: white
-  color: $grey-9
-  font-size: 16px
+.outer
+  background-color:  $white
+  background-image: url(../assets/material/background.png)
+  background-repeat: repeat
+  content: ""
+  display: block
+  position: absolute
+  top: 0
+  right: 0
+  height: 100%
+  width: 100%
+.q-layout
+  font-size: 14px
+  font-weight: 500
+  color: $light-black
+  font-family: 'Manrope'
+  .q-header, .q-footer
+    background: linear-gradient(to right, transparent 0, #3187FF 0%, transparent 0%)
+    color: $light-black
+    height: 48px
+    line-height: 48px
+  .q-header
+    width: 90%
+    margin: 0 auto
+    position: inherit
+    a,button
+      margin: 0 18px 0 18px
+    a
+      text-decoration: none
+      color: #31373D
+      @media (max-width: $breakpoint-sm-max)
+        display: none
+    button
+      text-transform: none
+      ::v-deep .q-btn_context
+        padding: 4px 0
+  .q-toolbar
+    padding: 0
+  .q-footer
+    background-color: $white
+    opacity: 0.7
 
 .logo
   width: 120px
   margin-right: 10px
   line-height: 72px
+  cursor: pointer
   @media (max-width: 660px)
     display: none
 
-.tools
-  margin: 0 10px 0 10px
-  text-decoration: none
-  color: $grey-9
-  @media (max-width: $breakpoint-sm-max)
-    display: none
-
 .q-page-container
+  padding-top: 10px !important
   ::v-deep .justify-evenly
     justify-content: center
     min-height: 800px !important
-
-.footer
-  color: $blue-14
-  font-size: 14px
 
 .search-box
   width: 450px

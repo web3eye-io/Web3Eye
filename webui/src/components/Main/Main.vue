@@ -1,81 +1,37 @@
 <template>
-  <div view='lHh Lpr lFf search-container'>
-    <div class='row logo'>
-      <q-space />
-      <q-img :src='logo' style='width: 400px' fit='contain' />
-      <q-space />
+  <div view='lHh Lpr lF' class="main-container">
+    <div class="summary">
+      <div class="easier row items-center">
+        <q-space />
+        <div class="left" />
+        <div class="center">Here we make web3.0 easier</div>
+        <div class="right" />
+        <q-space />
+      </div>
+      <div class="name">
+        <q-img :src='largelogo' class='logo' fit="contain" />
+      </div>
+      <div class="mission column items-center">
+        <div>Our mission is to organize the web3.0 information of different blockchain / ecosystem </div>
+        <div>and make the web3.0 easier to the whole world.</div>
+      </div>
     </div>
-    <q-input
-      v-if='isText'
-      class='icontainer input-padding'
-      rounded
-      outlined
-      v-model="contract"
-      @keyup.enter='handleEnter'
-      placeholder="input text here"
-    >
-      <template v-slot:append>
-        <InputOption v-model:option='curOption' :disable='uploading' />
-      </template>
-    </q-input>
-    <q-uploader
-      v-if='!isText'
-      class='upload-box'
-      url="/api/entrance/search/file"
-      color='white'
-      :square='false'
-      field-name='UploadFile'
-      :form-fields='[{name: "Limit", value: "20"}]'
-      auto-upload
-      flat
-      accept=".jpg, image/*"
-      :disable='uploading'
-      @failed='onFailed'
-      @uploaded='onUploaded'
-      @added='onAdded'
-      @uploading='uploading = true'
-    >
-      <template v-slot:header>
-          <q-input
-            class='icontainer'
-            rounded
-            outlined
-            v-model="fileName"
-            :loading="uploading"
-            placeholder="drag a image here"
-          >
-          <q-uploader-add-trigger /><!-- trigger file picker -->
-          <template v-slot:append>
-            <InputOption v-model:option='curOption' :disable='uploading' />
-          </template>
-        </q-input>
-      </template>
-      <template v-slot:list>
-      </template>
-    </q-uploader>
+    <div class="column input-container">
+      <input class="upload" id="drop-area" placeholder="search contract address or drag an image here" v-model="contract" />
+      <q-icon name="img:icons/search.png" size="18px" class="search" />
+    </div>
   </div>
-    <div class='occupier' />
 </template>
 
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
-import InputOption from 'src/components/Main/InputOption.vue'
-import logo from '../../assets/logo/logo.png'
+import { onMounted, ref } from 'vue'
+import largelogo from '../../assets/logo/large-logo.png'
 import { useRouter } from 'vue-router'
-import { useTokenStore } from 'src/teststore/token';
-import { GetTokensResponse } from 'src/teststore/token/types';
 import { useContractStore } from 'src/teststore/contract';
-
-const curOption = ref('File')
-const isText = computed(() => curOption.value === 'Text')
-
+import { useTokenStore } from 'src/teststore/token';
 const contract = ref('')
 const _contract = useContractStore()
 
-const handleEnter = () => {
-  console.log('enter......', contract)
-  getContractAndTokens(0, 100)
-}
 const getContractAndTokens = (offset: number, limit: number) => {
   _contract.getContractAndTokens({
     Contract: contract.value,
@@ -87,53 +43,81 @@ const getContractAndTokens = (offset: number, limit: number) => {
     void router.push('/contract')
   })
 }
-const fileName = ref('')
-const uploading = ref(false)
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const onAdded = (files: readonly any[]) => {
-  const _file = files[0] as File
-  fileName.value = _file.name
-}
-
 
 const router = useRouter()
 
 const token = useTokenStore()
-const onUploaded = (info: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    files: readonly any[];
-    xhr: XMLHttpRequest;
-  }) => {
-  const reader = new FileReader()
-  reader.readAsDataURL(info.files[0] as Blob)
-  reader.onload = function() {
-    token.SearchTokens.Current = window.URL.createObjectURL(info.files[0] as Blob)
-	}
-  const response = JSON.parse(info.xhr.response as string) as GetTokensResponse
-  token.setToken(response.Infos)
-  token.SearchTokens.Total = response.TotalTokens
-  token.SearchTokens.StorageKey = response.StorageKey
-  token.SearchTokens.TotalPages = response.TotalPages
-  void router.push({
-    path: '/token'
+
+onMounted(() => {
+  const dropArea = document.getElementById('drop-area')
+  dropArea?.addEventListener('drop', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    let formData = new FormData()
+    const file = e.dataTransfer?.files[0]
+    formData.append('UploadFile', file as Blob)
+    formData.append('Limit', '20')
+    contract.value = file?.name as string
+    token.searchTokens(formData, (error: boolean) => {
+      if (!error) {
+        void router.push('/token')
+      }
+    })
   })
-  uploading.value = false
-}
-
-const onFailed = () => {
-  uploading.value = false
-  console.log('onFailed...')
-}
-
+  dropArea?.addEventListener('dragenter', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    console.log('enter')
+  })
+  dropArea?.addEventListener('dragleave', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    console.log('leave')
+  })
+  dropArea?.addEventListener('keypress', (e) => {
+    if (e.key != 'Enter') {
+      return
+    }
+    e.stopPropagation()
+    e.preventDefault()
+    if (contract.value?.length === 0) return
+    getContractAndTokens(0, 100)
+  })
+})
 </script>
 
-<style scoped lang='sass'>
+<style lang='sass' scoped>
+.main-container
+  flex-grow: 1
+.summary
+  width: 840px
+  margin: 0 auto
+  .easier
+    font-size: 16px
+    color: #1772F8
+
+    .left,.right
+      width: 100px
+      height: 4px
+      border-radius: 2px
+    .left
+      background: linear-gradient(to left, transparent 0, #3187FF 0%, transparent 100%)
+    .right
+      background: linear-gradient(to right, transparent 0, #3187FF 0%, transparent 100%)
+    .center
+      padding: 0 15px
+  .name 
+    font-size: 8rem
+  .mission
+    font-size: 20px
+    opacity: 0.8
 .logo
   margin: 10px 0 20px 0
 
+.icontainer,.upload-box
+  width: 850px
 .icontainer
-  width: 650px
+  margin-top: 50px
 .looking
   margin: 10px 0 10px 0
   color: $grey-8
@@ -145,10 +129,34 @@ const onFailed = () => {
   padding-bottom: 5px
 
 .upload-box
-  width: 650px
+  background: none
   flex-direction: row
 .search-container
   ::v-deep > div.q-uploader
     width: auto
     max-height: 160px
+.q-uploader 
+  ::v-deep .bg-white
+    background: none !important
+.upload,.input-container
+  margin: 0 auto
+  width: 940px
+.upload
+  display: block
+  position: relative
+  width: 940px
+  margin: 0 auto
+  margin-top: 40px
+  padding-left: 40px
+  height: 48px
+  border-radius: 24px
+  border: 1px solid #3187FF
+  &:focus
+    outline: 1px solid #3187FF
+.search
+  display: inline-block
+  position: relative
+  padding-left: 20px
+  line-height: 45px
+  top: -43px
 </style>

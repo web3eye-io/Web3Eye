@@ -1,7 +1,7 @@
 <template>
   <q-icon
     v-if='imageType === ImageType.ICON'
-    size='300px' 
+    :size="width"
     :name='imageUrl'
   />
   <q-img
@@ -9,11 +9,11 @@
     :src="imageUrl"
     spinner-color="red"
     :height="height" 
-    :width="width" 
+    :width="width"
     fit="fill" 
   >
     <div class="absolute-bottom-left text-subtitle2" v-if="title">
-      {{title}}
+      <!-- {{title}} -->
     </div>
   </q-img>
 </template>
@@ -59,6 +59,7 @@ const imageUrl = computed(() => {
 </script>
 <style lang="sass" scoped>
 .q-img__content > div
-  padding: 2px
   background: none
+::v-deep .q-img__image
+  border-radius: 8px
 </style>
