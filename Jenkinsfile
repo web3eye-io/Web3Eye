@@ -2,12 +2,12 @@ pipeline {
   agent any
   environment {
     GOPROXY = 'https://goproxy.cn,direct'
-    GOVERSION = 1.19.12
-    GOTMPENV = "./go-tmp-env/$GOVERSION"
+    GOVERSION = "1.19.12"
+    GOTMPENV = "/tmp/go-tmp-env/$GOVERSION"
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    PATH = $GOBIN:$PATH
+    PATH = "$GOBIN:$PATH"
   }
   stages {
     stage('Clone') {
@@ -15,12 +15,11 @@ pipeline {
         git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-ssh-private-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
-    stage('Clone') {
+    stage('Prepare Golang ENV') {
       steps {
-        git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-ssh-private-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
+        sh 'make prepare-golang-env'
       }
     }
-
     stage('Prepare') {
       when {
         expression { DEPLOY_TARGET != 'true' }

@@ -100,6 +100,8 @@ deploy-to-k8s-cluster:
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
 	done
 
+prepare-golang-env:
+	${REPO_ROOT}/hack/set-golang-env.sh
 
 ##@ Tests
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
 go_name=go$GOVERSION
@@ -6,7 +6,7 @@ go_name=go$GOVERSION
 set +e
 rc=`go version | grep $go_name`
 if [ $? -eq 0 ]; then
-    return
+    exit 0
 fi
 set -e
 
@@ -23,7 +23,7 @@ mkdir -p $GOROOT
 [ -z $GOPROXY ] && export GOPROXY="https://proxy.golang.org,direct"
 
 shopt -s expand_aliases
-alias go="$go_root/bin/go"
+alias go="$GOROOT/bin/go"
 
 set +e
 rc=`go version | grep $go_name`
@@ -31,6 +31,6 @@ if [ ! $? -eq 0 ]; then
   set -e
   echo "Fetching $go_tar from $go_tar_url, stored to $go_data"
   curl -L $go_tar_url -o $go_data/$go_tar
-  tar -zxvf $go_data/$go_tar --strip-components 1 -C $go_root
+  tar -zxvf $go_data/$go_tar --strip-components 1 -C $GOROOT
 fi
 set -e

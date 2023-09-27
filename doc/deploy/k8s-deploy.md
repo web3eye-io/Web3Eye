@@ -8,7 +8,7 @@
 
 | IP           | hostname | 硬件配置                           | 角色                             | 位置 |
 |--------------|----------|--------------------------------|----------------------------------|------|
-| 172.16.29.49 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet) | IDC  |
+| 172.16.29.49 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet)、Jenkins | IDC  |
 | 172.16.29.51 | node1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master,jenkins               | IDC  |
 | 172.16.29.52 | node2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
 | 172.16.29.53 | node3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                       | IDC  |
@@ -131,6 +131,35 @@ do
     ssh "${arr[$index]}" "hostnamectl set-hostname \"\${hosts[\$index1]}\""
     ssh "${arr[$index]}" "apt install python3 -y"
 done  
+
+```
+
+
+## 准备Jenkins环境
+
+Jenkins管理K8s集群的生命周期，所以存在独立与K8s集群的机器上，这里选择Gateway机器安装。
+
+安装Docker:
+
+```Shell
+# apt 更新并安装必要工具
+apt update
+apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+
+# 设置Docker源
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt update
+
+# 列出docker-ce版本
+# apt-cache policy docker-ce
+# 安装docker-ce
+apt install docker-ce=5:20.10.5~3-0~ubuntu-focal -y
+```
+
+启动Jenkins
+
+```Shell
 
 ```
 
