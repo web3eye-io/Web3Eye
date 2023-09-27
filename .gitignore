@@ -14,3 +14,4 @@ dashboard/node_modules
 !webui/*.json
 !dashboard/*.json
 extern
+go-tmp-env
