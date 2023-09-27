@@ -28,6 +28,8 @@ const (
 	FieldName = "name"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
+	// FieldDecimals holds the string denoting the decimals field in the database.
+	FieldDecimals = "decimals"
 	// FieldCreator holds the string denoting the creator field in the database.
 	FieldCreator = "creator"
 	// FieldBlockNum holds the string denoting the block_num field in the database.
@@ -61,6 +63,7 @@ var Columns = []string{
 	FieldAddress,
 	FieldName,
 	FieldSymbol,
+	FieldDecimals,
 	FieldCreator,
 	FieldBlockNum,
 	FieldTxHash,
@@ -98,6 +101,8 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// DefaultDecimals holds the default value on creation for the "decimals" field.
+	DefaultDecimals uint32
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

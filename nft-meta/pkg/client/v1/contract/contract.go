@@ -16,9 +16,9 @@ import (
 
 var timeout = 10 * time.Second
 
-type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
+type handlerFunc func(context.Context, npool.ManagerClient) (cruder.Any, error)
 
-func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
+func withCRUD(ctx context.Context, handler handlerFunc) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	conn, err := grpc.Dial(
@@ -118,9 +118,9 @@ func CountContracts(ctx context.Context, in *npool.CountContractsRequest) (resp 
 }
 
 func DeleteContract(ctx context.Context, in *npool.DeleteContractRequest) (resp *npool.DeleteContractResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteContract(_ctx, in)
 		return resp, err
 	})
-	return resp, err
+	return ret.(*npool.DeleteContractResponse), err
 }

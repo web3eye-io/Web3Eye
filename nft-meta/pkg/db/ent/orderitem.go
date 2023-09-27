@@ -22,6 +22,10 @@ type OrderItem struct {
 	UpdatedAt uint32 `json:"updated_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
+	// OrderID holds the value of the "order_id" field.
+	OrderID string `json:"order_id,omitempty"`
+	// OrderItemType holds the value of the "order_item_type" field.
+	OrderItemType string `json:"order_item_type,omitempty"`
 	// Contract holds the value of the "contract" field.
 	Contract string `json:"contract,omitempty"`
 	// TokenType holds the value of the "token_type" field.
@@ -29,9 +33,7 @@ type OrderItem struct {
 	// TokenID holds the value of the "token_id" field.
 	TokenID string `json:"token_id,omitempty"`
 	// Amount holds the value of the "amount" field.
-	Amount uint64 `json:"amount,omitempty"`
-	// PortionNum holds the value of the "portion_num" field.
-	PortionNum uint32 `json:"portion_num,omitempty"`
+	Amount string `json:"amount,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -41,9 +43,9 @@ func (*OrderItem) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt, orderitem.FieldAmount, orderitem.FieldPortionNum:
+		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldRemark:
+		case orderitem.FieldOrderID, orderitem.FieldOrderItemType, orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldAmount, orderitem.FieldRemark:
 			values[i] = new(sql.NullString)
 		case orderitem.FieldID:
 			values[i] = new(uuid.UUID)
@@ -86,6 +88,18 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 			} else if value.Valid {
 				oi.DeletedAt = uint32(value.Int64)
 			}
+		case orderitem.FieldOrderID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field order_id", values[i])
+			} else if value.Valid {
+				oi.OrderID = value.String
+			}
+		case orderitem.FieldOrderItemType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field order_item_type", values[i])
+			} else if value.Valid {
+				oi.OrderItemType = value.String
+			}
 		case orderitem.FieldContract:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field contract", values[i])
@@ -105,16 +119,10 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 				oi.TokenID = value.String
 			}
 		case orderitem.FieldAmount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				oi.Amount = uint64(value.Int64)
-			}
-		case orderitem.FieldPortionNum:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field portion_num", values[i])
-			} else if value.Valid {
-				oi.PortionNum = uint32(value.Int64)
+				oi.Amount = value.String
 			}
 		case orderitem.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -159,6 +167,12 @@ func (oi *OrderItem) String() string {
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", oi.DeletedAt))
 	builder.WriteString(", ")
+	builder.WriteString("order_id=")
+	builder.WriteString(oi.OrderID)
+	builder.WriteString(", ")
+	builder.WriteString("order_item_type=")
+	builder.WriteString(oi.OrderItemType)
+	builder.WriteString(", ")
 	builder.WriteString("contract=")
 	builder.WriteString(oi.Contract)
 	builder.WriteString(", ")
@@ -169,10 +183,7 @@ func (oi *OrderItem) String() string {
 	builder.WriteString(oi.TokenID)
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", oi.Amount))
-	builder.WriteString(", ")
-	builder.WriteString("portion_num=")
-	builder.WriteString(fmt.Sprintf("%v", oi.PortionNum))
+	builder.WriteString(oi.Amount)
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(oi.Remark)

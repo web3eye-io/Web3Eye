@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
@@ -72,7 +73,7 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 		c.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType())
+		c.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		c.SetTokenID(in.GetTokenID())
@@ -87,7 +88,8 @@ func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate
 		c.SetBlockNumber(in.GetBlockNumber())
 	}
 	if in.Amount != nil {
-		c.SetAmount(in.GetAmount())
+		amount := utils.Uint64ToDecStr(in.GetAmount())
+		c.SetAmount(amount)
 	}
 	if in.TxHash != nil {
 		c.SetTxHash(in.GetTxHash())
@@ -136,7 +138,6 @@ func CreateBulk(ctx context.Context, in []*npool.TransferReq) ([]*ent.Transfer, 
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -170,7 +171,7 @@ func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpd
 		u.SetContract(in.GetContract())
 	}
 	if in.TokenType != nil {
-		u.SetTokenType(in.GetTokenType())
+		u.SetTokenType(in.GetTokenType().String())
 	}
 	if in.TokenID != nil {
 		u.SetTokenID(in.GetTokenID())
@@ -185,7 +186,7 @@ func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpd
 		u.SetBlockNumber(in.GetBlockNumber())
 	}
 	if in.Amount != nil {
-		u.SetAmount(in.GetAmount())
+		u.SetAmount(utils.Uint64ToDecStr(in.GetAmount()))
 	}
 	if in.TxHash != nil {
 		u.SetTxHash(in.GetTxHash())
@@ -217,7 +218,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
 	return info, nil
 }
 
-// nolint
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TransferQuery, error) {
 	stm := cli.Transfer.Query()
 	if conds == nil {
@@ -315,7 +316,7 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TransferQuery, err
 	if conds.Amount != nil {
 		switch conds.GetAmount().GetOp() {
 		case cruder.EQ:
-			stm.Where(transfer.Amount(conds.GetAmount().GetValue()))
+			stm.Where(transfer.Amount(utils.Uint64ToDecStr(conds.GetAmount().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid transfer field")
 		}

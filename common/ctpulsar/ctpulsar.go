@@ -10,14 +10,14 @@ import (
 
 func Client() (pulsar.Client, error) {
 	pulsarConfig := config.GetConfig().Pulsar
-	pulsarUrl := fmt.Sprintf(
+	pulsarURL := fmt.Sprintf(
 		"pulsar://%v:%v",
 		pulsarConfig.Domain,
 		pulsarConfig.Port,
 	)
 
 	return pulsar.NewClient(pulsar.ClientOptions{
-		URL:               pulsarUrl,
+		URL:               pulsarURL,
 		OperationTimeout:  time.Duration(pulsarConfig.OperationTimeout) * time.Second,
 		ConnectionTimeout: time.Duration(pulsarConfig.ConnectionTimeout) * time.Second,
 	})

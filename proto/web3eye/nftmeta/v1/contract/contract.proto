@@ -30,6 +30,7 @@ message ContractReq {
   optional string Address = 40;
   optional string Name = 50;
   optional string Symbol = 60;
+  optional uint32 Decimals = 61;
   optional string Creator = 70;
   optional uint64 BlockNum = 80;
   optional string TxHash = 90;
@@ -48,6 +49,7 @@ message Contract {
   string Address = 40;
   string Name = 50;
   string Symbol = 60;
+  uint32 Decimals = 61;
   string Creator = 70;
   uint64 BlockNum = 80;
   string TxHash = 90;
@@ -66,6 +68,7 @@ message Conds {
   web3eye.StringVal Address = 40;
   web3eye.StringVal Name = 50;
   web3eye.StringVal Symbol = 60;
+  web3eye.Uint32Val Decimals = 61;
   web3eye.StringVal Creator = 70;
   web3eye.Uint64Val BlockNum = 80;
   web3eye.StringVal TxHash = 90;

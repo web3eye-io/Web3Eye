@@ -14,15 +14,13 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	entranceproto "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/token"
+	"github.com/gogo/protobuf/jsonpb"
 
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 	"github.com/web3eye-io/Web3Eye/ranker/pkg/client/v1/token"
-	"google.golang.org/grpc"
 
 	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
@@ -46,6 +44,10 @@ type SearchToken struct {
 	Distance float32
 }
 
+var (
+	pbJSONMarshaler jsonpb.Marshaler
+)
+
 func init() {
 	mux := servermux.AppServerMux()
 	mux.HandleFunc("/search/file", Search)
@@ -57,35 +59,37 @@ func init() {
 	mux.Handle("/", http.FileServer(http.FS(pages)))
 }
 
-// nolint
 func Search(w http.ResponseWriter, r *http.Request) {
 	startT := time.Now()
-	respBody := make(map[string]interface{})
+	respBody := []byte{}
+	var err error
+	var errMsg string
 	defer func() {
-		_respBody, err := json.Marshal(respBody)
-		if err != nil {
-			respBody["msg"] = fmt.Sprintf("json marshal response body fail, %v", err)
+		if errMsg != "" {
+			w.WriteHeader(http.StatusBadRequest)
+			respBody = []byte(errMsg)
 		}
-		_, err = w.Write(_respBody)
+
+		_, err = w.Write(respBody)
 		if err != nil {
-			respBody["msg"] = fmt.Sprintf("write response body fail, %v", err)
+			logger.Sugar().Errorf("failed to write response,err %v", err)
 		}
 	}()
 
 	_limit := r.FormValue(LimitFeild)
-	limit, err := strconv.ParseUint(_limit, 10, 32)
+	baseNum := 10
+	bitSize := 32
+	limit, err := strconv.ParseUint(_limit, baseNum, bitSize)
 
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("failed to parse feild Limit %v, %v", _limit, err)
 		return
 	}
 
 	// judge weather filesize exceed max-size
 	err = r.ParseMultipartForm(MaxUploadFileSize)
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("read file failed %v, %v", MaxUploadFileSize, err)
 		return
 	}
 
@@ -93,10 +97,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	logger.Sugar().Infof("check params %v ms", inT.UnixMilli()-startT.UnixMilli())
 
 	// convert to vector
-	vector, err := ImgReqConvertVector(r)
+	vector, err := ImgReqConvertVector(r.Context(), r)
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("image convert fail, %v", err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("image convert fail, %v", err)
 		return
 	}
 
@@ -109,26 +112,26 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Limit:  uint32(limit),
 	})
 	if err != nil {
-		respBody["msg"] = fmt.Sprintf("search fail, %v", err)
-		w.WriteHeader(http.StatusBadRequest)
+		errMsg = fmt.Sprintf("search fail, %v", err)
 		return
 	}
 
 	inT = time.Now()
 	logger.Sugar().Infof("finish query id %v ms", inT.UnixMilli()-startT.UnixMilli())
 
-	respBody["Msg"] = fmt.Sprintf("have %v infos", len(resp.Infos))
-	respBody["Infos"] = resp.Infos
-	respBody["Page"] = resp.Page
-	respBody["StorageKey"] = resp.StorageKey
-	respBody["TotalPages"] = resp.TotalPages
-	respBody["TotalTokens"] = resp.TotalTokens
-	respBody["Limit"] = resp.Limit
+	pbJSONMarshaler.EmitDefaults = true
+	buff := bytes.NewBuffer([]byte{})
+	err = pbJSONMarshaler.Marshal(buff, resp)
+	if err != nil {
+		errMsg = fmt.Sprintf("marshal result fail, %v", err)
+		return
+	}
+
+	respBody = buff.Bytes()
 }
 
-// TODO: this method from nft-meta/pkg/imageconvert/utils.go that will be reconstruct
 // converte http request with image file to vector
-func ImgReqConvertVector(r *http.Request) ([]float32, error) {
+func ImgReqConvertVector(ctx context.Context, r *http.Request) ([]float32, error) {
 	// get file info
 	file, handler, err := r.FormFile(UploadFileFeild)
 	if err != nil {
@@ -156,41 +159,34 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	)
 	icURL := fmt.Sprintf("http://%v/v1/transform/file", ICServer)
 
-	res, err := http.Post(icURL, bodyWriter.FormDataContentType(), body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, icURL, body)
 	if err != nil {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	req.Header.Set("Content-Type", bodyWriter.FormDataContentType())
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
-	body1, err := io.ReadAll(res.Body)
+	body1, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	// parse response
-	resp := &Img2VectorResp{}
-	err = json.Unmarshal(body1, resp)
+	vectorResp := &Img2VectorResp{}
+	err = json.Unmarshal(body1, vectorResp)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Vector, nil
-}
-
-type Server struct {
-	entranceproto.UnimplementedManagerServer
+	return vectorResp.Vector, nil
 }
 
 func (s *Server) SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (*rankerproto.SearchResponse, error) {
 	token.UseCloudProxyCC()
 	return token.SearchPage(ctx, in)
-}
-
-func Register(server grpc.ServiceRegistrar) {
-	entranceproto.RegisterManagerServer(server, &Server{})
-}
-
-func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	return entranceproto.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts)
 }

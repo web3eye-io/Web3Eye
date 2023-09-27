@@ -108,8 +108,8 @@ func (tc *TransferCreate) SetTo(s string) *TransferCreate {
 }
 
 // SetAmount sets the "amount" field.
-func (tc *TransferCreate) SetAmount(u uint64) *TransferCreate {
-	tc.mutation.SetAmount(u)
+func (tc *TransferCreate) SetAmount(s string) *TransferCreate {
+	tc.mutation.SetAmount(s)
 	return tc
 }
 
@@ -461,7 +461,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldAmount,
 		})
@@ -698,7 +698,7 @@ func (u *TransferUpsert) UpdateTo() *TransferUpsert {
 }
 
 // SetAmount sets the "amount" field.
-func (u *TransferUpsert) SetAmount(v uint64) *TransferUpsert {
+func (u *TransferUpsert) SetAmount(v string) *TransferUpsert {
 	u.Set(transfer.FieldAmount, v)
 	return u
 }
@@ -706,12 +706,6 @@ func (u *TransferUpsert) SetAmount(v uint64) *TransferUpsert {
 // UpdateAmount sets the "amount" field to the value that was provided on create.
 func (u *TransferUpsert) UpdateAmount() *TransferUpsert {
 	u.SetExcluded(transfer.FieldAmount)
-	return u
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *TransferUpsert) AddAmount(v uint64) *TransferUpsert {
-	u.Add(transfer.FieldAmount, v)
 	return u
 }
 
@@ -1009,16 +1003,9 @@ func (u *TransferUpsertOne) UpdateTo() *TransferUpsertOne {
 }
 
 // SetAmount sets the "amount" field.
-func (u *TransferUpsertOne) SetAmount(v uint64) *TransferUpsertOne {
+func (u *TransferUpsertOne) SetAmount(v string) *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetAmount(v)
-	})
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *TransferUpsertOne) AddAmount(v uint64) *TransferUpsertOne {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddAmount(v)
 	})
 }
 
@@ -1501,16 +1488,9 @@ func (u *TransferUpsertBulk) UpdateTo() *TransferUpsertBulk {
 }
 
 // SetAmount sets the "amount" field.
-func (u *TransferUpsertBulk) SetAmount(v uint64) *TransferUpsertBulk {
+func (u *TransferUpsertBulk) SetAmount(v string) *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetAmount(v)
-	})
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *TransferUpsertBulk) AddAmount(v uint64) *TransferUpsertBulk {
-	return u.Update(func(s *TransferUpsert) {
-		s.AddAmount(v)
 	})
 }
 

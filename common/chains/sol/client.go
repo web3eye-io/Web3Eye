@@ -2,8 +2,9 @@ package sol
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
-	"math/rand"
+	"math/big"
 	"time"
 
 	"github.com/gagliardetto/solana-go/rpc"
@@ -14,7 +15,6 @@ const (
 	MinNodeNum       = 1
 	MaxRetries       = 3
 	retriesSleepTime = 200 * time.Millisecond
-	dialTimeout      = 3 * time.Second
 )
 
 type solClients struct {
@@ -22,7 +22,11 @@ type solClients struct {
 }
 
 func (solCli solClients) GetNode(ctx context.Context) (*rpc.Client, error) {
-	endpoint := solCli.endpoints[rand.Intn(len(solCli.endpoints))]
+	randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(solCli.endpoints))))
+	if err != nil {
+		return nil, err
+	}
+	endpoint := solCli.endpoints[randIndex.Int64()]
 
 	cli := rpc.New(endpoint)
 	return cli, nil

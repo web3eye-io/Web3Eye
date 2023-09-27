@@ -1,6 +1,5 @@
 package milvusdb
 
-// TODO: should use milvus-sdk-go to generate structure
 // TODO: support batch vectors
 
 import (

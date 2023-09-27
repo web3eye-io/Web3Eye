@@ -18,6 +18,7 @@ func Ent2Grpc(row *ent.Contract) *npool.Contract {
 		Address:     row.Address,
 		Name:        row.Name,
 		Symbol:      row.Symbol,
+		Decimals:    row.Decimals,
 		Creator:     row.Creator,
 		BlockNum:    row.BlockNum,
 		TxHash:      row.TxHash,

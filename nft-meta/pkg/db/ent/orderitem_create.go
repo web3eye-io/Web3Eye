@@ -65,6 +65,18 @@ func (oic *OrderItemCreate) SetNillableDeletedAt(u *uint32) *OrderItemCreate {
 	return oic
 }
 
+// SetOrderID sets the "order_id" field.
+func (oic *OrderItemCreate) SetOrderID(s string) *OrderItemCreate {
+	oic.mutation.SetOrderID(s)
+	return oic
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (oic *OrderItemCreate) SetOrderItemType(s string) *OrderItemCreate {
+	oic.mutation.SetOrderItemType(s)
+	return oic
+}
+
 // SetContract sets the "contract" field.
 func (oic *OrderItemCreate) SetContract(s string) *OrderItemCreate {
 	oic.mutation.SetContract(s)
@@ -84,14 +96,8 @@ func (oic *OrderItemCreate) SetTokenID(s string) *OrderItemCreate {
 }
 
 // SetAmount sets the "amount" field.
-func (oic *OrderItemCreate) SetAmount(u uint64) *OrderItemCreate {
-	oic.mutation.SetAmount(u)
-	return oic
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (oic *OrderItemCreate) SetPortionNum(u uint32) *OrderItemCreate {
-	oic.mutation.SetPortionNum(u)
+func (oic *OrderItemCreate) SetAmount(s string) *OrderItemCreate {
+	oic.mutation.SetAmount(s)
 	return oic
 }
 
@@ -244,6 +250,12 @@ func (oic *OrderItemCreate) check() error {
 	if _, ok := oic.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OrderItem.deleted_at"`)}
 	}
+	if _, ok := oic.mutation.OrderID(); !ok {
+		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderItem.order_id"`)}
+	}
+	if _, ok := oic.mutation.OrderItemType(); !ok {
+		return &ValidationError{Name: "order_item_type", err: errors.New(`ent: missing required field "OrderItem.order_item_type"`)}
+	}
 	if _, ok := oic.mutation.Contract(); !ok {
 		return &ValidationError{Name: "contract", err: errors.New(`ent: missing required field "OrderItem.contract"`)}
 	}
@@ -255,9 +267,6 @@ func (oic *OrderItemCreate) check() error {
 	}
 	if _, ok := oic.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "OrderItem.amount"`)}
-	}
-	if _, ok := oic.mutation.PortionNum(); !ok {
-		return &ValidationError{Name: "portion_num", err: errors.New(`ent: missing required field "OrderItem.portion_num"`)}
 	}
 	return nil
 }
@@ -320,6 +329,22 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 		})
 		_node.DeletedAt = value
 	}
+	if value, ok := oic.mutation.OrderID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderID,
+		})
+		_node.OrderID = value
+	}
+	if value, ok := oic.mutation.OrderItemType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderItemType,
+		})
+		_node.OrderItemType = value
+	}
 	if value, ok := oic.mutation.Contract(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -346,19 +371,11 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := oic.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: orderitem.FieldAmount,
 		})
 		_node.Amount = value
-	}
-	if value, ok := oic.mutation.PortionNum(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderitem.FieldPortionNum,
-		})
-		_node.PortionNum = value
 	}
 	if value, ok := oic.mutation.Remark(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -474,6 +491,30 @@ func (u *OrderItemUpsert) AddDeletedAt(v uint32) *OrderItemUpsert {
 	return u
 }
 
+// SetOrderID sets the "order_id" field.
+func (u *OrderItemUpsert) SetOrderID(v string) *OrderItemUpsert {
+	u.Set(orderitem.FieldOrderID, v)
+	return u
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderItemUpsert) UpdateOrderID() *OrderItemUpsert {
+	u.SetExcluded(orderitem.FieldOrderID)
+	return u
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (u *OrderItemUpsert) SetOrderItemType(v string) *OrderItemUpsert {
+	u.Set(orderitem.FieldOrderItemType, v)
+	return u
+}
+
+// UpdateOrderItemType sets the "order_item_type" field to the value that was provided on create.
+func (u *OrderItemUpsert) UpdateOrderItemType() *OrderItemUpsert {
+	u.SetExcluded(orderitem.FieldOrderItemType)
+	return u
+}
+
 // SetContract sets the "contract" field.
 func (u *OrderItemUpsert) SetContract(v string) *OrderItemUpsert {
 	u.Set(orderitem.FieldContract, v)
@@ -511,7 +552,7 @@ func (u *OrderItemUpsert) UpdateTokenID() *OrderItemUpsert {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsert) SetAmount(v uint64) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetAmount(v string) *OrderItemUpsert {
 	u.Set(orderitem.FieldAmount, v)
 	return u
 }
@@ -519,30 +560,6 @@ func (u *OrderItemUpsert) SetAmount(v uint64) *OrderItemUpsert {
 // UpdateAmount sets the "amount" field to the value that was provided on create.
 func (u *OrderItemUpsert) UpdateAmount() *OrderItemUpsert {
 	u.SetExcluded(orderitem.FieldAmount)
-	return u
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsert) AddAmount(v uint64) *OrderItemUpsert {
-	u.Add(orderitem.FieldAmount, v)
-	return u
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (u *OrderItemUpsert) SetPortionNum(v uint32) *OrderItemUpsert {
-	u.Set(orderitem.FieldPortionNum, v)
-	return u
-}
-
-// UpdatePortionNum sets the "portion_num" field to the value that was provided on create.
-func (u *OrderItemUpsert) UpdatePortionNum() *OrderItemUpsert {
-	u.SetExcluded(orderitem.FieldPortionNum)
-	return u
-}
-
-// AddPortionNum adds v to the "portion_num" field.
-func (u *OrderItemUpsert) AddPortionNum(v uint32) *OrderItemUpsert {
-	u.Add(orderitem.FieldPortionNum, v)
 	return u
 }
 
@@ -675,6 +692,34 @@ func (u *OrderItemUpsertOne) UpdateDeletedAt() *OrderItemUpsertOne {
 	})
 }
 
+// SetOrderID sets the "order_id" field.
+func (u *OrderItemUpsertOne) SetOrderID(v string) *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetOrderID(v)
+	})
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderItemUpsertOne) UpdateOrderID() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateOrderID()
+	})
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (u *OrderItemUpsertOne) SetOrderItemType(v string) *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetOrderItemType(v)
+	})
+}
+
+// UpdateOrderItemType sets the "order_item_type" field to the value that was provided on create.
+func (u *OrderItemUpsertOne) UpdateOrderItemType() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateOrderItemType()
+	})
+}
+
 // SetContract sets the "contract" field.
 func (u *OrderItemUpsertOne) SetContract(v string) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
@@ -718,16 +763,9 @@ func (u *OrderItemUpsertOne) UpdateTokenID() *OrderItemUpsertOne {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsertOne) SetAmount(v uint64) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetAmount(v string) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetAmount(v)
-	})
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsertOne) AddAmount(v uint64) *OrderItemUpsertOne {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.AddAmount(v)
 	})
 }
 
@@ -735,27 +773,6 @@ func (u *OrderItemUpsertOne) AddAmount(v uint64) *OrderItemUpsertOne {
 func (u *OrderItemUpsertOne) UpdateAmount() *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateAmount()
-	})
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (u *OrderItemUpsertOne) SetPortionNum(v uint32) *OrderItemUpsertOne {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.SetPortionNum(v)
-	})
-}
-
-// AddPortionNum adds v to the "portion_num" field.
-func (u *OrderItemUpsertOne) AddPortionNum(v uint32) *OrderItemUpsertOne {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.AddPortionNum(v)
-	})
-}
-
-// UpdatePortionNum sets the "portion_num" field to the value that was provided on create.
-func (u *OrderItemUpsertOne) UpdatePortionNum() *OrderItemUpsertOne {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.UpdatePortionNum()
 	})
 }
 
@@ -1055,6 +1072,34 @@ func (u *OrderItemUpsertBulk) UpdateDeletedAt() *OrderItemUpsertBulk {
 	})
 }
 
+// SetOrderID sets the "order_id" field.
+func (u *OrderItemUpsertBulk) SetOrderID(v string) *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetOrderID(v)
+	})
+}
+
+// UpdateOrderID sets the "order_id" field to the value that was provided on create.
+func (u *OrderItemUpsertBulk) UpdateOrderID() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateOrderID()
+	})
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (u *OrderItemUpsertBulk) SetOrderItemType(v string) *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetOrderItemType(v)
+	})
+}
+
+// UpdateOrderItemType sets the "order_item_type" field to the value that was provided on create.
+func (u *OrderItemUpsertBulk) UpdateOrderItemType() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateOrderItemType()
+	})
+}
+
 // SetContract sets the "contract" field.
 func (u *OrderItemUpsertBulk) SetContract(v string) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
@@ -1098,16 +1143,9 @@ func (u *OrderItemUpsertBulk) UpdateTokenID() *OrderItemUpsertBulk {
 }
 
 // SetAmount sets the "amount" field.
-func (u *OrderItemUpsertBulk) SetAmount(v uint64) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetAmount(v string) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetAmount(v)
-	})
-}
-
-// AddAmount adds v to the "amount" field.
-func (u *OrderItemUpsertBulk) AddAmount(v uint64) *OrderItemUpsertBulk {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.AddAmount(v)
 	})
 }
 
@@ -1115,27 +1153,6 @@ func (u *OrderItemUpsertBulk) AddAmount(v uint64) *OrderItemUpsertBulk {
 func (u *OrderItemUpsertBulk) UpdateAmount() *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateAmount()
-	})
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (u *OrderItemUpsertBulk) SetPortionNum(v uint32) *OrderItemUpsertBulk {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.SetPortionNum(v)
-	})
-}
-
-// AddPortionNum adds v to the "portion_num" field.
-func (u *OrderItemUpsertBulk) AddPortionNum(v uint32) *OrderItemUpsertBulk {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.AddPortionNum(v)
-	})
-}
-
-// UpdatePortionNum sets the "portion_num" field to the value that was provided on create.
-func (u *OrderItemUpsertBulk) UpdatePortionNum() *OrderItemUpsertBulk {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.UpdatePortionNum()
 	})
 }
 

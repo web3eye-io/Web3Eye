@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package entrance.v1.endpoint;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/endpoint";
+import "google/api/annotations.proto";
+import "web3eye/ranker/v1/endpoint/endpoint.proto";
+
+
+service Manager {
+  rpc CreateEndpoint(ranker.v1.endpoint.CreateEndpointRequest) returns (ranker.v1.endpoint.CreateEndpointResponse) {
+    option (google.api.http) = {
+      post:"/v1/create/endpoint"
+      body:"*"
+    };
+  }
+  rpc UpdateEndpoint(ranker.v1.endpoint.UpdateEndpointRequest) returns (ranker.v1.endpoint.UpdateEndpointResponse) {
+    option (google.api.http) = {
+      post:"/v1/update/endpoint"
+      body:"*"
+    };
+  }
+  rpc GetEndpoint(ranker.v1.endpoint.GetEndpointRequest) returns (ranker.v1.endpoint.GetEndpointResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/endpoint"
+      body:"*"
+    };
+  }
+  rpc GetEndpoints(ranker.v1.endpoint.GetEndpointsRequest) returns (ranker.v1.endpoint.GetEndpointsResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/endpoints"
+      body:"*"
+    };
+  }
+  rpc DeleteEndpoint(ranker.v1.endpoint.DeleteEndpointRequest) returns (ranker.v1.endpoint.DeleteEndpointResponse) {
+    option (google.api.http) = {
+      post:"/v1/delete/endpoint"
+      body:"*"
+    };
+  }
+}

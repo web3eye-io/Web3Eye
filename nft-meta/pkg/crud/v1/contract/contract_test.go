@@ -58,6 +58,7 @@ func prepareData() {
 		Address:   &entContract.Address,
 		Name:      &entContract.Name,
 		Symbol:    &entContract.Symbol,
+		Decimals:  &entContract.Decimals,
 		Creator:   &entContract.Creator,
 		Remark:    &entContract.Remark,
 	}
@@ -71,6 +72,7 @@ func rowToObject(row *ent.Contract) *ent.Contract {
 		Address:   row.Address,
 		Name:      row.Name,
 		Symbol:    row.Symbol,
+		Decimals:  row.Decimals,
 		Creator:   row.Creator,
 		Remark:    row.Remark,
 	}

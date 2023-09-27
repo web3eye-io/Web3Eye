@@ -7,10 +7,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
-      default-strip-entrance-prefix@kubernetescrd,
-      default-http-redirect-https@kubernetescrd,
-      default-http-redirect-https-testing@kubernetescrd,
-      default-common-headers@kubernetescrd
+      kube-system-strip-entrance-prefix@kubernetescrd,
+      kube-system-http-redirect-https@kubernetescrd,
+      kube-system-http-redirect-https-testing@kubernetescrd,
+      kube-system-common-headers@kubernetescrd
 
 spec:
   tls:
@@ -22,7 +22,35 @@ spec:
     - host: testnet.web3eye.io
       http:
         paths:
-          - path: /api/entrance
+          - path: /api/entrance/v1/get/contract/and/tokens
+            pathType: Prefix
+            backend:
+              service:
+                name: entrance
+                port:
+                  number: 30150
+          - path: /api/entrance/v1/get/token
+            pathType: Prefix
+            backend:
+              service:
+                name: entrance
+                port:
+                  number: 30150
+          - path: /api/entrance/v1/search/page
+            pathType: Prefix
+            backend:
+              service:
+                name: entrance
+                port:
+                  number: 30150
+          - path: /api/entrance/search/file
+            pathType: Prefix
+            backend:
+              service:
+                name: entrance
+                port:
+                  number: 30150
+          - path: /api/entrance/v1/get/transfers
             pathType: Prefix
             backend:
               service:

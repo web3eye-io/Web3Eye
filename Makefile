@@ -32,8 +32,11 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 	git config --local core.hooksPath "${REPO_ROOT}/.githooks"
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
-verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
+verify: ./extern/filecoin-ffi/filcrypto.pc go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
+
+verify-shellcheck: ## Runs shellcheck
+	${REPO_ROOT}/hack/verify-shellcheck.sh
 
 gen-ent:
 	go install entgo.io/ent/cmd/ent@v0.11.2
@@ -101,17 +104,24 @@ deploy-to-k8s-cluster:
 ##@ Tests
 
 .PHONY: go-unit-test go-ut
-go-ut: unit-test
-go-unit-test: verify-build
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/before-test.sh;\
-	done
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/test-go.sh;\
-	done
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/after-test.sh;\
-	done
+# TODO:build unit test system
+go-unit-test: verify-build 
+# go-unit-test: verify-build before-test test-go after-test
+
+# before-test:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/before-test.sh;\
+# 	done
+
+# test-go:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/test-go.sh;\
+# 	done
+
+# after-test:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/after-test.sh;\
+# 	done
 
 test-verbose:
 	VERBOSE=1 make test

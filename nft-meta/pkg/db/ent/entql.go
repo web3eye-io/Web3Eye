@@ -6,8 +6,8 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderpair"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -64,6 +64,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldAddress:     {Type: field.TypeString, Column: contract.FieldAddress},
 			contract.FieldName:        {Type: field.TypeString, Column: contract.FieldName},
 			contract.FieldSymbol:      {Type: field.TypeString, Column: contract.FieldSymbol},
+			contract.FieldDecimals:    {Type: field.TypeUint32, Column: contract.FieldDecimals},
 			contract.FieldCreator:     {Type: field.TypeString, Column: contract.FieldCreator},
 			contract.FieldBlockNum:    {Type: field.TypeUint64, Column: contract.FieldBlockNum},
 			contract.FieldTxHash:      {Type: field.TypeString, Column: contract.FieldTxHash},
@@ -98,6 +99,30 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   order.Table,
+			Columns: order.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: order.FieldID,
+			},
+		},
+		Type: "Order",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			order.FieldCreatedAt:   {Type: field.TypeUint32, Column: order.FieldCreatedAt},
+			order.FieldUpdatedAt:   {Type: field.TypeUint32, Column: order.FieldUpdatedAt},
+			order.FieldDeletedAt:   {Type: field.TypeUint32, Column: order.FieldDeletedAt},
+			order.FieldChainType:   {Type: field.TypeString, Column: order.FieldChainType},
+			order.FieldChainID:     {Type: field.TypeString, Column: order.FieldChainID},
+			order.FieldTxHash:      {Type: field.TypeString, Column: order.FieldTxHash},
+			order.FieldBlockNumber: {Type: field.TypeUint64, Column: order.FieldBlockNumber},
+			order.FieldTxIndex:     {Type: field.TypeUint32, Column: order.FieldTxIndex},
+			order.FieldLogIndex:    {Type: field.TypeUint32, Column: order.FieldLogIndex},
+			order.FieldRecipient:   {Type: field.TypeString, Column: order.FieldRecipient},
+			order.FieldRemark:      {Type: field.TypeString, Column: order.FieldRemark},
+		},
+	}
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orderitem.Table,
 			Columns: orderitem.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -107,36 +132,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "OrderItem",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			orderitem.FieldCreatedAt:  {Type: field.TypeUint32, Column: orderitem.FieldCreatedAt},
-			orderitem.FieldUpdatedAt:  {Type: field.TypeUint32, Column: orderitem.FieldUpdatedAt},
-			orderitem.FieldDeletedAt:  {Type: field.TypeUint32, Column: orderitem.FieldDeletedAt},
-			orderitem.FieldContract:   {Type: field.TypeString, Column: orderitem.FieldContract},
-			orderitem.FieldTokenType:  {Type: field.TypeString, Column: orderitem.FieldTokenType},
-			orderitem.FieldTokenID:    {Type: field.TypeString, Column: orderitem.FieldTokenID},
-			orderitem.FieldAmount:     {Type: field.TypeUint64, Column: orderitem.FieldAmount},
-			orderitem.FieldPortionNum: {Type: field.TypeUint32, Column: orderitem.FieldPortionNum},
-			orderitem.FieldRemark:     {Type: field.TypeString, Column: orderitem.FieldRemark},
-		},
-	}
-	graph.Nodes[4] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   orderpair.Table,
-			Columns: orderpair.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: orderpair.FieldID,
-			},
-		},
-		Type: "OrderPair",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			orderpair.FieldCreatedAt: {Type: field.TypeUint32, Column: orderpair.FieldCreatedAt},
-			orderpair.FieldUpdatedAt: {Type: field.TypeUint32, Column: orderpair.FieldUpdatedAt},
-			orderpair.FieldDeletedAt: {Type: field.TypeUint32, Column: orderpair.FieldDeletedAt},
-			orderpair.FieldTxHash:    {Type: field.TypeString, Column: orderpair.FieldTxHash},
-			orderpair.FieldRecipient: {Type: field.TypeString, Column: orderpair.FieldRecipient},
-			orderpair.FieldTargetID:  {Type: field.TypeString, Column: orderpair.FieldTargetID},
-			orderpair.FieldOfferID:   {Type: field.TypeString, Column: orderpair.FieldOfferID},
-			orderpair.FieldRemark:    {Type: field.TypeString, Column: orderpair.FieldRemark},
+			orderitem.FieldCreatedAt:     {Type: field.TypeUint32, Column: orderitem.FieldCreatedAt},
+			orderitem.FieldUpdatedAt:     {Type: field.TypeUint32, Column: orderitem.FieldUpdatedAt},
+			orderitem.FieldDeletedAt:     {Type: field.TypeUint32, Column: orderitem.FieldDeletedAt},
+			orderitem.FieldOrderID:       {Type: field.TypeString, Column: orderitem.FieldOrderID},
+			orderitem.FieldOrderItemType: {Type: field.TypeString, Column: orderitem.FieldOrderItemType},
+			orderitem.FieldContract:      {Type: field.TypeString, Column: orderitem.FieldContract},
+			orderitem.FieldTokenType:     {Type: field.TypeString, Column: orderitem.FieldTokenType},
+			orderitem.FieldTokenID:       {Type: field.TypeString, Column: orderitem.FieldTokenID},
+			orderitem.FieldAmount:        {Type: field.TypeString, Column: orderitem.FieldAmount},
+			orderitem.FieldRemark:        {Type: field.TypeString, Column: orderitem.FieldRemark},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -239,7 +244,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldTokenID:     {Type: field.TypeString, Column: transfer.FieldTokenID},
 			transfer.FieldFrom:        {Type: field.TypeString, Column: transfer.FieldFrom},
 			transfer.FieldTo:          {Type: field.TypeString, Column: transfer.FieldTo},
-			transfer.FieldAmount:      {Type: field.TypeUint64, Column: transfer.FieldAmount},
+			transfer.FieldAmount:      {Type: field.TypeString, Column: transfer.FieldAmount},
 			transfer.FieldBlockNumber: {Type: field.TypeUint64, Column: transfer.FieldBlockNumber},
 			transfer.FieldTxHash:      {Type: field.TypeString, Column: transfer.FieldTxHash},
 			transfer.FieldBlockHash:   {Type: field.TypeString, Column: transfer.FieldBlockHash},
@@ -426,6 +431,11 @@ func (f *ContractFilter) WhereSymbol(p entql.StringP) {
 	f.Where(p.Field(contract.FieldSymbol))
 }
 
+// WhereDecimals applies the entql uint32 predicate on the decimals field.
+func (f *ContractFilter) WhereDecimals(p entql.Uint32P) {
+	f.Where(p.Field(contract.FieldDecimals))
+}
+
 // WhereCreator applies the entql string predicate on the creator field.
 func (f *ContractFilter) WhereCreator(p entql.StringP) {
 	f.Where(p.Field(contract.FieldCreator))
@@ -552,6 +562,101 @@ func (f *EndpointFilter) WhereRemark(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (oq *OrderQuery) addPredicate(pred func(s *sql.Selector)) {
+	oq.predicates = append(oq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrderQuery builder.
+func (oq *OrderQuery) Filter() *OrderFilter {
+	return &OrderFilter{config: oq.config, predicateAdder: oq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrderMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrderMutation builder.
+func (m *OrderMutation) Filter() *OrderFilter {
+	return &OrderFilter{config: m.config, predicateAdder: m}
+}
+
+// OrderFilter provides a generic filtering capability at runtime for OrderQuery.
+type OrderFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrderFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *OrderFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(order.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *OrderFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *OrderFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *OrderFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldDeletedAt))
+}
+
+// WhereChainType applies the entql string predicate on the chain_type field.
+func (f *OrderFilter) WhereChainType(p entql.StringP) {
+	f.Where(p.Field(order.FieldChainType))
+}
+
+// WhereChainID applies the entql string predicate on the chain_id field.
+func (f *OrderFilter) WhereChainID(p entql.StringP) {
+	f.Where(p.Field(order.FieldChainID))
+}
+
+// WhereTxHash applies the entql string predicate on the tx_hash field.
+func (f *OrderFilter) WhereTxHash(p entql.StringP) {
+	f.Where(p.Field(order.FieldTxHash))
+}
+
+// WhereBlockNumber applies the entql uint64 predicate on the block_number field.
+func (f *OrderFilter) WhereBlockNumber(p entql.Uint64P) {
+	f.Where(p.Field(order.FieldBlockNumber))
+}
+
+// WhereTxIndex applies the entql uint32 predicate on the tx_index field.
+func (f *OrderFilter) WhereTxIndex(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldTxIndex))
+}
+
+// WhereLogIndex applies the entql uint32 predicate on the log_index field.
+func (f *OrderFilter) WhereLogIndex(p entql.Uint32P) {
+	f.Where(p.Field(order.FieldLogIndex))
+}
+
+// WhereRecipient applies the entql string predicate on the recipient field.
+func (f *OrderFilter) WhereRecipient(p entql.StringP) {
+	f.Where(p.Field(order.FieldRecipient))
+}
+
+// WhereRemark applies the entql string predicate on the remark field.
+func (f *OrderFilter) WhereRemark(p entql.StringP) {
+	f.Where(p.Field(order.FieldRemark))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (oiq *OrderItemQuery) addPredicate(pred func(s *sql.Selector)) {
 	oiq.predicates = append(oiq.predicates, pred)
 }
@@ -580,7 +685,7 @@ type OrderItemFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrderItemFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -606,6 +711,16 @@ func (f *OrderItemFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(orderitem.FieldDeletedAt))
 }
 
+// WhereOrderID applies the entql string predicate on the order_id field.
+func (f *OrderItemFilter) WhereOrderID(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldOrderID))
+}
+
+// WhereOrderItemType applies the entql string predicate on the order_item_type field.
+func (f *OrderItemFilter) WhereOrderItemType(p entql.StringP) {
+	f.Where(p.Field(orderitem.FieldOrderItemType))
+}
+
 // WhereContract applies the entql string predicate on the contract field.
 func (f *OrderItemFilter) WhereContract(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldContract))
@@ -621,99 +736,14 @@ func (f *OrderItemFilter) WhereTokenID(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldTokenID))
 }
 
-// WhereAmount applies the entql uint64 predicate on the amount field.
-func (f *OrderItemFilter) WhereAmount(p entql.Uint64P) {
+// WhereAmount applies the entql string predicate on the amount field.
+func (f *OrderItemFilter) WhereAmount(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldAmount))
-}
-
-// WherePortionNum applies the entql uint32 predicate on the portion_num field.
-func (f *OrderItemFilter) WherePortionNum(p entql.Uint32P) {
-	f.Where(p.Field(orderitem.FieldPortionNum))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.
 func (f *OrderItemFilter) WhereRemark(p entql.StringP) {
 	f.Where(p.Field(orderitem.FieldRemark))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (opq *OrderPairQuery) addPredicate(pred func(s *sql.Selector)) {
-	opq.predicates = append(opq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the OrderPairQuery builder.
-func (opq *OrderPairQuery) Filter() *OrderPairFilter {
-	return &OrderPairFilter{config: opq.config, predicateAdder: opq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *OrderPairMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the OrderPairMutation builder.
-func (m *OrderPairMutation) Filter() *OrderPairFilter {
-	return &OrderPairFilter{config: m.config, predicateAdder: m}
-}
-
-// OrderPairFilter provides a generic filtering capability at runtime for OrderPairQuery.
-type OrderPairFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *OrderPairFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *OrderPairFilter) WhereID(p entql.ValueP) {
-	f.Where(p.Field(orderpair.FieldID))
-}
-
-// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
-func (f *OrderPairFilter) WhereCreatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpair.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
-func (f *OrderPairFilter) WhereUpdatedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpair.FieldUpdatedAt))
-}
-
-// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
-func (f *OrderPairFilter) WhereDeletedAt(p entql.Uint32P) {
-	f.Where(p.Field(orderpair.FieldDeletedAt))
-}
-
-// WhereTxHash applies the entql string predicate on the tx_hash field.
-func (f *OrderPairFilter) WhereTxHash(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldTxHash))
-}
-
-// WhereRecipient applies the entql string predicate on the recipient field.
-func (f *OrderPairFilter) WhereRecipient(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldRecipient))
-}
-
-// WhereTargetID applies the entql string predicate on the target_id field.
-func (f *OrderPairFilter) WhereTargetID(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldTargetID))
-}
-
-// WhereOfferID applies the entql string predicate on the offer_id field.
-func (f *OrderPairFilter) WhereOfferID(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldOfferID))
-}
-
-// WhereRemark applies the entql string predicate on the remark field.
-func (f *OrderPairFilter) WhereRemark(p entql.StringP) {
-	f.Where(p.Field(orderpair.FieldRemark))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -1126,8 +1156,8 @@ func (f *TransferFilter) WhereTo(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldTo))
 }
 
-// WhereAmount applies the entql uint64 predicate on the amount field.
-func (f *TransferFilter) WhereAmount(p entql.Uint64P) {
+// WhereAmount applies the entql string predicate on the amount field.
+func (f *TransferFilter) WhereAmount(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldAmount))
 }
 

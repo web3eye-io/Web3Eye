@@ -20,7 +20,7 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	for _, v := range e.Endpoints {
 		_, inspectErr := sol.GetEndpointChainID(ctx, v)
 		if inspectErr != nil {
-			logger.Sugar().Warnf("check the endpoint %v is unavaliable,err: %v,has been removed", v, inspectErr)
+			logger.Sugar().Warnf("check the endpoint %v is unavailable,err: %v,has been removed", v, inspectErr)
 			conds := &endpoint.Conds{
 				ChainType: &web3eye.StringVal{
 					Op:    "eq",
@@ -68,12 +68,12 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	}
 }
 
-// check if endpoints should be stoped by the err
-func (e *SolIndexer) checkErr(ctx context.Context, err error) (retry bool) {
+// check if endpoints should be stoped by the err,and return weather to retry again
+func (e *SolIndexer) checkErr(ctx context.Context, err error) {
 	retryErrs := []string{"context deadline exceeded"}
 	for _, v := range retryErrs {
 		if strings.Contains(err.Error(), v) {
-			return true
+			return
 		}
 	}
 
@@ -83,11 +83,8 @@ func (e *SolIndexer) checkErr(ctx context.Context, err error) (retry bool) {
 			e.CheckEndpointAndDeal(ctx)
 			if len(e.Endpoints) == 0 {
 				e.StopIndex()
-				return false
 			}
-			return true
+			return
 		}
 	}
-
-	return false
 }

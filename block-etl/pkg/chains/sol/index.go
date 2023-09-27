@@ -161,7 +161,11 @@ func (e *SolIndexer) indexTask(ctx context.Context, pulsarCli pulsar.Client, tas
 				continue
 			}
 			outBlockNum <- blockNum
-			consumer.Ack(msg)
+			err = consumer.Ack(msg)
+			if err != nil {
+				logger.Sugar().Errorf("ask SyncTask msg failed ,err: %v", err)
+				continue
+			}
 			retries = 0
 		case <-time.NewTicker(CheckTopicInterval).C:
 			if retries > maxRetries {
@@ -237,12 +241,11 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum chan uint64, 
 
 			infos := make([]*transferProto.TransferReq, len(transfers))
 			for i := range transfers {
-				tokenType := string(transfers[i].TokenType)
 				infos[i] = &transferProto.TransferReq{
 					ChainType:   &e.ChainType,
 					ChainID:     &e.ChainID,
 					Contract:    &transfers[i].Contract,
-					TokenType:   &tokenType,
+					TokenType:   &transfers[i].TokenType,
 					TokenID:     &transfers[i].TokenID,
 					From:        &transfers[i].From,
 					To:          &transfers[i].To,
@@ -271,49 +274,12 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 		select {
 		case transfers := <-inTransfers:
 			for _, transfer := range transfers {
-				identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
-				locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
-				if err != nil {
-					logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
-					continue
-				}
-
-				if !locked {
-					continue
-				}
-
-				remark := ""
-				conds := &tokenProto.Conds{
-					ChainType: &ctMessage.StringVal{
-						Value: e.ChainType.String(),
-						Op:    "eq",
-					},
-					ChainID: &ctMessage.StringVal{
-						Value: e.ChainID,
-						Op:    "eq",
-					},
-					Contract: &ctMessage.StringVal{
-						Value: transfer.Contract,
-						Op:    "eq",
-					},
-					TokenID: &ctMessage.StringVal{
-						Value: transfer.TokenID,
-						Op:    "eq",
-					},
-				}
-
-				if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
-					continue
-				} else if err != nil {
-					logger.Sugar().Errorf("check if the token exist failed, err: %v", err)
-					continue
-				}
-
 				cli, err := sol.Client(e.Endpoints)
 				if err != nil {
 					logger.Sugar().Errorf("cannot get sol client,err: %v", err)
 					continue
 				}
+				remark := ""
 
 				metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 				if err != nil {
@@ -328,7 +294,6 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers chan []*chains.
 					if err != nil {
 						tokenURIInfo = &token.TokenURIInfo{}
 						remark = fmt.Sprintf("%v,%v", remark, err)
-
 					}
 				}
 
@@ -368,66 +333,16 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 	for {
 		select {
 		case transfer := <-inTransfer:
-			identifier := contractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
-			locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+			exist, err := e.checkContract(ctx, transfer)
 			if err != nil {
-				logger.Sugar().Errorf("lock the token indentifier failed, err: %v", err)
+				logger.Sugar().Error(err)
+				continue
+			}
+			if exist {
 				continue
 			}
 
-			if !locked {
-				continue
-			}
-
-			conds := &contractProto.Conds{
-				ChainType: &ctMessage.StringVal{
-					Value: e.ChainType.String(),
-					Op:    "eq",
-				},
-				ChainID: &ctMessage.StringVal{
-					Value: e.ChainID,
-					Op:    "eq",
-				},
-				Address: &ctMessage.StringVal{
-					Value: transfer.Contract,
-					Op:    "eq",
-				},
-			}
-
-			if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{
-				Conds: conds,
-			}); err == nil && resp != nil && resp.GetExist() {
-				continue
-			} else if err != nil {
-				logger.Sugar().Errorf("check if the contract exist failed, err: %v", err)
-				continue
-			}
-
-			remark := ""
-			cli, err := sol.Client(e.Endpoints)
-			if err != nil {
-				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
-				continue
-			}
-
-			contractMeta, err := cli.GetMetadata(ctx, transfer.Contract)
-			if err != nil {
-				e.checkErr(ctx, err)
-				logger.Sugar().Warnf("transfer cannot get ,err: %v", err)
-				contractMeta = &token_metadata.Metadata{}
-				remark = fmt.Sprintf("%v,%v", remark, err)
-			}
-
-			creator := &eth.ContractCreator{}
-			// // stop get info for creator
-			// if findContractCreator {
-			// 	contractMeta.
-			// 	creator, err = cli.GetContractCreator(ctx, transfer.Contract)
-			// 	if err != nil {
-			// 		e.checkErr(ctx, err)
-			// 		remark = err.Error()
-			// 	}
-			// }
+			contractMeta, creator, remark := e.getContractInfo(ctx, transfer)
 
 			from := creator.From.String()
 			txHash := creator.TxHash.Hex()
@@ -455,6 +370,64 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 			return
 		}
 	}
+}
+
+func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTransfer) (exist bool, err error) {
+	identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+	locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+	if err != nil {
+		return false, fmt.Errorf("lock the token indentifier failed, err: %v", err)
+	}
+
+	if !locked {
+		return true, nil
+	}
+
+	conds := &tokenProto.Conds{
+		ChainType: &ctMessage.StringVal{
+			Value: e.ChainType.String(),
+			Op:    "eq",
+		},
+		ChainID: &ctMessage.StringVal{
+			Value: e.ChainID,
+			Op:    "eq",
+		},
+		Contract: &ctMessage.StringVal{
+			Value: transfer.Contract,
+			Op:    "eq",
+		},
+		TokenID: &ctMessage.StringVal{
+			Value: transfer.TokenID,
+			Op:    "eq",
+		},
+	}
+
+	if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
+		return true, nil
+	} else if err != nil {
+		return false, fmt.Errorf("check if the token exist failed, err: %v", err)
+	}
+	return false, nil
+}
+
+func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.TokenTransfer) (*token_metadata.Metadata, *eth.ContractCreator, string) {
+	remark := ""
+	contractMeta := &token_metadata.Metadata{}
+
+	// TODO: support find creator
+	creator := &eth.ContractCreator{}
+
+	cli, err := sol.Client(e.Endpoints)
+	if err != nil {
+		return contractMeta, creator, fmt.Sprintf("cannot get sol client,err: %v", err)
+	}
+
+	contractMeta, err = cli.GetMetadata(ctx, transfer.Contract)
+	if err != nil {
+		e.checkErr(ctx, err)
+		remark = err.Error()
+	}
+	return contractMeta, creator, remark
 }
 
 func (e *SolIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
@@ -488,8 +461,4 @@ func (e *SolIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 
 func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
 	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
-}
-
-func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
-	return fmt.Sprintf("%v+%v+%v", chain, chainID, contract)
 }

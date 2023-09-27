@@ -2,71 +2,48 @@ package transfer
 
 import (
 	"context"
+	"fmt"
+	"math/big"
 
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/transfer"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye"
-	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
+	"github.com/shopspring/decimal"
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	rankernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
+	"github.com/web3eye-io/Web3Eye/ranker/pkg/crud/v1/transfer"
 	"google.golang.org/grpc"
 )
 
 type Server struct {
 	rankernpool.UnimplementedManagerServer
-	transfer.Server
 }
 
-func (s *Server) GetTransfer(ctx context.Context, in *nftmetanpool.GetTransferRequest) (*nftmetanpool.GetTransferResponse, error) {
-	return s.Server.GetTransfer(ctx, in)
-}
-
-func (s *Server) GetTransferOnly(
-	ctx context.Context,
-	in *nftmetanpool.GetTransferOnlyRequest) (*nftmetanpool.GetTransferOnlyResponse, error) {
-	return s.Server.GetTransferOnly(ctx, in)
-}
-
-func (s *Server) GetTransfers(ctx context.Context, in *rankernpool.GetTransfersRequest) (*nftmetanpool.GetTransfersResponse, error) {
-	_conds := &nftmetanpool.Conds{
-		ChainType: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.ChainType.String(),
-		},
-		ChainID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetChainID(),
-		},
-		Contract: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetContract(),
-		},
-		TokenID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetTokenID(),
-		},
+func (s *Server) GetTransfers(ctx context.Context, in *rankernpool.GetTransfersRequest) (*rankernpool.GetTransfersResponse, error) {
+	infos, total, err := transfer.Rows(ctx, in)
+	if err != nil {
+		return nil, err
 	}
-	return s.Server.GetTransfers(ctx, &nftmetanpool.GetTransfersRequest{Conds: _conds, Offset: in.Offset, Limit: in.Limit})
+	for _, info := range infos {
+		for _, item := range info.OfferItems {
+			FillAmountStr(item)
+		}
+		for _, item := range info.TargetItems {
+			FillAmountStr(item)
+		}
+	}
+	return &rankernpool.GetTransfersResponse{Infos: infos, Total: uint32(total)}, nil
 }
 
-func (s *Server) CountTransfers(ctx context.Context, in *rankernpool.CountTransfersRequest) (*nftmetanpool.CountTransfersResponse, error) {
-	_conds := &nftmetanpool.Conds{
-		ChainType: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.ChainType.String(),
-		},
-		ChainID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetChainID(),
-		},
-		Contract: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetContract(),
-		},
-		TokenID: &web3eye.StringVal{
-			Op:    "eq",
-			Value: in.GetTokenID(),
-		},
+func FillAmountStr(item *rankernpool.OrderItem) {
+	if item.TokenType == v1.TokenType_ERC1155 ||
+		item.TokenType == v1.TokenType_ERC1155_WITH_CRITERIA ||
+		item.TokenType == v1.TokenType_ERC721 ||
+		item.TokenType == v1.TokenType_ERC721_WITH_CRITERIA {
+		item.AmountStr = fmt.Sprintf("%v #%v", item.Symbol, item.TokenID)
+	} else {
+		maxAmountStrFixed := int32(4)
+		amount := big.NewInt(0).SetUint64(item.Amount)
+		amountStr := decimal.NewFromBigInt(amount, -int32(item.Decimals)).Round(maxAmountStrFixed)
+		item.AmountStr = fmt.Sprintf("%v %v", amountStr, item.Symbol)
 	}
-	return s.Server.CountTransfers(ctx, &nftmetanpool.CountTransfersRequest{Conds: _conds})
 }
 
 func Register(server grpc.ServiceRegistrar) {

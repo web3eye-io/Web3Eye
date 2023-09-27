@@ -29,6 +29,7 @@ func (Contract) Fields() []ent.Field {
 		field.String("address"),
 		field.String("name"),
 		field.String("symbol"),
+		field.Uint32("decimals").Default(0),
 		field.String("creator").
 			Optional(),
 		field.Uint64("block_num").

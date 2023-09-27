@@ -1,0 +1,362 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/nftmeta/v1/order/order.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum",
+        "Solana"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "Native",
+        "ERC20",
+        "ERC721",
+        "ERC721_WITH_CRITERIA",
+        "ERC1155",
+        "ERC1155_WITH_CRITERIA",
+        "Metaplex",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
+    "orderConds": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "ChainID": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "TxHash": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "BlockNumber": {
+          "$ref": "#/definitions/web3eyeUint64Val"
+        },
+        "TxIndex": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "LogIndex": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "Recipient": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "Remark": {
+          "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeStringSliceVal"
+        }
+      }
+    },
+    "orderCountOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "orderCreateOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "orderCreateOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrder"
+          }
+        }
+      }
+    },
+    "orderDeleteOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "orderExistOrderCondsResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderExistOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Exist": {
+          "type": "boolean"
+        }
+      }
+    },
+    "orderGetOrderOnlyResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "orderGetOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "orderGetOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrder"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "orderOrder": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxIndex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Recipient": {
+          "type": "string"
+        },
+        "TargetItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrderItem"
+          }
+        },
+        "OfferItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrderItem"
+          }
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "orderOrderItem": {
+      "type": "object",
+      "properties": {
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "orderOrderReq": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxIndex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Recipient": {
+          "type": "string"
+        },
+        "TargetItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrderItem"
+          }
+        },
+        "OfferItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrderItem"
+          }
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "orderUpdateOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "web3eyeStringSliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "web3eyeStringVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "web3eyeUint64Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    }
+  }
+}

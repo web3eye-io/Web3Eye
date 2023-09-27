@@ -1,0 +1,376 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/entrance/v1/endpoint/endpoint.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/create/endpoint": {
+      "post": {
+        "operationId": "Manager_CreateEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointCreateEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointCreateEndpointRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/delete/endpoint": {
+      "post": {
+        "operationId": "Manager_DeleteEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointDeleteEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointDeleteEndpointRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/endpoint": {
+      "post": {
+        "operationId": "Manager_GetEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointGetEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointGetEndpointRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/endpoints": {
+      "post": {
+        "operationId": "Manager_GetEndpoints",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointGetEndpointsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointGetEndpointsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/update/endpoint": {
+      "post": {
+        "operationId": "Manager_UpdateEndpoint",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointUpdateEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1endpointUpdateEndpointRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum",
+        "Solana"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "cttypeEndpointState": {
+      "type": "string",
+      "enum": [
+        "EndpointDefault",
+        "EndpointAvaliable",
+        "EndpointUnstable",
+        "EndpointError"
+      ],
+      "default": "EndpointDefault"
+    },
+    "endpointEndpoint": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rankerv1endpointCreateEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointCreateEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointDeleteEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointDeleteEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointsRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "rankerv1endpointGetEndpointsResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpointEndpoint"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "rankerv1endpointUpdateEndpointRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "Address": {
+          "type": "string"
+        },
+        "State": {
+          "$ref": "#/definitions/cttypeEndpointState"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1endpointUpdateEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/endpointEndpoint"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

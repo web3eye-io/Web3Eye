@@ -12,7 +12,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer"
 )
 
@@ -55,33 +54,9 @@ func UseCloudProxyCC() {
 		)}
 }
 
-func GetTransfer(ctx context.Context, in *nftmetaproto.GetTransferRequest) (resp *nftmetaproto.GetTransferResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.GetTransfer(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func GetTransferOnly(ctx context.Context, in *nftmetaproto.GetTransferOnlyRequest) (resp *nftmetaproto.GetTransferOnlyResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.GetTransferOnly(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (resp *nftmetaproto.GetTransfersResponse, err error) {
+func GetTransfers(ctx context.Context, in *rankerproto.GetTransfersRequest) (resp *rankerproto.GetTransfersResponse, err error) {
 	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.GetTransfers(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
-func CountTransfers(ctx context.Context, in *rankerproto.CountTransfersRequest) (resp *nftmetaproto.CountTransfersResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountTransfers(ctx, in)
 		return resp, err
 	})
 	return resp, err

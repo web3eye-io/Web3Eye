@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
-PROJECT_FOLDER=$(cd $SHELL_FOLDER/../;pwd)
-
-cd $PROJECT_FOLDER
+REPO_ROOT=$(cd $SHELL_FOLDER/../;pwd)
 
 set -o errexit
 set -o nounset
 set -o pipefail
-
-REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 
 # Default timeout is 1800s
 TEST_TIMEOUT=${TIMEOUT:-1800}

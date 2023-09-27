@@ -33,7 +33,6 @@ func Create(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
 	return info, nil
 }
 
-//nolint:gocyclo
 func CreateSet(c *ent.EndpointCreate, in *npool.EndpointReq) *ent.EndpointCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -75,7 +74,6 @@ func CreateBulk(ctx context.Context, in []*npool.EndpointReq) ([]*ent.Endpoint, 
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
 	var err error
 	var info *ent.Endpoint
@@ -130,7 +128,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Endpoint, error) {
 	return info, nil
 }
 
-// nolint
+//nolint:gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.EndpointQuery, error) {
 	stm := cli.Endpoint.Query()
 	if conds == nil {

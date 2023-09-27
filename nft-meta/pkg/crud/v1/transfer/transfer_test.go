@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	val "github.com/web3eye-io/Web3Eye/proto/web3eye"
 
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
@@ -47,7 +48,7 @@ func prepareData() {
 		TokenID:     strconv.Itoa(RandInt()),
 		From:        "f",
 		To:          "t",
-		Amount:      1,
+		Amount:      utils.Uint64ToDecStr(1),
 		BlockNumber: 123,
 		TxHash:      uuid.NewString(),
 		BlockHash:   uuid.NewString(),
@@ -57,17 +58,19 @@ func prepareData() {
 
 	id = entTransfer.ID.String()
 	chainType := basetype.ChainType(basetype.ChainType_value[entTransfer.ChainType])
+	tokenType := basetype.TokenType(basetype.TokenType_value[entTransfer.TokenType])
+	amount, _ := utils.DecStr2uint64(entTransfer.Amount)
 	transferReq = npool.TransferReq{
 		ID: &id,
 
 		ChainType:   &chainType,
 		ChainID:     &entTransfer.ChainID,
 		Contract:    &entTransfer.Contract,
-		TokenType:   &entTransfer.TokenType,
+		TokenType:   &tokenType,
 		TokenID:     &entTransfer.TokenID,
 		From:        &entTransfer.From,
 		To:          &entTransfer.To,
-		Amount:      &entTransfer.Amount,
+		Amount:      &amount,
 		BlockNumber: &entTransfer.BlockNumber,
 		TxHash:      &entTransfer.TxHash,
 		BlockHash:   &entTransfer.BlockHash,
@@ -119,7 +122,7 @@ func createBulk(t *testing.T) {
 			TokenID:     strconv.Itoa(RandInt()),
 			From:        "f",
 			To:          "t",
-			Amount:      1,
+			Amount:      utils.Uint64ToDecStr(1),
 			BlockNumber: 123,
 			TxHash:      uuid.NewString(),
 			BlockHash:   uuid.NewString(),
@@ -135,7 +138,7 @@ func createBulk(t *testing.T) {
 			TokenID:     strconv.Itoa(RandInt()),
 			From:        "f",
 			To:          "t",
-			Amount:      1,
+			Amount:      utils.Uint64ToDecStr(1),
 			BlockNumber: 123,
 			TxHash:      uuid.NewString(),
 			BlockHash:   uuid.NewString(),
@@ -148,16 +151,18 @@ func createBulk(t *testing.T) {
 	for key := range entTransfer {
 		id := entTransfer[key].ID.String()
 		chainType := basetype.ChainType(basetype.ChainType_value[entTransfer[key].ChainType])
+		tokenType := basetype.TokenType(basetype.TokenType_value[entTransfer[key].TokenType])
+		amount, _ := utils.DecStr2uint64(entTransfer[key].Amount)
 		transfers = append(transfers, &npool.TransferReq{
 			ID:          &id,
 			ChainType:   &chainType,
 			ChainID:     &entTransfer[key].ChainID,
 			Contract:    &entTransfer[key].Contract,
-			TokenType:   &entTransfer[key].TokenType,
+			TokenType:   &tokenType,
 			TokenID:     &entTransfer[key].TokenID,
 			From:        &entTransfer[key].From,
 			To:          &entTransfer[key].To,
-			Amount:      &entTransfer[key].Amount,
+			Amount:      &amount,
 			BlockNumber: &entTransfer[key].BlockNumber,
 			TxHash:      &entTransfer[key].TxHash,
 			BlockHash:   &entTransfer[key].BlockHash,
