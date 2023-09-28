@@ -25,7 +25,7 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 **Block-ETL** 负责与区块链节点交互，获取NFT的transfer日志，分析对应的Token信息以及Cantract信息  
 **Image-Converter** 将图片转换为向量  
 
-![架构](doc/picture/archi.jpg)
+![架构](doc/picture/archi.png)
 
 在主要的三个微服务模块中，NFT-Meta负责提供搜索、信息存储查询、任务分发等功能，其他两个模块更多的是获取并处理任务；其中Image-Converter不只是处理从Kafka获取由NFT-Meta发送的任务，还提供HTTP服务支持直接请求获得向量，主要用来为以图搜图服务；而Block-ETL不对外提供接口，只接收任务和提交任务。
 

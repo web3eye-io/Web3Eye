@@ -9,13 +9,13 @@
 | IP           | hostname | 硬件配置                           | 角色                                     | 位置 | 系统       |
 |--------------|----------|--------------------------------|------------------------------------------|------|------------|
 | 172.16.29.49 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet)、Jenkins | IDC  | centos7    |
-| 172.16.29.51 | node1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master,jenkins                       | IDC  | ubuntu20.4 |
-| 172.16.29.52 | node2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
-| 172.16.29.53 | node3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
-| 172.16.29.54 | node4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server                    | IDC  | ubuntu20.4 |
-| 172.23.10.87 | node1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker                    | AWS  | ubuntu20.4 |
+| 172.16.29.51 | idcnode1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master                       | IDC  | ubuntu20.4 |
+| 172.16.29.52 | idcnode2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
+| 172.16.29.53 | idcnode3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
+| 172.16.29.54 | idcnode4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server                    | IDC  | ubuntu20.4 |
+| 172.23.10.87 | awsnode1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker                    | AWS  | ubuntu20.4 |
 
-系统：Ubuntu20.04 or Ubuntu22.04
+可依据高可用需求灵活扩展K8s集群规模
 
 ### 安装V2rayA（可选）
 
@@ -87,10 +87,10 @@ netplan apply
 # a host info like:
 # IP hostname
 hosts=(
-    172.16.29.51 node1
-    172.16.29.52 node2
-    172.16.29.53 node3
-    172.16.29.54 node4
+    172.16.29.51 idcnode1
+    172.16.29.52 idcnode2
+    172.16.29.53 idcnode3
+    172.16.29.54 idcnode4
 )
 
 # ssh-keygen in me
@@ -212,7 +212,7 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 ### 安装K8s
 
-在Jenkins使用Kubeasz安装K8s
+在Jenkins使用Kubeasz安装K8s，按照主机规划在IDC和AWS分别部署K8S环境。
 
 建议job-name： 0001-set-testing-k8s-cluster
 
