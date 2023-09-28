@@ -3,19 +3,32 @@ pipeline {
 
   stages {
     // -------install tasks----------
-    stage('install traefik') {
+    stage('install helm') {
       when {
         expression { INSTALL   ==  'true' }
-        anyOf {
-          expression { TARGET   ==  'all' }
-          expression { TARGET == 'traefik' }
-        }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'helm' }
       }
       steps {
-        sh 'bash basement/03-traefik/install.sh'
+        sh 'bash basement/02-helm/install.sh'
       }
     }
 
+    stage('set nfs-storage') {
+      when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'nfs-storage' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          export NFS_SERVER=$NFS_SERVER
+          export NFS_PATH=$NFS_PATH
+          bash basement/03-nfs-storage/install.sh
+        '''.stripIndent())
+      }
+    }
+    
     stage('install milvus') {
       when {
         expression { INSTALL   ==  'true' }
@@ -28,7 +41,7 @@ pipeline {
         sh 'bash basement/04-milvus/install.sh'
       }
     }
-
+    
     stage('install redis-cluster') {
       when{
         expression { INSTALL   ==  'true' }
@@ -69,43 +82,29 @@ pipeline {
       }
     }
 
-    stage('install helm') {
+    stage('install traefik') {
       when {
         expression { INSTALL   ==  'true' }
-        expression { UNINSTALL   ==  'false' }
-        expression { TARGET == 'helm' }
-      }
-      steps {
-        sh 'bash basement/00-helm/install.sh'
-      }
-    }
-
-    stage('set nfs-storage') {
-      when {
-        expression { INSTALL   ==  'true' }
-        expression { UNINSTALL   ==  'false' }
-        expression { TARGET == 'nfs-storage' }
-      }
-      steps {
-        sh (returnStdout: false, script: '''
-          export NFS_SERVER=$NFS_SERVER
-          export NFS_PATH=$NFS_PATH
-          bash basement/02-nfs-storage/install.sh
-        '''.stripIndent())
-      }
-    }
-
-    // -------uninstall tasks----------
-    stage('uninstall traefik') {
-      when {
-        expression { UNINSTALL   ==  'true' }
         anyOf {
           expression { TARGET   ==  'all' }
           expression { TARGET == 'traefik' }
         }
       }
       steps {
-        sh 'bash basement/03-traefik/uninstall.sh'
+        sh 'bash basement/10-traefik/install.sh'
+      }
+    }
+
+    // -------uninstall tasks----------
+    stage('uninstall nfs-storage') {
+      when {
+        expression { UNINSTALL   ==  'true' }
+        expression { TARGET == 'nfs-storage' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          bash basement/03-nfs-storage/uninstall.sh
+        '''.stripIndent())
       }
     }
 
@@ -162,18 +161,21 @@ pipeline {
       }
     }
 
-    stage('uninstall nfs-storage') {
+    stage('uninstall traefik') {
       when {
         expression { UNINSTALL   ==  'true' }
-        expression { TARGET == 'nfs-storage' }
+        anyOf {
+          expression { TARGET   ==  'all' }
+          expression { TARGET == 'traefik' }
+        }
       }
       steps {
-        sh (returnStdout: false, script: '''
-          bash basement/02-nfs-storage/uninstall.sh
-        '''.stripIndent())
+        sh 'bash basement/10-traefik/uninstall.sh'
       }
     }
   }
+
+
 
   post('Report') {
     always {
