@@ -2,6 +2,10 @@
 
 每个小节请阅读完成再操作，以免理解错误上下文意思，同时欢迎提Issue帮助改进。
 
+部署顺序如下：
+
+![deploy steps](doc/picture/deploy-step.png)
+
 ## 机器准备
 
 主机规划表
@@ -17,7 +21,31 @@
 
 可依据高可用需求灵活扩展K8s集群规模
 
-### 安装V2rayA（可选）
+## 初始化系统配置
+
+按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
+
+**K8s集群内的所有机器**
+
+目标：
+- 设置root密码
+- 开启root的ssh登录
+- 固定IP
+
+```Shell
+# 切换到root用户
+su root
+# 设置密码
+passwd
+
+#允许root登录
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+#允许密码登录
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+systemctl restart sshd
+```
+
+## 安装V2rayA（可选）
 
 Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方式实现，主要为了更好的科学上网，如果没有科学上网的需求可不要gateway节点。
 
@@ -38,46 +66,103 @@ sudo systemctl enable v2raya.service
 
 安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网了。
 
-## 初始化系统配置
+## 安装Jenkins
 
-按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
+目标：
+- 关闭Selinux和防火墙
+- 安装Docker
+- 启动Jenkins
+- 初始化Jenkins
+- 配置Git插件
 
-**K8s集群内的所有机器**
-
-- 设置root密码
-
-- 开启root的ssh登录
-
-- 设置gateway（可选）
+### 关闭Selinux和防火墙
 
 ```Shell
-# 切换到root用户
-su root
-# 设置密码
-passwd
+# 临时关闭Selinux
+setenforce 0
+# 永久关闭Selinux
+vi /etc/selinux/config
+## 将SELINUX=enforcing改为SELINUX=disabled
 
-#允许root登录
-sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
-#允许密码登录
-sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-systemctl restart sshd
 
-# 设置gateway，修改gateway配置成安装了V2rayA的机器IP
-vim /etc/netplan/00-installer-config.yaml
-netplan apply
+# 关闭防火墙
+systemctl stop firewalld.service
+systemctl disable firewalld.service
 ```
 
-初始化K8s集群机器，在**jenkins所在服务器**执行，这里jenkins和gateway是同一个服务器。
+### 安装Docker
+
+```Shell
+# 清除旧版本Docker
+yum remove -y docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine \
+                  docker \
+                  docker-ce \
+                  docker-ce-cli
+
+yum install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+yum install docker
+```
+
+### 启动Jenkins
+
+```Shell
+docker run -d -p 9090:8080 -p 60000:50000 \
+    --name jenkins-centos-7 \
+    -v /opt/share/jenkins:/var/lib/jenkins   \
+    -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
+    --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    --restart always \
+    --privileged uhub.service.ucloud.cn/entropypool/jenkins:centos-7 /usr/sbin/init
+
+docker run \
+  -u 0\
+  --name jenkins \
+  -d \
+  --privileged \
+  -p 18080:8080 \
+  -p 50000:50000 \
+  -v /opt/share/jenkins:/var/lib/jenkins   \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
+  --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
+  -v /root/.kube:/root/.kube  \
+  coastlinesss/jenkins
+```
+
+### 初始化Jenkins
+
+获取jenkins初始密码
+
+```shell
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+访问jenkins web页面(172.16.29.51:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
+
+### 配置Git插件
+
+**配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
+
+**配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
+
+
+## 初始化K8s集群环境
 
 初始化系统配置内容如下，配置好后执行脚本即可
 
-1.按照规划修改IP和hostname
-
-2.Master免密登录其他机器
-
-3.清理已安装的docker
-
-4.安装python3
+- 按照规划修改IP和hostname
+- Master免密登录其他机器
+- 清理已安装的docker
+- 安装python3
 
 复制脚本到.sh文件中，并配置后执行
 
@@ -88,9 +173,10 @@ netplan apply
 # IP hostname
 hosts=(
     172.16.29.51 idcnode1
+    172.16.29.51 idcnode1
     172.16.29.52 idcnode2
     172.16.29.53 idcnode3
-    172.16.29.54 idcnode4
+    172.23.10.87 awsnode1
 )
 
 # ssh-keygen in me
@@ -132,7 +218,7 @@ do
     
     if [ $clearOldDocker ];then
         echo "start clear old-docker" 
-        # ssh "${hosts[$index]}" "for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove \$pkg; done"
+        ssh "${hosts[$index]}" "for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove \$pkg; done"
         echo "end clear old-docker" 
     fi
 
@@ -143,80 +229,7 @@ done
 
 ```
 
-
-## 准备Jenkins环境
-
-Jenkins管理K8s集群的生命周期，所以存在独立与K8s集群的机器上。
-
-安装Docker:
-
-```Shell
-# 清除旧版本Docker
-yum remove -y docker \
-                  docker-client \
-                  docker-client-latest \
-                  docker-common \
-                  docker-latest \
-                  docker-latest-logrotate \
-                  docker-logrotate \
-                  docker-engine \
-                  docker \
-                  docker-ce \
-                  docker-ce-cli
-
-yum install -y yum-utils
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-
-yum install docker
-```
-
-启动Jenkins
-
-```Shell
-docker run -d -p 9090:8080 -p 60000:50000 \
-    --name jenkins-centos-7 \
-    -v /opt/share/jenkins:/var/lib/jenkins   \
-    -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
-    --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    --restart always \
-    --privileged uhub.service.ucloud.cn/entropypool/jenkins:centos-7 /usr/sbin/init
-
-docker run \
-  -u 0\
-  --name jenkins \
-  -d \
-  --privileged \
-  -p 18080:8080 \
-  -p 50000:50000 \
-  -v /opt/share/jenkins:/var/lib/jenkins   \
-  -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
-  --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
-  -v /root/.kube:/root/.kube  \
-  coastlinesss/jenkins
-```
-
-获取jenkins初始密码
-
-```shell
-docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
-```
-
-访问jenkins web页面(172.16.29.51:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
-
-### 配置Jenkins环境
-
-**配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
-
-**配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
-
-### 安装K8s
-
-在Jenkins使用Kubeasz安装K8s，按照主机规划在IDC和AWS分别部署K8S环境。
-
-建议job-name： 0001-set-testing-k8s-cluster
-
-### 安装NFS-server提供存储
+## 配置NFS-SERVER服务
 
 本示例使用NFS作为存储类，也可以替换成其他存储方案。
 
@@ -235,7 +248,13 @@ systemctl start nfs-kernel-server.service
 exportfs -a
 ```
 
-## 初始化K8s以及安装基础组件
+## 安装K8s
+
+在Jenkins使用Kubeasz安装K8s，按照主机规划在IDC和AWS分别部署K8S环境。
+
+建议job-name： 0001-set-testing-k8s-cluster
+
+### 初始化K8s以及安装基础组件
 
 在Jenkins创建对应Job进行环境设置和中间件安装，与其他项目Job设置只是Jenkinsfile文件路径有差异，需要关注。
 
@@ -243,10 +262,10 @@ exportfs -a
 
 主要目标：
 
-1.初始化K8s
+1.初始化K8s（IDC与AWS都需要）
     1.1 安装Helm工具
     1.2 设置默认存储类
-2.安装基础组件
+2.安装基础组件（只有IDC需要）
     - milvus
     - redis-cluster
     - minio
@@ -301,6 +320,8 @@ exportfs -a
   - entrance
   - webui
   - dashboard
+
+配置部署Job时建议按照IDC、AWS分类
 
 脚本路径：Jenkinsfile 
 
