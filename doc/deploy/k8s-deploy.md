@@ -4,7 +4,7 @@
 
 部署顺序如下：
 
-![deploy steps](doc/picture/deploy-step.png)
+![deploy steps](../picture/deploy-step.png)
 
 ## 机器准备
 
