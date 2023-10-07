@@ -4,7 +4,7 @@
 
 部署顺序如下：
 
-![deploy steps](../picture/deploy-step.png)
+![deploy steps](https://raw.githubusercontent.com/web3eye-io/Web3Eye/master/doc/picture/deploy-steps.png)
 
 ## 机器准备
 
