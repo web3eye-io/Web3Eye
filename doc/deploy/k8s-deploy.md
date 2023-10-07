@@ -47,24 +47,26 @@ systemctl restart sshd
 
 ## 安装V2rayA（可选）
 
-Gateway机器主要为IDC提供统一的网络控制，此处也可选其他方式实现，主要为了更好的科学上网，如果没有科学上网的需求可不要gateway节点。
+Gateway机器主要为IDC提供统一的网络控制，主要为了更好的科学上网，此处也可选其他方式实现，如果没有科学上网的需求可不要gateway节点。
 
 选择V2rayA主要考虑代理能力强，模式多且设置便捷，而且可用Web操作，在无图形化服务器非常好用。
 
 安装方法：https://v2raya.org/docs/prologue/installation/redhat/
 
 ```Shell
-curl -Ls https://mirrors.v2raya.org/go.sh | sudo bash
-sudo systemctl disable v2ray --now ### Xray 需要替换服务为 xray
+curl -Ls https://mirrors.v2raya.org/go.sh | bash
+systemctl disable v2ray --now ### Xray 需要替换服务为 xray
+
+yum install wget -y
 
 wget https://github.com/v2rayA/v2rayA/releases/download/v2.2.4/installer_redhat_x64_2.2.4.rpm -O /tmp/v2raya.rpm
 rpm -i /tmp/v2raya.rpm
 
-sudo systemctl start v2raya.service
-sudo systemctl enable v2raya.service
+systemctl start v2raya.service
+systemctl enable v2raya.service
 ```
 
-安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网了。
+安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网。
 
 ## 安装Jenkins
 
@@ -110,6 +112,9 @@ yum install -y yum-utils
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
 yum install docker
+
+systemctl start docker
+systemctl enable docker
 ```
 
 ### 启动Jenkins
@@ -278,7 +283,7 @@ exportfs -a
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名    | 0002-install-helm-for-jenkins | 0003-set-k8s-nfs-storage |
+| 参数名 \ Job   | 0002-install-helm-for-jenkins | 0003-set-k8s-nfs-storage |
 |-----------|-------------------------------|--------------------------|
 | INSTALL   | true                          | true                     |
 | UNINSTALL | false                         | false                    |

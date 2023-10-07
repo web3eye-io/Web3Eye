@@ -86,7 +86,6 @@ pipeline {
       when {
         expression { INSTALL   ==  'true' }
         anyOf {
-          expression { TARGET   ==  'all' }
           expression { TARGET == 'traefik' }
         }
       }
@@ -165,7 +164,6 @@ pipeline {
       when {
         expression { UNINSTALL   ==  'true' }
         anyOf {
-          expression { TARGET   ==  'all' }
           expression { TARGET == 'traefik' }
         }
       }

@@ -89,7 +89,6 @@ func queryOrderItemsAndContract(ctx context.Context, orderID string, cli *ent.Cl
 			}
 			v.ImageURL = ret.ImageURL
 		}
-
 	}
 
 	return qOrderItems, nil

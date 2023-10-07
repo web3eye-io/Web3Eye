@@ -39,7 +39,7 @@ func FillAmountStr(item *rankernpool.OrderItem) {
 		item.TokenType == v1.TokenType_ERC721_WITH_CRITERIA {
 		item.AmountStr = fmt.Sprintf("%v #%v", item.Symbol, item.TokenID)
 	} else {
-		maxAmountStrFixed := int32(4)
+		var maxAmountStrFixed int32 = 4
 		amount := big.NewInt(0).SetUint64(item.Amount)
 		amountStr := decimal.NewFromBigInt(amount, -int32(item.Decimals)).Round(maxAmountStrFixed)
 		item.AmountStr = fmt.Sprintf("%v %v", amountStr, item.Symbol)
