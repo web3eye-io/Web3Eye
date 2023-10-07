@@ -2,6 +2,13 @@ pipeline {
   agent any
 
   stages {
+    // switch k8s env
+    stage('Switch to current cluster') {
+      steps {
+        sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
+      }
+    }
+
     // -------install tasks----------
     stage('install helm') {
       when {

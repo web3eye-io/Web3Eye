@@ -235,10 +235,21 @@ pipeline {
       }
     }
 
+    // switch k8s env
+    stage('Switch to current cluster') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+      }
+
+      steps {
+        sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
+      }
+    }
+
     stage('Deploy for dev') {
       when {
         expression { DEPLOY_TARGET == 'true' }
-        expression { TARGET_ENV == "dev" }
+        expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
         sh 'TAG=latest make deploy-to-k8s-cluster'
@@ -249,8 +260,8 @@ pipeline {
       when {
         expression { DEPLOY_TARGET == 'true' }
         anyOf{
-          expression { TARGET_ENV == "test" }
-          expression { TARGET_ENV == "prod" }
+          expression { TARGET_ENV ==~ /.*test.*/ }
+          expression { TARGET_ENV ==~ /.*prod.*/ }
         }
       }
       steps {

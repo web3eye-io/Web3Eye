@@ -13,11 +13,11 @@
 | IP           | hostname | 硬件配置                           | 角色                                     | 位置 | 系统       |
 |--------------|----------|--------------------------------|------------------------------------------|------|------------|
 | 172.16.29.49 |          | CPU:4核  内存：8G  磁盘：50G         | gateway(for Scientific Internet)、Jenkins | IDC  | centos7    |
-| 172.16.29.51 | idcnode1    | CPU:8核  内存：16G  磁盘：200G       | k8s-master                       | IDC  | ubuntu20.4 |
-| 172.16.29.52 | idcnode2    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
-| 172.16.29.53 | idcnode3    | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
-| 172.16.29.54 | idcnode4    | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server                    | IDC  | ubuntu20.4 |
-| 172.23.10.87 | awsnode1    | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker                    | AWS  | ubuntu20.4 |
+| 172.16.29.51 | idcnode1 | CPU:8核  内存：16G  磁盘：200G       | k8s-master                               | IDC  | ubuntu20.4 |
+| 172.16.29.52 | idcnode2 | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
+| 172.16.29.53 | idcnode3 | CPU:16核  内存：32G  磁盘：100G      | k8s-worker                               | IDC  | ubuntu20.4 |
+| 172.16.29.54 | idcnode4 | CPU:16核  内存：32G  磁盘：100G+400G | k8s-worker,nfs-server                    | IDC  | ubuntu20.4 |
+| 172.23.10.87 | awsnode1 | CPU:8核  内存：16G  磁盘：100G       | k8s-master,k8s-worker                    | AWS  | ubuntu20.4 |
 
 可依据高可用需求灵活扩展K8s集群规模
 
@@ -120,27 +120,18 @@ systemctl enable docker
 ### 启动Jenkins
 
 ```Shell
-docker run -d -p 9090:8080 -p 60000:50000 \
-    --name jenkins-centos-7 \
-    -v /opt/share/jenkins:/var/lib/jenkins   \
-    -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
-    --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    --restart always \
-    --privileged uhub.service.ucloud.cn/entropypool/jenkins:centos-7 /usr/sbin/init
-
 docker run \
-  -u 0\
   --name jenkins \
   -d \
-  --privileged \
   -p 18080:8080 \
   -p 50000:50000 \
   -v /opt/share/jenkins:/var/lib/jenkins   \
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro      \
   --tmpfs /tmp:exec --tmpfs /run --tmpfs /run/lock --tmpfs /var/run \
-  -v /root/.kube:/root/.kube  \
-  coastlinesss/jenkins
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --restart always \
+  --privileged coastlinesss/jenkins:0.0.1 /usr/sbin/init
+  
 ```
 
 ### 初始化Jenkins
@@ -148,91 +139,16 @@ docker run \
 获取jenkins初始密码
 
 ```shell
-docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+docker exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-访问jenkins web页面(172.16.29.51:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
+访问jenkins web页面(172.16.29.49:9090)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
 
 ### 配置Git插件
 
 **配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
 
 **配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
-
-
-## 初始化K8s集群环境
-
-初始化系统配置内容如下，配置好后执行脚本即可
-
-- 按照规划修改IP和hostname
-- Master免密登录其他机器
-- 清理已安装的docker
-- 安装python3
-
-复制脚本到.sh文件中，并配置后执行
-
-```Shell
-#!/bin/bash
-
-# a host info like:
-# IP hostname
-hosts=(
-    172.16.29.51 idcnode1
-    172.16.29.51 idcnode1
-    172.16.29.52 idcnode2
-    172.16.29.53 idcnode3
-    172.23.10.87 awsnode1
-)
-
-# ssh-keygen in me
-# value: true or false
-enableSSHKeygen=true
-
-# clear old docker in me
-# value: true or false
-clearOldDocker=true
-
-if [ $enableSSHKeygen ];then
-    echo "start ssh-keygen" 
-    ssh-keygen
-    echo "end ssh-keygen" 
-fi
-
-
-rem=0
-for index in "${!hosts[@]}";   
-do   
-    if [ $rem != 0 ];then
-        rem=0
-        continue
-    fi
-    rem=1
-
-    ssh-copy-id "${hosts[$index]}"
-done  
-
-
-rem=0
-for index in "${!hosts[@]}";   
-do   
-    if [ $rem != 0 ];then
-        rem=0
-        continue
-    fi
-    rem=1
-    
-    if [ $clearOldDocker ];then
-        echo "start clear old-docker" 
-        ssh "${hosts[$index]}" "for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove \$pkg; done"
-        echo "end clear old-docker" 
-    fi
-
-    index1=`expr $index + 1`
-    ssh "${hosts[$index]}" "hostnamectl set-hostname \"${hosts[$index1]}\""
-    ssh "${hosts[$index]}" "apt install python3 -y"
-done  
-
-```
 
 ## 配置NFS-SERVER服务
 
@@ -257,7 +173,9 @@ exportfs -a
 
 在Jenkins使用Kubeasz安装K8s，按照主机规划在IDC和AWS分别部署K8S环境。
 
-建议job-name： 0001-set-testing-k8s-cluster
+建议job-name： testing-0001-IDC-k8s-cluster、testing-0002-AWS-k8s-cluster
+
+需要在IDC以及AWS环境中各安装一套K8S
 
 ### 初始化K8s以及安装基础组件
 
@@ -271,11 +189,13 @@ exportfs -a
     1.1 安装Helm工具
     1.2 设置默认存储类
 2.安装基础组件（只有IDC需要）
-    - milvus
-    - redis-cluster
-    - minio
-    - mysql
-    - treafik
+    - IDC基础组件
+      - milvus
+      - redis-cluster
+      - minio
+      - mysql
+    - AWS基础组件
+      - treafik
 
 ### 初始化K8s
 
@@ -283,13 +203,25 @@ exportfs -a
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名 \ Job   | 0002-install-helm-for-jenkins | 0003-set-k8s-nfs-storage |
-|-----------|-------------------------------|--------------------------|
-| INSTALL   | true                          | true                     |
-| UNINSTALL | false                         | false                    |
-| TARGET    | helm                          | nfs-storage              |
+| 参数名    | testing-1001-install-helm-for-jenkins |
+|-----------|-------------------------------|
+| INSTALL   | true                          |
+| UNINSTALL | false                         |
+| TARGET    | helm                          |
+| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+
+| 参数名     | testing-1002-set-k8s-nfs-storage |
+|------------|--------------------------|
+| INSTALL    | true                     |
+| UNINSTALL  | false                    |
+| TARGET     | nfs-storage              |
+| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+| NFS_SERVER | 172.16.29.54             |
+| NFS_PATH   | /scratch                 |
 
 ### 安装初始化组件
+
+#### IDC基础组件
 
 安装中间件的Job参数如下，其中TARGET参数为"all"时同时安装所有中间件。
 
@@ -300,15 +232,30 @@ exportfs -a
 - redis-cluster
 - minio
 - mysql
-- treafik
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名    | 1001-install-all-basement | 1001-uninstall-all-basement |
+| 参数名    | testing-1003-install-all-basement | testing-1003-uninstall-all-basement |
 |-----------|---------------------------|-----------------------------|
 | INSTALL   | true                      | false                       |
 | UNINSTALL | false                     | true                        |
 | TARGET    | all                       | all                         |
+| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+
+
+#### IDC基础组件
+
+组件名单：
+- traefik
+
+脚本路径：basement/Jenkinsfile 
+
+| 参数名    | testing-1004-install-traefik | testing-1004-uninstall-traefik |
+|-----------|---------------------------|-----------------------------|
+| INSTALL   | true                      | false                       |
+| UNINSTALL | false                     | true                        |
+| TARGET    | traefik                       | traefik                         |
+| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
 
 ## 项目构建&部署任务
 
