@@ -98,6 +98,18 @@
                 </div>
               </div>
             </q-td>
+            <q-td key="Transfer" :props="props">
+              <span v-if='props.row.OfferItems?.length === 0' />
+              <div v-else class="row justify-start">
+                <div class="column items-start right">
+                  <div class="show-more">
+                    <q-icon name="img:icons/transfer.png" size="20px"/>
+                  </div>
+                </div>
+              </div>
+            </q-td>
+            <q-td key="Transfer1" :props="props">
+            </q-td>
             <q-td key="TargetItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
               <div v-else class="row justify-start">
@@ -200,6 +212,16 @@ const columns = computed(() => [
   {
     name: 'OfferItems',
     label: 'Offer Items',
+    align: 'left',
+  },
+  {
+    name: 'Transfer',
+    label: '',
+    align: 'left',
+  },
+  {
+    name: 'Transfer1',
+    label: '',
     align: 'left',
   },
   {
