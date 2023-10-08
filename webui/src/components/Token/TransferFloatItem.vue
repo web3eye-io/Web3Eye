@@ -1,9 +1,9 @@
 <template>
-    <div class="inner row">
+    <div class="inner row justify-between">
         <div class="inner-left column">
             <div class="title">Value</div>
             <template v-for='(item, index) in offers' :key='index'>
-                <div class="token-number">#{{ item.TokenID }}</div>
+                <div class="token-number"># {{ item.TokenID }}</div>
                 <q-separator />
                 <div class="coin">+ {{ item.AmountStr }}</div>
             </template>
@@ -16,7 +16,7 @@
         <div class="inner-right column">
             <div class="title">Value</div>
             <template v-for='(item, index) in targets' :key='index'>
-                <div class="token-number">#{{ item.TokenID }}</div>
+                <div class="token-number"># {{ item.TokenID }}</div>
                 <q-separator />
                 <div class="coin">+ {{ item.AmountStr }}</div>
             </template>
