@@ -108,6 +108,9 @@ prepare-golang-env:
 prepare-node-env:
 	${REPO_ROOT}/hack/set-node-env.sh
 
+prepare-rust-env:
+	${REPO_ROOT}/hack/set-rust-env.sh
+
 ##@ Tests
 
 .PHONY: go-unit-test go-ut

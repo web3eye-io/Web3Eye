@@ -31,6 +31,12 @@ pipeline {
         sh 'make prepare-node-env'
       }
     }
+
+    stage('Prepare Rust ENV') {
+      steps {
+        sh 'make prepare-rust-env'
+      }
+    }
     stage('Prepare') {
       when {
         expression { DEPLOY_TARGET != 'true' }

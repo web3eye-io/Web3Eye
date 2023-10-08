@@ -23,6 +23,7 @@ RUN yum install make -y
 RUN yum install nodejs -y
 RUN yum install ansible -y
 RUN yum install git -y
+RUN yum install jq -y
 
 RUN sed -i 's/#host_key_checking = False/host_key_checking = False/g' /etc/ansible/ansible.cfg
 
