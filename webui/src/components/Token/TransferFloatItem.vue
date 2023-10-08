@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import {  computed, ref, toRef } from 'vue'
+import {  computed, toRef } from 'vue'
 import { OrderItem } from 'src/teststore/transfer/types'
 
 interface Props {

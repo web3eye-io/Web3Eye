@@ -5,20 +5,9 @@
         <q-toolbar>
         <div class='search row'>
           <q-img :src='logobottom' class='logo' fit="contain" @click="onLogoClick" />
-          <q-input
-            v-model='search'
-            rounded
-            outlined
-            disable
-            dense
-            class='search-box'
-            placeholder='Coming soon'
-            v-if='false'
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
+        </div>
+        <div class="search-box column justify-center">
+          <SearchBox  v-if="displaySearchBox" />
         </div>
         <q-space />
         <a href='#/whitepaper'>White Paper</a>
@@ -62,8 +51,8 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, computed } from 'vue'
-import { useWeb3jsStore } from 'src/localstore'
+import { ref, reactive, computed, defineAsyncComponent } from 'vue'
+import { useLocalSettingStore, useWeb3jsStore } from 'src/localstore'
 
 import logobottom from '../assets/logo/logo-bottom.png'
 // import metamask from '../assets/icon/metamask.webp'
@@ -71,11 +60,10 @@ import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
 import { Cookies } from 'quasar'
 import { useRouter } from 'vue-router'
+const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchBox.vue'))
 
-// const setting = useLocalSettingStore()
-// const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
-
-const search = ref('')
+const setting = useLocalSettingStore()
+const displaySearchBox = computed(() => setting.DisplayToolbarSearchBox)
 
 const web3js = useWeb3jsStore()
 const account = reactive({} as Account)
@@ -186,7 +174,7 @@ const onLogoClick = () => {
 .logo
   width: 120px
   margin-right: 10px
-  line-height: 72px
+  line-height: 56px
   cursor: pointer
   @media (max-width: 660px)
     display: none
@@ -198,8 +186,14 @@ const onLogoClick = () => {
     min-height: 800px !important
 
 .search-box
-  width: 450px
-  max-width: 100%
+  width: 400px
+  height: 50px
+  ::v-deep .upload
+    margin-top: 0
+    height: 40px
+    margin-top: 45px
+  ::v-deep .search
+    top: -55px
 
 .search
   height: 56px
