@@ -12,7 +12,7 @@ pipeline {
     // NODETMPENV = "/tmp/node-tmp-env/$NODEVERSION"
     // NODEHOME = "$NODETMPENV/nodehome"
     // NODEBIN = "$NODEHOME/bin"
-    // PATH = "$NODEBIN:$GOBIN:$PATH"
+    PATH = "$NODEBIN:$GOBIN:$PATH"
   }
   stages {
     stage('Clone') {
