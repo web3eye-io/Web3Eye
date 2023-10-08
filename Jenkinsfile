@@ -201,7 +201,7 @@ pipeline {
         }
         expression { TARGET_ENV ==~ /.*testing.*/ }
       }
-      script {
+      steps {
         sh(returnStdout: false, script: '''
           set +e
           // sync remote tags
@@ -209,9 +209,12 @@ pipeline {
           git fetch origin --prune
         '''.stripIndent())
 
-        TAG_VERSION = sh(returnStatus: true,
-          script: 'git tag|grep \'[13579]$\'|tail -n 1'
-        ).trim()
+        script {
+          TAG_VERSION = sh(returnStatus: true,
+            script: 'git tag|grep \'[13579]$\'|tail -n 1'
+            ).trim()
+        }
+        
       }
     }
 
