@@ -209,7 +209,7 @@ pipeline {
         script {
           env.TAG_VERSION = sh(returnStdout: true,
             script: 'git tag|grep \'[13579]$\'|tail -n 1'
-            )
+            ).trim()
         }
       }
     }
