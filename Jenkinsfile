@@ -209,9 +209,8 @@ pipeline {
           git fetch origin --prune
         '''.stripIndent())
 
-        TAG_VERSION=sh (
-          script: "git tag|grep '[13579]$'|tail -n 1",
-          returnStatus: true
+        TAG_VERSION=sh(returnStatus: true,
+          script: '''git tag|grep '[13579]$'|tail -n 1'''
         ).trim()
       }
     }
