@@ -82,8 +82,8 @@ pipeline {
           expression { TAG_PATCH == 'true' }
         }
         anyOf{
-          expression { TAG_FOR == 'test' }
-          expression { TAG_FOR == 'prod' }
+          expression { TAG_FOR == 'testing' }
+          expression { TAG_FOR == 'production' }
         }
       }
       steps {
@@ -119,10 +119,10 @@ pipeline {
           fi    
 
           case $TAG_FOR in
-            test)
+            testing)
               patch=$(( $patch + $patch % 2 + 1 ))
               ;;
-            prod)
+            production)
               patch=$(( $patch + ( $patch +  1 ) % 2 + 1 ))
               git reset --hard
               git checkout $tag
