@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: kube-system
+  name: traefik-vpn
+  labels:
+    app: traefik-vpn
+
+spec:
+  selector:
+    matchLabels:
+      app: traefik-vpn
+  template:
+    metadata:
+      labels:
+        app: traefik-vpn
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      nodeSelector:
+        type: traefik-vpn
+        kubernetes.io/os: linux
+      containers:
+        - name: traefik-vpn
+          image: traefik:v2.9
+          args:
+            - --api.insecure
+            - --accesslog
+            - --log.level=INFO
+            - --log.filePath=/var/log/traefik.log
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.Address=:443
+            - --entrypoints.websecure.http.tls=true
+            - --providers.kubernetesingress
+            - --providers.kubernetescrd
+            - --providers.kubernetesingress.ingressclass=traefik-internet-vpn
+          ports:
+            - name: web
+              containerPort: 80
+              hostPort: 32080
+              protocol: TCP
+            - name: websecure
+              containerPort: 443
+              protocol: TCP
+              hostPort: 32443
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kube-system
+  name: traefik-vpn
+spec:
+  # type: LoadBalancer
+  selector:
+    app: traefik-vpn
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+      targetPort: 80
+    - protocol: TCP
+      name: websecure
+      port: 443
+      targetPort: 443
