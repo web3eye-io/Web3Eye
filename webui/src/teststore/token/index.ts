@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { doActionWithError } from '../action'
 import { API } from './const'
-import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokensRequest, SearchTokensResponse, Token } from './types' 
+import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokensResponse, Token } from './types' 
 
 export const useTokenStore = defineStore('token', {
   state: () => ({
