@@ -46,8 +46,8 @@
                 <q-td key="TxTime" :props="props">
                   {{ formatTime(props.row.TxTime) }}
                 </q-td>
-                <q-td key="Value" :props="props">
-                  {{ props.row.Value }}
+                <q-td key="Amount" :props="props">
+                  {{ props.row.Amount }}
                 </q-td>
                 <q-td key="From" :props="props">
                   <ToolTip :address="props.row.From" />
@@ -150,7 +150,7 @@ const columns = computed(() => [
     align: 'center',
   },
   {
-    name: 'Value',
+    name: 'Amount',
     label: 'Value',
     align: 'center',
   },

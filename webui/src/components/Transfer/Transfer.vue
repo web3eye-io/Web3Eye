@@ -61,7 +61,7 @@ const token = ref(_token)
 const columns = computed(() => [
   {
     name: 'Block',
-    label: 'BLOCK',
+    label: 'Block',
     align: 'center',
     field: (row: Transfer) => row.BlockNumber
   },
@@ -72,7 +72,7 @@ const columns = computed(() => [
     field: (row: Transfer) => row.TxTime
   },
   {
-    name: 'Value',
+    name: 'Amount',
     label: 'Value',
     align: 'center',
     field: (row: Transfer) => row.Amount
