@@ -13,8 +13,6 @@ pipeline {
     // NODEHOME = "$NODETMPENV/nodehome"
     // NODEBIN = "$NODEHOME/bin"
     PATH = "$NODEBIN:$GOBIN:$PATH"
-
-    TAG_VERSION = ""
   }
   stages {
     stage('Clone') {
@@ -206,8 +204,15 @@ pipeline {
           // sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
-          TAG_VERSION=`git tag|grep '[13579]$'|tail -n 1`
         '''.stripIndent())
+
+        script {
+          TAG_VERSION = sh(returnStdout: true,
+            script: 'git tag|grep \'[13579]$\'|tail -n 1'
+            )
+             echo "Git committer email: ${TAG_VERSION}"
+        }
+        
       }
     }
 
@@ -225,7 +230,7 @@ pipeline {
           // sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
-          TAG_VERSION=`git tag --sort=-v:refname |grep '[02468]$'`
+          TAG_VERSION=``git tag|grep '[02468]$'|tail -n 1`
         '''.stripIndent())
         sh ''
       }
