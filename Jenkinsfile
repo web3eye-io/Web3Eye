@@ -206,10 +206,11 @@ pipeline {
           git fetch origin --prune
         '''.stripIndent())
 
-        environment {
-          TAG_VERSION = sh(returnStdout: true,
+        script {
+          env.TAG_VERSION = sh(returnStdout: true,
             script: 'git tag|grep \'[13579]$\'|tail -n 1'
             )
+             echo "Git committer email: ${TAG_VERSION}"
         }
         
       }
