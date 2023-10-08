@@ -24,21 +24,18 @@ pipeline {
       }
     }
 
-    stage('set nfs-storage') {
+    stage('install traefik') {
       when {
         expression { INSTALL   ==  'true' }
-        expression { UNINSTALL   ==  'false' }
-        expression { TARGET == 'nfs-storage' }
+        anyOf {
+          expression { TARGET == 'traefik' }
+        }
       }
       steps {
-        sh (returnStdout: false, script: '''
-          export NFS_SERVER=$NFS_SERVER
-          export NFS_PATH=$NFS_PATH
-          bash basement/03-nfs-storage/install.sh
-        '''.stripIndent())
+        sh 'bash basement/03-traefik/install.sh'
       }
     }
-    
+
     stage('install milvus') {
       when {
         expression { INSTALL   ==  'true' }
@@ -92,28 +89,16 @@ pipeline {
       }
     }
 
-    stage('install traefik') {
+    // -------uninstall tasks----------
+    stage('uninstall traefik') {
       when {
-        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'true' }
         anyOf {
           expression { TARGET == 'traefik' }
         }
       }
       steps {
-        sh 'bash basement/10-traefik/install.sh'
-      }
-    }
-
-    // -------uninstall tasks----------
-    stage('uninstall nfs-storage') {
-      when {
-        expression { UNINSTALL   ==  'true' }
-        expression { TARGET == 'nfs-storage' }
-      }
-      steps {
-        sh (returnStdout: false, script: '''
-          bash basement/03-nfs-storage/uninstall.sh
-        '''.stripIndent())
+        sh 'bash basement/03-traefik/uninstall.sh'
       }
     }
 
@@ -167,18 +152,6 @@ pipeline {
       }
       steps {
         sh 'bash basement/07-mysql/uninstall.sh'
-      }
-    }
-
-    stage('uninstall traefik') {
-      when {
-        expression { UNINSTALL   ==  'true' }
-        anyOf {
-          expression { TARGET == 'traefik' }
-        }
-      }
-      steps {
-        sh 'bash basement/10-traefik/uninstall.sh'
       }
     }
   }

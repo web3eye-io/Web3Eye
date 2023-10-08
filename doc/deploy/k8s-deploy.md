@@ -173,6 +173,14 @@ exportfs -a
 
 在Jenkins使用Kubeasz安装K8s，按照主机规划在IDC和AWS分别部署K8S环境。
 
+按照主机规划修改
+- hosts
+  - 主机规划，比如etcd、kube_master、kube_node
+  - [all:vars]下的用户名及密码
+  - cluster_dir
+- config.yml
+  - nfs-provisioner下的配置，主要关注nfs_server及nfs_path
+
 建议job-name： testing-0001-IDC-k8s-cluster、testing-0002-AWS-k8s-cluster
 
 需要在IDC以及AWS环境中各安装一套K8S
@@ -185,10 +193,8 @@ exportfs -a
 
 主要目标：
 
-1.初始化K8s（IDC与AWS都需要）
-    1.1 安装Helm工具
-    1.2 设置默认存储类
-2.安装基础组件（只有IDC需要）
+1 安装Helm工具
+2.安装基础组件
     - IDC基础组件
       - milvus
       - redis-cluster
@@ -197,7 +203,7 @@ exportfs -a
     - AWS基础组件
       - treafik
 
-### 初始化K8s
+### 安装Helm工具
 
 安装Helm和设置默认存储类的Job参数如下
 
@@ -208,15 +214,6 @@ exportfs -a
 | INSTALL   | true                                  |
 | UNINSTALL | false                                 |
 | TARGET    | helm                                  |
-
-| 参数名     | testing-1002-set-k8s-nfs-storage  |
-|------------|-----------------------------------|
-| INSTALL    | true                              |
-| UNINSTALL  | false                             |
-| TARGET     | nfs-storage                       |
-| TARGET_ENV | web3eye-testing-idc(或者其他环境) |
-| NFS_SERVER | 172.16.29.54                      |
-| NFS_PATH   | /k8sdata                          |
 
 ### 安装初始化组件
 
@@ -234,7 +231,7 @@ exportfs -a
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名    | testing-1003-install-all-basement | testing-1003-uninstall-all-basement |
+| 参数名    | testing-1002-install-all-basement | testing-1002-uninstall-all-basement |
 |-----------|-----------------------------------|-------------------------------------|
 | INSTALL   | true                              | false                               |
 | UNINSTALL | false                             | true                                |
@@ -242,14 +239,14 @@ exportfs -a
 | TARGET_ENV    | web3eye-testing-idc(或者其他环境)                          |
 
 
-#### IDC基础组件
+#### AWS基础组件
 
 组件名单：
 - traefik
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名    | testing-1004-install-traefik | testing-1004-uninstall-traefik |
+| 参数名    | testing-1003-install-traefik | testing-1003-uninstall-traefik |
 |-----------|------------------------------|--------------------------------|
 | INSTALL   | true                         | false                          |
 | UNINSTALL | false                        | true                           |
