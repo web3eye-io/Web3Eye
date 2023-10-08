@@ -204,7 +204,7 @@ pipeline {
           // sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
-          TAG_VERSION=`git tag --sort=-v:refname |grep '[13579]$'`
+          TAG_VERSION=`git tag|grep '[13579]$'|tail -n 1`
         '''.stripIndent())
       }
     }
