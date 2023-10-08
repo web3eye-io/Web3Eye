@@ -105,6 +105,9 @@ deploy-to-k8s-cluster:
 prepare-golang-env:
 	${REPO_ROOT}/hack/set-golang-env.sh
 
+prepare-node-env:
+	${REPO_ROOT}/hack/set-node-env.sh
+
 ##@ Tests
 
 .PHONY: go-unit-test go-ut

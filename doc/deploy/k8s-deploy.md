@@ -1,4 +1,4 @@
-## 安装说明
+# 安装说明
 
 每个小节请阅读完成再操作，以免理解错误上下文意思，同时欢迎提Issue帮助改进。
 
@@ -6,7 +6,7 @@
 
 ![deploy steps](https://raw.githubusercontent.com/web3eye-io/Web3Eye/master/doc/picture/deploy-steps.png)
 
-## 机器准备
+# 机器规划
 
 主机规划表
 
@@ -21,7 +21,15 @@
 
 可依据高可用需求灵活扩展K8s集群规模
 
-## 初始化系统配置
+| 集群角色 | TARGET_ENV                                      |
+|------|-------------------------------------------------|
+| 开发环境 | web3eye-development-idc、web3eye-development-aws |
+| 测试环境 | web3eye-testing-idc、web3eye-testing-aws         |
+| 生产环境 | web3eye-production-idc、web3eye-production-aws   |
+
+以下的TARGET_ENV使用web3eye-testing-*为例子
+
+# 安装及初始化系统
 
 按照配置正常安装系统即可，若是在虚拟机上安装可考虑用克隆的方式提高安装速度。
 
@@ -68,7 +76,9 @@ systemctl enable v2raya.service
 
 安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网。
 
-## 安装Jenkins
+# 安装Jenkins
+
+安装Jenkins此处安装在gateway角色上，一般来说只要不安装在K8s集群的机器上都可以
 
 目标：
 - 关闭Selinux和防火墙
@@ -77,7 +87,9 @@ systemctl enable v2raya.service
 - 初始化Jenkins
 - 配置Git插件
 
-### 关闭Selinux和防火墙
+## 关闭Selinux和防火墙
+
+因为gateway服务器是Centos系统，所以需要设置SeLinux和防火墙。
 
 ```Shell
 # 临时关闭Selinux
@@ -92,7 +104,7 @@ systemctl stop firewalld.service
 systemctl disable firewalld.service
 ```
 
-### 安装Docker
+## 安装Docker
 
 ```Shell
 # 清除旧版本Docker
@@ -117,7 +129,7 @@ systemctl start docker
 systemctl enable docker
 ```
 
-### 启动Jenkins
+## 启动Jenkins
 
 ```Shell
 docker run \
@@ -131,10 +143,9 @@ docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --restart always \
   --privileged coastlinesss/jenkins:0.0.1 /usr/sbin/init
-  
 ```
 
-### 初始化Jenkins
+## 初始化Jenkins
 
 获取jenkins初始密码
 
@@ -142,7 +153,7 @@ docker run \
 docker exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-访问jenkins web页面(172.16.29.49:9090)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
+访问jenkins web页面(172.16.29.49:18080)，完成Jenkins初始配置，如添加用户等，在安装插件时可先安装建议插件。
 
 ### 配置Git插件
 
@@ -150,11 +161,11 @@ docker exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword
 
 **配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
 
-## 配置NFS-SERVER服务
+# 提供NFS-SERVER服务
 
 本示例使用NFS作为存储类，也可以替换成其他存储方案。
 
-首先选择一台主机安装nfs-server并配置一个路径提供NFS服务，后续通过Jenkins Job为K8s设置默认存储类。
+首先选择一台主机（例子中提供存储的是idcnode4）安装nfs-server并配置一个路径提供NFS服务，后续通过Jenkins Job为K8s设置默认存储类。
 
 nfs-server安装示例：
 
@@ -168,6 +179,21 @@ systemctl start nfs-kernel-server.service
 
 exportfs -a
 ```
+# Jenkins任务说明
+
+试图及任务说明
+
+| 视图                                                | 编号格式                                        | 任务说明     |
+|-----------------------------------------------------|-------------------------------------------------|-------------|
+| 00-kubernets                                        | (development\testing\production)-000N-*         | 安装K8s环境  |
+| 01-basement                                         | (development\testing\production)-100N-*         | 安装基础组件 |
+| 02-build                                            | (development\testing\production)-200N-*         | 构建项目     |
+| 03-tag-(testing\production)                         | (testing\production)-300N-*                     | 打tag        |
+| 04-release-(feature\development\testing\production) | (feature\development\testing\production)-400N-* | release项目  |
+| 05-deploy-(feature\development\testing\production)  | (feature\development\testing\production)-500N-* | 部署项目     |
+
+
+# 安装K8s
 
 ## 安装K8s
 
@@ -184,40 +210,34 @@ exportfs -a
 建议job-name： testing-0001-IDC-k8s-cluster、testing-0002-AWS-k8s-cluster
 
 需要在IDC以及AWS环境中各安装一套K8S
+## 安装Helm工具
 
-### 初始化K8s以及安装基础组件
+安装Helm和设置默认存储类的Job参数如下
+
+脚本路径：basement/Jenkinsfile 
+
+| 参数名    | testing-0002-install-helm-for-jenkins |
+|-----------|---------------------------------------|
+| INSTALL   | true                                  |
+| UNINSTALL | false                                 |
+| TARGET    | helm                                  |
+
+# 安装基础组件
 
 在Jenkins创建对应Job进行环境设置和中间件安装，与其他项目Job设置只是Jenkinsfile文件路径有差异，需要关注。
 
 参数名和值参考给出的表格。
 
 主要目标：
+- IDC基础组件
+  - milvus
+  - redis-cluster
+  - minio
+  - mysql
+- AWS基础组件
+  - treafik
 
-1 安装Helm工具
-2.安装基础组件
-    - IDC基础组件
-      - milvus
-      - redis-cluster
-      - minio
-      - mysql
-    - AWS基础组件
-      - treafik
-
-### 安装Helm工具
-
-安装Helm和设置默认存储类的Job参数如下
-
-脚本路径：basement/Jenkinsfile 
-
-| 参数名    | testing-1001-install-helm-for-jenkins |
-|-----------|---------------------------------------|
-| INSTALL   | true                                  |
-| UNINSTALL | false                                 |
-| TARGET    | helm                                  |
-
-### 安装初始化组件
-
-#### IDC基础组件
+## IDC基础组件
 
 安装中间件的Job参数如下，其中TARGET参数为"all"时同时安装所有中间件。
 
@@ -236,10 +256,10 @@ exportfs -a
 | INSTALL   | true                              | false                               |
 | UNINSTALL | false                             | true                                |
 | TARGET    | all                               | all                                 |
-| TARGET_ENV    | web3eye-testing-idc(或者其他环境)                          |
+| TARGET_ENV    | web3eye-testing-idc                          |
 
 
-#### AWS基础组件
+## AWS基础组件
 
 组件名单：
 - traefik
@@ -251,9 +271,9 @@ exportfs -a
 | INSTALL   | true                         | false                          |
 | UNINSTALL | false                        | true                           |
 | TARGET    | traefik                      | traefik                        |
-| TARGET_ENV    | web3eye-testing-aws(或者其他环境)                          |
+| TARGET_ENV    | web3eye-testing-aws                          |
 
-## 项目构建&部署任务
+# 项目构建&部署任务
 
 项目名清单：
 - IDC
@@ -283,7 +303,7 @@ exportfs -a
 | TAG_MINOR      | false  | true/false | false   | false  |
 | TAG_MAJOR      | false  | true/false | false   | false  |
 | AIMPROJECT     | 项目名 | 项目名     | 项目名  | 项目名 |
-| TAG_FOR        | none   | test/prod  | none    | none   |
+| TAG_FOR        |    | test/prod  |     |    |
 | TARGET_ENV     | 环境名 | 环境名     | 环境名  | 环境名 |
 
 release和deploy的Tag关系说明：
