@@ -32,7 +32,7 @@ const MainDrawerMenus = [
     children: [
       {
         menuId: uid(),
-        label: 'Endpoint MGR',
+        label: 'Task MGR',
         caption: '',
         icon: 'perm_identity',
         target: '/manager/task',
