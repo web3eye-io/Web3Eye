@@ -28,7 +28,7 @@ if [ ! $? -eq 0 ]; then
   set -e
   echo "Fetching $node_tar from $node_tar_url, stored to $node_data"
   curl -L $node_tar_url -o $node_data/$node_tar
-  tar -xvf $node_data/$node_tar --strip-components 1 -C $NODE_HOME
+  tar -xvf $node_data/$node_tar --strip-components 1 -C $NODEHOME
 fi
 
 set -e
