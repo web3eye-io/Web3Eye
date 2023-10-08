@@ -19,3 +19,8 @@ export enum ChainTokenType {
     Metaplex = 'Metaplex',
     NoURI = 'NoURI',
 }
+
+export enum OrderItemType {
+    OfferItemOffer = 'OfferItemOffer',
+    OfferItemTarget = 'OfferItemTarget'
+}

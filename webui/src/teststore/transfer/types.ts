@@ -1,5 +1,19 @@
-import { ChainType } from '../basetypes/const'
+import { ChainType, OrderItemType, TokenType } from '../basetypes/const'
 import { BaseRequest } from '../local'
+
+export interface OrderItem {
+  Contract: string
+  TokenType: TokenType
+  TokenID: string
+  Amount: string
+  AmountStr: string
+  Remark: string
+  Name: string
+  Symbol: string
+  Decimals: number
+  OrderItemType: OrderItemType
+  ImageURL: string
+}
 
 export interface Transfer {
   ID: string
@@ -16,6 +30,8 @@ export interface Transfer {
   BlockHash: string
   TxTime: number
   Remark: string
+  OfferItems: OrderItem[]
+  TargetItems: OrderItem[]
 }
 
 export interface GetTransferRequest extends BaseRequest {
