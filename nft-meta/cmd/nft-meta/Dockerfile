@@ -10,7 +10,7 @@ ENV ENV_DATA_DIR=/data \
 RUN mkdir $ENV_DATA_DIR
 
 RUN apt update -y
-RUN apt install -y --no-install-recommends ca-certificates curl
+RUN apt install -y --no-install-recommends ca-certificates curl --allow-unauthenticated upgrade
 
 WORKDIR /usr/local/bin/
 
