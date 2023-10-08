@@ -9,8 +9,8 @@ ENV ENV_DATA_DIR=/data \
     ENV_INVERSTOR_KEY=""
 RUN mkdir $ENV_DATA_DIR
  
-RUN apt update -y --allow-unauthenticated
-RUN apt install -y --no-install-recommends ca-certificates curl --allow-unauthenticated
+RUN apt-get update -y --allow-unauthenticated
+RUN apt-get install -y --no-install-recommends ca-certificates curl --allow-unauthenticated
 
 WORKDIR /usr/local/bin/
 
