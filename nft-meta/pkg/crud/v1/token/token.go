@@ -58,8 +58,11 @@ func Upsert(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 
 //nolint:gocyclo
 func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
-	if in.ID != nil {
+	id, err := uuid.Parse(*in.ID)
+	if err != nil {
 		c.SetID(uuid.New())
+	} else {
+		c.SetID(id)
 	}
 	if in.ChainType != nil {
 		c.SetChainType(in.GetChainType().String())
@@ -137,7 +140,6 @@ func CreateBulk(ctx context.Context, in []*npool.TokenReq) ([]*ent.Token, error)
 	return rows, nil
 }
 
-//nolint:gocyclo
 func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -160,6 +162,7 @@ func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.TokenUpdateOne, in *npool.TokenReq) *ent.TokenUpdateOne {
 	if in.ChainType != nil {
 		u.SetChainType(in.GetChainType().String())
@@ -230,7 +233,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
 	return info, nil
 }
 
-// nolint
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error) {
 	stm := cli.Token.Query()
 	if conds == nil {

@@ -124,7 +124,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Snapshot, error) {
 	return info, nil
 }
 
-// nolint
+//nolint:gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SnapshotQuery, error) {
 	stm := cli.Snapshot.Query()
 	if conds == nil {

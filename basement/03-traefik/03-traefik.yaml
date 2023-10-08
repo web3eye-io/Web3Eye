@@ -16,6 +16,9 @@ spec:
         app: traefik
     spec:
       serviceAccountName: traefik-ingress-controller
+      nodeSelector:
+        type: traefik
+        kubernetes.io/os: linux
       containers:
         - name: traefik
           image: traefik:v2.9

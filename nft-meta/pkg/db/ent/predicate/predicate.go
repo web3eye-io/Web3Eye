@@ -15,11 +15,11 @@ type Contract func(*sql.Selector)
 // Endpoint is the predicate function for endpoint builders.
 type Endpoint func(*sql.Selector)
 
+// Order is the predicate function for order builders.
+type Order func(*sql.Selector)
+
 // OrderItem is the predicate function for orderitem builders.
 type OrderItem func(*sql.Selector)
-
-// OrderPair is the predicate function for orderpair builders.
-type OrderPair func(*sql.Selector)
 
 // Snapshot is the predicate function for snapshot builders.
 type Snapshot func(*sql.Selector)

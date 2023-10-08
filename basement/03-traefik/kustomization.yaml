@@ -4,4 +4,3 @@ resources:
   - 03-traefik.yaml
   - 04-traefik-vpn.yaml
   - 05-whoami.yaml
-  - 06-middlewares.yaml

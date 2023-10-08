@@ -83,6 +83,18 @@ func (oiu *OrderItemUpdate) AddDeletedAt(u int32) *OrderItemUpdate {
 	return oiu
 }
 
+// SetOrderID sets the "order_id" field.
+func (oiu *OrderItemUpdate) SetOrderID(s string) *OrderItemUpdate {
+	oiu.mutation.SetOrderID(s)
+	return oiu
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (oiu *OrderItemUpdate) SetOrderItemType(s string) *OrderItemUpdate {
+	oiu.mutation.SetOrderItemType(s)
+	return oiu
+}
+
 // SetContract sets the "contract" field.
 func (oiu *OrderItemUpdate) SetContract(s string) *OrderItemUpdate {
 	oiu.mutation.SetContract(s)
@@ -102,28 +114,8 @@ func (oiu *OrderItemUpdate) SetTokenID(s string) *OrderItemUpdate {
 }
 
 // SetAmount sets the "amount" field.
-func (oiu *OrderItemUpdate) SetAmount(u uint64) *OrderItemUpdate {
-	oiu.mutation.ResetAmount()
-	oiu.mutation.SetAmount(u)
-	return oiu
-}
-
-// AddAmount adds u to the "amount" field.
-func (oiu *OrderItemUpdate) AddAmount(u int64) *OrderItemUpdate {
-	oiu.mutation.AddAmount(u)
-	return oiu
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (oiu *OrderItemUpdate) SetPortionNum(u uint32) *OrderItemUpdate {
-	oiu.mutation.ResetPortionNum()
-	oiu.mutation.SetPortionNum(u)
-	return oiu
-}
-
-// AddPortionNum adds u to the "portion_num" field.
-func (oiu *OrderItemUpdate) AddPortionNum(u int32) *OrderItemUpdate {
-	oiu.mutation.AddPortionNum(u)
+func (oiu *OrderItemUpdate) SetAmount(s string) *OrderItemUpdate {
+	oiu.mutation.SetAmount(s)
 	return oiu
 }
 
@@ -287,6 +279,20 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: orderitem.FieldDeletedAt,
 		})
 	}
+	if value, ok := oiu.mutation.OrderID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderID,
+		})
+	}
+	if value, ok := oiu.mutation.OrderItemType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderItemType,
+		})
+	}
 	if value, ok := oiu.mutation.Contract(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -310,30 +316,9 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := oiu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiu.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiu.mutation.PortionNum(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderitem.FieldPortionNum,
-		})
-	}
-	if value, ok := oiu.mutation.AddedPortionNum(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderitem.FieldPortionNum,
 		})
 	}
 	if value, ok := oiu.mutation.Remark(); ok {
@@ -425,6 +410,18 @@ func (oiuo *OrderItemUpdateOne) AddDeletedAt(u int32) *OrderItemUpdateOne {
 	return oiuo
 }
 
+// SetOrderID sets the "order_id" field.
+func (oiuo *OrderItemUpdateOne) SetOrderID(s string) *OrderItemUpdateOne {
+	oiuo.mutation.SetOrderID(s)
+	return oiuo
+}
+
+// SetOrderItemType sets the "order_item_type" field.
+func (oiuo *OrderItemUpdateOne) SetOrderItemType(s string) *OrderItemUpdateOne {
+	oiuo.mutation.SetOrderItemType(s)
+	return oiuo
+}
+
 // SetContract sets the "contract" field.
 func (oiuo *OrderItemUpdateOne) SetContract(s string) *OrderItemUpdateOne {
 	oiuo.mutation.SetContract(s)
@@ -444,28 +441,8 @@ func (oiuo *OrderItemUpdateOne) SetTokenID(s string) *OrderItemUpdateOne {
 }
 
 // SetAmount sets the "amount" field.
-func (oiuo *OrderItemUpdateOne) SetAmount(u uint64) *OrderItemUpdateOne {
-	oiuo.mutation.ResetAmount()
-	oiuo.mutation.SetAmount(u)
-	return oiuo
-}
-
-// AddAmount adds u to the "amount" field.
-func (oiuo *OrderItemUpdateOne) AddAmount(u int64) *OrderItemUpdateOne {
-	oiuo.mutation.AddAmount(u)
-	return oiuo
-}
-
-// SetPortionNum sets the "portion_num" field.
-func (oiuo *OrderItemUpdateOne) SetPortionNum(u uint32) *OrderItemUpdateOne {
-	oiuo.mutation.ResetPortionNum()
-	oiuo.mutation.SetPortionNum(u)
-	return oiuo
-}
-
-// AddPortionNum adds u to the "portion_num" field.
-func (oiuo *OrderItemUpdateOne) AddPortionNum(u int32) *OrderItemUpdateOne {
-	oiuo.mutation.AddPortionNum(u)
+func (oiuo *OrderItemUpdateOne) SetAmount(s string) *OrderItemUpdateOne {
+	oiuo.mutation.SetAmount(s)
 	return oiuo
 }
 
@@ -659,6 +636,20 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 			Column: orderitem.FieldDeletedAt,
 		})
 	}
+	if value, ok := oiuo.mutation.OrderID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderID,
+		})
+	}
+	if value, ok := oiuo.mutation.OrderItemType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: orderitem.FieldOrderItemType,
+		})
+	}
 	if value, ok := oiuo.mutation.Contract(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -682,30 +673,9 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	}
 	if value, ok := oiuo.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiuo.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: orderitem.FieldAmount,
-		})
-	}
-	if value, ok := oiuo.mutation.PortionNum(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderitem.FieldPortionNum,
-		})
-	}
-	if value, ok := oiuo.mutation.AddedPortionNum(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
-			Value:  value,
-			Column: orderitem.FieldPortionNum,
 		})
 	}
 	if value, ok := oiuo.mutation.Remark(); ok {

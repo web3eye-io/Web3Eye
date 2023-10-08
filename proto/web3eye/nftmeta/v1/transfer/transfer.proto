@@ -30,7 +30,7 @@ message TransferReq {
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Contract = 40;
-  optional string TokenType = 50;
+  optional chain.TokenType TokenType = 50;
   optional string TokenID = 60;
   optional string From = 70;
   optional string To = 80;
@@ -47,7 +47,7 @@ message Transfer {
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
-  string TokenType = 50;
+  chain.TokenType TokenType = 50;
   string TokenID = 60;
   string From = 70;
   string To = 80;

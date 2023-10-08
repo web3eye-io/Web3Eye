@@ -20,6 +20,7 @@ import (
 
 const (
 	UploadFileFeild = "UploadFile"
+	ToVectorTimeout = time.Second * 3
 )
 
 type TransformResp struct {
@@ -87,7 +88,7 @@ func TransformFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer os.Remove(filePath)
 
-	vector, err := model.ToImageVector(filePath)
+	vector, err := model.ToImageVector(r.Context(), filePath)
 	if err != nil {
 		errStr := err.Error()
 		logger.Sugar().Errorf("failed to get file info ,err: %v", err)

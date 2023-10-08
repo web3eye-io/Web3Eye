@@ -32,6 +32,8 @@ type Contract struct {
 	Name string `json:"name,omitempty"`
 	// Symbol holds the value of the "symbol" field.
 	Symbol string `json:"symbol,omitempty"`
+	// Decimals holds the value of the "decimals" field.
+	Decimals uint32 `json:"decimals,omitempty"`
 	// Creator holds the value of the "creator" field.
 	Creator string `json:"creator,omitempty"`
 	// BlockNum holds the value of the "block_num" field.
@@ -57,7 +59,7 @@ func (*Contract) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case contract.FieldCreatedAt, contract.FieldUpdatedAt, contract.FieldDeletedAt, contract.FieldBlockNum, contract.FieldTxTime:
+		case contract.FieldCreatedAt, contract.FieldUpdatedAt, contract.FieldDeletedAt, contract.FieldDecimals, contract.FieldBlockNum, contract.FieldTxTime:
 			values[i] = new(sql.NullInt64)
 		case contract.FieldChainType, contract.FieldChainID, contract.FieldAddress, contract.FieldName, contract.FieldSymbol, contract.FieldCreator, contract.FieldTxHash, contract.FieldProfileURL, contract.FieldBaseURL, contract.FieldBannerURL, contract.FieldDescription, contract.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -131,6 +133,12 @@ func (c *Contract) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field symbol", values[i])
 			} else if value.Valid {
 				c.Symbol = value.String
+			}
+		case contract.FieldDecimals:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field decimals", values[i])
+			} else if value.Valid {
+				c.Decimals = uint32(value.Int64)
 			}
 		case contract.FieldCreator:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -237,6 +245,9 @@ func (c *Contract) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("symbol=")
 	builder.WriteString(c.Symbol)
+	builder.WriteString(", ")
+	builder.WriteString("decimals=")
+	builder.WriteString(fmt.Sprintf("%v", c.Decimals))
 	builder.WriteString(", ")
 	builder.WriteString("creator=")
 	builder.WriteString(c.Creator)

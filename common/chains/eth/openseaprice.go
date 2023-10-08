@@ -1,14 +1,14 @@
 package eth
 
 import (
-	"context"
 	"fmt"
 	"math/big"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 
-	ethereum "github.com/ethereum/go-ethereum"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
@@ -22,6 +22,9 @@ const (
 )
 
 var (
+	OrderFulfilledTopics = []common.Hash{
+		common.HexToHash(orderFulfilledEventHash),
+	}
 	openseaABI, _       = contracts.OpenseaMetaData.GetAbi()
 	ItemTypeToTokenType = map[uint8]basetype.TokenType{
 		0: basetype.TokenType_Native,
@@ -34,21 +37,21 @@ var (
 )
 
 type OrderItem struct {
-	PayType       basetype.TokenType
-	TokenContract string
-	TokenID       string
-	Amount        *big.Int
+	TokenType basetype.TokenType
+	Contract  string
+	TokenID   string
+	Amount    *big.Int
 }
 
 type OrderAccountDetails struct {
 	TxHash            string
-	OrderAccountItems map[string][]OrderItem
+	OrderAccountItems map[string][]*OrderItem
 }
 
 type OrderPricePair struct {
 	Recipient   string
-	TargetItems []OrderItem
-	OfferItems  []OrderItem
+	TargetItems []*npool.OrderItem
+	OfferItems  []*npool.OrderItem
 }
 
 type OrderPriceDetails struct {
@@ -56,40 +59,34 @@ type OrderPriceDetails struct {
 	OrderPricePairs []OrderPricePair
 }
 
-//nolint:gocritic
-func LogsToPrice(pLogs []types.Log) []*OrderPriceDetails {
-	result := make([]*OrderPriceDetails, 0)
+func LogsToOrders(pLogs []*types.Log) []*npool.Order {
+	result := make([]*npool.Order, 0)
 	for _, pLog := range pLogs {
 		orderObj, err := LogToOrderFulfilled(pLog)
 		if err != nil {
 			logger.Sugar().Warnf("failed to parse OrderFulfilled log,err %v", err)
 			continue
 		}
+
 		orderAD := TidyOrderAccount(orderObj)
 		orderPD := CalOrderPrice(orderAD)
-		result = append(result, orderPD)
+
+		for _, v := range orderPD.OrderPricePairs {
+			result = append(result, &npool.Order{
+				TxHash:      pLog.TxHash.String(),
+				BlockNumber: pLog.BlockNumber,
+				TxIndex:     uint32(pLog.TxIndex),
+				LogIndex:    uint32(pLog.Index),
+				Recipient:   v.Recipient,
+				TargetItems: v.TargetItems,
+				OfferItems:  v.OfferItems,
+			})
+		}
 	}
 	return result
 }
 
-func (ethCli *ethClients) OrderFulfilledLogs(ctx context.Context, fromBlock, toBlock int64) ([]*OrderPriceDetails, error) {
-	topics := [][]common.Hash{{
-		common.HexToHash(string(orderFulfilledEventHash)),
-	}}
-
-	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
-		FromBlock: big.NewInt(fromBlock),
-		ToBlock:   big.NewInt(toBlock),
-		Topics:    topics,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return LogsToPrice(logs), nil
-}
-
-func LogToOrderFulfilled(orderLog types.Log) (*contracts.OpenseaOrderFulfilled, error) {
+func LogToOrderFulfilled(orderLog *types.Log) (*contracts.OpenseaOrderFulfilled, error) {
 	orderObj := contracts.OpenseaOrderFulfilled{}
 	err := openseaABI.UnpackIntoInterface(&orderObj, "OrderFulfilled", orderLog.Data)
 	if err != nil {
@@ -101,7 +98,7 @@ func LogToOrderFulfilled(orderLog types.Log) (*contracts.OpenseaOrderFulfilled, 
 	}
 
 	orderObj.Offerer = common.HexToAddress(orderLog.Topics[1].Hex())
-	orderObj.Zone = common.HexToAddress(string(orderLog.Topics[2].Hex()))
+	orderObj.Zone = common.HexToAddress(orderLog.Topics[2].Hex())
 	orderObj.Raw.TxHash = orderLog.TxHash
 	orderObj.Raw.BlockHash = orderLog.BlockHash
 	orderObj.Raw.BlockNumber = orderLog.BlockNumber
@@ -112,42 +109,42 @@ func TidyOrderAccount(orderObj *contracts.OpenseaOrderFulfilled) *OrderAccountDe
 	accDetails := &OrderAccountDetails{
 		TxHash: orderObj.Raw.TxHash.String(),
 	}
-	accOrderItems := make(map[string][]OrderItem)
+	accOrderItems := make(map[string][]*OrderItem)
 	if _, ok := accOrderItems[orderObj.Recipient.String()]; !ok {
-		accOrderItems[orderObj.Recipient.String()] = []OrderItem{}
+		accOrderItems[orderObj.Recipient.String()] = []*OrderItem{}
 	}
 	if _, ok := accOrderItems[orderObj.Offerer.String()]; !ok {
-		accOrderItems[orderObj.Offerer.String()] = []OrderItem{}
+		accOrderItems[orderObj.Offerer.String()] = []*OrderItem{}
 	}
 	for _, v := range orderObj.Offer {
-		accOrderItems[orderObj.Offerer.String()] = append(accOrderItems[orderObj.Offerer.String()], OrderItem{
-			PayType:       ItemTypeToTokenType[v.ItemType],
-			TokenID:       v.Identifier.String(),
-			TokenContract: v.Token.String(),
-			Amount:        big.NewInt(0).Neg(v.Amount),
+		accOrderItems[orderObj.Offerer.String()] = append(accOrderItems[orderObj.Offerer.String()], &OrderItem{
+			TokenType: ItemTypeToTokenType[v.ItemType],
+			TokenID:   v.Identifier.String(),
+			Contract:  v.Token.String(),
+			Amount:    big.NewInt(0).Neg(v.Amount),
 		})
-		accOrderItems[orderObj.Recipient.String()] = append(accOrderItems[orderObj.Recipient.String()], OrderItem{
-			PayType:       ItemTypeToTokenType[v.ItemType],
-			TokenID:       v.Identifier.String(),
-			TokenContract: v.Token.String(),
-			Amount:        v.Amount,
+		accOrderItems[orderObj.Recipient.String()] = append(accOrderItems[orderObj.Recipient.String()], &OrderItem{
+			TokenType: ItemTypeToTokenType[v.ItemType],
+			TokenID:   v.Identifier.String(),
+			Contract:  v.Token.String(),
+			Amount:    v.Amount,
 		})
 	}
 	for _, v := range orderObj.Consideration {
 		if _, ok := accOrderItems[v.Recipient.String()]; !ok {
-			accOrderItems[v.Recipient.String()] = []OrderItem{}
+			accOrderItems[v.Recipient.String()] = []*OrderItem{}
 		}
-		accOrderItems[v.Recipient.String()] = append(accOrderItems[v.Recipient.String()], OrderItem{
-			PayType:       ItemTypeToTokenType[v.ItemType],
-			TokenID:       v.Identifier.String(),
-			TokenContract: v.Token.String(),
-			Amount:        v.Amount,
+		accOrderItems[v.Recipient.String()] = append(accOrderItems[v.Recipient.String()], &OrderItem{
+			TokenType: ItemTypeToTokenType[v.ItemType],
+			TokenID:   v.Identifier.String(),
+			Contract:  v.Token.String(),
+			Amount:    v.Amount,
 		})
-		accOrderItems[orderObj.Recipient.String()] = append(accOrderItems[orderObj.Recipient.String()], OrderItem{
-			PayType:       ItemTypeToTokenType[v.ItemType],
-			TokenID:       v.Identifier.String(),
-			TokenContract: v.Token.String(),
-			Amount:        big.NewInt(0).Neg(v.Amount),
+		accOrderItems[orderObj.Recipient.String()] = append(accOrderItems[orderObj.Recipient.String()], &OrderItem{
+			TokenType: ItemTypeToTokenType[v.ItemType],
+			TokenID:   v.Identifier.String(),
+			Contract:  v.Token.String(),
+			Amount:    big.NewInt(0).Neg(v.Amount),
 		})
 	}
 	accDetails.OrderAccountItems = accOrderItems
@@ -155,23 +152,23 @@ func TidyOrderAccount(orderObj *contracts.OpenseaOrderFulfilled) *OrderAccountDe
 }
 
 func CalOrderPrice(orderAD *OrderAccountDetails) *OrderPriceDetails {
-	collectedOAD := make(map[string][]OrderItem)
+	collectedOAD := make(map[string][]*OrderItem)
 	// collect sample items
 	for k, v := range orderAD.OrderAccountItems {
-		tokenSet := make(map[string]map[string]OrderItem)
+		tokenSet := make(map[string]map[string]*OrderItem)
 		for _, item := range v {
-			if _, ok := tokenSet[item.TokenContract]; !ok {
-				tokenSet[item.TokenContract] = make(map[string]OrderItem)
+			if _, ok := tokenSet[item.Contract]; !ok {
+				tokenSet[item.Contract] = make(map[string]*OrderItem)
 			}
-			if _, ok := tokenSet[item.TokenContract][item.TokenID]; !ok {
-				tokenSet[item.TokenContract][item.TokenID] = item
+			if _, ok := tokenSet[item.Contract][item.TokenID]; !ok {
+				tokenSet[item.Contract][item.TokenID] = item
 			} else {
-				lastItem := tokenSet[item.TokenContract][item.TokenID]
-				lastItem.Amount = big.NewInt(0).Add(tokenSet[item.TokenContract][item.TokenID].Amount, item.Amount)
-				tokenSet[item.TokenContract][item.TokenID] = lastItem
+				lastItem := tokenSet[item.Contract][item.TokenID]
+				lastItem.Amount = big.NewInt(0).Add(tokenSet[item.Contract][item.TokenID].Amount, item.Amount)
+				tokenSet[item.Contract][item.TokenID] = lastItem
 			}
 		}
-		collectedOAD[k] = []OrderItem{}
+		collectedOAD[k] = []*OrderItem{}
 		for _, items := range tokenSet {
 			for _, item := range items {
 				collectedOAD[k] = append(collectedOAD[k], item)
@@ -185,13 +182,23 @@ func CalOrderPrice(orderAD *OrderAccountDetails) *OrderPriceDetails {
 	}
 
 	for k, v := range collectedOAD {
-		targetItems := []OrderItem{}
-		offerItems := []OrderItem{}
+		targetItems := []*npool.OrderItem{}
+		offerItems := []*npool.OrderItem{}
 		for _, item := range v {
-			if item.PayType > basetype.TokenType_ERC20 && item.Amount.Sign() > 0 {
-				targetItems = append(targetItems, item)
+			if item.Amount.Sign() > 0 {
+				targetItems = append(targetItems, &npool.OrderItem{
+					Contract:  item.Contract,
+					TokenType: item.TokenType,
+					TokenID:   item.TokenID,
+					Amount:    item.Amount.Uint64(),
+				})
 			} else {
-				offerItems = append(offerItems, item)
+				offerItems = append(offerItems, &npool.OrderItem{
+					Contract:  item.Contract,
+					TokenType: item.TokenType,
+					TokenID:   item.TokenID,
+					Amount:    big.NewInt(0).Neg(item.Amount).Uint64(),
+				})
 			}
 		}
 		if len(targetItems) > 0 {

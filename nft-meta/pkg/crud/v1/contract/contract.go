@@ -58,7 +58,7 @@ func Upsert(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, err
 }
 
-// nolint
+//nolint:gocyclo
 func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate {
 	if in.ID != nil {
 		c.SetID(uuid.New())
@@ -77,6 +77,9 @@ func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate
 	}
 	if in.Symbol != nil {
 		c.SetSymbol(in.GetSymbol())
+	}
+	if in.Decimals != nil {
+		c.SetDecimals(in.GetDecimals())
 	}
 	if in.Creator != nil {
 		c.SetCreator(in.GetCreator())
@@ -126,7 +129,6 @@ func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, 
 	return rows, nil
 }
 
-// nolint
 func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -150,6 +152,7 @@ func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
 	return info, nil
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpdateOne {
 	if in.ChainType != nil {
 		u.SetChainType(in.GetChainType().String())
@@ -165,6 +168,9 @@ func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpd
 	}
 	if in.Symbol != nil {
 		u.SetSymbol(in.GetSymbol())
+	}
+	if in.Decimals != nil {
+		u.SetDecimals(in.GetDecimals())
 	}
 	if in.Creator != nil {
 		u.SetCreator(in.GetCreator())
@@ -211,7 +217,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
 	return info, nil
 }
 
-// nolint
+//nolint:funlen,gocyclo
 func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, error) {
 	stm := cli.Contract.Query()
 	if conds == nil {
@@ -282,6 +288,15 @@ func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, err
 			stm.Where(contract.Symbol(conds.GetSymbol().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid Symbol field")
+		}
+	}
+
+	if conds.Decimals != nil {
+		switch conds.GetDecimals().GetOp() {
+		case cruder.EQ:
+			stm.Where(contract.Decimals(conds.GetDecimals().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid Decimals field")
 		}
 	}
 

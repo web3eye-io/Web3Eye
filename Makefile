@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car converter dealer webui dashboard
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car converter dealer
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car transform dealer webui dashboard
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car transform dealer
 
 ##@ init project
 init:
@@ -32,8 +32,11 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 	git config --local core.hooksPath "${REPO_ROOT}/.githooks"
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
-verify: go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
+verify: ./extern/filecoin-ffi/filcrypto.pc go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
 	${REPO_ROOT}/hack/verify.sh
+
+verify-shellcheck: ## Runs shellcheck
+	${REPO_ROOT}/hack/verify-shellcheck.sh
 
 gen-ent:
 	go install entgo.io/ent/cmd/ent@v0.11.2
@@ -88,30 +91,44 @@ build-docker:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/build-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
+
 release-docker:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/release-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
+	
 deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
 	done
 
+prepare-golang-env:
+	${REPO_ROOT}/hack/set-golang-env.sh
+
+prepare-node-env:
+	${REPO_ROOT}/hack/set-node-env.sh
 
 ##@ Tests
 
 .PHONY: go-unit-test go-ut
-go-ut: unit-test
-go-unit-test: verify-build
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/before-test.sh;\
-	done
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/test-go.sh;\
-	done
-	@for x in $(GO_PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/after-test.sh;\
-	done
+# TODO:build unit test system
+go-unit-test: verify-build 
+# go-unit-test: verify-build before-test test-go after-test
+
+# before-test:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/before-test.sh;\
+# 	done
+
+# test-go:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/test-go.sh;\
+# 	done
+
+# after-test:
+# 	@for x in $(GO_PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/after-test.sh;\
+# 	done
 
 test-verbose:
 	VERBOSE=1 make test

@@ -24,6 +24,7 @@ func Ent2Grpc(row *ent.Token) *npool.Token {
 		VideoURL:        row.VideoURL,
 		Description:     row.Description,
 		Name:            row.Name,
+		TokenType:       basetype.TokenType(basetype.TokenType_value[row.TokenType]),
 		VectorState:     npool.ConvertState(npool.ConvertState_value[row.VectorState]),
 		VectorID:        row.VectorID,
 		IPFSImageURL:    row.IpfsImageURL,

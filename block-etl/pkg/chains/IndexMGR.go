@@ -47,7 +47,7 @@ func init() {
 		endpointGroups:          make(map[basetype.ChainType]map[string][]string),
 	}
 
-	// TODO:should be registed
+	// TODO:should be registered
 	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
 	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.GetEndpointChainID
 }
@@ -118,7 +118,7 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	}
 }
 
-// check erver chantype-chainid avaliable endpoints and update it to indexer
+// check erver chantype-chainid available endpoints and update it to indexer
 func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.StringVal{

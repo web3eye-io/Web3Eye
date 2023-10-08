@@ -2,8 +2,9 @@ package eth
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
-	"math/rand"
+	"math/big"
 	"time"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -22,7 +23,12 @@ type ethClients struct {
 }
 
 func (ethCli ethClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
-	endpoint := ethCli.endpoints[rand.Intn(len(ethCli.endpoints))]
+	randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(ethCli.endpoints))))
+	if err != nil {
+		return nil, err
+	}
+	endpoint := ethCli.endpoints[randIndex.Int64()]
+
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
 

@@ -12,7 +12,7 @@ import (
 )
 
 func (b *backup) buildHost(ctx context.Context) error {
-	host, err := libp2p.New()
+	host, err := libp2p.New() //nolint
 	if err != nil {
 		return err
 	}

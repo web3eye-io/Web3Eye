@@ -62,6 +62,9 @@
         "Symbol": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
+        "Decimals": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
         "Creator": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
@@ -114,6 +117,10 @@
         },
         "Symbol": {
           "type": "string"
+        },
+        "Decimals": {
+          "type": "integer",
+          "format": "int64"
         },
         "Creator": {
           "type": "string"

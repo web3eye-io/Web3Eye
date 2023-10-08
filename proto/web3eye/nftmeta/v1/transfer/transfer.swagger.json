@@ -26,6 +26,21 @@
       ],
       "default": "ChainUnkonwn"
     },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "Native",
+        "ERC20",
+        "ERC721",
+        "ERC721_WITH_CRITERIA",
+        "ERC1155",
+        "ERC1155_WITH_CRITERIA",
+        "Metaplex",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -202,7 +217,7 @@
           "type": "string"
         },
         "TokenType": {
-          "type": "string"
+          "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
           "type": "string"
@@ -252,7 +267,7 @@
           "type": "string"
         },
         "TokenType": {
-          "type": "string"
+          "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
           "type": "string"

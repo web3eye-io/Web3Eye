@@ -18,10 +18,10 @@ metadata:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
-      default-strip-gateway-prefix@kubernetescrd,
-      default-http-redirect-https@kubernetescrd,
-      default-http-redirect-https-testing@kubernetescrd,
-      default-common-headers@kubernetescrd
+      kube-system-strip-gateway-prefix@kubernetescrd,
+      kube-system-http-redirect-https@kubernetescrd,
+      kube-system-http-redirect-https-testing@kubernetescrd,
+      kube-system-common-headers@kubernetescrd
 
 spec:
   tls:

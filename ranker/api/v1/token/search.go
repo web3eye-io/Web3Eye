@@ -11,6 +11,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
@@ -76,7 +77,7 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		}
 		pBone := &PageBone{
 			TokenBones:  ToTokenBones(infos[start:end]),
-			Page:        uint32(i + 1),
+			Page:        i + 1,
 			TotalPages:  totalPages,
 			TotalTokens: totalTokens,
 			Limit:       in.Limit,
@@ -154,6 +155,7 @@ func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32,
 
 func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*rankernpool.SearchToken, error) {
 	vIDs := []int64{}
+	fmt.Println(utils.PrettyStruct(scores))
 	for i := range scores {
 		vIDs = append(vIDs, i)
 	}
@@ -206,7 +208,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*ra
 	// full the siblinsTokens
 	for _, v := range result {
 		conds = &nftmetanpool.Conds{
-			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType},
+			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType.String()},
 			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
 			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
 		}

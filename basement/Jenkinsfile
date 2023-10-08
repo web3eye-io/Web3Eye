@@ -1,12 +1,33 @@
 pipeline {
   agent any
+
   stages {
+    // switch k8s env
+    stage('Switch to current cluster') {
+      when {
+        expression { TARGET != 'helm' }
+      }
+      steps {
+        sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
+      }
+    }
+
     // -------install tasks----------
+    stage('install helm') {
+      when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'helm' }
+      }
+      steps {
+        sh 'bash basement/02-helm/install.sh'
+      }
+    }
+
     stage('install traefik') {
       when {
         expression { INSTALL   ==  'true' }
         anyOf {
-          expression { TARGET   ==  'all' }
           expression { TARGET == 'traefik' }
         }
       }
@@ -27,7 +48,7 @@ pipeline {
         sh 'bash basement/04-milvus/install.sh'
       }
     }
-
+    
     stage('install redis-cluster') {
       when{
         expression { INSTALL   ==  'true' }
@@ -73,7 +94,6 @@ pipeline {
       when {
         expression { UNINSTALL   ==  'true' }
         anyOf {
-          expression { TARGET   ==  'all' }
           expression { TARGET == 'traefik' }
         }
       }
@@ -135,6 +155,8 @@ pipeline {
       }
     }
   }
+
+
 
   post('Report') {
     always {

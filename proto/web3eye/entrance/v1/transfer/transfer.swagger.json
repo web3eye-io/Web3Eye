@@ -16,102 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/count/transfers": {
-      "post": {
-        "operationId": "Manager_CountTransfers",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/transferCountTransfersResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/rankerv1transferCountTransfersRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/get/transfer": {
-      "post": {
-        "operationId": "Manager_GetTransfer",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/transferGetTransferResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/transferGetTransferRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
-    "/v1/get/transfer/only": {
-      "post": {
-        "operationId": "Manager_GetTransferOnly",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/transferGetTransferOnlyResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/transferGetTransferOnlyRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/get/transfers": {
       "post": {
         "operationId": "Manager_GetTransfers",
@@ -119,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/transferGetTransfersResponse"
+              "$ref": "#/definitions/rankerv1transferGetTransfersResponse"
             }
           },
           "default": {
@@ -155,6 +59,21 @@
       ],
       "default": "ChainUnkonwn"
     },
+    "chainTokenType": {
+      "type": "string",
+      "enum": [
+        "TokenUnkonwn",
+        "Native",
+        "ERC20",
+        "ERC721",
+        "ERC721_WITH_CRITERIA",
+        "ERC1155",
+        "ERC1155_WITH_CRITERIA",
+        "Metaplex",
+        "NoURI"
+      ],
+      "default": "TokenUnkonwn"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -163,31 +82,6 @@
         }
       },
       "additionalProperties": {}
-    },
-    "rankerv1transferCountTransfersRequest": {
-      "type": "object",
-      "properties": {
-        "ChainType": {
-          "$ref": "#/definitions/chainChainType"
-        },
-        "ChainID": {
-          "type": "string"
-        },
-        "Contract": {
-          "type": "string"
-        },
-        "TokenID": {
-          "type": "string"
-        },
-        "Offset": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Limit": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
     },
     "rankerv1transferGetTransfersRequest": {
       "type": "object",
@@ -214,6 +108,83 @@
         }
       }
     },
+    "rankerv1transferGetTransfersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rankerv1transferTransfer"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "rankerv1transferTransfer": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Contract": {
+          "type": "string"
+        },
+        "TokenType": {
+          "$ref": "#/definitions/chainTokenType"
+        },
+        "TokenID": {
+          "type": "string"
+        },
+        "From": {
+          "type": "string"
+        },
+        "To": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "BlockNumber": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TxHash": {
+          "type": "string"
+        },
+        "BlockHash": {
+          "type": "string"
+        },
+        "TxTime": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Remark": {
+          "type": "string"
+        },
+        "TargetItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1transferOrderItem"
+          }
+        },
+        "OfferItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1transferOrderItem"
+          }
+        }
+      }
+    },
     "rpcStatus": {
       "type": "object",
       "properties": {
@@ -232,208 +203,43 @@
         }
       }
     },
-    "transferConds": {
+    "v1transferOrderItem": {
       "type": "object",
       "properties": {
-        "ID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "ChainID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Contract": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TokenID": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "From": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "To": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "Amount": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "BlockNumber": {
-          "$ref": "#/definitions/web3eyeUint64Val"
-        },
-        "TxHash": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "BlockHash": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "TxTime": {
-          "$ref": "#/definitions/web3eyeUint32Val"
-        },
-        "Remark": {
-          "$ref": "#/definitions/web3eyeStringVal"
-        },
-        "IDs": {
-          "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "transferCountTransfersResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "transferGetTransferOnlyRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/transferConds"
-        }
-      }
-    },
-    "transferGetTransferOnlyResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/transferTransfer"
-        }
-      }
-    },
-    "transferGetTransferRequest": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        }
-      }
-    },
-    "transferGetTransferResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "$ref": "#/definitions/transferTransfer"
-        }
-      }
-    },
-    "transferGetTransfersResponse": {
-      "type": "object",
-      "properties": {
-        "Infos": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/transferTransfer"
-          }
-        },
-        "Total": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "transferTransfer": {
-      "type": "object",
-      "properties": {
-        "ID": {
-          "type": "string"
-        },
-        "ChainType": {
-          "$ref": "#/definitions/chainChainType"
-        },
-        "ChainID": {
-          "type": "string"
-        },
         "Contract": {
           "type": "string"
         },
         "TokenType": {
-          "type": "string"
+          "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
-          "type": "string"
-        },
-        "From": {
-          "type": "string"
-        },
-        "To": {
           "type": "string"
         },
         "Amount": {
           "type": "string",
           "format": "uint64"
         },
-        "BlockNumber": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "TxHash": {
+        "AmountStr": {
           "type": "string"
-        },
-        "BlockHash": {
-          "type": "string"
-        },
-        "TxTime": {
-          "type": "integer",
-          "format": "int64"
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "web3eyeStringSliceVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
+        },
+        "Name": {
           "type": "string"
         },
-        "Value": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "web3eyeStringVal": {
-      "type": "object",
-      "properties": {
-        "Op": {
+        "Symbol": {
           "type": "string"
         },
-        "Value": {
-          "type": "string"
-        }
-      }
-    },
-    "web3eyeUint32Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
+        "Decimals": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "web3eyeUint64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
+        },
+        "OrderItemType": {
           "type": "string"
         },
-        "Value": {
-          "type": "string",
-          "format": "uint64"
+        "ImageURL": {
+          "type": "string"
         }
       }
     }

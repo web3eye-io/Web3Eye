@@ -1,0 +1,153 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/ranker/v1/synctask/synctask.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum",
+        "Solana"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "cttypeSyncState": {
+      "type": "string",
+      "enum": [
+        "Default",
+        "Start",
+        "Pause",
+        "Finish",
+        "Failed"
+      ],
+      "default": "Default"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rankerv1synctaskCreateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskDeleteSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTasksResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/synctaskSyncTask"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "rankerv1synctaskUpdateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "synctaskSyncTask": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Start": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "End": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Current": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Topic": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "SyncState": {
+          "$ref": "#/definitions/cttypeSyncState"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

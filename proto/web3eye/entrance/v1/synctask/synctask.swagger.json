@@ -1,0 +1,440 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web3eye/entrance/v1/synctask/synctask.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Manager"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/create/synctask": {
+      "post": {
+        "operationId": "Manager_CreateSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskCreateSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskCreateSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/delete/synctask": {
+      "post": {
+        "operationId": "Manager_DeleteSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskDeleteSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskDeleteSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/synctask": {
+      "post": {
+        "operationId": "Manager_GetSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskGetSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskGetSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/get/synctasks": {
+      "post": {
+        "operationId": "Manager_GetSyncTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskGetSyncTasksResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskGetSyncTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    },
+    "/v1/update/synctask": {
+      "post": {
+        "operationId": "Manager_UpdateSyncTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskUpdateSyncTaskResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rankerv1synctaskUpdateSyncTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Manager"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "chainChainType": {
+      "type": "string",
+      "enum": [
+        "ChainUnkonwn",
+        "Ethereum",
+        "Solana"
+      ],
+      "default": "ChainUnkonwn"
+    },
+    "cttypeSyncState": {
+      "type": "string",
+      "enum": [
+        "Default",
+        "Start",
+        "Pause",
+        "Finish",
+        "Failed"
+      ],
+      "default": "Default"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rankerv1synctaskCreateSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Start": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "End": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Current": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "SyncState": {
+          "$ref": "#/definitions/cttypeSyncState"
+        }
+      }
+    },
+    "rankerv1synctaskCreateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskDeleteSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1synctaskDeleteSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTasksRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Start": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "End": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Current": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Topic": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "SyncState": {
+          "$ref": "#/definitions/cttypeSyncState"
+        },
+        "Remark": {
+          "type": "string"
+        },
+        "Offset": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "rankerv1synctaskGetSyncTasksResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/synctaskSyncTask"
+          }
+        },
+        "Total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "rankerv1synctaskUpdateSyncTaskRequest": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Start": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "End": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Current": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Topic": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "SyncState": {
+          "$ref": "#/definitions/cttypeSyncState"
+        }
+      }
+    },
+    "rankerv1synctaskUpdateSyncTaskResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/synctaskSyncTask"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "synctaskSyncTask": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "ChainType": {
+          "$ref": "#/definitions/chainChainType"
+        },
+        "ChainID": {
+          "type": "string"
+        },
+        "Start": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "End": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Current": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "Topic": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "SyncState": {
+          "$ref": "#/definitions/cttypeSyncState"
+        },
+        "Remark": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

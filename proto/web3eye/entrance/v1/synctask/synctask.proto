@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package entrance.v1.synctask;
+
+option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/entrance/v1/synctask";
+import "google/api/annotations.proto";
+import "web3eye/ranker/v1/synctask/synctask.proto";
+
+service Manager {
+  rpc CreateSyncTask(ranker.v1.synctask.CreateSyncTaskRequest) returns (ranker.v1.synctask.CreateSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/create/synctask"
+      body:"*"
+    };
+  }
+  rpc UpdateSyncTask(ranker.v1.synctask.UpdateSyncTaskRequest) returns (ranker.v1.synctask.UpdateSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/update/synctask"
+      body:"*"
+    };
+  }
+  rpc GetSyncTask(ranker.v1.synctask.GetSyncTaskRequest) returns (ranker.v1.synctask.GetSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/synctask"
+      body:"*"
+    };
+  }
+  rpc GetSyncTasks(ranker.v1.synctask.GetSyncTasksRequest) returns (ranker.v1.synctask.GetSyncTasksResponse) {
+    option (google.api.http) = {
+      post:"/v1/get/synctasks"
+      body:"*"
+    };
+  }
+  rpc DeleteSyncTask(ranker.v1.synctask.DeleteSyncTaskRequest) returns (ranker.v1.synctask.DeleteSyncTaskResponse) {
+    option (google.api.http) = {
+      post:"/v1/delete/synctask"
+      body:"*"
+    };
+  }
+}

@@ -13,8 +13,8 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderpair"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
@@ -42,8 +42,8 @@ func columnChecker(table string) func(string) error {
 		block.Table:     block.ValidColumn,
 		contract.Table:  contract.ValidColumn,
 		endpoint.Table:  endpoint.ValidColumn,
+		order.Table:     order.ValidColumn,
 		orderitem.Table: orderitem.ValidColumn,
-		orderpair.Table: orderpair.ValidColumn,
 		snapshot.Table:  snapshot.ValidColumn,
 		synctask.Table:  synctask.ValidColumn,
 		token.Table:     token.ValidColumn,

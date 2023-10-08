@@ -24,11 +24,12 @@ func (OrderItem) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New).
 			Unique(),
+		field.String("order_id"),
+		field.String("order_item_type"),
 		field.String("contract"),
 		field.String("token_type"),
 		field.String("token_id"),
-		field.Uint64("amount"),
-		field.Uint32("portion_num"),
+		field.String("amount"),
 		field.Text("remark").
 			Optional(),
 	}
@@ -36,6 +37,6 @@ func (OrderItem) Fields() []ent.Field {
 
 func (OrderItem) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("id").Unique(),
+		index.Fields("order_id"),
 	}
 }

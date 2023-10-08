@@ -126,15 +126,8 @@ func (tu *TransferUpdate) SetTo(s string) *TransferUpdate {
 }
 
 // SetAmount sets the "amount" field.
-func (tu *TransferUpdate) SetAmount(u uint64) *TransferUpdate {
-	tu.mutation.ResetAmount()
-	tu.mutation.SetAmount(u)
-	return tu
-}
-
-// AddAmount adds u to the "amount" field.
-func (tu *TransferUpdate) AddAmount(u int64) *TransferUpdate {
-	tu.mutation.AddAmount(u)
+func (tu *TransferUpdate) SetAmount(s string) *TransferUpdate {
+	tu.mutation.SetAmount(s)
 	return tu
 }
 
@@ -427,14 +420,7 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: transfer.FieldAmount,
-		})
-	}
-	if value, ok := tu.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldAmount,
 		})
@@ -619,15 +605,8 @@ func (tuo *TransferUpdateOne) SetTo(s string) *TransferUpdateOne {
 }
 
 // SetAmount sets the "amount" field.
-func (tuo *TransferUpdateOne) SetAmount(u uint64) *TransferUpdateOne {
-	tuo.mutation.ResetAmount()
-	tuo.mutation.SetAmount(u)
-	return tuo
-}
-
-// AddAmount adds u to the "amount" field.
-func (tuo *TransferUpdateOne) AddAmount(u int64) *TransferUpdateOne {
-	tuo.mutation.AddAmount(u)
+func (tuo *TransferUpdateOne) SetAmount(s string) *TransferUpdateOne {
+	tuo.mutation.SetAmount(s)
 	return tuo
 }
 
@@ -950,14 +929,7 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 	}
 	if value, ok := tuo.mutation.Amount(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
-			Value:  value,
-			Column: transfer.FieldAmount,
-		})
-	}
-	if value, ok := tuo.mutation.AddedAmount(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint64,
+			Type:   field.TypeString,
 			Value:  value,
 			Column: transfer.FieldAmount,
 		})

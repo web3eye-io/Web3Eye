@@ -18,6 +18,10 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldOrderID holds the string denoting the order_id field in the database.
+	FieldOrderID = "order_id"
+	// FieldOrderItemType holds the string denoting the order_item_type field in the database.
+	FieldOrderItemType = "order_item_type"
 	// FieldContract holds the string denoting the contract field in the database.
 	FieldContract = "contract"
 	// FieldTokenType holds the string denoting the token_type field in the database.
@@ -26,8 +30,6 @@ const (
 	FieldTokenID = "token_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
-	// FieldPortionNum holds the string denoting the portion_num field in the database.
-	FieldPortionNum = "portion_num"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// Table holds the table name of the orderitem in the database.
@@ -40,11 +42,12 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
+	FieldOrderID,
+	FieldOrderItemType,
 	FieldContract,
 	FieldTokenType,
 	FieldTokenID,
 	FieldAmount,
-	FieldPortionNum,
 	FieldRemark,
 }
 

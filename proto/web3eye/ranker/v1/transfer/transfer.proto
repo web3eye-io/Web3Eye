@@ -4,31 +4,57 @@ package ranker.v1.transfer;
 
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/transfer";
 import "web3eye/nftmeta/v1/transfer/transfer.proto";
+import "web3eye/nftmeta/v1/order/order.proto";
 import "web3eye/basetype/v1/chain.proto";
 
 service Manager {
-  rpc GetTransfer(nftmeta.v1.transfer.GetTransferRequest) returns (nftmeta.v1.transfer.GetTransferResponse) {}
-  rpc GetTransferOnly(nftmeta.v1.transfer.GetTransferOnlyRequest)
-      returns (nftmeta.v1.transfer.GetTransferOnlyResponse) {}
-  rpc GetTransfers(GetTransfersRequest) returns (nftmeta.v1.transfer.GetTransfersResponse) {}
-  rpc CountTransfers(CountTransfersRequest) returns (nftmeta.v1.transfer.CountTransfersResponse) {}
+  rpc GetTransfers(GetTransfersRequest) returns (GetTransfersResponse) {}
+}
+
+message OrderItem{
+  string Contract = 10;
+  chain.TokenType TokenType = 20;
+  string TokenID = 30;
+  uint64 Amount = 40;
+  string AmountStr = 41;
+  string Remark = 50;
+  string Name = 60;
+  string Symbol = 70;
+  uint32 Decimals = 80;
+  string OrderItemType = 90;
+  string ImageURL = 100;
+}
+
+message Transfer {
+  string ID = 10;
+  chain.ChainType ChainType = 20;
+  string ChainID = 30;
+  string Contract = 40;
+  chain.TokenType TokenType = 50;
+  string TokenID = 60;
+  string From = 70;
+  string To = 80;
+  uint64 Amount = 90;
+  uint64 BlockNumber = 100;
+  string TxHash = 110;
+  string BlockHash = 120;
+  uint32 TxTime = 130;
+  string Remark = 140;
+  repeated OrderItem TargetItems = 150;
+  repeated OrderItem OfferItems = 160;
 }
 
 message GetTransfersRequest{
   chain.ChainType ChainType = 10;
   string ChainID = 20;
   string Contract = 30;
-  string TokenID = 40;
+  optional string TokenID = 40;
   int32 Offset = 50;
   int32 Limit = 60;
 }
 
-message CountTransfersRequest{
-  chain.ChainType ChainType = 10;
-  string ChainID = 20;
-  string Contract = 30;
-  string TokenID = 40;
-  int32 Offset = 50;
-  int32 Limit = 60;
+message GetTransfersResponse{
+  repeated Transfer Infos = 10;
+  uint32 Total = 20;
 }
 

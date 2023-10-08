@@ -50,7 +50,7 @@ func NewSnapshotKV(ctx context.Context, odb orbitiface.OrbitDB) (*SnapshotKV, er
 		return nil, err
 	}
 
-	if err := kv.kvSnapshotIndex.Load(ctx, -1); err != nil { //nolint
+	if err := kv.kvSnapshotIndex.Load(ctx, -1); err != nil {
 		return nil, err
 	}
 
@@ -73,7 +73,7 @@ func (kv *SnapshotKV) NextWaitSnapshot(ctx context.Context) error {
 	if kv.kvSnapshotIndex == nil {
 		return fmt.Errorf("invalid kvstore")
 	}
-
+	//nolint:gomnd
 	b := make([]byte, 8)
 	kv.waitSnapshotIndex += 1
 	binary.PutUvarint(b, kv.waitSnapshotIndex)
@@ -209,7 +209,7 @@ func (kv *SnapshotKV) NextBackupSnapshot(ctx context.Context) error {
 	if kv.kvSnapshotIndex == nil {
 		return fmt.Errorf("invalid kvstore")
 	}
-
+	//nolint:gomnd
 	b := make([]byte, 8)
 	kv.backupSnapshotIndex += 1
 	binary.PutUvarint(b, kv.backupSnapshotIndex)
@@ -318,7 +318,7 @@ func (kv *SnapshotKV) UpdateSnapshotDealID(ctx context.Context, index, dealID ui
 	if err := _kv.Load(ctx, -1); err != nil {
 		return nil, err
 	}
-
+	//nolint:gomnd
 	b := make([]byte, 8)
 	binary.PutUvarint(b, dealID)
 	if _, err := _kv.Put(ctx, SnapshotDealID, b); err != nil {

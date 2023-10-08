@@ -6,8 +6,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/endpoint"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/orderitem"
-	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/orderpair"
+	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/snapshot"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/token"
@@ -31,15 +30,14 @@ func Register(server grpc.ServiceRegistrar) {
 	synctask.Register(server)
 	snapshot.Register(server)
 	endpoint.Register(server)
-	orderitem.Register(server)
-	orderpair.Register(server)
+	order.Register(server)
 }
 
-func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {
-	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, endpoint, opts); err != nil {
+func RegisterGateway(mux *runtime.ServeMux, e string, opts []grpc.DialOption) error {
+	if err := npool.RegisterManagerHandlerFromEndpoint(context.Background(), mux, e, opts); err != nil {
 		return err
 	}
-	if err := token.RegisterGateway(mux, endpoint, opts); err != nil {
+	if err := token.RegisterGateway(mux, e, opts); err != nil {
 		return err
 	}
 	return nil
