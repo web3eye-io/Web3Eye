@@ -82,10 +82,11 @@ endif
 
 dealer: ./dealer/output/linux/amd64/lotus ./dealer/output/linux/amd64/ipfs
 
-build: ./extern/filecoin-ffi/filcrypto.pc ## Build project
-	@for x in $(PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
-	done
+build: 
+# ./extern/filecoin-ffi/filcrypto.pc ## Build project
+# 	@for x in $(PROJECTS); do \
+# 		${REPO_ROOT}/$${x}/script/build.sh $(TAG);\
+# 	done
 
 build-docker:
 	@for x in $(PROJECTS); do \
