@@ -213,6 +213,7 @@ pipeline {
           TAG_VERSION = sh(returnStatus: true,
             script: 'git tag|grep \'[13579]$\'|tail -n 1'
             )
+             echo "Git committer email: ${TAG_VERSION}"
         }
         
       }
