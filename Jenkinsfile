@@ -252,7 +252,7 @@ pipeline {
           git reset --hard
           git checkout $TAG_VERSION
         '''.stripIndent())
-        sh 'TAG= make build'
+        sh 'TAG=$TAG_VERSION make build'
         sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
