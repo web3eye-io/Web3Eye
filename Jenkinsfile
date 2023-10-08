@@ -201,7 +201,7 @@ pipeline {
         }
         expression { TARGET_ENV ==~ /.*testing.*/ }
       }
-      steps {
+      script {
         sh(returnStdout: false, script: '''
           set +e
           // sync remote tags
