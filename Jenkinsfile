@@ -17,7 +17,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-ssh-private-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
+        git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-token', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
     stage('Prepare Golang ENV') {
