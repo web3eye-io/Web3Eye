@@ -91,10 +91,12 @@ build-docker:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/build-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
+
 release-docker:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/release-docker-image.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
+	
 deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
 		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\

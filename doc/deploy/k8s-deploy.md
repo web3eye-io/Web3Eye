@@ -162,8 +162,8 @@ nfs-server安装示例：
 apt update
 apt install nfs-kernel-server -y
 
-# 本例子/scratch为提供存储的目录
-echo '/scratch *(rw,async,no_subtree_check,no_root_squash)' >> /etc/exports
+# 本例子/k8sdata为提供存储的目录
+echo '/k8sdata *(rw,async,no_subtree_check,no_root_squash)' >> /etc/exports
 systemctl start nfs-kernel-server.service
 
 exportfs -a
@@ -204,20 +204,19 @@ exportfs -a
 脚本路径：basement/Jenkinsfile 
 
 | 参数名    | testing-1001-install-helm-for-jenkins |
-|-----------|-------------------------------|
-| INSTALL   | true                          |
-| UNINSTALL | false                         |
-| TARGET    | helm                          |
-| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+|-----------|---------------------------------------|
+| INSTALL   | true                                  |
+| UNINSTALL | false                                 |
+| TARGET    | helm                                  |
 
-| 参数名     | testing-1002-set-k8s-nfs-storage |
-|------------|--------------------------|
-| INSTALL    | true                     |
-| UNINSTALL  | false                    |
-| TARGET     | nfs-storage              |
-| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
-| NFS_SERVER | 172.16.29.54             |
-| NFS_PATH   | /scratch                 |
+| 参数名     | testing-1002-set-k8s-nfs-storage  |
+|------------|-----------------------------------|
+| INSTALL    | true                              |
+| UNINSTALL  | false                             |
+| TARGET     | nfs-storage                       |
+| TARGET_ENV | web3eye-testing-idc(或者其他环境) |
+| NFS_SERVER | 172.16.29.54                      |
+| NFS_PATH   | /k8sdata                          |
 
 ### 安装初始化组件
 
@@ -236,11 +235,11 @@ exportfs -a
 脚本路径：basement/Jenkinsfile 
 
 | 参数名    | testing-1003-install-all-basement | testing-1003-uninstall-all-basement |
-|-----------|---------------------------|-----------------------------|
-| INSTALL   | true                      | false                       |
-| UNINSTALL | false                     | true                        |
-| TARGET    | all                       | all                         |
-| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+|-----------|-----------------------------------|-------------------------------------|
+| INSTALL   | true                              | false                               |
+| UNINSTALL | false                             | true                                |
+| TARGET    | all                               | all                                 |
+| TARGET_ENV    | web3eye-testing-idc(或者其他环境)                          |
 
 
 #### IDC基础组件
@@ -251,11 +250,11 @@ exportfs -a
 脚本路径：basement/Jenkinsfile 
 
 | 参数名    | testing-1004-install-traefik | testing-1004-uninstall-traefik |
-|-----------|---------------------------|-----------------------------|
-| INSTALL   | true                      | false                       |
-| UNINSTALL | false                     | true                        |
-| TARGET    | traefik                       | traefik                         |
-| TARGET_ENV    | web3eye-testing(或者其他环境)                          |
+|-----------|------------------------------|--------------------------------|
+| INSTALL   | true                         | false                          |
+| UNINSTALL | false                        | true                           |
+| TARGET    | traefik                      | traefik                        |
+| TARGET_ENV    | web3eye-testing-aws(或者其他环境)                          |
 
 ## 项目构建&部署任务
 
@@ -277,18 +276,26 @@ exportfs -a
 
 脚本路径：Jenkinsfile 
 
-| 参数名         | build  | tag           | release       | deploy        |
-|----------------|--------|---------------|---------------|---------------|
-| BRANCH_NAME    | 分支名 | 分支名        | 分支名        | 分支名        |
-| BUILD_TARGET   | true   | false         | false         | false         |
-| DEPLOY_TARGET  | false  | false         | false         | true          |
-| RELEASE_TARGET | false  | false         | true          | true          |
-| TAG_PATCH      | false  | true/false    | false         | false         |
-| TAG_MINOR      | false  | true/false    | false         | false         |
-| TAG_MAJOR      | false  | true/false    | false         | false         |
-| AIMPROJECT     | 项目名 | 项目名        | 项目名        | 项目名        |
-| TAG_FOR        | none   | dev/test/prod | dev/test/prod | dev/test/prod |
-| TARGET_ENV     | 环境名 | 环境名        | 环境名        | 环境名        |
+| 参数名         | build  | tag        | release | deploy |
+|----------------|--------|------------|---------|--------|
+| BRANCH_NAME    | 分支名 | 分支名     | 分支名  | 分支名 |
+| BUILD_TARGET   | true   | false      | false   | false  |
+| DEPLOY_TARGET  | false  | false      | false   | true   |
+| RELEASE_TARGET | false  | false      | true    | true   |
+| TAG_PATCH      | false  | true/false | false   | false  |
+| TAG_MINOR      | false  | true/false | false   | false  |
+| TAG_MAJOR      | false  | true/false | false   | false  |
+| AIMPROJECT     | 项目名 | 项目名     | 项目名  | 项目名 |
+| TAG_FOR        | none   | test/prod  | none    | none   |
+| TARGET_ENV     | 环境名 | 环境名     | 环境名  | 环境名 |
+
+release和deploy的Tag关系说明：
+
+|             | feature  | development | testing              | production           |
+|-------------|----------|-------------|----------------------|----------------------|
+| BRANCH_NAME | branch   | master      | master               | master               |
+| TARGET_ENV  | 任意环境 | development | testing              | production           |
+| 最终Tag名   | branch名 | latest      | 奇数版本号(如:0.5.3) | 偶数版本号(如:0.5.2) |
 
 ## 配置说明
 

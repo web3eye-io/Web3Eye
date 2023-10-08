@@ -4,6 +4,9 @@ pipeline {
   stages {
     // switch k8s env
     stage('Switch to current cluster') {
+      when {
+        expression { TARGET != 'helm' }
+      }
       steps {
         sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
       }

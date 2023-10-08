@@ -41,7 +41,6 @@ pipeline {
     stage('Compile') {
       when {
         expression { BUILD_TARGET == 'true' }
-        expression { TAG_FOR == 'none' }
       }
       steps {
         sh (returnStdout: false, script: '''
@@ -50,32 +49,18 @@ pipeline {
       }
     }
 
-
-    // TODO: support switch k8s cluster
-    // stage('Switch to current cluster') {
+    // TODO: support UT
+    // stage('Unit Tests') {
     //   when {
-    //     anyOf {
-    //       expression { BUILD_TARGET == 'true' }
-    //       expression { DEPLOY_TARGET == 'true' }
-    //     }
+    //     expression { BUILD_TARGET == 'true' }
     //   }
     //   steps {
-    //     sh 'cd /etc/kubeasz; ./ezctl checkout $TARGET_ENV'
+    //     sh (returnStdout: false, script: '''
+    //       swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
+    //       kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
+    //     '''.stripIndent())
     //   }
     // }
-
-    // TODO: support UT
-    stage('Unit Tests') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh (returnStdout: false, script: '''
-          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-          kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
-        '''.stripIndent())
-      }
-    }
 
     stage('Tag') {
       when {
@@ -142,11 +127,39 @@ pipeline {
         }
       }
     }
+
+    stage('Generate docker image for feature') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { BRANCH_NAME != 'master' }
+      }
+      steps {
+        sh 'make verify-build'
+        sh(returnStdout: false, script: '''
+          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
+        '''.stripIndent())
+      }
+    }
+
+    stage('Release docker image for feature') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { BRANCH_NAME != 'master' }
+      }
+      steps {
+         sh(returnStdout: false, script: '''
+          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
+        '''.stripIndent())
+      }
+    }
     
     stage('Generate docker image for dev') {
       when {
         expression { RELEASE_TARGET == 'true' }
-        expression { TAG_FOR == 'dev' }
+        expression { BRANCH_NAME == 'master' }
+        expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
         sh 'TAG=latest make build'
@@ -157,20 +170,21 @@ pipeline {
     stage('Release docker image for dev') {
       when {
         expression { RELEASE_TARGET == 'true' }
-        expression { TAG_FOR == 'dev' }
+        expression { BRANCH_NAME == 'master' }
+        expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
       }
     }
 
-    stage('Pick tag version for test') {
+    stage('Pick tag version for testing') {
       when {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
-        expression { TAG_FOR == 'test' }
+        expression { TARGET_ENV ==~ /.*testing.*/ }
       }
       steps {
         sh(returnStdout: false, script: '''
@@ -183,13 +197,13 @@ pipeline {
       }
     }
 
-    stage('Pick tag version for prod') {
+    stage('Pick tag version for production') {
       when {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
-        expression { TAG_FOR == 'prod' }
+        expression { TARGET_ENV ==~ /.*production.*/ }
       }
       steps {
         sh(returnStdout: false, script: '''
@@ -207,8 +221,8 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         anyOf{
-          expression { TAG_FOR == 'test' }
-          expression { TAG_FOR == 'prod' }
+          expression { TARGET_ENV ==~ /.*testing.*/ }
+          expression { TARGET_ENV ==~ /.*production.*/ }
         }
       }
       steps {
@@ -226,8 +240,8 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         anyOf{
-          expression { TAG_FOR == 'test' }
-          expression { TAG_FOR == 'prod' }
+          expression { TARGET_ENV ==~ /.*testing.*/ }
+          expression { TARGET_ENV ==~ /.*production.*/ }
         }
       }
       steps {
@@ -246,6 +260,19 @@ pipeline {
       }
     }
 
+    stage('Deploy for feature') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME != 'master' }
+      }
+      steps {
+        sh(returnStdout: false, script: '''
+          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          TAG=$feature_name make deploy-to-k8s-cluster
+        '''.stripIndent())
+      }
+    }
+
     stage('Deploy for dev') {
       when {
         expression { DEPLOY_TARGET == 'true' }
@@ -260,8 +287,8 @@ pipeline {
       when {
         expression { DEPLOY_TARGET == 'true' }
         anyOf{
-          expression { TARGET_ENV ==~ /.*test.*/ }
-          expression { TARGET_ENV ==~ /.*prod.*/ }
+          expression { TARGET_ENV ==~ /.*testing.*/ }
+          expression { TARGET_ENV ==~ /.*production.*/ }
         }
       }
       steps {

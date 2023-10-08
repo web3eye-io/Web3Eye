@@ -16,6 +16,9 @@ spec:
         app: traefik-vpn
     spec:
       serviceAccountName: traefik-ingress-controller
+      nodeSelector:
+        type: traefik-vpn
+        kubernetes.io/os: linux
       containers:
         - name: traefik-vpn
           image: traefik:v2.9
