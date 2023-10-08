@@ -31,6 +31,8 @@ const onUpdate = () => {
 }
 </script>
 <style lang="sass" scoped>
+.q-btn
+  padding: 4px 0
 button
   ::v-deep .q-hoverable
     &:hover   

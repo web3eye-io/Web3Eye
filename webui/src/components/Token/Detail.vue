@@ -73,7 +73,7 @@
           <q-tr :props="props">
             <q-td key="OfferItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-center">
+              <div v-else class="row justify-start">
                 <div class="left">
                   <MyImage
                     :url="(target?.ImageURL as string)"
@@ -82,7 +82,7 @@
                   />
                 </div>
                 <div class="column items-start right">
-                  <div class="token">#17173445</div>
+                  <div class="token"># {{props.row.OfferItems?.[0]?.TokenID}}</div>
                   <div class="show-more">
                     Show More(Hover)
                     <q-tooltip
@@ -100,7 +100,7 @@
             </q-td>
             <q-td key="TargetItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-center">
+              <div v-else class="row justify-start">
                 <div class="left">
                   <MyImage
                     :url="(target?.ImageURL as string)"
@@ -109,7 +109,7 @@
                   />
                 </div>
                 <div class="column items-start right">
-                  <div class="token">#17173445</div>
+                  <div class="token"># {{props.row.TargetItems?.[0]?.TokenID}}</div>
                   <div class="show-more">
                     Show More(Hover)
                     <q-tooltip
@@ -200,27 +200,27 @@ const columns = computed(() => [
   {
     name: 'OfferItems',
     label: 'Offer Items',
-    align: 'center',
+    align: 'left',
   },
   {
     name: 'TargetItems',
     label: 'Target Items',
-    align: 'center',
+    align: 'left',
   },
   {
     name: 'From',
     label: 'From',
-    align: 'center',
+    align: 'left',
   },
   {
     name: 'To',
     label: 'To',
-    align: 'center',
+    align: 'left',
   },
   {
     name: 'TxTime',
     label: 'Time',
-    align: 'center',
+    align: 'left',
   },
 ])
 
@@ -386,5 +386,6 @@ onMounted(() => {
 .show-more
   color: #1772F8
   font-size: 12px
-
+.token,.show-more
+  padding-left: 5px
 </style>
