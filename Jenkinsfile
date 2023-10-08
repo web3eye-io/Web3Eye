@@ -13,6 +13,8 @@ pipeline {
     // NODEHOME = "$NODETMPENV/nodehome"
     // NODEBIN = "$NODEHOME/bin"
     PATH = "$NODEBIN:$GOBIN:$PATH"
+
+    TAG_VERSION = ""
   }
   stages {
     stage('Clone') {
