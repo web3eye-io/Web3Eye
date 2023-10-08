@@ -7,13 +7,12 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    PATH = "$GOBIN:$PATH"
 
     NODEVERSION = "18.18.0"
     NODETMPENV = "/tmp/node-tmp-env/$NODEVERSION"
     NODEHOME = "$NODETMPENV/nodehome"
     NODEBIN = "$NODEHOME/bin"
-    PATH = "$NODEBIN:$PATH"
+    PATH = "$NODEBIN:$GOBIN:$PATH"
   }
   stages {
     stage('Clone') {
