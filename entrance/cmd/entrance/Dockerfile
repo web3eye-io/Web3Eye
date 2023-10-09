@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM jrei/systemd-centos:7
 
 COPY entrance /usr/local/bin/entrance
 COPY Entrance.viper.yaml /etc/Entrance/Entrance.viper.yaml
@@ -9,8 +9,8 @@ ENV ENV_DATA_DIR=/data \
     ENV_INVERSTOR_KEY=""
 RUN mkdir $ENV_DATA_DIR
 
-RUN apt update -y
-RUN apt install -y --no-install-recommends ca-certificates curl
+RUN yum update -y
+RUN yum install ca-certificates curl -y
 
 WORKDIR /usr/local/bin/
 
