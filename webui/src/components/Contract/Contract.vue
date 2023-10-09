@@ -40,22 +40,82 @@
           <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name" :rows-per-page-options='[20]'>
             <template v-slot:body="props">
               <q-tr :props="props">
-                <q-td key="Block" :props="props">
-                  {{ props.row.BlockNumber }}
-                </q-td>
-                <q-td key="TxTime" :props="props">
-                  {{ formatTime(props.row.TxTime) }}
-                </q-td>
-                <q-td key="Amount" :props="props">
-                  {{ props.row.Amount }}
-                </q-td>
-                <q-td key="From" :props="props">
-                  <ToolTip :address="props.row.From" />
-                </q-td>
-                <q-td key="To" :props="props">
-                  <ToolTip :address="props.row.To" />
-                </q-td>
-              </q-tr>
+            <q-td key="OfferItems" :props="props">
+              <span v-if='props.row.OfferItems?.length === 0' />
+              <div v-else class="row justify-start">
+                <div class="left">
+                  <MyImage
+                    :url="(props.row.OfferItems?.[0].ImageURL as string)"
+                    :height="'40px'"
+                    :width="'40px'"
+                  />
+                </div>
+                <div class="column items-start right">
+                  <div class="token"># {{props.row.OfferItems?.[0]?.TokenID}}</div>
+                  <div class="show-more">
+                    Show More(Hover)
+                    <q-tooltip
+                      anchor="bottom right"
+                      style="width: 400px"
+                      self="center middle"
+                      class="bg-white text-black shadow-2"
+                      :offset="[60, 60]"
+                    >
+                      <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
+                    </q-tooltip>
+                  </div>
+                </div>
+              </div>
+            </q-td>
+            <q-td key="Transfer" :props="props">
+              <span v-if='props.row.OfferItems?.length === 0' />
+              <div v-else class="row justify-start">
+                <div class="column items-start right">
+                  <div class="show-more">
+                    <q-icon name="img:icons/transfer.png" size="20px"/>
+                  </div>
+                </div>
+              </div>
+            </q-td>
+            <q-td key="Transfer1" :props="props">
+            </q-td>
+            <q-td key="TargetItems" :props="props">
+              <span v-if='props.row.TargetItems?.length === 0' />
+              <div v-else class="row justify-start">
+                <div class="left">
+                  <MyImage
+                    :url="(props.row.TargetItems?.[0]?.ImageURL as string)"
+                    :height="'40px'"
+                    :width="'40px'"
+                  />
+                </div>
+                <div class="column items-start right">
+                  <div class="token"># {{props.row.TargetItems?.[0]?.TokenID}}</div>
+                  <div class="show-more">
+                    Show More(Hover)
+                    <q-tooltip
+                      anchor="bottom right"
+                      style="width: 400px"
+                      self="center middle"
+                      class="bg-white text-black shadow-2"
+                      :offset="[60, 60]"
+                    >
+                      <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
+                    </q-tooltip>
+                  </div>
+                </div>
+              </div>
+            </q-td>
+            <q-td key="From" :props="props">
+              <ToolTip :address="props.row.From" />
+            </q-td>
+            <q-td key="To" :props="props">
+              <ToolTip :address="props.row.To" />
+            </q-td>
+            <q-td key="TxTime" :props="props">
+              {{ formatTime(props.row.TxTime) }}
+            </q-td>
+          </q-tr>
             </template>
           </q-table>
         </div>
@@ -76,7 +136,12 @@ import { formatTime } from 'src/teststore/util'
 import { ShotToken } from 'src/teststore/contract/types';
 const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
-
+const MyImage = defineAsyncComponent(
+  () => import('src/components/Token/Image.vue')
+)
+const TransferFloatItem = defineAsyncComponent(
+  () => import('src/components/Token/TransferFloatItem.vue')
+)
 const tab = ref('Collections')
 const contract = useContractStore()
 const tokens = computed(() => contract.ShotTokens.ShotTokens)
@@ -140,29 +205,39 @@ const getTransfers = (offset: number, limit: number) => {
 
 const columns = computed(() => [
   {
-    name: 'Block',
-    label: 'BLOCK',
-    align: 'center',
+    name: 'OfferItems',
+    label: 'Offer Items',
+    align: 'left',
   },
   {
-    name: 'TxTime',
-    label: 'Time',
-    align: 'center',
+    name: 'Transfer',
+    label: '',
+    align: 'left',
   },
   {
-    name: 'Amount',
-    label: 'Value',
-    align: 'center',
+    name: 'Transfer1',
+    label: '',
+    align: 'left',
+  },
+  {
+    name: 'TargetItems',
+    label: 'Target Items',
+    align: 'left',
   },
   {
     name: 'From',
     label: 'From',
-    align: 'center',
+    align: 'left',
   },
   {
     name: 'To',
     label: 'To',
-    align: 'center',
+    align: 'left',
+  },
+  {
+    name: 'TxTime',
+    label: 'Time',
+    align: 'left',
   },
 ])
 
@@ -231,5 +306,11 @@ onMounted(() => {
   padding-right: 0
   padding-left: 0
   
-
+.token
+  font-size: 16px
+.show-more
+  color: #1772F8
+  font-size: 12px
+.token,.show-more
+  padding-left: 5px
 </style>
