@@ -23,22 +23,29 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 微服务模块：  
 **NFT-Meta** 维护区块转储任务,存储NFT交易、NFT资产、NFT对应Contract等信息  
 **Block-ETL** 负责与区块链节点交互，获取NFT的transfer日志，分析对应的Token信息以及Cantract信息  
-**Image-Converter** 将图片转换为向量  
+**Transform** 向量生成服务
+**Ranker** NFT-Meta项目负责组织任务以及负责对接解析好的数据，将其存入数据库，而Ranker则对接查询&搜索功能，有机组合数据
+**Gateway&Cloud-Proxy** Gateway和Cloud-Proxy是AWS和IDC之间的信息桥梁，Gateway主动连接Cloud-Proxy，向AWS提供数据服务
+**Entrance** 负责向外提供服务接口，外面的服务统一从Entrance入口进入，通过Cloud-Proxy和Gateway请求到IDC
+**WebUI** 主要负责用户侧UI
+**Dashboard** 主要负责管理员UI
+
+
 
 ![架构](doc/picture/archi.png)
 
-在主要的三个微服务模块中，NFT-Meta负责提供搜索、信息存储查询、任务分发等功能，其他两个模块更多的是获取并处理任务；其中Image-Converter不只是处理从Kafka获取由NFT-Meta发送的任务，还提供HTTP服务支持直接请求获得向量，主要用来为以图搜图服务；而Block-ETL不对外提供接口，只接收任务和提交任务。
+在主要的三个微服务模块中，NFT-Meta负责提供搜索、信息存储查询、任务分发等功能，其他两个模块更多的是获取并处理任务；其中Image-Converter不只是处理从Pulsar获取由NFT-Meta发送的任务，还提供HTTP服务支持直接请求获得向量，主要用来为以图搜图服务；而Block-ETL不对外提供接口，只接收任务和提交任务。
 
-### 模块设计
+### 主要模块设计
 
-#### Image-Converter
+#### Transform
 
-目前主要提供Jpg、Jepg、Png等常规图片格式的转向量操作，其他图像资源比如GIF、Base64等目前并不支持。  
-服务启动后有两个线程，一个负责提供HTTP接口方式的转向量方式，提供同步的转向量方式，支持URL和文件两种方式；还有一个负责从Kafka获取转向量任务，转换后放入Kafka中NFT-Meta获取后存入Milvus和数据库。  
+目前主要提供Jpg、Jepg、Png等常规图片格式的转向量操作，其他图像资源比如GIF等目前并不支持。  
+服务启动后有两个线程，一个负责提供HTTP接口方式的转向量方式，提供同步的转向量方式，支持URL和文件两种方式；还有一个负责从Pulsar获取转向量任务，转换后放入Pulsar中NFT-Meta获取后存入Milvus和数据库。  
 
 #### Block-ETL
 
-目前仅支持Ethereum，所以以下描述都基于ETH背景；并且目前也只支持标准的ERC721和ERC1155至于其他玩法的NFT后续提供支持。
+目前仅支持Ethereum、Solana
 
 从区块链全节点（存有全部区块数据，下面称为钱包节点）中的log中**拉取transfer信息，解析出NFT交易、Token、Contract信息**；由于存在Swap合约、非标准NFT合约所以部分Token信息无法解析出资产信息（比如图片描述和图片地址）。
 
@@ -52,11 +59,10 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 
 分配到其他两个模块的任务都由NFT-Meta发出、存储其他两个模块处理过的数据并对外提供搜索功能。目前这个模块可能有些臃肿，比如关于搜索的功能可以独立出去、其他模块产生的数据直接与数据库交互这类问题后续会继续思考，但是前期搜索由于功能较少先放到这个模块中。
 
-NFT-Meta主要维护四个表：  
+NFT-Meta主要维护的表：  
 1 **Transfers**  NFT交易记录  
 2 **Tokens**  NFT-资产信息  
 3 **Contracts**  NFT-合约信息  
-4 **SyncTasks**  同步任务
 
 NFT-Meta提供GRPC和HTTP两种协议的API接口，GRPC主要提供给对内的微服务模块，HTTP对外提供服务；向量数据主要存在Milvus中，关系型数据主要存在MySql中。Milvus与MySql中的数据依靠Milvus提供的ID关联。  
 
@@ -77,6 +83,10 @@ MySql中会关联Milvus中的ID字段
     VectorState: Success  
 ...  
 }  
+
+#### Ranker
+
+Ranker只负责从数据库中查询数据，将数据组合成前端需要的结构。在Ranker中，会直接到Milvus中和MySql中进行查询，不经过NFT-Meta，但是部分接口会直接包装NFT-Meta的API函数，不重复写功能一致的函数。需要多张表联合查询的，直接实现CRUD层提供功能。涉及到搜索的部分时，为了提升速度减少重复查询，将组合好的中间结果保留主干信息后放到Redis，需要时进行填充。
 
 ### 主要流程
 
@@ -120,7 +130,7 @@ Token的主要字段如下：
 
 #### 任务分发
 
-目前用到Kafka的地方有两个，一是给Image-Converter放转向量任务，二是给Block-ETL放需要解析的区块高度。
+目前用到Pulsar的地方有两个，一是给Image-Converter放转向量任务，二是给Block-ETL放需要解析的区块高度。
 
 图中就是需要大量转向量对时间要求不高时的转向量任务处理过程，因为转向量时消耗网络带宽和计算资源所以采用异步的方式提高稳定性。
 
@@ -135,7 +145,7 @@ Blcok-ETL获取的任务（待同步的区块高度号），有两个过程：
 1.管理员通过请求NFT-Meta建立同步任务，任务包含开始区块、结束区块、当前区块  
 2.Blocke-ETL会定期检查(向NFT-Meta请求)是否有需要同步的Topic，有则监听并消费  
 
-第一个过程很简单就是往数据库加入一条任务记录。第二个要求Block-ETL主动查询待同步的任务，主动触发NFT-Meta往Kafka中放数据，虽然是NFT-Meta放数据，但是消费的主动权交到Block-ETL，同时让NFT-Meta更加无状态化。
+第一个过程很简单就是往数据库加入一条任务记录。第二个要求Block-ETL主动查询待同步的任务，主动触发NFT-Meta往Pulsar中放数据，虽然是NFT-Meta放数据，但是消费的主动权交到Block-ETL，同时让NFT-Meta更加无状态化。
 
 ![IC转换向量任务分配](doc/picture/block-etl-task.jpg)
 
