@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM jrei/systemd-centos:7
 
 COPY gen-car /usr/local/bin/gen-car
 COPY GenCar.viper.yaml /etc/GenCar/GenCar.viper.yaml
@@ -9,10 +9,10 @@ ENV ENV_DATA_DIR=/data \
     ENV_INVERSTOR_KEY=""
 RUN mkdir $ENV_DATA_DIR
 
-RUN apt update -y
-RUN apt install -y libhwloc-dev
+RUN yum update -y
+RUN yum install -y hwloc-devel
 RUN ln -s /usr/lib/x86_64-linux-gnu/libhwloc.so /usr/lib/x86_64-linux-gnu/libhwloc.so.5
-RUN apt install -y --no-install-recommends ca-certificates curl
+RUN yum install ca-certificates curl -y
 
 WORKDIR /usr/local/bin/
 

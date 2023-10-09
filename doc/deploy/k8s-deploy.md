@@ -51,6 +51,10 @@ sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/ssh
 #允许密码登录
 sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
+
+# 设置hostname
+hostnamectl set-hostname <newhostname>
+hostname <new-hostname>
 ```
 
 ## 安装V2rayA（可选）

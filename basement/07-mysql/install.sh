@@ -14,7 +14,15 @@ set -o pipefail
 
 cd $SHELL_FOLDER
 
-git clone -b branch/web3eye https://github.com/NpoolPlatform/mysql-cluster.git
+FOLDER=mysql-cluster
+URL=https://github.com/NpoolPlatform/mysql-cluster.git
+if [ ! -d "$FOLDER" ] ; then
+    git clone -b branch/web3eye $URL $FOLDER
+else
+    cd "$FOLDER"
+    git pull $URL
+fi
+
 sed -i 's/consul_register_enable: "true"/consul_register_enable: "false"/g' $SHELL_FOLDER/mysql-cluster/k8s/01-configmap.yaml
 sed -i 's/pmm_admin_enable: "true"/pmm_admin_enable: "false"/g' $SHELL_FOLDER/mysql-cluster/k8s/01-configmap.yaml          
 

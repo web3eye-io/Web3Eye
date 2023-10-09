@@ -208,8 +208,8 @@ pipeline {
 
         script {
           env.TAG_VERSION = sh(returnStdout: true,
-            script: 'git tag|grep \'[13579]$\'|tail -n 1'
-            )
+            script: 'git tag|grep \'[13579]$\'|sort -V|tail -n 1'
+            ).trim()
         }
       }
     }
@@ -232,7 +232,7 @@ pipeline {
 
         script {
           env.TAG_VERSION = sh(returnStdout: true,
-            script: 'git tag|grep \'[02468]$\'|tail -n 1'
+            script: 'git tag|grep \'[02468]$\'|sort -V|tail -n 1'
             )
         }
       }
@@ -252,8 +252,8 @@ pipeline {
           git reset --hard
           git checkout $TAG_VERSION
         '''.stripIndent())
-        sh 'TAG="$TAG_VERSION" make build'
-        sh 'TAG="$TAG_VERSION" DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+        sh 'TAG=$TAG_VERSION make build'
+        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
     
