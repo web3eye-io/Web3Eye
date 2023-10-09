@@ -51,15 +51,16 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, computed, defineAsyncComponent } from 'vue'
+import { ref, reactive, computed, defineAsyncComponent, onMounted } from 'vue'
 import { useLocalSettingStore, useWeb3jsStore } from 'src/localstore'
-
+import { event } from 'vue-gtag'
 import logobottom from '../assets/logo/logo-bottom.png'
 // import metamask from '../assets/icon/metamask.webp'
 import Web3 from 'web3'
 import { Account } from 'src/localstore/web3js/types'
 import { Cookies } from 'quasar'
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchBox.vue'))
 
 const setting = useLocalSettingStore()
@@ -117,15 +118,21 @@ const router = useRouter()
 const onLogoClick = () => {
   void router.push({path: '/'})
 }
-// const onLogout = () => {
-//   // TODO
-// }
 
-// const router = useRouter()
-// const onTxClick = () => {
-//   void router.push({path: '/transaction'})
-// }
+interface FromChannel {
+  channel: string
+}
 
+const route = useRoute()
+const sendChannel = () => {
+  const from = JSON.parse(JSON.stringify(route.query)) as FromChannel 
+  if (from.channel?.length === 0) return
+  event('channel', {'channel': from.channel})
+}
+
+onMounted(() => {
+  sendChannel()
+})
 </script>
 
 <style scoped lang='sass'>
