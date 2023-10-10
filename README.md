@@ -53,7 +53,7 @@ Pull transfer information from the logs in the full node of the blockchain (whic
 
 The granularity of the tasks obtained from NFT-Meta is the block height. All transfer logs from a block height are obtained, and each transfer is recorded. Then, Token information is searched from the transfer information, because multiple transfers may correspond to the same Token. Therefore, the database is first queried to see if the Token exists. If it does not exist, the TokenURI will be requested from the wallet node, and the corresponding Contract will also be checked. When checking whether the Token and Contract exist here, Redis is actually checked first for records. If there is no record, a query is made to the database, and a record is created in Redis when the information is found.
 
-![Data Relationship](doc/picture/transfer-token-contract.jpg)
+![Data Relationship](doc/picture/transfer-token-contract.png)
 
 When parsing the transfer logs of a block, most of the information can be obtained from the wallet node. However, the information carried by the TokenURI needs to be obtained from the Internet or IPFS, or directly stored on the blockchain as Base64, SVG, and so on. Currently, the work of parsing the TokenURI belongs to this module, and it is planned to be independently developed into a separate module in the future. Because such parsing work is time-consuming and labor-intensive, Block-ETL tries to interact only with the wallet node and only do the job of storing on-chain data as much as possible.
 
@@ -140,7 +140,7 @@ There are currently two places where Kafka is used. The first is to send vector 
 
 The figure below shows the process of handling a large number of vector conversion tasks with low time requirements using asynchronous processing, as network bandwidth and computing resources are consumed during vector conversion.
 
-![Image2Vector task dispatch](doc/picture/to-vector-task.jpg)
+![Image2Vector task dispatch](doc/picture/to-vector-task.png)
 
 However, when searching, the HTTP vector conversion method provided by Transform is directly requested to improve response speed.
 

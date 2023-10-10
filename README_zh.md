@@ -49,7 +49,7 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 
 在拉取transfer的同时会同步拉取order-log的信息，同步将订单信息解析到数据库中，在ranker查询时将有order信息的transfer一同返回到用户。
 
-![数据处理关系](doc/picture/transfer-token-contract.jpg)
+![数据处理关系](doc/picture/transfer-token-contract.png)
 
 在解析一个区块的transfer日志时，大部分信息都可以从钱包节点获取。但是从TokenURI中所带的信息需要从互联网或者IPFS上获取，或者直接在区块链上存储Base64、SVG等，解析TokenURI的工作目前还属于这个模块，后续考虑独立成一个单独的模块。因为这样的解析工作费时费力，同时尽量保持Block-ETL只与钱包节点交互、只做链上数据的转存工作。
 
@@ -141,7 +141,7 @@ Token的主要字段如下：
 
 图中就是需要大量转向量对时间要求不高时的转向量任务处理过程，因为转向量时消耗网络带宽和计算资源所以采用异步的方式提高稳定性。
 
-![IC转换向量任务分配](doc/picture/to-vector-task.jpg)
+![IC转换向量任务分配](doc/picture/to-vector-task.png)
 
 但是在搜索时就直接请求Transform提供的HTTP转向量方式，提高响应速度。
 
