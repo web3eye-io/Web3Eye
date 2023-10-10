@@ -27,7 +27,7 @@ Microservice modules:
 
 **Block-ETL** is responsible for interacting with the blockchain node, obtaining NFT transfer logs, analyzing corresponding Token information and Contract information
 
-**Image-Converter** converts images into vectors.
+**Transform** converts images into vectors.
 
 **IPFS** persistent cache storage
 
@@ -35,11 +35,11 @@ Microservice modules:
 
 ![Architecture](doc/picture/archi.png)
 
-Among the three main microservice modules, NFT-Meta is responsible for providing search, information storage query, task distribution and other functions, while the other two modules are more focused on obtaining and processing tasks. Image-Converter not only processes tasks sent by NFT-Meta from Kafka, but also provides HTTP service support to directly request vectors, mainly used to provide image search services. Block-ETL does not provide external interfaces, only receives tasks and submits tasks.
+Among the three main microservice modules, NFT-Meta is responsible for providing search, information storage query, task distribution and other functions, while the other two modules are more focused on obtaining and processing tasks. Transform not only processes tasks sent by NFT-Meta from Kafka, but also provides HTTP service support to directly request vectors, mainly used to provide image search services. Block-ETL does not provide external interfaces, only receives tasks and submits tasks.
 
 ### Module Design
 
-#### Image-Converter
+#### Transform
 
 Currently, the service mainly provides vector conversion operations for common image formats such as JPG, JPEG, and PNG. Other image resources such as GIF and Base64 are currently not supported.
 
@@ -114,7 +114,7 @@ The process of searching for an image in Web3Eye typically involves four stages:
 
 1. The user sends a request with a file (image file) to NFT-Meta.
 
-2. NFT-Meta forwards the request to Image-Converter to convert the file into a vector.
+2. NFT-Meta forwards the request to Transform to convert the file into a vector.
 
 3. NFT-Meta uses the vector to search for similar vectors in Milvus and returns the vector ID.
 
@@ -132,17 +132,17 @@ The main fields of a Token are as follows:
 "VectorID"
 }
 
-Among these fields, Contract, TokenID, and URI can be obtained directly from the wallet node. TokenType and ImageURL can be derived from URI analysis. VectorID, on the other hand, needs to be inserted into a Token record in NFT-Meta after all other information has been obtained. The vector conversion task is then added to a queue and waits for Image-Converter to process it. Once the conversion is completed, the result is placed in a queue and waits for NFT-Meta to update the VectorID field.
+Among these fields, Contract, TokenID, and URI can be obtained directly from the wallet node. TokenType and ImageURL can be derived from URI analysis. VectorID, on the other hand, needs to be inserted into a Token record in NFT-Meta after all other information has been obtained. The vector conversion task is then added to a queue and waits for Transform to process it. Once the conversion is completed, the result is placed in a queue and waits for NFT-Meta to update the VectorID field.
 
 #### Task Dispatch
 
-There are currently two places where Kafka is used. The first is to send vector conversion tasks to Image-Converter, and the second is to send block heights that need to be parsed to Block-ETL.
+There are currently two places where Kafka is used. The first is to send vector conversion tasks to Transform, and the second is to send block heights that need to be parsed to Block-ETL.
 
 The figure below shows the process of handling a large number of vector conversion tasks with low time requirements using asynchronous processing, as network bandwidth and computing resources are consumed during vector conversion.
 
 ![Image2Vector task dispatch](doc/picture/to-vector-task.jpg)
 
-However, when searching, the HTTP vector conversion method provided by Image-Converter is directly requested to improve response speed.
+However, when searching, the HTTP vector conversion method provided by Transform is directly requested to improve response speed.
 
 Block-ETL is mainly responsible for analyzing data from each block height and placing it in NFT-Meta.
 

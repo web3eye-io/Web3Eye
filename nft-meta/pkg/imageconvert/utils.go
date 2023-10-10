@@ -175,7 +175,7 @@ func ImgReqConvertVector(r *http.Request) ([]float32, error) {
 	icURL := fmt.Sprintf("%v/img2vector/file", ICServer)
 	method := "POST"
 
-	// build request for image-converter
+	// build request for Transform
 	req, err := http.NewRequestWithContext(r.Context(), method, icURL, body)
 	if err != nil {
 		return nil, err

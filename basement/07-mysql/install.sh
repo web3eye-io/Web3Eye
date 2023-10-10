@@ -33,4 +33,3 @@ kubectl apply -k $SHELL_FOLDER/mysql-cluster/k8s/
 
 sleep 5
 kubectl get pods -A| grep mysql
-
