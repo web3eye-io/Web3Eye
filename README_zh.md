@@ -47,13 +47,15 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 
 从NFT-Meta获取的任务粒度为区块高度，从一个区块高度中获取所有的transfer-log，记录每一笔transfer；再从transfer信息查找Token信息，因为多笔transfer可能会对应到同一个Token，所以会先向数据库查询Token是否存在，不存在会向钱包节点请求TokenURI同时也会检查对应的Contract是否存在。在此处查询Token和Contract是否存在时，其实会先检查Redis里是否有记录，没有记录再去数据库查询，当查询到后会在Redis中建立一条记录。
 
+在拉取transfer的同时会同步拉取order-log的信息，同步将订单信息解析到数据库中，在ranker查询时将有order信息的transfer一同返回到用户。
+
 ![数据处理关系](doc/picture/transfer-token-contract.jpg)
 
 在解析一个区块的transfer日志时，大部分信息都可以从钱包节点获取。但是从TokenURI中所带的信息需要从互联网或者IPFS上获取，或者直接在区块链上存储Base64、SVG等，解析TokenURI的工作目前还属于这个模块，后续考虑独立成一个单独的模块。因为这样的解析工作费时费力，同时尽量保持Block-ETL只与钱包节点交互、只做链上数据的转存工作。
 
 #### NFT-Meta
 
-分配到其他两个模块的任务都由NFT-Meta发出、存储其他两个模块处理过的数据。
+这个模块主要负责数据的CRUD以及向Pulsar中丢任务，提供数据的CRUD不用多说，向Pulsar中丢任务是为了解决任务之间速度不匹配的问题。
 
 NFT-Meta主要维护的表：  
 1 **Transfers**  NFT-交易记录  
@@ -61,7 +63,9 @@ NFT-Meta主要维护的表：
 3 **Contracts**  NFT-合约信息  
 4 **Orders**  NFT-订单信息 
 
-NFT-Meta提供GRPC和HTTP两种协议的API接口，GRPC主要提供给对内的微服务模块，HTTP对外提供服务；向量数据主要存在Milvus中，关系型数据主要存在MySql中。Milvus与MySql中的数据依靠Milvus提供的ID关联。  
+分配到其他两个模块的任务都由NFT-Meta发出、存储其他两个模块处理过的数据。
+
+向量数据主要存在Milvus中，关系型数据主要存在MySql中。Milvus与MySql中的数据依靠Milvus提供的ID关联。  
 
 Milvus中结构为：
 
@@ -96,6 +100,7 @@ Ranker只负责从数据库中查询数据，将数据组合成前端需要的�
 
 有了非结构化数据的搜索，接下来就是聚合NFT数据，从钱包节点上获取transfer日志（NFT交易的日志）分析出Token和Contract信息。与NFT相关的三个数据中，transfer和Contract信息可以较简单的获取到，而Token的解析稍微复杂些。
 
+
 #### 以图搜图
 
 以图搜图就是特征向量求距离的过程，从一堆已有的特征向量中，求出与给定特征向量的距离，取出最小距离排名的前N个即可。
@@ -110,10 +115,10 @@ Ranker只负责从数据库中查询数据，将数据组合成前端需要的�
 
 ![以图搜图步骤](doc/picture/pictrue-search.jpg)
 
-1. 用户带文件请求（图片文件）发送到NFT-Meta  
-2. NFT-Meta将请求转发给Transform转换成向量  
-3. 拿到向量的NFT-Meta去Milvus中查找相似的向量，并且返回向量ID  
-4. NFT-Meta拿到相似向量的ID，去MySql中将ID对应的Token信息查询出来  
+1. 用户带文件请求（图片文件）发送到Entrance  
+2. Entrance将请求转发给Transform转换成向量，发送到Ranker  
+3. 拿到向量的Ranker去Milvus中查找相似的向量，并且返回向量ID  
+4. Ranker拿到相似向量的ID，去MySql中将ID对应的Token信息查询出来  
 最后返回到用户即可  
 
 #### 获取Token信息
@@ -155,9 +160,15 @@ Blcok-ETL获取的任务（待同步的区块高度号），有两个过程：
 
 [k8s-deploy](doc/deploy/k8s-deploy.md)
 
+## 性能测试
+
+[k8s-deploy](doc/deploy/performance.md)
+
 ## 版本迭代计划
 
 [0.1.0](doc/feature/0.1.0.md)
+
+[0.2.0](doc/feature/0.2.0.md)
 
 [100.0.0](doc/feature/100.0.0.md)
 

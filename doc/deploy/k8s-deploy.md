@@ -195,6 +195,7 @@ exportfs -a
 | 03-tag-(testing\production)                         | (testing\production)-300N-*                     | 打tag        |
 | 04-release-(feature\development\testing\production) | (feature\development\testing\production)-400N-* | release项目  |
 | 05-deploy-(feature\development\testing\production)  | (feature\development\testing\production)-500N-* | 部署项目     |
+| 05-domain-(feature\development\testing\production)  | (feature\development\testing\production)-600N-* | 网站上线相关     |
 
 
 # 安装K8s
@@ -317,6 +318,14 @@ release和deploy的Tag关系说明：
 | BRANCH_NAME | branch   | master      | master               | master               |
 | TARGET_ENV  | 任意环境 | development | testing              | production           |
 | 最终Tag名   | branch名 | latest      | 奇数版本号(如:0.5.3) | 偶数版本号(如:0.5.2) |
+
+# 网站上线
+
+部署好所有项目后，要上线网站还需要配置TLS域名解析。
+
+# 开始使用
+
+打开Dashboard（AWS的32443端口访问），添加Eth和Sol的Endpoints，再添加同步任务即可。
 
 ## 配置说明
 
