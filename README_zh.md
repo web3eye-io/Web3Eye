@@ -162,7 +162,7 @@ Blcok-ETL获取的任务（待同步的区块高度号），有两个过程：
 
 ## 性能测试
 
-[k8s-deploy](doc/deploy/performance.md)
+[performance-estimate](doc/deploy/performance.md)
 
 ## 版本迭代计划
 
