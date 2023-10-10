@@ -76,7 +76,7 @@
               <div v-else class="row justify-start">
                 <div class="left">
                   <MyImage
-                    :url="(target?.ImageURL as string)"
+                    :url="(props.row.OfferItems?.[0]?.ImageURL as string)"
                     :height="'40px'"
                     :width="'40px'"
                   />
@@ -111,11 +111,11 @@
             <q-td key="Transfer1" :props="props">
             </q-td>
             <q-td key="TargetItems" :props="props">
-              <span v-if='props.row.OfferItems?.length === 0' />
+              <span v-if='props.row.TargetItems?.length === 0' />
               <div v-else class="row justify-start">
                 <div class="left">
                   <MyImage
-                    :url="(target?.ImageURL as string)"
+                    :url="(props.row.TargetItems?.[0]?.ImageURL as string)"
                     :height="'40px'"
                     :width="'40px'"
                   />
