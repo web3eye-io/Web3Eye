@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/config"
@@ -85,23 +86,21 @@ func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 }
 
 func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
-	config.GetConfig().CloudProxy.Domain = "cloud-proxy.testnet.web3eye.io"
-	config.GetConfig().CloudProxy.GrpcPort = 80
-
-	fmt.Printf("%v:%v",
+	addr := fmt.Sprintf("%v:%v",
 		config.GetConfig().CloudProxy.Domain,
 		config.GetConfig().CloudProxy.GrpcPort)
 
+	logger.Sugar().Infow("withNoConnClose", "action", "prepare to connect to cloudproxy", "address", addr)
+
 	conn, err := grpc.Dial(
-		fmt.Sprintf("%v:%v",
-			config.GetConfig().CloudProxy.Domain,
-			config.GetConfig().CloudProxy.GrpcPort),
+		addr,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
+		logger.Sugar().Errorw("withNoConnClose", "action", "failed to connect to cloudproxy", "address", addr)
 		return nil, err
 	}
-
+	logger.Sugar().Infow("withNoConnClose", "action", "success to connect to cloudproxy", "address", addr)
 	cli := npool.NewManagerClient(conn)
 
 	return handler(ctx, cli)
