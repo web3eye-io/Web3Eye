@@ -19,7 +19,7 @@ Web3Eye是一个聚合历史NFT交易记录的搜素引擎；
 **Pulsar** 主要用于任务分配  
 **Redis** 用于缓存从MySql查到的热信息(计算机中的局部原理，减轻MySql的压力)  
 **Milvus** 用于存储向量数据，以及提供向量搜索  
-**Traefik** 用于存储向量数据，以及提供向量搜索  
+**Traefik** 提供服务路由  
 
 微服务模块：  
 **NFT-Meta** 维护区块转储任务,存储NFT交易、NFT资产、NFT对应Contract等信息  
