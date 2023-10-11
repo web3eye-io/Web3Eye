@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/canhlinh/svg2png"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -140,7 +139,7 @@ func SVGToPng(svgPath, pngPath string) error {
 
 	chrome := svg2png.NewChrome().SetHeight(int(height)).SetWith(int(width))
 	if err := chrome.Screenshoot(svgPath, pngPath); err != nil {
-		logrus.Panic(err)
+		return err
 	}
 	return nil
 }

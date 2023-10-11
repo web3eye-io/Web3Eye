@@ -1,7 +1,7 @@
 ---
 config:
   hostname: "block-etl.npool.top"
-  http_port: 30100
-  grpc_port: 30101
-  prometheus_port: 30102
+  http_port: 30110
+  grpc_port: 30111
+  prometheus_port: 30112
   logdir: "./"

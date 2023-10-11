@@ -39,4 +39,4 @@ spec:
               service:
                 name: gateway
                 port:
-                  number: 30120
+                  number: 30130
