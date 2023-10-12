@@ -69,6 +69,8 @@ Gateway机器主要为IDC提供统一的网络控制，主要为了更好的科�
 
 安装方法：https://v2raya.org/docs/prologue/installation/redhat/
 
+centos安装示例:
+
 ```Shell
 curl -Ls https://mirrors.v2raya.org/go.sh | bash
 systemctl disable v2ray --now ### Xray 需要替换服务为 xray
@@ -81,6 +83,19 @@ rpm -i /tmp/v2raya.rpm
 systemctl start v2raya.service
 systemctl enable v2raya.service
 ```
+
+ubuntu安装示例:
+
+```Shell
+wget -qO - https://apt.v2raya.org/key/public-key.asc | sudo tee /etc/apt/keyrings/v2raya.asc
+echo "deb [signed-by=/etc/apt/keyrings/v2raya.asc] https://apt.v2raya.org/ v2raya main" | sudo tee /etc/apt/sources.list.d/v2raya.list
+sudo apt update -y
+sudo apt install v2raya v2ray ## 也可以使用 xray 包
+sudo systemctl start v2raya.service
+sudo systemctl enable v2raya.service
+```
+
+启动后默认访问IP:2017,导入订阅码即可。
 
 安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网。
 
