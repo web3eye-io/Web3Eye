@@ -11,7 +11,6 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
@@ -25,6 +24,7 @@ import (
 
 const (
 	TopN               = 100
+	MaxSearchN         = 10000
 	ShowSiblinsNum int = 10
 	StorageExpr        = time.Minute * 5
 )
@@ -45,17 +45,22 @@ type PageBone struct {
 	Limit       uint32
 }
 
+type ScoreItem struct {
+	VID   int64
+	Score float32
+}
+
 func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest) (*rankernpool.SearchResponse, error) {
 	logger.Sugar().Info("start search")
 	start := time.Now()
 
 	// search from milvus
-	scores, err := SerachFromMilvus(ctx, in.Vector)
+	scores, err := SerachFromMilvus(ctx, in.Vector, MaxSearchN)
 	if err != nil {
 		logger.Sugar().Errorf("search from milvus failed, %v", err)
 		return nil, err
 	}
-	infos, err := QueryAndCollectTokens(ctx, scores)
+	infos, err := QueryAndCollectTokens(ctx, scores, int(in.Limit))
 	if err != nil {
 		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return nil, err
@@ -137,11 +142,11 @@ func (pt *PageBone) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, pt)
 }
 
-func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32, error) {
+func SerachFromMilvus(ctx context.Context, vector []float32, topN int) (map[int64]float32, error) {
 	// search from milvus
 	milvusmgr := milvusdb.NewNFTConllectionMGR()
 	_vector := imageconvert.ToArrayVector(vector)
-	_scores, err := milvusmgr.Search(ctx, [][milvusdb.VectorDim]float32{_vector}, TopN)
+	_scores, err := milvusmgr.Search(ctx, [][milvusdb.VectorDim]float32{_vector}, topN)
 	if err != nil {
 		return nil, err
 	}
@@ -153,61 +158,91 @@ func SerachFromMilvus(ctx context.Context, vector []float32) (map[int64]float32,
 	return _scores[0], nil
 }
 
-func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32) ([]*rankernpool.SearchToken, error) {
-	vIDs := []int64{}
-	fmt.Println(utils.PrettyStruct(scores))
-	for i := range scores {
-		vIDs = append(vIDs, i)
+func sortSroces(scores map[int64]float32) []*ScoreItem {
+	topScores := make([]*ScoreItem, len(scores))
+	index := int64(0)
+	for k, v := range scores {
+		topScores[index] = &ScoreItem{
+			VID:   k,
+			Score: v,
+		}
+		index++
 	}
 
-	conds := &nftmetanpool.Conds{
-		VectorIDs: &val.Int64SliceVal{
-			Op:    "in",
-			Value: vIDs,
-		},
-	}
-
-	// query from db
-	rows, _, err := crud.Rows(ctx, conds, 0, len(vIDs))
-	if err != nil {
-		return nil, err
-	}
-
-	infos := []*rankernpool.SearchToken{}
-	for i := 0; i < len(rows); i++ {
-		info := converter.Ent2Grpc(rows[i])
-		info.Distance = scores[info.VectorID]
-		info.SiblingTokens = make([]*rankernpool.SiblingToken, 0)
-		infos = append(infos, info)
-	}
-
-	sort.Slice(infos, func(i, j int) bool {
-		return infos[i].Distance < infos[j].Distance
+	sort.Slice(topScores, func(i, j int) bool {
+		return topScores[i].Score < topScores[j].Score
 	})
+	return topScores
+}
 
-	// collection
-	contractRecord := make(map[string]int)
+func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN int) ([]*rankernpool.SearchToken, error) {
+	topScores := sortSroces(scores)
 	result := []*rankernpool.SearchToken{}
-	for _, v := range infos {
-		if _, ok := contractRecord[v.Contract]; ok {
-			if len(result[contractRecord[v.Contract]].SiblingTokens) >= ShowSiblinsNum {
-				continue
+	contractRecord := make(map[string]int)
+
+	start, end := 0, 0
+	for len(result) < topN {
+		start = end
+		end = start + topN
+		if start >= len(topScores) {
+			break
+		} else if end > len(topScores) {
+			end = len(topScores)
+		}
+
+		vIDs := []int64{}
+		for _, v := range topScores[start:end] {
+			vIDs = append(vIDs, v.VID)
+		}
+
+		conds := &nftmetanpool.Conds{
+			VectorIDs: &val.Int64SliceVal{
+				Op:    "in",
+				Value: vIDs,
+			},
+		}
+
+		// query from db
+		rows, _, err := crud.Rows(ctx, conds, 0, len(vIDs))
+		if err != nil {
+			return nil, err
+		}
+
+		infos := []*rankernpool.SearchToken{}
+		for i := 0; i < len(rows); i++ {
+			info := converter.Ent2Grpc(rows[i])
+			info.Distance = scores[info.VectorID]
+			info.SiblingTokens = make([]*rankernpool.SiblingToken, 0)
+			infos = append(infos, info)
+		}
+
+		// sort.Slice(infos, func(i, j int) bool {
+		// 	return infos[i].Distance < infos[j].Distance
+		// })
+
+		// collection
+		for _, v := range infos {
+			if _, ok := contractRecord[v.Contract]; ok {
+				if len(result[contractRecord[v.Contract]].SiblingTokens) >= ShowSiblinsNum {
+					continue
+				}
+				result[contractRecord[v.Contract]].SiblingTokens = append(
+					result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
+						ID:           v.ID,
+						TokenID:      v.TokenID,
+						ImageURL:     v.ImageURL,
+						IPFSImageURL: v.IPFSImageURL,
+					})
+			} else {
+				result = append(result, v)
+				contractRecord[v.Contract] = len(result) - 1
 			}
-			result[contractRecord[v.Contract]].SiblingTokens = append(
-				result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
-					ID:           v.ID,
-					TokenID:      v.TokenID,
-					ImageURL:     v.ImageURL,
-					IPFSImageURL: v.IPFSImageURL,
-				})
-		} else {
-			result = append(result, v)
-			contractRecord[v.Contract] = len(result) - 1
 		}
 	}
+
 	// full the siblinsTokens
 	for _, v := range result {
-		conds = &nftmetanpool.Conds{
+		conds := &nftmetanpool.Conds{
 			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType.String()},
 			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
 			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},

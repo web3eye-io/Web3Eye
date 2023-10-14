@@ -134,3 +134,28 @@ func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]
 	}
 	return ret, nil
 }
+
+func (c *nftConllectionMGR) TotalNum(ctx context.Context) (int64, error) {
+	cli, err := Client(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	segs, err := cli.GetPersistentSegmentInfo(ctx, c.CollectionName)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(segs) == 0 {
+		return 0, nil
+	}
+
+	num := segs[0].NumRows
+	for _, v := range segs {
+		if v.NumRows < num {
+			num = v.NumRows
+		}
+	}
+
+	return num, nil
+}
