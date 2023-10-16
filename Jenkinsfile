@@ -301,8 +301,8 @@ pipeline {
       }
       steps {
          sh(returnStdout: true, script: '''
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$AWS_DOMIAN_NAME  # for gateway
-          export CLOUD_PROXY_GRPC_PORT=$AWS_DOMIAN_HTTP_PORT  # for gateway
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$DOMIAN_NAME  # for gateway
+          export CLOUD_PROXY_GRPC_PORT=$DOMIAN_HTTP_PORT  # for gateway
           TAG=latest make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -318,6 +318,8 @@ pipeline {
       }
       steps {
         sh(returnStdout: true, script: '''
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$DOMIAN_NAME  # for gateway
+          export CLOUD_PROXY_GRPC_PORT=$DOMIAN_HTTP_PORT  # for gateway
           TAG=$TAG_VERSION make deploy-to-k8s-cluster
         '''.stripIndent())
       }

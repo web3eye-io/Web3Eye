@@ -262,7 +262,7 @@ exportfs -a
 | INSTALL      | true                         |
 | UNINSTALL    | false                        |
 | TARGET       | helm                         |
-| TARGET_ENV   | 环境名                        |
+| TARGET_ENV   | 环境名                       |
 | GATEWAY_HOST | 172.16.29.49                 |
 
 ## 安装Helm工具
@@ -348,18 +348,20 @@ exportfs -a
 
 脚本路径：Jenkinsfile 
 
-| 参数名         | build  | tag        | release | deploy |
-|----------------|--------|------------|---------|--------|
-| BRANCH_NAME    | 分支名 | 分支名     | 分支名  | 分支名 |
-| BUILD_TARGET   | true   | false      | false   | false  |
-| DEPLOY_TARGET  | false  | false      | false   | true   |
-| RELEASE_TARGET | false  | false      | true    | true   |
-| TAG_PATCH      | false  | true/false | false   | false  |
-| TAG_MINOR      | false  | true/false | false   | false  |
-| TAG_MAJOR      | false  | true/false | false   | false  |
-| AIMPROJECT     | 项目名 | 项目名     | 项目名  | 项目名 |
-| TAG_FOR        |        | test/prod  |         |        |
-| TARGET_ENV     | 环境名 | 环境名     | 环境名  | 环境名 |
+| 参数名           | build  | tag        | release | deploy          |
+|------------------|--------|------------|---------|-----------------|
+| BRANCH_NAME      | 分支名 | 分支名     | 分支名  | 分支名          |
+| BUILD_TARGET     | true   | false      | false   | false           |
+| DEPLOY_TARGET    | false  | false      | false   | true            |
+| RELEASE_TARGET   | false  | false      | true    | true            |
+| TAG_PATCH        | false  | true/false | false   | false           |
+| TAG_MINOR        | false  | true/false | false   | false           |
+| TAG_MAJOR        | false  | true/false | false   | false           |
+| AIMPROJECT       | 项目名 | 项目名     | 项目名  | 项目名          |
+| TAG_FOR          |        | test/prod  |         |                 |
+| TARGET_ENV       | 环境名 | 环境名     | 环境名  | 环境名          |
+| DOMIAN_NAME      |        |            |         | aws环境域名     |
+| DOMIAN_HTTP_PORT |        |            |         | aws环境HTTP端口 |
 
 release和deploy的Tag关系说明：
 

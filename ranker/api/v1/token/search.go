@@ -60,14 +60,14 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		logger.Sugar().Errorf("search from milvus failed, %v", err)
 		return nil, err
 	}
-	infos, err := QueryAndCollectTokens(ctx, scores, int(in.Limit))
+	infos, err := QueryAndCollectTokens(ctx, scores, TopN)
 	if err != nil {
 		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return nil, err
 	}
 
-	totalPages := uint32(len(infos) / int(in.Limit))
-	if len(infos)%int(in.Limit) > 0 {
+	totalPages := uint32(len(infos) / TopN)
+	if len(infos)%TopN > 0 {
 		totalPages += 1
 	}
 

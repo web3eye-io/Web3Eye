@@ -66,6 +66,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var errMsg string
 	defer func() {
 		if errMsg != "" {
+			logger.Sugar().Infof("failed to search, err: %v", errMsg)
 			w.WriteHeader(http.StatusBadRequest)
 			respBody = []byte(errMsg)
 		}
