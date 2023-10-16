@@ -66,8 +66,8 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 		return nil, err
 	}
 
-	totalPages := uint32(len(infos) / TopN)
-	if len(infos)%TopN > 0 {
+	totalPages := uint32(len(infos) / int(in.Limit))
+	if len(infos)%int(in.Limit) > 0 {
 		totalPages += 1
 	}
 
