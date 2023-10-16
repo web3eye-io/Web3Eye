@@ -20,7 +20,7 @@ pipeline {
         expression { TARGET == 'set-gateway' }
       }
       steps {
-        sh 'ansible-playbook -i /etc/kubeasz/clusters/$TARGET_ENV/hosts -e "CLUSTER_GATEWAY=$GATEWAY_HOST" basement/00-gateway/gateway.yaml'
+        sh 'ansible-playbook -i /etc/kubeasz/clusters/$TARGET_ENV/hosts -e "CLUSTER_GATEWAY=$GATEWAY_HOST" basement/00-set-gateway/gateway.yaml'
       }
     }
 
