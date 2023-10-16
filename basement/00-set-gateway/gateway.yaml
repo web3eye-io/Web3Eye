@@ -1,0 +1,8 @@
+
+- name: Exec multi line command with |
+  shell: | # 注意这里
+    export gateway={{CLUSTER_GATEWAY}}
+    ip_sub=`echo $gateway | sed 's/.[0-9]$/0/g'`
+    nic=`ip route |grep $ip_sub |awk '{print $3}'`
+    netplan set ethernets.$nic.gateway4=$gateway
+    netplan apply

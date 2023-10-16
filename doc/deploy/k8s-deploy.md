@@ -82,6 +82,19 @@ rpm -i /tmp/v2raya.rpm
 
 systemctl start v2raya.service
 systemctl enable v2raya.service
+
+# 开启路由转发
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+
+yum install iptables-services -y
+systemctl enable iptables
+iptables -I FORWARD -j ACCEPT
+service iptables save
+
+# 同步时间
+yum install ntpdate -y
+ntpdate -u pool.ntp.org
 ```
 
 ubuntu安装示例:
@@ -95,7 +108,11 @@ sudo systemctl start v2raya.service
 sudo systemctl enable v2raya.service
 ```
 
-启动后默认访问IP:2017,导入订阅码即可。
+启动后默认访问IP:2017  
+1.设置用户名密码  
+2.导入订阅码  
+3.测速选择较快的节点，开启proxy  
+4.在setting中开启系统代理，选择On:Proxy except CN Sites即可  
 
 安装完成后导入代理节点即可使用，同时将其他机器的网关设置成Gateway机器的IP，其他机器也能科学上网。
 
@@ -146,7 +163,7 @@ yum remove -y docker \
 yum install -y yum-utils
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-yum install docker
+yum install docker -y
 
 systemctl start docker
 systemctl enable docker
@@ -196,10 +213,11 @@ nfs-server安装示例：
 apt update
 apt install nfs-kernel-server -y
 
+# 此处省略将磁盘挂载到/k8sdata的过程
 # 本例子/k8sdata为提供存储的目录
 echo '/k8sdata *(rw,async,no_subtree_check,no_root_squash)' >> /etc/exports
-systemctl start nfs-kernel-server.service
 
+systemctl start nfs-kernel-server.service
 exportfs -a
 ```
 # Jenkins任务说明

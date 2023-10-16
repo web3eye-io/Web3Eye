@@ -13,6 +13,17 @@ pipeline {
     }
 
     // -------install tasks----------
+    stage('set cluster gateway') {
+      when {
+        expression { INSTALL   ==  'true' }
+        expression { UNINSTALL   ==  'false' }
+        expression { TARGET == 'gateway' }
+      }
+      steps {
+        sh 'ansible-playbook -i /etc/kubeasz/clusters/$TARGET_ENV/hosts -e "CLUSTER_GATEWAY=$GATEWAY_HOST" 00-gateway/gateway.yaml'
+      }
+    }
+
     stage('install helm') {
       when {
         expression { INSTALL   ==  'true' }
