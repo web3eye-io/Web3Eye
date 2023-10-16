@@ -300,7 +300,11 @@ pipeline {
         expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
-        sh 'TAG=latest make deploy-to-k8s-cluster'
+         sh(returnStdout: true, script: '''
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$AWS_DOMIAN_NAME  # for gateway
+          export CLOUD_PROXY_GRPC_PORT=$AWS_DOMIAN_HTTP_PORT  # for gateway
+          TAG=$TAG_VERSION make deploy-to-k8s-cluster
+        '''.stripIndent())
       }
     }
 

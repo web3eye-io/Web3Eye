@@ -199,8 +199,6 @@ docker exec -it jenkins cat /var/lib/jenkins/secrets/initialAdminPassword
 
 **配置Git** 接受第一次连接（Dashboard > 系统管理 > 全局安全配置 ），找到Git Host Key Verification Configuration选择Accept first connection
 
-**配置Git名称**（Dashboard > 系统管理 > 全局工具配置 ），找到Git 配置Path to Git executable 和 Name 为git
-
 # 提供NFS-SERVER服务
 
 本示例使用NFS作为存储类，也可以替换成其他存储方案。
@@ -232,7 +230,7 @@ exportfs -a
 | 03-tag-(testing\production)                         | (testing\production)-300N-*                     | 打tag        |
 | 04-release-(feature\development\testing\production) | (feature\development\testing\production)-400N-* | release项目  |
 | 05-deploy-(feature\development\testing\production)  | (feature\development\testing\production)-500N-* | 部署项目     |
-| 05-domain-(feature\development\testing\production)  | (feature\development\testing\production)-600N-* | 网站上线相关     |
+| 05-domain-(feature\development\testing\production)  | (feature\development\testing\production)-600N-* | 网站上线相关 |
 
 
 # 安装K8s
@@ -252,13 +250,28 @@ exportfs -a
 建议job-name： testing-0001-IDC-k8s-cluster、testing-0002-AWS-k8s-cluster
 
 需要在IDC以及AWS环境中各安装一套K8S
+
+## 设置gateway（可选）
+
+安装Helm和设置默认存储类的Job参数如下
+
+脚本路径：basement/Jenkinsfile 
+
+| 参数名       | testing-0003-IDC-set-gateway |
+|--------------|------------------------------|
+| INSTALL      | true                         |
+| UNINSTALL    | false                        |
+| TARGET       | helm                         |
+| TARGET_ENV   | 环境名                        |
+| GATEWAY_HOST | 172.16.29.49                 |
+
 ## 安装Helm工具
 
 安装Helm和设置默认存储类的Job参数如下
 
 脚本路径：basement/Jenkinsfile 
 
-| 参数名    | testing-0002-install-helm-for-jenkins |
+| 参数名    | testing-0004-install-helm-for-jenkins |
 |-----------|---------------------------------------|
 | INSTALL   | true                                  |
 | UNINSTALL | false                                 |
@@ -345,7 +358,7 @@ exportfs -a
 | TAG_MINOR      | false  | true/false | false   | false  |
 | TAG_MAJOR      | false  | true/false | false   | false  |
 | AIMPROJECT     | 项目名 | 项目名     | 项目名  | 项目名 |
-| TAG_FOR        |    | test/prod  |     |    |
+| TAG_FOR        |        | test/prod  |         |        |
 | TARGET_ENV     | 环境名 | 环境名     | 环境名  | 环境名 |
 
 release和deploy的Tag关系说明：
