@@ -21,6 +21,9 @@ pipeline {
       }
     }
     stage('Prepare Golang ENV') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
       steps {
         sh 'make prepare-golang-env'
       }
@@ -34,7 +37,7 @@ pipeline {
 
     stage('Prepare') {
       when {
-        expression { DEPLOY_TARGET != 'true' }
+        expression { BUILD_TARGET == 'true' }
       }
       steps {
         sh 'make deps'
