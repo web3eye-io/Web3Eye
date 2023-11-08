@@ -211,8 +211,8 @@ pipeline {
 
         script {
           env.TAG_VERSION = sh(returnStdout: true,
-            script: 'git tag|grep \'[13579]$\'|sort -V|tail -n 1'
-            ).trim()
+            script: 'git tag|grep \'[13579]$\'|sort -V|tail -n 1| tr -d \'\\n\''
+            )
         }
       }
     }
@@ -235,8 +235,7 @@ pipeline {
 
         script {
           env.TAG_VERSION = sh(returnStdout: true,
-//            script: 'git tag|grep \'[02468]$\'|sort -V|tail -n 1'
-            script: 'git tag|sort -V|tail -n 1'
+           script: 'git tag|grep \'[02468]$\'|sort -V|tail -n 1| tr -d \'\\n\''
             )
         }
       }
