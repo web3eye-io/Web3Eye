@@ -7,7 +7,7 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    
+
     PATH = "$GOBIN:$PATH"
   }
   stages {
@@ -25,34 +25,34 @@ pipeline {
       }
     }
 
-    stage('Prepare') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh 'make deps'
-      }
-    }
+    // stage('Prepare') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh 'make deps'
+    //   }
+    // }
 
-    stage('Linting') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh 'make verify'
-      }
-    }
+    // stage('Linting') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh 'make verify'
+    //   }
+    // }
 
-    stage('Compile') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-      }
-      steps {
-        sh (returnStdout: false, script: '''
-          TAG=latest make build
-        '''.stripIndent())
-      }
-    }
+    // stage('Compile') {
+    //   when {
+    //     expression { BUILD_TARGET == 'true' }
+    //   }
+    //   steps {
+    //     sh (returnStdout: false, script: '''
+    //       TAG=latest make build
+    //     '''.stripIndent())
+    //   }
+    // }
 
     // TODO: support UT
     // stage('Unit Tests') {
@@ -80,6 +80,11 @@ pipeline {
         }
       }
       steps {
+        sh(returnStdout: true, script: '''
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+        '''.stripIndent())
+
         sh(returnStdout: true, script: '''
           set +e
           revlist=`git rev-list --tags --max-count=1`
