@@ -91,9 +91,6 @@ pipeline {
       }
       steps {
         sh(returnStdout: true, script: '''
-          git tag -l | xargs git tag -d
-          git fetch origin --prune
-
           set +e
           revlist=`git rev-list --tags --max-count=1`
           rc=$?
