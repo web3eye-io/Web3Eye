@@ -13,6 +13,11 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
+        sh(returnStdout: true, script: '''
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+          echo "update tags for repo"
+        '''.stripIndent())
         git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-token', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
@@ -33,7 +38,7 @@ pipeline {
         sh 'make deps'
       }
     }
-
+       
     stage('Linting') {
       when {
         expression { BUILD_TARGET == 'true' }
