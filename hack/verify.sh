@@ -74,7 +74,7 @@ function run-checks {
     echo -e "Verifying ${check_name}"
 
     start=$(date +%s)
-    run-cmd "${runner}" "-x ${t}" && tr=$? || tr=$?
+    run-cmd "${runner}" "${t}" && tr=$? || tr=$?
     local elapsed=$(($(date +%s) - start))
 
     if [[ ${tr} -eq 0 ]]; then
