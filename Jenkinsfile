@@ -7,11 +7,7 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-
-    // NODEVERSION = "18.18.0"
-    // NODETMPENV = "/tmp/node-tmp-env/$NODEVERSION"
-    // NODEHOME = "$NODETMPENV/nodehome"
-    // NODEBIN = "$NODEHOME/bin"
+    
     PATH = "$GOBIN:$PATH"
   }
   stages {
@@ -28,12 +24,6 @@ pipeline {
         sh 'make prepare-golang-env'
       }
     }
-
-    // stage('Prepare Node ENV') {
-    //   steps {
-    //     sh 'make prepare-node-env'
-    //   }
-    // }
 
     stage('Prepare') {
       when {
