@@ -21,7 +21,7 @@ if ! command -v gofumpt; then
     go install mvdan.cc/gofumpt@v0.3.1
 fi
 
-PATH=$PATH:$LINT_BIN
+PATH=$LINT_BIN:$PATH
 set +e
 rc=`golangci-lint version | grep $VERSION_NUM`
 if [ ! $? -eq 0 ]; then
