@@ -54,7 +54,7 @@ pipeline {
       }
     }
 
-    TODO: support UT
+    // TODO: support UT
     stage('Unit Tests') {
       when {
         expression { BUILD_TARGET == 'true' }
