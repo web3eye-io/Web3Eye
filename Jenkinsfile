@@ -25,47 +25,47 @@ pipeline {
       }
     }
 
-    // stage('Prepare') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh 'make deps'
-    //   }
-    // }
+    stage('Prepare') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh 'make deps'
+      }
+    }
 
-    // stage('Linting') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh 'make verify'
-    //   }
-    // }
+    stage('Linting') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh 'make verify'
+      }
+    }
 
-    // stage('Compile') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh (returnStdout: false, script: '''
-    //       TAG=latest make build
-    //     '''.stripIndent())
-    //   }
-    // }
+    stage('Compile') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          TAG=latest make build
+        '''.stripIndent())
+      }
+    }
 
-    // TODO: support UT
-    // stage('Unit Tests') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh (returnStdout: false, script: '''
-    //       swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-    //       kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
-    //     '''.stripIndent())
-    //   }
-    // }
+    TODO: support UT
+    stage('Unit Tests') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
+          kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
+        '''.stripIndent())
+      }
+    }
 
     stage('Tag') {
       when {
@@ -80,12 +80,6 @@ pipeline {
         }
       }
       steps {
-        sh(returnStdout: true, script: '''
-          git tag -l | xargs git tag -d
-          git fetch origin --prune
-          echo "update tags for repo"
-        '''.stripIndent())
-
         sh(returnStdout: true, script: '''
           set +e
           revlist=`git rev-list --tags --max-count=1`
