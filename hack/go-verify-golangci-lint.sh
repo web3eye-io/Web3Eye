@@ -4,7 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-VERSION=v1.48.0
+VERSION_NUM=1.48.0
+VERSION=v${VERSION_NUM}
 URL_BASE=https://raw.githubusercontent.com/golangci/golangci-lint
 URL=$URL_BASE/$VERSION/install.sh
 
@@ -17,10 +18,15 @@ if ! command -v gofumpt; then
     go install mvdan.cc/gofumpt@v0.3.1
 fi
 
-if ! command -v golangci-lint; then
-    curl -sfL $URL | sh -s $VERSION
-    PATH=$PATH:bin
+PATH=$PATH:bin
+
+set +e
+rc=`golangci-lint version | grep $VERSION_NUM`
+if [ ! $? -eq 0 ]; then
+  set -e
+  curl -sfL $URL | sh -s $VERSION
 fi
+set -e
 
 golangci-lint version
 golangci-lint linters

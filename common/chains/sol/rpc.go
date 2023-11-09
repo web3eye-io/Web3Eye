@@ -3,7 +3,7 @@ package sol
 import (
 	"context"
 
-	"github.com/gagliardetto/solana-go"
+	solana "github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/portto/solana-go-sdk/common"
 	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
