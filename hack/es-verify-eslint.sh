@@ -45,6 +45,7 @@ echo $PATH
 echo "//////////"
 
 # $SUDO n v16.14.0
+export $PATH
 n v16.14.0
 npm install @typescript-eslint/eslint-plugin --save-dev
 yarn lint
