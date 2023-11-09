@@ -19,12 +19,12 @@ if ! command -v gofumpt; then
 fi
 
 PATH=$PATH:bin
-
 set +e
 rc=`golangci-lint version | grep $VERSION_NUM`
 if [ ! $? -eq 0 ]; then
   set -e
   curl -sfL $URL | sh -s $VERSION
+  PATH=$PATH:bin
 fi
 set -e
 
