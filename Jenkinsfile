@@ -83,6 +83,7 @@ pipeline {
         sh(returnStdout: true, script: '''
           git tag -l | xargs git tag -d
           git fetch origin --prune
+          echo "update tags for repo"
         '''.stripIndent())
 
         sh(returnStdout: true, script: '''
