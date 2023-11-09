@@ -24,6 +24,13 @@ if [ "$user" == "root" ]; then
     alias sudo=""
 fi
 
+set +e
+rc=`sudo ls`
+if [ ! $? -eq 0 ]; then
+  alias sudo=""
+fi
+set -e
+
 if ! command -v n; then
     sudo npm install -g n -y
 fi
