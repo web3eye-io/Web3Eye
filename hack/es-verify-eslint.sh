@@ -19,6 +19,11 @@ if [[ ! -f .eslintrc.js ]]; then
     exit 1
 fi
 
+user=$(whoami)
+if [ "$user" == "root" ]; then
+    alias sudo=""
+fi
+
 if ! command -v n; then
     sudo npm install -g n -y
 fi
