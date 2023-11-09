@@ -19,28 +19,21 @@ if [[ ! -f .eslintrc.js ]]; then
     exit 1
 fi
 
+SUDO="sudo"
 user=$(whoami)
 if [ "$user" == "root" ]; then
-    alias sudo=""
+    SUDO=""
 fi
-
-set +e
-rc=`sudo ls`
-if [ ! $? -eq 0 ]; then
-  alias sudo=""
-fi
-set -e
 
 if ! command -v n; then
-    sudo npm install -g n -y
+    $SUDO npm install -g n -y
 fi
 
 if ! command -v yarn; then
-    sudo npm install -g yarn -y
+    $SUDO npm install -g yarn -y
 fi
 
-
-sudo n v16.14.0
+$SUDO n v16.14.0
 npm install @typescript-eslint/eslint-plugin --save-dev
 yarn lint
 
