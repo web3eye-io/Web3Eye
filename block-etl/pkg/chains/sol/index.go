@@ -70,13 +70,7 @@ func (e *SolIndexer) StartIndex(ctx context.Context) {
 	e.onIndex = true
 
 	// TODO: can be muilti goroutine
-	// go e.IndexTasks(ctx, taskBlockNum)
-	go func() {
-		for i := uint64(203773000); i < 203773100; i++ {
-			taskBlockNum <- i
-		}
-	}()
-
+	go e.IndexTasks(ctx, taskBlockNum)
 	go e.IndexBlock(ctx, taskBlockNum, indexBlockNum)
 	go e.IndexTransfer(ctx, indexBlockNum, outTransfers)
 	go e.IndexToken(ctx, outTransfers, outTransfer)

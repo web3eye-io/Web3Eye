@@ -175,6 +175,8 @@ func sortSroces(scores map[int64]float32) []*ScoreItem {
 	return topScores
 }
 
+// TODO:too long,will be rewrite
+//nolint:all
 func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN int) ([]*rankernpool.SearchToken, error) {
 	topScores := sortSroces(scores)
 	result := []*rankernpool.SearchToken{}
@@ -216,9 +218,9 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 			infos = append(infos, info)
 		}
 
-		// sort.Slice(infos, func(i, j int) bool {
-		// 	return infos[i].Distance < infos[j].Distance
-		// })
+		sort.Slice(infos, func(i, j int) bool {
+			return infos[i].Distance < infos[j].Distance
+		})
 
 		// collection
 		for _, v := range infos {
