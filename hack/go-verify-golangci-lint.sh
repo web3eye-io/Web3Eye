@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bas
+MY_PATH=`cd $(dirname $0);pwd`
+ROOT_PATH=$MY_PATH/../
+LINT_BIN=${ROOT_PATH}/bin
 
 set -o errexit
 set -o nounset
@@ -18,13 +21,12 @@ if ! command -v gofumpt; then
     go install mvdan.cc/gofumpt@v0.3.1
 fi
 
-PATH=$PATH:bin
+PATH=$PATH:$LINT_BIN
 set +e
 rc=`golangci-lint version | grep $VERSION_NUM`
 if [ ! $? -eq 0 ]; then
   set -e
-  curl -sfL $URL | sh -s $VERSION
-  PATH=$PATH:bin
+  curl -sfL $URL | sh -s $VERSION -b $LINT_BIN
 fi
 set -e
 
