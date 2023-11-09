@@ -34,15 +34,6 @@ if ! command -v yarn; then
     
 fi
 
-echo "-----------"
-$SUDO whereis n
-$SUDO whereis yarn
-$SUDO echo $PATH
-echo "+++++++++++"
-whereis n
-whereis yarn
-echo $PATH
-echo "//////////"
 PATH=/usr/local/bin:$PATH
 # $SUDO n v16.14.0
 n v16.14.0

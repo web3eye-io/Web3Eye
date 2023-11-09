@@ -104,6 +104,9 @@ pipeline {
           major=0
           minor=0
           patch=-1
+          if [ "$TAG_FOR" == 'testing' ]; then
+            patch=0
+          fi
           
           if [ 0 -eq $rc ]; then
             tag=`git describe --tags $revlist`
@@ -115,10 +118,8 @@ pipeline {
           if [ "$TAG_MAJOR" == 'true' ]; then
             major=$(( $major + 1 ))
             minor=0
-            patch=-1
           elif [ "$TAG_MINOR" == 'true' ]; then
             minor=$(( $minor + 1 ))
-            patch=-1
           fi    
 
           case $TAG_FOR in
