@@ -43,9 +43,8 @@ whereis n
 whereis yarn
 echo $PATH
 echo "//////////"
-
+PATH=/usr/local/bin:$PATH
 # $SUDO n v16.14.0
-source /etc/profile
 n v16.14.0
 npm install @typescript-eslint/eslint-plugin --save-dev
 yarn lint
