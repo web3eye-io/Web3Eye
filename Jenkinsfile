@@ -97,6 +97,7 @@ pipeline {
           git fetch origin --prune
 
           // get last tag
+          git version
           revlist=`git rev-list --tags --max-count=1`
           rc=$?
           set -e
