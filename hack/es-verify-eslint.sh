@@ -32,8 +32,8 @@ fi
 if ! command -v yarn; then
     $SUDO npm install -g yarn -y
 fi
-npm install -g n -y
-$SUDO n v16.14.0
+
+# $SUDO n v16.14.0
 npm install @typescript-eslint/eslint-plugin --save-dev
 yarn lint
 
