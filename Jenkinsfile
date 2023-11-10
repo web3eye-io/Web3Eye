@@ -163,7 +163,7 @@ pipeline {
     
     stage('Generate docker image for dev') {
       when {
-        expression { RELEASE_TARGET == 'true' }
+        expression { BUILD_TARGET == 'true' }
         expression { BRANCH_NAME == 'master' }
         expression { TARGET_ENV ==~ /.*development.*/ }
       }
