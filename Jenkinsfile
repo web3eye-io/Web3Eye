@@ -245,7 +245,7 @@ pipeline {
 
     stage('Generate docker image for test or prod') {
       when {
-        expression { RELEASE_TARGET == 'true' }
+        expression { BUILD_TARGET == 'true' }
         anyOf{
           expression { TARGET_ENV ==~ /.*testing.*/ }
           expression { TARGET_ENV ==~ /.*production.*/ }
