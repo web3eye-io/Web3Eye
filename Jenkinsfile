@@ -8,15 +8,16 @@ pipeline {
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
 
-    // NODEVERSION = "18.18.0"
-    // NODETMPENV = "/tmp/node-tmp-env/$NODEVERSION"
-    // NODEHOME = "$NODETMPENV/nodehome"
-    // NODEBIN = "$NODEHOME/bin"
     PATH = "$GOBIN:$PATH"
   }
   stages {
     stage('Clone') {
       steps {
+        sh(returnStdout: true, script: '''
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+          echo "update tags for repo"
+        '''.stripIndent())
         git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-token', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
@@ -29,12 +30,6 @@ pipeline {
       }
     }
 
-    // stage('Prepare Node ENV') {
-    //   steps {
-    //     sh 'make prepare-node-env'
-    //   }
-    // }
-
     stage('Prepare') {
       when {
         expression { BUILD_TARGET == 'true' }
@@ -43,7 +38,7 @@ pipeline {
         sh 'make deps'
       }
     }
-
+       
     stage('Linting') {
       when {
         expression { BUILD_TARGET == 'true' }
@@ -65,17 +60,17 @@ pipeline {
     }
 
     // TODO: support UT
-    // stage('Unit Tests') {
-    //   when {
-    //     expression { BUILD_TARGET == 'true' }
-    //   }
-    //   steps {
-    //     sh (returnStdout: false, script: '''
-    //       swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-    //       kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
-    //     '''.stripIndent())
-    //   }
-    // }
+    stage('Unit Tests') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+      }
+      steps {
+        sh (returnStdout: false, script: '''
+          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
+          kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
+        '''.stripIndent())
+      }
+    }
 
     stage('Tag') {
       when {
@@ -92,12 +87,6 @@ pipeline {
       steps {
         sh(returnStdout: true, script: '''
           set +e
-          // sync remote tags
-          git tag -l | xargs git tag -d
-          git fetch origin --prune
-
-          // get last tag
-          git version
           revlist=`git rev-list --tags --max-count=1`
           rc=$?
           set -e
