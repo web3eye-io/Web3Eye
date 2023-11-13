@@ -40,12 +40,8 @@ fi
 if [[ "xdev" == "x$1" ]]; then
     version=latest
 fi
-
-# TODO: should be official registry
-# registry=uhub.service.ucloud.cn
-registry=""
-OrginazeName=coastlinesss
-# OrginazeName=web3eye
+registry=uhub.service.ucloud.cn
+OrginazeName=web3eye
 
 if [[ "x" != $2 ]]; then
     registry=$2/

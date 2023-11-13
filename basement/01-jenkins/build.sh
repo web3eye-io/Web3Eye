@@ -8,9 +8,9 @@ PROJECT_FOLDER=$(
     pwd
 )
 
-registry=""
-OrginazeName=coastlinesss
-# OrginazeName=web3eye
+
+
+OrginazeName=web3eye
 
 user=$(whoami)
 service_name=jenkins

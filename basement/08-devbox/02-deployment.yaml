@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: development-box
-          image: coastlinesss/development-box:latest
+          image: uhub.service.ucloud.cn/web3eye/development-box:latest
           imagePullPolicy: Always
           resources:
             limits:

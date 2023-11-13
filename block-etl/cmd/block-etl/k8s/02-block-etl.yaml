@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: block-etl
-          image: coastlinesss/block-etl:latest
+          image: uhub.service.ucloud.cn/web3eye/block-etl:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

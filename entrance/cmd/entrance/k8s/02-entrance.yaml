@@ -18,7 +18,7 @@ spec:
       containers:
         - name: entrance
           # image: web3eye/entrance:latest
-          image: coastlinesss/entrance:latest
+          image: uhub.service.ucloud.cn/web3eye/entrance:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

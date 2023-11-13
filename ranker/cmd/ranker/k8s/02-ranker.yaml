@@ -18,7 +18,7 @@ spec:
       containers:
         - name: ranker
           # image: web3eye/ranker:latest
-          image: coastlinesss/ranker:latest
+          image: uhub.service.ucloud.cn/web3eye/ranker:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

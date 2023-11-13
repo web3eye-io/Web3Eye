@@ -18,7 +18,7 @@ spec:
       containers:
         - name: nft-meta
           # image: web3eye/nft-meta:latest
-          image: coastlinesss/nft-meta:latest
+          image: uhub.service.ucloud.cn/web3eye/nft-meta:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

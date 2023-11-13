@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: transform
-          image: coastlinesss/transform:latest
+          image: uhub.service.ucloud.cn/web3eye/transform:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

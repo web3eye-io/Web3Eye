@@ -18,7 +18,7 @@ spec:
       containers:
         - name: gateway
           # image: web3eye/gateway:latest
-          image: coastlinesss/gateway:latest
+          image: uhub.service.ucloud.cn/web3eye/gateway:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config

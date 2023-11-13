@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dashboard
-          image: coastlinesss/dashboard:latest
+          image: uhub.service.ucloud.cn/web3eye/dashboard:latest
           imagePullPolicy: Always
 
 ---

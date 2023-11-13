@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dealer
-          image: coastlinesss/dealer:latest
+          image: uhub.service.ucloud.cn/web3eye/dealer:latest
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
