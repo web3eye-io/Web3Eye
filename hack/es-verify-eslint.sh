@@ -35,10 +35,9 @@ if ! command -v yarn; then
 fi
 
 PATH=/usr/local/bin:$PATH
-# $SUDO n v16.14.0
-n v16.14.0
-npm install @typescript-eslint/eslint-plugin --save-dev
-yarn lint
+$SUDO n v16.14.0
+$SUDO npm install @typescript-eslint/eslint-plugin --save-dev
+$SUDO yarn lint
 
 done
 
