@@ -16,7 +16,7 @@ user=$(whoami)
 service_name=jenkins
 version=latest
 if [ "$user" == "root" ]; then
-    docker push ${registry}${OrginazeName}/$service_name:$version
+    docker push ${registry}/${OrginazeName}/$service_name:$version
 else
-    sudo docker push ${registry}${OrginazeName}/$service_name:$version
+    sudo docker push ${registry}/${OrginazeName}/$service_name:$version
 fi

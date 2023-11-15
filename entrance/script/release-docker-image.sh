@@ -48,7 +48,7 @@ echo "Release docker image for $PLATFORM -- $version"
 
 user=$(whoami)
 if [ "$user" == "root" ]; then
-  docker push ${registry}${OrginazeName}/$service_name:$version
+  docker push ${registry}/${OrginazeName}/$service_name:$version
 else
-  sudo docker push ${registry}${OrginazeName}/$service_name:$version
+  sudo docker push ${registry}/${OrginazeName}/$service_name:$version
 fi

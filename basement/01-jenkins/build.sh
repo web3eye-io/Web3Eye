@@ -16,7 +16,7 @@ user=$(whoami)
 service_name=jenkins
 version=latest
 if [ "$user" == "root" ]; then
-    docker build -t ${registry}${OrginazeName}/$service_name:$version .
+    docker build -t ${registry}/${OrginazeName}/$service_name:$version .
 else
-    sudo docker build -t ${registry}${OrginazeName}/$service_name:$version .
+    sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version .
 fi
