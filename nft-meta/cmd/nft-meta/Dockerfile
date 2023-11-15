@@ -1,6 +1,8 @@
 FROM centos:centos7.9.2009
 
 RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+RUN yum repolist all
+
 RUN yum clean all
 RUN yum makecache
 RUN yum -y update
