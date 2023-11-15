@@ -66,8 +66,7 @@ pipeline {
       }
       steps {
         sh (returnStdout: false, script: '''
-          swaggeruipod=`kubectl get pods -A | grep swagger | awk '{print $2}'`
-          kubectl cp proto/web3eye/nftmeta/v1/synctask/*.swagger.json swagger-ui-55ff4755b6-q7xlw:/usr/share/nginx/html || true
+          echo "TODO:will make it ok"
         '''.stripIndent())
       }
     }
