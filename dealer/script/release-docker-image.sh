@@ -41,7 +41,7 @@ registry=uhub.service.ucloud.cn
 OrginazeName=web3eye
 
 if [[ "x" != $2 ]]; then
-  registry=$2/
+  registry=$2
 fi
 
 echo "Release docker image for $PLATFORM -- $version"
