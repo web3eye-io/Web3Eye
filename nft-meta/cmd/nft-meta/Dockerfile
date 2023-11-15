@@ -1,5 +1,7 @@
 FROM centos:centos7.9.2009
 
+RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+
 COPY nft-meta /usr/local/bin/nft-meta
 COPY NFTMeta.viper.yaml /etc/NFTMeta/NFTMeta.viper.yaml
 ENV ENV_DATA_DIR=/data \
