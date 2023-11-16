@@ -163,7 +163,7 @@ pipeline {
       when {
         expression { BUILD_TARGET == 'true' }
         expression { BRANCH_NAME == 'master' }
-        expression { TARGET_ENV ==~ /.*development.*/ }
+        expression { TAG_FOR == 'development' }
       }
       steps {
         sh 'TAG=latest make build'
@@ -175,7 +175,7 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         expression { BRANCH_NAME == 'master' }
-        expression { TARGET_ENV ==~ /.*development.*/ }
+        expression { TAG_FOR == 'development' }
       }
       steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
@@ -188,7 +188,7 @@ pipeline {
           expression { RELEASE_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
-        expression { TARGET_ENV ==~ /.*testing.*/ }
+        expression { TAG_FOR == 'testing' }
       }
       steps {
         sh(returnStdout: false, script: '''
@@ -212,7 +212,7 @@ pipeline {
           expression { RELEASE_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
-        expression { TARGET_ENV ==~ /.*production.*/ }
+        expression { TAG_FOR == 'production' }
       }
       steps {
         sh(returnStdout: false, script: '''
@@ -234,8 +234,8 @@ pipeline {
       when {
         expression { BUILD_TARGET == 'true' }
         anyOf{
-          expression { TARGET_ENV ==~ /.*testing.*/ }
-          expression { TARGET_ENV ==~ /.*production.*/ }
+          expression { TAG_FOR == 'testing' }
+          expression { TAG_FOR == 'production' }
         }
       }
       steps {
@@ -253,8 +253,8 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         anyOf{
-          expression { TARGET_ENV ==~ /.*testing.*/ }
-          expression { TARGET_ENV ==~ /.*production.*/ }
+          expression { TAG_FOR == 'testing' }
+          expression { TAG_FOR == 'production' }
         }
       }
       steps {
