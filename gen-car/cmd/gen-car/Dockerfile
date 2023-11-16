@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY gen-car /usr/local/bin/gen-car
 COPY GenCar.viper.yaml /etc/GenCar/GenCar.viper.yaml

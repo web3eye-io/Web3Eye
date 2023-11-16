@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY dealer /usr/local/bin/dealer
 COPY lotus /usr/local/bin/lotus

@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY ranker /usr/local/bin/ranker
 COPY Ranker.viper.yaml /etc/Ranker/Ranker.viper.yaml

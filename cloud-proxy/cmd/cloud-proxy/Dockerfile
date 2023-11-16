@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY cloud-proxy /usr/local/bin/cloud-proxy
 COPY CloudProxy.viper.yaml /etc/CloudProxy/CloudProxy.viper.yaml

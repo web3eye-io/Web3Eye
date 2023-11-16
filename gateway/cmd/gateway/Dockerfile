@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY gateway /usr/local/bin/gateway
 COPY Gateway.viper.yaml /etc/Gateway/Gateway.viper.yaml

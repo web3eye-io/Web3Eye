@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY entrance /usr/local/bin/entrance
 COPY Entrance.viper.yaml /etc/Entrance/Entrance.viper.yaml

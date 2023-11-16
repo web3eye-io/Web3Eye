@@ -1,4 +1,4 @@
-FROM jrei/systemd-centos:7
+FROM centos:centos7.9.2009
 
 COPY block-etl /usr/local/bin/block-etl
 COPY BlockETL.viper.yaml /etc/BlockETL/BlockETL.viper.yaml
