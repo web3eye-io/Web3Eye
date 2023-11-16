@@ -7,7 +7,7 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-
+    AIMPROJECT = $AIMPROJECT
     PATH = "$GOBIN:$PATH"
   }
   stages {
@@ -259,6 +259,46 @@ pipeline {
       }
       steps {
         sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
+      }
+    }
+
+    stage('Release docker image for all(development testing production)') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { TAG_FOR == '' }
+        expression { AIMPROJECT != '' }
+      }
+      steps {
+        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker'
+        sh(returnStdout: false, script: '''
+          // sync remote tags
+          git tag -l | xargs git tag -d
+          git fetch origin --prune
+          
+          set +e
+          prod_tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
+          docker images | grep $AIMPROJECT | grep $prod_tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            TAG=$prod_tag DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker-images
+          fi
+
+          set +e
+          test_tag=$(git tag|grep '[13579]$'|sort -V|tail -n 1| tr -d '\n')
+          docker images | grep $AIMPROJECT | grep $test_tag
+          rc=$?
+          set -e
+          if [ 0 -eq $rc ]; then
+            TAG=$test_tag DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker-images
+          fi
+        '''.stripIndent())
+        sh(returnStdout: false, script: '''
+          images=`docker images | grep '$AIMPROJECT|none' | awk '{ print $3 }'`
+          for image in $images; do
+            docker rmi $image -f
+          done
+        '''.stripIndent())
       }
     }
 
