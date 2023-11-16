@@ -7,7 +7,6 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    AIMPROJECT = $AIMPROJECT
     PATH = "$GOBIN:$PATH"
   }
   stages {
@@ -266,10 +265,9 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         expression { TAG_FOR == '' }
-        expression { AIMPROJECT != '' }
       }
       steps {
-        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker'
+        sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
         sh(returnStdout: false, script: '''
           // sync remote tags
           git tag -l | xargs git tag -d
@@ -277,24 +275,24 @@ pipeline {
           
           set +e
           prod_tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
-          docker images | grep $AIMPROJECT | grep $prod_tag
+          docker images | grep web3eye | grep $prod_tag
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$prod_tag DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker-images
+            TAG=$prod_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
           fi
 
           set +e
           test_tag=$(git tag|grep '[13579]$'|sort -V|tail -n 1| tr -d '\n')
-          docker images | grep $AIMPROJECT | grep $test_tag
+          docker images | grep web3eye | grep $test_tag
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$test_tag DOCKER_REGISTRY=$DOCKER_REGISTRY AIMPROJECT=$AIMPROJECT make release-docker-images
+            TAG=$test_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
           fi
         '''.stripIndent())
         sh(returnStdout: false, script: '''
-          images=`docker images | grep '$AIMPROJECT|none' | awk '{ print $3 }'`
+          images=`docker images | grep 'web3eye|none' | awk '{ print $3 }'`
           for image in $images; do
             docker rmi $image -f
           done
