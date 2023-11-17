@@ -18,7 +18,6 @@ import (
 )
 
 type GetEndpointChainID func(ctx context.Context, endpoint string) (ChainID string, err error)
-type NewIndexer func(chainID string) *Index
 
 type Index interface {
 	StartIndex(ctx context.Context)

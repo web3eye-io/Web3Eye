@@ -62,7 +62,6 @@ func (e *EthIndexer) StartIndex(ctx context.Context) {
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexBlock(ctx, taskBlockNum)
 	}
-	time.Sleep(time.Minute * 3)
 }
 
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
