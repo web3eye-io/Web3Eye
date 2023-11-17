@@ -1,4 +1,4 @@
-package chains
+package indexer
 
 import (
 	"context"
@@ -25,7 +25,7 @@ const (
 	updateBlockNumInterval = time.Minute
 )
 
-type IndexerI interface {
+type IIndexer interface {
 	GetCurrentBlockNum(ctx context.Context, updateBlockNumInterval time.Duration)
 	IndexBlock(ctx context.Context, taskBlockNum chan uint64)
 }
@@ -38,7 +38,7 @@ type Indexer struct {
 	CurrentBlockNum uint64
 	onIndex         bool
 	cancel          *context.CancelFunc
-	IndexerI
+	IIndexer
 }
 
 func NewIndexer(chainID string, chainType basetype.ChainType) *Indexer {
@@ -183,14 +183,14 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 	}
 }
 
-func transferIdentifier(contract, tokenID, txHash, from string) string {
+func TransferIdentifier(contract, tokenID, txHash, from string) string {
 	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
 }
 
-func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
+func TokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
 	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
 }
 
-func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
+func ContractIdentifier(chain basetype.ChainType, chainID, contract string) string {
 	return fmt.Sprintf("%v:%v:%v", chain, chainID, contract)
 }

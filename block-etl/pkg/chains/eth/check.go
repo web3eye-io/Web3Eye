@@ -20,7 +20,7 @@ func (e *EthIndexer) checkErr(ctx context.Context, err error) {
 
 	okEndpints := []string{}
 	// extract wrong endpoints
-	for _, v := range e.Endpoints {
+	for _, v := range e.OkEndpoints {
 		_, inspectErr := eth.GetEndpointChainID(ctx, v)
 		if inspectErr != nil {
 			logger.Sugar().Warnf("check the endpoint %v is unavailable,err: %v,has been removed", v, inspectErr)
@@ -32,7 +32,7 @@ func (e *EthIndexer) checkErr(ctx context.Context, err error) {
 
 	e.UpdateEndpoints(okEndpints)
 
-	if len(e.Endpoints) == 0 {
+	if len(e.OkEndpoints) == 0 {
 		e.StopIndex()
 	}
 }

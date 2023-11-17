@@ -177,7 +177,7 @@ func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.Cha
 	if _, ok := pmgr.Indexs[chanType][chainID]; !ok {
 		switch chanType {
 		case basetype.ChainType_Ethereum:
-			pmgr.Indexs[chanType][chainID] = eth.NewIndexer(chainID)
+			pmgr.Indexs[chanType][chainID] = eth.NewEthIndexer(chainID)
 		case basetype.ChainType_Solana:
 			pmgr.Indexs[chanType][chainID] = sol.NewIndexer(chainID)
 		default:
