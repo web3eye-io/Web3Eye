@@ -9,11 +9,9 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/common/utils"
-	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
 	ctMessage "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	blockProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
@@ -27,22 +25,30 @@ const (
 	updateBlockNumInterval = time.Minute
 )
 
+type IndexerI interface {
+	GetCurrentBlockNum(ctx context.Context, updateBlockNumInterval time.Duration)
+	IndexBlock(ctx context.Context, taskBlockNum chan uint64)
+}
+
 type Indexer struct {
-	Endpoints       []string
+	OkEndpoints     []string
 	BadEndpoints    map[string]error
 	ChainType       basetype.ChainType
 	ChainID         string
 	CurrentBlockNum uint64
 	onIndex         bool
 	cancel          *context.CancelFunc
+	IndexerI
 }
 
-func NewIndexer(chainID string) *Indexer {
+func NewIndexer(chainID string, chainType basetype.ChainType) *Indexer {
 	return &Indexer{
+		OkEndpoints:     []string{},
 		BadEndpoints:    make(map[string]error),
-		ChainType:       basetype.ChainType_Ethereum,
+		ChainType:       chainType,
 		ChainID:         chainID,
 		CurrentBlockNum: 0,
+		onIndex:         false,
 	}
 }
 
@@ -62,11 +68,10 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexBlock(ctx, taskBlockNum)
 	}
-	time.Sleep(time.Minute * 3)
 }
 
 func (e *Indexer) UpdateEndpoints(endpoints []string) {
-	e.Endpoints = endpoints
+	e.OkEndpoints = endpoints
 }
 
 func (e *Indexer) IsOnIndex() bool {
@@ -79,7 +84,7 @@ func (e *Indexer) StopIndex() {
 		(*e.cancel)()
 		e.cancel = nil
 		e.BadEndpoints = nil
-		e.Endpoints = nil
+		e.OkEndpoints = nil
 		e.onIndex = false
 	}
 }
@@ -174,80 +179,6 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				return
 			}
 			retries++
-		}
-	}
-}
-
-func (e *Indexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
-	for {
-		select {
-		case num := <-taskBlockNum:
-			block, err := e.CheckBlock(ctx, num)
-			if err != nil {
-				logger.Sugar().Error(err)
-				continue
-			}
-
-			if block.ParseState == basetype.BlockParseState_BlockTypeFinish {
-				continue
-			}
-
-			err = func() error {
-				blockLogs, err := e.IndexBlockLogs(ctx, num)
-				if err != nil {
-					return err
-				}
-
-				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs)
-				if err != nil {
-					return err
-				}
-
-				contractT1, err := e.IndexToken(ctx, filteredT1)
-				if err != nil {
-					return err
-				}
-
-				err = e.IndexContract(ctx, contractT1, FindContractCreator)
-				if err != nil {
-					return err
-				}
-
-				contractT2, err := e.IndexOrder(ctx, blockLogs.OrderLogs)
-				if err != nil {
-					return err
-				}
-
-				err = e.IndexContract(ctx, contractT2, FindContractCreator)
-				if err != nil {
-					return err
-				}
-				return nil
-			}()
-
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-
-			remark := ""
-			parseState := basetype.BlockParseState_BlockTypeFinish
-			if err != nil {
-				remark = err.Error()
-				parseState = basetype.BlockParseState_BlockTypeFailed
-			}
-
-			_, err = blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
-				Info: &blockProto.BlockReq{
-					ID:         &block.ID,
-					ParseState: &parseState,
-					Remark:     &remark,
-				},
-			})
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-		case <-ctx.Done():
-			return
 		}
 	}
 }

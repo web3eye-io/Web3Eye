@@ -1,4 +1,17 @@
-import  "slices"
+package main
 
-things := []string{"foo", "bar", "baz"}
-slices.Contains(things, "foo") // true
+import (
+	"fmt"
+	"strings"
+
+	"golang.org/x/exp/slices"
+)
+
+func main() {
+
+	things := []string{"foo", "bar", "baz"}
+	fmt.Println(slices.ContainsFunc[string](things, func(s string) bool {
+		return strings.Contains(s, "fo")
+	})) // true
+
+}
