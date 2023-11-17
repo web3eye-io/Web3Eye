@@ -192,7 +192,7 @@ pipeline {
       steps {
         sh(returnStdout: false, script: '''
           set +e
-          // sync remote tags
+          # sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
         '''.stripIndent())
@@ -216,7 +216,7 @@ pipeline {
       steps {
         sh(returnStdout: false, script: '''
           set +e
-          // sync remote tags
+          # sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
         '''.stripIndent())
