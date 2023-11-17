@@ -269,7 +269,7 @@ pipeline {
       steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
         sh(returnStdout: false, script: '''
-          // sync remote tags
+          # sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
           
