@@ -162,7 +162,6 @@ pipeline {
       when {
         expression { BUILD_TARGET == 'true' }
         expression { BRANCH_NAME == 'master' }
-        expression { TAG_FOR == 'development' }
       }
       steps {
         sh 'TAG=latest make build'
@@ -174,7 +173,6 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         expression { BRANCH_NAME == 'master' }
-        expression { TAG_FOR == 'development' }
       }
       steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
@@ -185,6 +183,7 @@ pipeline {
       when {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
+          expression { BUILD_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
         expression { TAG_FOR == 'testing' }
@@ -209,6 +208,7 @@ pipeline {
       when {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
+          expression { BUILD_TARGET == 'true' }
           expression { DEPLOY_TARGET == 'true' }
         }
         expression { TAG_FOR == 'production' }
