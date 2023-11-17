@@ -184,7 +184,6 @@ pipeline {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
           expression { BUILD_TARGET == 'true' }
-          expression { DEPLOY_TARGET == 'true' }
         }
         expression { TAG_FOR == 'testing' }
       }
@@ -209,7 +208,6 @@ pipeline {
         anyOf{
           expression { RELEASE_TARGET == 'true' }
           expression { BUILD_TARGET == 'true' }
-          expression { DEPLOY_TARGET == 'true' }
         }
         expression { TAG_FOR == 'production' }
       }
@@ -347,9 +345,18 @@ pipeline {
       }
       steps {
         sh(returnStdout: true, script: '''
+          tag=latest
+          result=$(echo $TARGET_ENV | grep "${testing}")
+          if [[ "$result" != "" ]]
+          then
+            tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
+          else
+            tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
+          fi
+          
           export CLOUD_PROXY_DOMAIN=cloud-proxy.$DOMAIN_NAME  # for gateway
           export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
-          TAG=$TAG_VERSION make deploy-to-k8s-cluster
+          TAG=$tag make deploy-to-k8s-cluster
         '''.stripIndent())
       }
     }
