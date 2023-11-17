@@ -278,7 +278,7 @@ pipeline {
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$prod_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
+            TAG=$prod_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
           fi
 
           set +e
@@ -287,7 +287,7 @@ pipeline {
           rc=$?
           set -e
           if [ 0 -eq $rc ]; then
-            TAG=$test_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker-images
+            TAG=$test_tag DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
           fi
         '''.stripIndent())
         sh(returnStdout: false, script: '''
