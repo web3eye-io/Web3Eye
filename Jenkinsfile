@@ -69,6 +69,53 @@ pipeline {
       }
     }
 
+    stage('Generate docker image for dev') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
+      }
+      steps {
+        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
+      }
+    }
+    
+    stage('Release docker image for dev') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
+      }
+      steps {
+        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
+      }
+    }
+
+    stage('Generate docker image for feature') {
+      when {
+        expression { BUILD_TARGET == 'true' }
+        expression { BRANCH_NAME != 'master' }
+      }
+      steps {
+        sh 'make verify-build'
+        sh(returnStdout: false, script: '''
+          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
+        '''.stripIndent())
+      }
+    }
+
+    stage('Release docker image for feature') {
+      when {
+        expression { RELEASE_TARGET == 'true' }
+        expression { BRANCH_NAME != 'master' }
+      }
+      steps {
+         sh(returnStdout: false, script: '''
+          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
+        '''.stripIndent())
+      }
+    }
+
     stage('Tag') {
       when {
         anyOf{
@@ -130,55 +177,8 @@ pipeline {
         }
       }
     }
-
-    stage('Generate docker image for feature') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-        expression { BRANCH_NAME != 'master' }
-      }
-      steps {
-        sh 'make verify-build'
-        sh(returnStdout: false, script: '''
-          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
-          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker
-        '''.stripIndent())
-      }
-    }
-
-    stage('Release docker image for feature') {
-      when {
-        expression { RELEASE_TARGET == 'true' }
-        expression { BRANCH_NAME != 'master' }
-      }
-      steps {
-         sh(returnStdout: false, script: '''
-          feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
-          TAG=$feature_name DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker
-        '''.stripIndent())
-      }
-    }
     
-    stage('Generate docker image for dev') {
-      when {
-        expression { BUILD_TARGET == 'true' }
-        expression { BRANCH_NAME == 'master' }
-      }
-      steps {
-        sh 'TAG=latest make build'
-        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
-      }
-    }
     
-    stage('Release docker image for dev') {
-      when {
-        expression { RELEASE_TARGET == 'true' }
-        expression { BRANCH_NAME == 'master' }
-      }
-      steps {
-        sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
-      }
-    }
-
     stage('Pick tag version for testing') {
       when {
         anyOf{
@@ -243,7 +243,6 @@ pipeline {
           git reset --hard
           git checkout $TAG_VERSION
         '''.stripIndent())
-        sh 'TAG=$TAG_VERSION make build'
         sh 'TAG=$TAG_VERSION DOCKER_REGISTRY=$DOCKER_REGISTRY make build-docker'
       }
     }
