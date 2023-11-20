@@ -3,30 +3,29 @@ package main
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 )
 
 type IB interface {
-	start(cancel *context.CancelFunc)
+	start(cancel *context.CancelFunc, a string)
 	index1(ctx context.Context)
 	index2(ctx context.Context)
 	stop()
 }
 type A struct {
 	cancel *context.CancelFunc
+	aaa    string
 	IB
 }
 
 func (a A) StartIndex() {
 	ctx, cancel := context.WithCancel(context.Background())
 	a.cancel = &cancel
-	a.start(&cancel)
-	fmt.Println("aaa ", reflect.ValueOf(a.cancel).IsNil())
-
+	a.start(&cancel, "from a")
 	go a.index1(ctx)
 	go a.index2(ctx)
-	fmt.Println("aaa ", reflect.ValueOf(a.cancel).IsNil())
+	time.Sleep(time.Second * 4)
+	a.stop()
 
 }
 
@@ -40,25 +39,24 @@ func (a A) StopIndex() {
 
 type B struct {
 	cancel *context.CancelFunc
+	aaa    string
 }
 
-func (b B) start(cancel *context.CancelFunc) {
-	fmt.Println(reflect.ValueOf(b.cancel).IsNil())
+func (b *B) start(cancel *context.CancelFunc, a string) {
 	b.cancel = cancel
-	fmt.Println(reflect.ValueOf(b.cancel).IsNil())
+	b.aaa = a
 }
 
-func (b B) stop() {
-	fmt.Println(reflect.ValueOf(b.cancel).IsNil())
-
-	if !reflect.ValueOf(b.cancel).IsNil() {
+func (b *B) stop() {
+	fmt.Println(b.aaa)
+	if b.cancel != nil {
 		fmt.Println("B stop")
 		(*b.cancel)()
 		b.cancel = nil
 	}
 }
 
-func (b B) index1(ctx context.Context) {
+func (b *B) index1(ctx context.Context) {
 	for i := 0; i < 8; i++ {
 		select {
 		case <-time.NewTicker(time.Second * 1).C:
@@ -68,7 +66,7 @@ func (b B) index1(ctx context.Context) {
 	}
 }
 
-func (b B) index2(ctx context.Context) {
+func (b *B) index2(ctx context.Context) {
 	for i := 0; i < 5; i++ {
 		select {
 		case <-time.NewTicker(time.Second * 1).C:
@@ -81,7 +79,7 @@ func (b B) index2(ctx context.Context) {
 }
 
 func main() {
-	a := A{IB: B{}}
+	a := A{IB: &B{aaa: "from b"}}
 	a.StartIndex()
 	time.Sleep(10 * time.Second)
 }
