@@ -346,7 +346,9 @@ pipeline {
       steps {
         sh(returnStdout: true, script: '''
           tag=latest
+          set +e
           result=$(echo $TARGET_ENV | grep "testing")
+          set -e
           if [[ "$result" != "" ]]
           then
             tag=$(git tag|grep '[13579]$'|sort -V|tail -n 1| tr -d '\n')
