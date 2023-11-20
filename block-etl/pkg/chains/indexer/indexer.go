@@ -39,6 +39,7 @@ type Indexer struct {
 	ChainID   string
 	onIndex   bool
 	cancel    *context.CancelFunc
+	stopChan  chan struct{}
 	IIndexer
 }
 
@@ -58,8 +59,9 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	go e.SyncCurrentBlockNum(ctx, updateBlockNumInterval)
 
 	e.onIndex = true
+	e.stopChan = make(chan struct{})
 
-	taskBlockNum, err := e.PullTaskTopics(ctx)
+	taskBlockNum, err := e.pullTaskTopics(ctx)
 	if err != nil {
 		logger.Sugar().Error(err)
 		panic(err)
@@ -69,7 +71,20 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	}
 }
 
-func (e *Indexer) PullTaskTopics(ctx context.Context) (outBlockNum chan uint64, err error) {
+func (e *Indexer) IsOnIndex() bool {
+	return e.onIndex
+}
+
+func (e *Indexer) StopIndex() {
+	if e.cancel != nil {
+		logger.Sugar().Infof("stop the indexer chainType: %v, chainID: %v", e.ChainType, e.ChainID)
+		(*e.cancel)()
+		e.cancel = nil
+		e.onIndex = false
+	}
+}
+
+func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, err error) {
 	logger.Sugar().Info("start to index task for ethereum")
 	conds := &synctask.Conds{
 		ChainType: &ctMessage.StringVal{
@@ -103,8 +118,8 @@ func (e *Indexer) PullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 					logger.Sugar().Error(err)
 				}
 
-				for _, v := range resp.GetInfos() {
-					e.indexTopicTasks(ctx, pulsarCli, v, outBlockNum)
+				for _, info := range resp.GetInfos() {
+					e.indexTopicTasks(ctx, pulsarCli, info, outBlockNum)
 				}
 			case <-ctx.Done():
 				return
@@ -160,19 +175,6 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 			}
 			retries++
 		}
-	}
-}
-
-func (e *Indexer) IsOnIndex() bool {
-	return e.onIndex
-}
-
-func (e *Indexer) StopIndex() {
-	if e.cancel != nil {
-		logger.Sugar().Infof("stop the indexer chainType: %v, chainID: %v", e.ChainType, e.ChainID)
-		(*e.cancel)()
-		e.cancel = nil
-		e.onIndex = false
 	}
 }
 
