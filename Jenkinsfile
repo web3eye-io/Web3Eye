@@ -349,7 +349,7 @@ pipeline {
           result=$(echo $TARGET_ENV | grep "${testing}")
           if [[ "$result" != "" ]]
           then
-            tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
+            tag=$(git tag|grep '[13579]$'|sort -V|tail -n 1| tr -d '\n')
           else
             tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
           fi
