@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: kube-system
-  name: dashboard
+  name: web3eye-webui
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: dashboard
+      app: web3eye-webui
   template:
     metadata:
       labels:
-        app: dashboard
+        app: web3eye-webui
     spec:
       containers:
-        - name: dashboard
-          image: uhub.service.ucloud.cn/web3eye/dashboard:latest
+        - name: web3eye-webui
+          image: uhub.service.ucloud.cn/web3eye/webui:latest
           imagePullPolicy: Always
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dashboard
+  name: web3eye-webui
   namespace: kube-system
 spec:
   ports:
@@ -30,4 +30,4 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: dashboard
+    app: web3eye-webui

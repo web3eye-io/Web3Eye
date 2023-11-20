@@ -22,13 +22,21 @@ const (
 )
 
 type EthIndexer struct {
-	*indexer.Indexer
+	CurrentBlockNum uint64
+	OkEndpoints     []string
+	BadEndpoints    map[string]error
+	ChainType       basetype.ChainType
+	ChainID         string
 }
 
-func NewEthIndexer(chainID string) *EthIndexer {
-	return &EthIndexer{
-		Indexer: indexer.NewIndexer(chainID, basetype.ChainType_Ethereum),
-	}
+func NewEthIndexer(chainID string) *indexer.Indexer {
+	return indexer.NewIndexer(chainID, basetype.ChainType_Ethereum, &EthIndexer{
+		OkEndpoints:     []string{},
+		BadEndpoints:    make(map[string]error),
+		ChainType:       basetype.ChainType_Ethereum,
+		ChainID:         chainID,
+		CurrentBlockNum: 0,
+	})
 }
 
 func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
@@ -103,6 +111,10 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			return
 		}
 	}
+}
+
+func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
+	e.OkEndpoints = endpoints
 }
 
 func transferIdentifier(contract, tokenID, txHash, from string) string {
