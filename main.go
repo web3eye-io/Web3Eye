@@ -24,9 +24,6 @@ func (a A) StartIndex() {
 	a.start(&cancel, "from a")
 	go a.index1(ctx)
 	go a.index2(ctx)
-	time.Sleep(time.Second * 4)
-	a.stop()
-
 }
 
 func (a A) StopIndex() {
