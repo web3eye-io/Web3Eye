@@ -350,7 +350,11 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	return contractMeta, creator, remark
 }
 
-func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
+func (e *EthIndexer) GetCurrentBlockNum() uint64 {
+	return e.CurrentBlockNum
+}
+
+func (e *EthIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
 	for {
 		func() {
 			cli, err := eth.Client(e.OkEndpoints)

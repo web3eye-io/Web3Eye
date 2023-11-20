@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: web3eye-dashboard-ingress-vpn
+  name: web3eye-webui-ingress-vpn
   namespace: kube-system
   annotations:
-    k8s.kuboard.cn/displayName: web3eye-dashboard
-    k8s.kuboard.cn/workload: web3eye-dashboard
+    # k8s.kuboard.cn/displayName: web3eye-webui
+    # k8s.kuboard.cn/workload: web3eye-webui
     kubernetes.io/ingress.class: 'traefik-internet-vpn'
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
@@ -16,19 +16,27 @@ metadata:
 spec:
   tls:
     - hosts:
-        - '*.dashboard.web3eye.io'
-        - dashboard.web3eye.io
-      secretName: web3eye-io-tls
+        - '*.testnet.web3eye.io'
+        - testnet.web3eye.io
+      secretName: testnet-web3eye-io-tls
   rules:
-    - host: dashboard.web3eye.io
-      http: &http_rules
+    - host: testnet.web3eye.io
+      http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: web3eye-dashboard
+                name: web3eye-webui
                 port:
                   number: 80
-    - host: www.dashboard.web3eye.io
-      http: *http_rules
+    # - host: www.testnet.web3eye.io
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: web3eye-webui
+    #             port:
+    #               number: 80

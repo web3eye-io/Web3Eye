@@ -26,29 +26,28 @@ const (
 )
 
 type IIndexer interface {
-	GetCurrentBlockNum(ctx context.Context, updateBlockNumInterval time.Duration)
+	SyncCurrentBlockNum(ctx context.Context, updateBlockNumInterval time.Duration)
+	GetCurrentBlockNum() uint64
 	IndexBlock(ctx context.Context, taskBlockNum chan uint64)
+	UpdateEndpoints(endpoints []string)
+	// IsOnIndex() bool
+	// StopIndex()
 }
 
 type Indexer struct {
-	OkEndpoints     []string
-	BadEndpoints    map[string]error
-	ChainType       basetype.ChainType
-	ChainID         string
-	CurrentBlockNum uint64
-	onIndex         bool
-	cancel          *context.CancelFunc
+	ChainType basetype.ChainType
+	ChainID   string
+	onIndex   bool
+	cancel    *context.CancelFunc
 	IIndexer
 }
 
-func NewIndexer(chainID string, chainType basetype.ChainType) *Indexer {
+func NewIndexer(chainID string, chainType basetype.ChainType, iIndexer IIndexer) *Indexer {
 	return &Indexer{
-		OkEndpoints:     []string{},
-		BadEndpoints:    make(map[string]error),
-		ChainType:       chainType,
-		ChainID:         chainID,
-		CurrentBlockNum: 0,
-		onIndex:         false,
+		ChainType: chainType,
+		ChainID:   chainID,
+		onIndex:   false,
+		IIndexer:  iIndexer,
 	}
 }
 
@@ -56,7 +55,7 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	logger.Sugar().Infof("start the indexer chainType: %v, chainID: %v", e.ChainType, e.ChainID)
 	ctx, cancel := context.WithCancel(ctx)
 	e.cancel = &cancel
-	go e.GetCurrentBlockNum(ctx, updateBlockNumInterval)
+	go e.SyncCurrentBlockNum(ctx, updateBlockNumInterval)
 
 	e.onIndex = true
 
@@ -67,25 +66,6 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	}
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexBlock(ctx, taskBlockNum)
-	}
-}
-
-func (e *Indexer) UpdateEndpoints(endpoints []string) {
-	e.OkEndpoints = endpoints
-}
-
-func (e *Indexer) IsOnIndex() bool {
-	return e.onIndex
-}
-
-func (e *Indexer) StopIndex() {
-	if e.cancel != nil {
-		logger.Sugar().Infof("stop the indexer chainType: %v, chainID: %v", e.ChainType, e.ChainID)
-		(*e.cancel)()
-		e.cancel = nil
-		e.BadEndpoints = nil
-		e.OkEndpoints = nil
-		e.onIndex = false
 	}
 }
 
@@ -170,7 +150,7 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 			if retries > maxRetries {
 				return
 			}
-			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.CurrentBlockNum})
+			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.GetCurrentBlockNum()})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				continue
@@ -180,6 +160,19 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 			}
 			retries++
 		}
+	}
+}
+
+func (e *Indexer) IsOnIndex() bool {
+	return e.onIndex
+}
+
+func (e *Indexer) StopIndex() {
+	if e.cancel != nil {
+		logger.Sugar().Infof("stop the indexer chainType: %v, chainID: %v", e.ChainType, e.ChainID)
+		(*e.cancel)()
+		e.cancel = nil
+		e.onIndex = false
 	}
 }
 

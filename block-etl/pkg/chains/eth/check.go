@@ -30,9 +30,9 @@ func (e *EthIndexer) checkErr(ctx context.Context, err error) {
 		}
 	}
 
-	e.UpdateEndpoints(okEndpints)
+	// e.UpdateEndpoints(okEndpints)
 
-	if len(e.OkEndpoints) == 0 {
-		e.StopIndex()
-	}
+	// if len(e.OkEndpoints) == 0 {
+	// 	e.StopIndex()
+	// }
 }
