@@ -27,6 +27,8 @@ type EthIndexer struct {
 	BadEndpoints    map[string]error
 	ChainType       basetype.ChainType
 	ChainID         string
+	// full name: On No Available Endpoints
+	ONAEEvents []func()
 }
 
 func NewEthIndexer(chainID string) *indexer.Indexer {
@@ -36,10 +38,12 @@ func NewEthIndexer(chainID string) *indexer.Indexer {
 		ChainType:       basetype.ChainType_Ethereum,
 		ChainID:         chainID,
 		CurrentBlockNum: 0,
+		ONAEEvents:      make([]func(), 0),
 	})
 }
 
 func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
+	ctx.Done()
 	for {
 		select {
 		case num := <-taskBlockNum:
@@ -113,8 +117,17 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	}
 }
 
+func (e *EthIndexer) OnNoAvalibleEndpoints(event func()) {
+	e.ONAEEvents = append(e.ONAEEvents, event)
+}
+
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
 	e.OkEndpoints = endpoints
+	if len(e.OkEndpoints) == 0 {
+		for _, v := range e.ONAEEvents {
+			v()
+		}
+	}
 }
 
 func transferIdentifier(contract, tokenID, txHash, from string) string {

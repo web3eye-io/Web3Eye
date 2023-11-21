@@ -27,11 +27,10 @@ const (
 
 type IIndexer interface {
 	SyncCurrentBlockNum(ctx context.Context, updateBlockNumInterval time.Duration)
-	GetCurrentBlockNum() uint64
 	IndexBlock(ctx context.Context, taskBlockNum chan uint64)
+	GetCurrentBlockNum() uint64
 	UpdateEndpoints(endpoints []string)
-	// IsOnIndex() bool
-	// StopIndex()
+	OnNoAvalibleEndpoints(func())
 }
 
 type Indexer struct {
@@ -39,7 +38,6 @@ type Indexer struct {
 	ChainID   string
 	onIndex   bool
 	cancel    *context.CancelFunc
-	stopChan  chan struct{}
 	IIndexer
 }
 
@@ -58,8 +56,10 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	e.cancel = &cancel
 	go e.SyncCurrentBlockNum(ctx, updateBlockNumInterval)
 
+	e.OnNoAvalibleEndpoints(func() {
+		e.StopIndex()
+	})
 	e.onIndex = true
-	e.stopChan = make(chan struct{})
 
 	taskBlockNum, err := e.pullTaskTopics(ctx)
 	if err != nil {
@@ -69,6 +69,7 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexBlock(ctx, taskBlockNum)
 	}
+
 }
 
 func (e *Indexer) IsOnIndex() bool {
