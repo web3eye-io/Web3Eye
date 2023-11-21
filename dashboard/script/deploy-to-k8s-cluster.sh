@@ -34,9 +34,9 @@ service_name=$(
 )
 
 sed -i "s/$service_name:latest/$service_name:$version/g" $PROJECT_FOLDER/k8s/01-$service_name.yaml
-sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/01-$service_name.yaml
-sed -i "s/web3eye.webui.io/$CLOUD_ROOT_DOMAIN/g" cmd/$service_name/k8s/02-ingress-vpn.yaml
-sed -i "s/web3eye-webui-io/$CLOUD_CERT_NAME/g" cmd/$service_name/k8s/02-ingress-vpn.yaml
+sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" $PROJECT_FOLDER/k8s/01-$service_name.yaml
+sed -i "s/web3eye.webui.io/$CLOUD_ROOT_DOMAIN/g" $PROJECT_FOLDER/k8s/02-ingress-vpn.yaml
+sed -i "s/web3eye-webui-io/$CLOUD_CERT_NAME/g" $PROJECT_FOLDER/k8s/02-ingress-vpn.yaml
 
 set +e
 
