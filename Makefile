@@ -52,7 +52,7 @@ DEVELOPMENT= dev
 endif
 
 ifndef DOCKER_REGISTRY
-DOCKER_REGISTRY= x
+DOCKER_REGISTRY= uhub.service.ucloud.cn
 endif
 
 ifndef TAG
@@ -99,7 +99,7 @@ release-docker:
 	
 deploy-to-k8s-cluster:
 	@for x in $(PROJECTS); do \
-		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG);\
+		${REPO_ROOT}/$${x}/script/deploy-to-k8s-cluster.sh $(TAG) $(DOCKER_REGISTRY);\
 	done
 
 prepare-golang-env:
