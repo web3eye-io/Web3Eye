@@ -360,7 +360,7 @@ exportfs -a
 | AIMPROJECT       | 项目名 | 项目名     | 项目名  | 项目名          |
 | TAG_FOR          |        | test/prod  |         |                 |
 | TARGET_ENV       | 环境名 | 环境名     | 环境名  | 环境名          |
-| DOMIAN_NAME      |        |            |         | aws环境域名     |
+| CERT_NAME      |        |            |         | aws环境域名     |
 | DOMIAN_HTTP_PORT |        |            |         | aws环境HTTP端口 |
 
 release和deploy的Tag关系说明：

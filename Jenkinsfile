@@ -328,8 +328,10 @@ pipeline {
       }
       steps {
          sh(returnStdout: true, script: '''
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$DOMIAN_NAME  # for gateway
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$CERT_NAME  # for gateway
           export CLOUD_PROXY_GRPC_PORT=$DOMIAN_HTTP_PORT  # for gateway
+          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
           TAG=latest make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -356,8 +358,10 @@ pipeline {
             tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
           fi
           
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$DOMAIN_NAME  # for gateway
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$CERT_NAME  # for gateway
           export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
+          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
           TAG=$tag make deploy-to-k8s-cluster
         '''.stripIndent())
       }
