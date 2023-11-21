@@ -329,7 +329,7 @@ pipeline {
       steps {
          sh(returnStdout: true, script: '''
           export CLOUD_PROXY_DOMAIN=cloud-proxy.$CERT_NAME  # for gateway
-          export CLOUD_PROXY_GRPC_PORT=$DOMIAN_HTTP_PORT  # for gateway
+          export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
           export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
           export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
           TAG=latest make deploy-to-k8s-cluster
