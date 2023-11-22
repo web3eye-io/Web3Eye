@@ -18,7 +18,7 @@ if (window.location.hostname.startsWith('www.')) {
   baseURL = window.location.origin.replace('www', 'api') + '/api'
 }
 if (window.location.hostname.includes('.npool.top')) {
-  baseURL = window.location.protocol + '//api.web3eye.webui.io' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
+  baseURL = window.location.protocol + '//api.web3eye.npool.top' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
 }
 
 // define
