@@ -89,7 +89,6 @@ func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
 	addr := fmt.Sprintf("%v:%v",
 		config.GetConfig().CloudProxy.Domain,
 		config.GetConfig().CloudProxy.GrpcPort)
-
 	logger.Sugar().Infow("withNoConnClose", "action", "prepare to connect to cloudproxy", "address", addr)
 
 	conn, err := grpc.Dial(

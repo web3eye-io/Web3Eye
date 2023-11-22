@@ -34,11 +34,11 @@ if [ "$1" == "dev" ]; then
   version=latest
 fi
 
-# TODO: support change registry
-## For testing or production environment, pass the second variable
-# if [[ "x" != "x$2" ]]; then
-#   DOCKER_REGISTRY=$2
-# fi
+DOCKER_REGISTRY=uhub.service.ucloud.cn
+# For testing or production environment, pass the second variable
+if [[ "x" != "x$2" ]]; then
+  DOCKER_REGISTRY=$2
+fi
 
 service_name=$(
   cd $PROJECT_FOLDER
@@ -48,8 +48,8 @@ service_name=$(
 echo "Deploy docker image for $PLATFORM -- $version"
 
 sed -i "s/$service_name:latest/$service_name:$version/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
-# sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/02-$service_name.yaml
-sed -i "s/web3eye.webui.io/$CLOUD_ROOT_DOMAIN/g" $PROJECT_FOLDER/cmd/$service_name/k8s/03-ingress.yaml
+sed -i "s/uhub\.service\.ucloud\.cn/$DOCKER_REGISTRY/g" cmd/$service_name/k8s/02-$service_name.yaml
+sed -i "s/web3eye\.webui\.io/$CLOUD_ROOT_DOMAIN/g" $PROJECT_FOLDER/cmd/$service_name/k8s/03-ingress.yaml
 sed -i "s/web3eye-webui-io/$CLOUD_CERT_NAME/g" $PROJECT_FOLDER/cmd/$service_name/k8s/03-ingress.yaml
 
 set +e
