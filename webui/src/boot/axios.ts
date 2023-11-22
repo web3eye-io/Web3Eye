@@ -13,7 +13,16 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: '' })
+let baseURL = window.location.protocol + '//api.' + window.location.hostname + '/api'
+if (window.location.hostname.startsWith('www.')) {
+  baseURL = window.location.origin.replace('www', 'api') + '/api'
+}
+if (window.location.hostname.includes('.npool.top')) {
+  baseURL = window.location.protocol + '//api.web3eye.webui.io' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
+}
+
+// define
+const api = axios.create({ baseURL: baseURL })
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
