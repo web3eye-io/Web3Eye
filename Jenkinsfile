@@ -337,7 +337,37 @@ pipeline {
       }
     }
 
-    stage('Deploy for test or prod') {
+    stage('Deploy for test') {
+      when {
+        expression { DEPLOY_TARGET == 'true' }
+        anyOf{
+          expression { TARGET_ENV ==~ /.*testing.*/ }
+        }
+      }
+      steps {
+        sh(returnStdout: true, script: '''
+          set +e
+          revlist=`git rev-list --tags --max-count=1`
+          rc=$?
+          set -e
+          if [ ! 0 -eq $rc ]; then
+            exit 0
+          fi
+          tag=`git describe --tags $revlist`
+
+          git reset --hard
+          git checkout $tag
+
+          export CLOUD_PROXY_DOMAIN=cloud-proxy.$ROOT_DOMAIN  # for gateway
+          export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
+          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
+          TAG=$tag make deploy-to-k8s-cluster
+        '''.stripIndent())
+      }
+    }
+
+    stage('Deploy for prod') {
       when {
         expression { DEPLOY_TARGET == 'true' }
         anyOf{
@@ -347,16 +377,10 @@ pipeline {
       }
       steps {
         sh(returnStdout: true, script: '''
-          tag=latest
-          set +e
-          result=$(echo $TARGET_ENV | grep "testing")
-          set -e
-          if [[ "$result" != "" ]]
-          then
-            tag=$(git tag|grep '[13579]$'|sort -V|tail -n 1| tr -d '\n')
-          else
-            tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
-          fi
+          tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
+          
+          git reset --hard
+          git checkout $tag
           
           export CLOUD_PROXY_DOMAIN=cloud-proxy.$ROOT_DOMAIN  # for gateway
           export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
