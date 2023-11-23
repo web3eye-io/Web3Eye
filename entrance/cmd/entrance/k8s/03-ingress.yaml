@@ -15,11 +15,11 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "*.web3eye.webui.io"
-        - web3eye.webui.io
-      secretName: web3eye-webui-io-tls
+        - "*.api.web3eye.webui.io"
+        - api.web3eye.webui.io
+      secretName: api.web3eye-webui-io-tls
   rules:
-    - host: web3eye.webui.io
+    - host: api.web3eye.webui.io
       http:
         paths:
           - path: /api/entrance/v1/get/contract/and/tokens
