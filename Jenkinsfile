@@ -371,7 +371,6 @@ pipeline {
       when {
         expression { DEPLOY_TARGET == 'true' }
         anyOf{
-          expression { TARGET_ENV ==~ /.*testing.*/ }
           expression { TARGET_ENV ==~ /.*production.*/ }
         }
       }
