@@ -17,7 +17,7 @@ spec:
     - hosts:
         - "*.api.web3eye.webui.io"
         - api.web3eye.webui.io
-      secretName: api.web3eye-webui-io-tls
+      secretName: web3eye-webui-io-tls
   rules:
     - host: api.web3eye.webui.io
       http:
