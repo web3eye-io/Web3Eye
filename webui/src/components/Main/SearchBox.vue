@@ -11,6 +11,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
+import { SearchTokenMessage } from 'src/teststore/token/types'
 const contract = ref('')
 const _contract = useContractStore()
 
@@ -40,7 +41,8 @@ onMounted(() => {
         formData.append('UploadFile', file as Blob)
         formData.append('Limit', '20')
         contract.value = file?.name as string
-        token.searchTokens(formData, (error: boolean) => {
+        const reqMessage = {} as SearchTokenMessage
+        token.searchTokens(formData, reqMessage, (error: boolean) => {
             if (!error) {
                 void router.push('/token')
             }

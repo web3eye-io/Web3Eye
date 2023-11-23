@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { doActionWithError } from '../action'
 import { API } from './const'
-import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokensResponse, Token } from './types' 
+import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokenMessage, SearchTokensResponse, Token } from './types' 
 
 export const useTokenStore = defineStore('token', {
   state: () => ({
@@ -30,22 +30,20 @@ export const useTokenStore = defineStore('token', {
     }
   },
   actions: {
-    searchTokens (req: FormData, done: (error: boolean, rows?: SearchToken[]) => void) {
-        const xhttp = new XMLHttpRequest();
-        xhttp.open('POST', '/api/entrance/search/file');
-        xhttp.send(req)
-        xhttp.onload = () => {
-          const response = JSON.parse(xhttp.responseText) as SearchTokensResponse
-          this.SearchTokens.SearchTokens = response.Infos
-          this.SearchTokens.TotalPages = response.TotalPages
-          this.SearchTokens.TotalTokens = response.TotalTokens
-          this.SearchTokens.StorageKey = response.StorageKey
-        }
-        if (xhttp.status === 0) {
-          done(false)
-          return
-        }
-        done(true)
+    searchTokens (req: FormData, reqMessage: SearchTokenMessage, done: (error: boolean, rows?: SearchToken[]) => void) {
+      doActionWithError<object, SearchTokensResponse>(
+        API.SEARCH_PAGE,
+        req,
+        reqMessage.Message,
+        (resp: SearchTokensResponse): void => {
+          this.SearchTokens.SearchTokens = resp.Infos
+          this.SearchTokens.TotalPages = resp.TotalPages
+          this.SearchTokens.TotalTokens = resp.TotalTokens
+          this.SearchTokens.StorageKey = resp.StorageKey
+          done(false, resp.Infos)
+        }, () => {
+          done(true, [])
+      })
     },
     getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[]) => void) {
       doActionWithError<GetTokensRequest, GetTokensResponse>(

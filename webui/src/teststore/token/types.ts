@@ -9,10 +9,8 @@ export enum ConvertState {
     Success = 'Success',
     Failed = 'Failed',
 }
+export type SearchTokenMessage = BaseRequest
 
-export interface SearchTokensRequest extends BaseRequest{
-    Info: FormData
-}
 export interface SearchTokensResponse {
     Infos: Array<SearchToken>
     StorageKey: string
