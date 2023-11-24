@@ -32,7 +32,7 @@ export const useTokenStore = defineStore('token', {
   actions: {
     searchTokens (req: FormData, reqMessage: SearchTokenMessage, done: (error: boolean, rows?: SearchToken[]) => void) {
       doActionWithError<object, SearchTokensResponse>(
-        API.SEARCH_PAGE,
+        API.SEARCH_FILE,
         req,
         reqMessage.Message,
         (resp: SearchTokensResponse): void => {
