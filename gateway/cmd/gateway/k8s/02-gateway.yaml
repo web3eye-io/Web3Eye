@@ -34,9 +34,9 @@ spec:
                   name: redis-cluster
                   key: redis-password
             - name: cloud_proxy_domain
-              value: "CLOUD_PROXY_DOMAIN"
+              value: "cloud-proxy.web3eye.io"
             - name: cloud_proxy_grpc_port
-              value: "CLOUD_PROXY_GRPC_PORT"
+              value: "80"
       volumes:
         - name: service-config
           configMap:

@@ -17,21 +17,11 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "traefik-internet"
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    # traefik.ingress.kubernetes.io/router.middlewares:
-    #   kube-system-strip-cloud-proxy-prefix@kubernetescrd,
-    #   kube-system-http-redirect-https@kubernetescrd,
-    #   kube-system-http-redirect-https-testing@kubernetescrd,
-    #   kube-system-common-headers@kubernetescrd
 
 spec:
-  tls:
-    - hosts:
-        - "*.web3eye.webui.io"
-        - web3eye.webui.io
-      secretName: web3eye-webui-io-tls
   rules:
-    - host: cloud-proxy.web3eye.webui.io
-      http:
+    - host: cloud-proxy.web3eye.io
+      http: &http_rules
         paths:
           - path: /
             pathType: Prefix
@@ -40,3 +30,7 @@ spec:
                 name: cloud-proxy
                 port:
                   number: 30121
+    - host: cloud-proxy.npool.top
+      http: *http_rules
+    - host: cloud-proxy.web3eye.npool.top
+      http: *http_rules

@@ -13,14 +13,9 @@ metadata:
       kube-system-common-headers@kubernetescrd
 
 spec:
-  tls:
-    - hosts:
-        - "*.api.web3eye.webui.io"
-        - api.web3eye.webui.io
-      secretName: web3eye-webui-io-tls
   rules:
-    - host: api.web3eye.webui.io
-      http:
+    - host: api.web3eye.io
+      http: &http_rules
         paths:
           - path: /api/entrance
             pathType: Prefix
@@ -29,13 +24,5 @@ spec:
                 name: entrance
                 port:
                   number: 30150
-    - host: www.api.web3eye.webui.io
-      http:
-        paths:
-          - path: /api/entrance
-            pathType: Prefix
-            backend:
-              service:
-                name: entrance
-                port:
-                  number: 30150
+    - host: api.npool.io
+      http: *http_rules

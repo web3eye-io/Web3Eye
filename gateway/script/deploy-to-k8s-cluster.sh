@@ -47,10 +47,13 @@ service_name=$(
 
 echo "Deploy docker image for $PLATFORM -- $version"
 
+ROOT_DOMAIN=${ROOT_DOMAIN:="web3eye.io"}
+ROOT_DOMAIN_HTTP_PORT=${ROOT_DOMAIN_HTTP_PORT:="80"}
+
 sed -i "s/$service_name:latest/$service_name:$version/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
-sed -i "s/CLOUD_PROXY_DOMAIN/$CLOUD_PROXY_DOMAIN/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
-sed -i "s/CLOUD_PROXY_GRPC_PORT/$CLOUD_PROXY_GRPC_PORT/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
-# sed -i "s/uhub.service.ucloud.cn/$DOCKER_REGISTRY/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
+sed -i "s/uhub\.service\.ucloud\.cn/$DOCKER_REGISTRY/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
+sed -i "s/cloud-proxy\.web3eye\.io/cloud-proxy.$ROOT_DOMAIN/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
+sed -i "s/80/$ROOT_DOMAIN_HTTP_PORT/g" $PROJECT_FOLDER/cmd/$service_name/k8s/02-$service_name.yaml
 
 set +e
 

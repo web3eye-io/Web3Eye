@@ -316,6 +316,9 @@ pipeline {
       steps {
         sh(returnStdout: false, script: '''
           feature_name=`echo $BRANCH_NAME | awk -F '/' '{ print $2 }'`
+          export CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export ROOT_DOMAIN=$ROOT_DOMAIN  # for webui dashboard and gateway
+          export ROOT_DOMAIN_HTTP_PORT=$ROOT_DOMAIN_HTTP_PORT  # for gateway
           TAG=$feature_name make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -328,10 +331,9 @@ pipeline {
       }
       steps {
          sh(returnStdout: true, script: '''
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$ROOT_DOMAIN  # for gateway
-          export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
-          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
-          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
+          export CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export ROOT_DOMAIN=$ROOT_DOMAIN  # for webui dashboard and gateway
+          export ROOT_DOMAIN_HTTP_PORT=$ROOT_DOMAIN_HTTP_PORT  # for gateway
           TAG=latest make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -358,10 +360,9 @@ pipeline {
           git reset --hard
           git checkout $tag
 
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$ROOT_DOMAIN  # for gateway
-          export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
-          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
-          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
+          export CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export ROOT_DOMAIN=$ROOT_DOMAIN  # for webui dashboard and gateway
+          export ROOT_DOMAIN_HTTP_PORT=$ROOT_DOMAIN_HTTP_PORT  # for gateway
           TAG=$tag make deploy-to-k8s-cluster
         '''.stripIndent())
       }
@@ -380,11 +381,9 @@ pipeline {
           
           git reset --hard
           git checkout $tag
-          
-          export CLOUD_PROXY_DOMAIN=cloud-proxy.$ROOT_DOMAIN  # for gateway
-          export CLOUD_PROXY_GRPC_PORT=$DOMAIN_HTTP_PORT  # for gateway
-          export CLOUD_CERT_NAME=$CERT_NAME  # for webui and dashboard
-          export CLOUD_ROOT_DOMAIN=$ROOT_DOMAIN  # for webui and dashboard
+          export CERT_NAME=$CERT_NAME  # for webui and dashboard
+          export ROOT_DOMAIN=$ROOT_DOMAIN  # for webui dashboard and gateway
+          export ROOT_DOMAIN_HTTP_PORT=$ROOT_DOMAIN_HTTP_PORT  # for gateway
           TAG=$tag make deploy-to-k8s-cluster
         '''.stripIndent())
       }

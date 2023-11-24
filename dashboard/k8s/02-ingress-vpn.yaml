@@ -16,12 +16,12 @@ metadata:
 spec:
   tls:
     - hosts:
-        - '*.dashboard.web3eye.webui.io'
-        - dashboard.web3eye.webui.io
-      secretName: web3eye-webui-io-tls
+        - '*.dashboard.web3eye.io'
+        - dashboard.web3eye.io
+      secretName: web3eye-io-tls
   rules:
-    - host: dashboard.web3eye.webui.io
-      http:
+    - host: dashboard.web3eye.io
+      http: &http_rules
         paths:
           - path: /
             pathType: Prefix
@@ -30,13 +30,5 @@ spec:
                 name: web3eye-dashboard
                 port:
                   number: 80
-    - host: www.dashboard.web3eye.webui.io
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web3eye-dashboard
-                port:
-                  number: 80
+    - host: www.dashboard.web3eye.io
+      http: *http_rules
