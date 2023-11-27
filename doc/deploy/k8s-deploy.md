@@ -362,7 +362,7 @@ exportfs -a
 | TARGET_ENV       | 环境名 | 环境名     | 环境名  | 环境名          |
 | CERT_NAME        |        |            |         | aws-cert-name   |
 | ROOT_DOMAIN      |        |            |         | aws环境域名     |
-| DOMAIN_HTTP_PORT |        |            |         | aws环境HTTP端口 |
+| ROOT_DOMAIN_HTTP_PORT |        |            |         | aws环境HTTP端口 |
 
 release和deploy的Tag关系说明：
 
