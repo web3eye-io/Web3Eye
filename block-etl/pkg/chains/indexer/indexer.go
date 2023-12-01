@@ -19,7 +19,6 @@ import (
 const (
 	CheckTopicInterval     = time.Second * 10
 	FindContractCreator    = false
-	redisExpireDefaultTime = time.Second * 10
 	maxTopicNum            = 5
 	maxParseGoroutineNum   = 5
 	updateBlockNumInterval = time.Minute
@@ -69,7 +68,6 @@ func (e *Indexer) StartIndex(ctx context.Context) {
 	for i := 0; i < maxParseGoroutineNum; i++ {
 		go e.IndexBlock(ctx, taskBlockNum)
 	}
-
 }
 
 func (e *Indexer) IsOnIndex() bool {

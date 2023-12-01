@@ -16,9 +16,6 @@ const (
 	CheckTopicInterval     = time.Second * 10
 	FindContractCreator    = false
 	redisExpireDefaultTime = time.Second * 10
-	maxTopicNum            = 5
-	maxParseGoroutineNum   = 5
-	updateBlockNumInterval = time.Minute
 )
 
 type EthIndexer struct {
