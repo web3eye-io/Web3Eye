@@ -47,7 +47,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		return blockOnly.GetInfo(), nil
 	}
 
-	cli, err := eth.Client(e.Endpoints)
+	cli, err := eth.Client(e.OkEndpoints)
 	if err != nil {
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
@@ -81,7 +81,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 }
 
 func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*BlockLogs, error) {
-	cli, err := eth.Client(e.Endpoints)
+	cli, err := eth.Client(e.OkEndpoints)
 	if err != nil {
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
@@ -190,7 +190,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			return nil, fmt.Errorf("check if the token exist failed, err: %v", err)
 		}
 
-		cli, err := eth.Client(e.Endpoints)
+		cli, err := eth.Client(e.OkEndpoints)
 		if err != nil {
 			return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 		}
@@ -319,7 +319,7 @@ func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist 
 func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *eth.ContractCreator, string) {
 	contractMeta := &eth.EthCurrencyMetadata{}
 	creator := &eth.ContractCreator{}
-	cli, err := eth.Client(e.Endpoints)
+	cli, err := eth.Client(e.OkEndpoints)
 	remark := ""
 	if err != nil {
 		return contractMeta, creator, fmt.Sprintf("cannot get eth client,err: %v", err)
@@ -350,10 +350,14 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	return contractMeta, creator, remark
 }
 
-func (e *EthIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
+func (e *EthIndexer) GetCurrentBlockNum() uint64 {
+	return e.CurrentBlockNum
+}
+
+func (e *EthIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval time.Duration) {
 	for {
 		func() {
-			cli, err := eth.Client(e.Endpoints)
+			cli, err := eth.Client(e.OkEndpoints)
 			if err != nil {
 				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
 				return

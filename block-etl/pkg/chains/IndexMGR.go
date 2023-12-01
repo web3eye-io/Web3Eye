@@ -81,18 +81,23 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	infos := getEResp.GetInfos()
 	updateInfos := []*endpoint.EndpointReq{}
 	for _, info := range infos {
-		handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
-		if !ok {
-			logger.Sugar().Warnf("have not handler for chain type: %v", info.ChainType)
-		}
+		func() {
+			handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
+			if !ok {
+				logger.Sugar().Warnf("have not handler for chain type: %v", info.ChainType)
+				info.State = cttype.EndpointState_EndpointError
+				return
+			}
 
-		chainID, err := handler(ctx, info.Address)
-		if err != nil {
-			info.State = cttype.EndpointState_EndpointError
-			continue
-		}
-		info.ChainID = chainID
-		info.State = cttype.EndpointState_EndpointAvaliable
+			chainID, err := handler(ctx, info.Address)
+			if err != nil {
+				info.State = cttype.EndpointState_EndpointError
+				return
+			}
+
+			info.ChainID = chainID
+			info.State = cttype.EndpointState_EndpointAvaliable
+		}()
 
 		updateInfos = append(updateInfos, &endpoint.EndpointReq{
 			ID:        &info.ID,
@@ -172,7 +177,7 @@ func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.Cha
 	if _, ok := pmgr.Indexs[chanType][chainID]; !ok {
 		switch chanType {
 		case basetype.ChainType_Ethereum:
-			pmgr.Indexs[chanType][chainID] = eth.NewIndexer(chainID)
+			pmgr.Indexs[chanType][chainID] = eth.NewEthIndexer(chainID)
 		case basetype.ChainType_Solana:
 			pmgr.Indexs[chanType][chainID] = sol.NewIndexer(chainID)
 		default:

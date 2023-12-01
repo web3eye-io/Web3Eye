@@ -15,8 +15,9 @@ pipeline {
         sh(returnStdout: true, script: '''
           git tag -l | xargs git tag -d
           git fetch origin --prune
+          echo "update tags for repo"
         '''.stripIndent())
-        git(url: scm.userRemoteConfigs[0].url,credentialsId: 'KK-github-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
+        git(url: scm.userRemoteConfigs[0].url,credentialsId: 'web3eye-git-token', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
     }
     stage('Prepare Golang ENV') {
@@ -172,7 +173,7 @@ pipeline {
           git tag -a $tag -m "Bump version to $tag"
         '''.stripIndent())
 
-        withCredentials([gitUsernamePassword(credentialsId: 'KK-github-key', gitToolName: 'git-tool')]) {
+        withCredentials([gitUsernamePassword(credentialsId: 'web3eye-git-token', gitToolName: 'git-tool')]) {
           sh 'git push --tag'
         }
       }
