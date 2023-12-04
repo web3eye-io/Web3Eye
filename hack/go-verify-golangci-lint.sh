@@ -22,13 +22,12 @@ if ! command -v gofumpt; then
 fi
 
 PATH=$LINT_BIN:$PATH
-set -e
+set +e
 rc=`golangci-lint version | grep $VERSION_NUM`
+set -e
 if [ ! $? -eq 0 ]; then
-  set +e
   curl -sfL $URL | sh -s $VERSION -b $LINT_BIN
 fi
-set +e
 
 golangci-lint version
 golangci-lint linters
