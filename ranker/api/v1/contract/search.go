@@ -22,7 +22,7 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 		Value: in.Contract,
 	}}
 
-	entcontract, err := contractcrud.RowOnly(ctx, contractconds)
+	info, err := contractcrud.RowOnly(ctx, contractconds)
 	if err != nil {
 		return nil, err
 	}
@@ -39,15 +39,15 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	transfersconds := &transfer.Conds{
 		ChainType: &web3eye.StringVal{
 			Op:    "eq",
-			Value: entcontract.ChainType,
+			Value: info.ChainType,
 		},
 		Contract: &web3eye.StringVal{
 			Op:    "eq",
-			Value: entcontract.Address,
+			Value: info.Address,
 		},
 		ChainID: &web3eye.StringVal{
 			Op:    "eq",
-			Value: entcontract.ChainID,
+			Value: info.ChainID,
 		},
 	}
 	shotTokens := rankerconverter.Ent2GrpcMany(tokens)
@@ -64,7 +64,7 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	}
 
 	return &rankernpool.GetContractAndTokensResp{
-		Contract:    nftmetaconverter.Ent2Grpc(entcontract),
+		Contract:    nftmetaconverter.Ent2Grpc(info),
 		Tokens:      shotTokens,
 		TotalTokens: uint32(total),
 	}, nil
