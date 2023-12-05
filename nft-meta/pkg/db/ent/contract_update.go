@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -80,6 +81,20 @@ func (cu *ContractUpdate) SetNillableDeletedAt(u *uint32) *ContractUpdate {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (cu *ContractUpdate) AddDeletedAt(u int32) *ContractUpdate {
 	cu.mutation.AddDeletedAt(u)
+	return cu
+}
+
+// SetEntID sets the "ent_id" field.
+func (cu *ContractUpdate) SetEntID(u uuid.UUID) *ContractUpdate {
+	cu.mutation.SetEntID(u)
+	return cu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cu *ContractUpdate) SetNillableEntID(u *uuid.UUID) *ContractUpdate {
+	if u != nil {
+		cu.SetEntID(*u)
+	}
 	return cu
 }
 
@@ -414,7 +429,7 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   contract.Table,
 			Columns: contract.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: contract.FieldID,
 			},
 		},
@@ -466,6 +481,13 @@ func (cu *ContractUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: contract.FieldDeletedAt,
+		})
+	}
+	if value, ok := cu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: contract.FieldEntID,
 		})
 	}
 	if value, ok := cu.mutation.ChainType(); ok {
@@ -721,6 +743,20 @@ func (cuo *ContractUpdateOne) SetNillableDeletedAt(u *uint32) *ContractUpdateOne
 // AddDeletedAt adds u to the "deleted_at" field.
 func (cuo *ContractUpdateOne) AddDeletedAt(u int32) *ContractUpdateOne {
 	cuo.mutation.AddDeletedAt(u)
+	return cuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (cuo *ContractUpdateOne) SetEntID(u uuid.UUID) *ContractUpdateOne {
+	cuo.mutation.SetEntID(u)
+	return cuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (cuo *ContractUpdateOne) SetNillableEntID(u *uuid.UUID) *ContractUpdateOne {
+	if u != nil {
+		cuo.SetEntID(*u)
+	}
 	return cuo
 }
 
@@ -1068,7 +1104,7 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 			Table:   contract.Table,
 			Columns: contract.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: contract.FieldID,
 			},
 		},
@@ -1137,6 +1173,13 @@ func (cuo *ContractUpdateOne) sqlSave(ctx context.Context) (_node *Contract, err
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: contract.FieldDeletedAt,
+		})
+	}
+	if value, ok := cuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: contract.FieldEntID,
 		})
 	}
 	if value, ok := cuo.mutation.ChainType(); ok {

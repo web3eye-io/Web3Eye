@@ -41,7 +41,7 @@ verify-shellcheck: ## Runs shellcheck
 gen-ent:
 	go install entgo.io/ent/cmd/ent@v0.11.2
 	go get entgo.io/ent/cmd/ent@v0.11.2
-	go run entgo.io/ent/cmd/ent generate --feature entql,sql/lock,sql/execquery,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
+	go run -mod=mod entgo.io/ent/cmd/ent generate --feature entql,sql/lock,sql/execquery,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
 
 ifdef AIMPROJECT
 PROJECTS= $(AIMPROJECT)

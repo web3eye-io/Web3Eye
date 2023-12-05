@@ -15,7 +15,9 @@ import (
 type Order struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -45,11 +47,11 @@ func (*Order) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldBlockNumber, order.FieldTxIndex, order.FieldLogIndex:
+		case order.FieldID, order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldBlockNumber, order.FieldTxIndex, order.FieldLogIndex:
 			values[i] = new(sql.NullInt64)
 		case order.FieldChainType, order.FieldChainID, order.FieldTxHash, order.FieldRecipient, order.FieldRemark:
 			values[i] = new(sql.NullString)
-		case order.FieldID:
+		case order.FieldEntID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Order", columns[i])
@@ -67,10 +69,16 @@ func (o *Order) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case order.FieldID:
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
+			}
+			o.ID = uint32(value.Int64)
+		case order.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				o.ID = *value
+				o.EntID = *value
 			}
 		case order.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -166,6 +174,9 @@ func (o *Order) String() string {
 	var builder strings.Builder
 	builder.WriteString("Order(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", o.ID))
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.EntID))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", o.CreatedAt))
 	builder.WriteString(", ")

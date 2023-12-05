@@ -26,7 +26,7 @@
       ],
       "default": "ChainUnkonwn"
     },
-    "cttypeSyncState": {
+    "chainSyncState": {
       "type": "string",
       "enum": [
         "Default",
@@ -115,6 +115,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "ChainType": {
@@ -142,7 +146,7 @@
           "type": "string"
         },
         "SyncState": {
-          "$ref": "#/definitions/cttypeSyncState"
+          "$ref": "#/definitions/chainSyncState"
         },
         "Remark": {
           "type": "string"

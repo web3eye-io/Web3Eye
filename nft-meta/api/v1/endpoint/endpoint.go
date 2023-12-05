@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 
 	"github.com/google/uuid"
@@ -21,7 +21,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *npool.CreateEndpointReq
 	var err error
 
 	in.GetInfo().ChainID = nil
-	in.GetInfo().State = cttype.EndpointState_EndpointDefault.Enum()
+	in.GetInfo().State = basetype.EndpointState_EndpointDefault.Enum()
 	info, err := crud.Create(ctx, in.GetInfo())
 	if err != nil {
 		logger.Sugar().Errorw("CreateEndpoint", "error", err)

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type OrderItemCreate struct {
 	mutation *OrderItemMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (oic *OrderItemCreate) SetEntID(u uuid.UUID) *OrderItemCreate {
+	oic.mutation.SetEntID(u)
+	return oic
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableEntID(u *uuid.UUID) *OrderItemCreate {
+	if u != nil {
+		oic.SetEntID(*u)
+	}
+	return oic
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -66,8 +79,16 @@ func (oic *OrderItemCreate) SetNillableDeletedAt(u *uint32) *OrderItemCreate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (oic *OrderItemCreate) SetOrderID(s string) *OrderItemCreate {
-	oic.mutation.SetOrderID(s)
+func (oic *OrderItemCreate) SetOrderID(u uuid.UUID) *OrderItemCreate {
+	oic.mutation.SetOrderID(u)
+	return oic
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oic *OrderItemCreate) SetNillableOrderID(u *uuid.UUID) *OrderItemCreate {
+	if u != nil {
+		oic.SetOrderID(*u)
+	}
 	return oic
 }
 
@@ -116,16 +137,8 @@ func (oic *OrderItemCreate) SetNillableRemark(s *string) *OrderItemCreate {
 }
 
 // SetID sets the "id" field.
-func (oic *OrderItemCreate) SetID(u uuid.UUID) *OrderItemCreate {
+func (oic *OrderItemCreate) SetID(u uint32) *OrderItemCreate {
 	oic.mutation.SetID(u)
-	return oic
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (oic *OrderItemCreate) SetNillableID(u *uuid.UUID) *OrderItemCreate {
-	if u != nil {
-		oic.SetID(*u)
-	}
 	return oic
 }
 
@@ -208,6 +221,13 @@ func (oic *OrderItemCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oic *OrderItemCreate) defaults() error {
+	if _, ok := oic.mutation.EntID(); !ok {
+		if orderitem.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized orderitem.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := orderitem.DefaultEntID()
+		oic.mutation.SetEntID(v)
+	}
 	if _, ok := oic.mutation.CreatedAt(); !ok {
 		if orderitem.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized orderitem.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -229,18 +249,21 @@ func (oic *OrderItemCreate) defaults() error {
 		v := orderitem.DefaultDeletedAt()
 		oic.mutation.SetDeletedAt(v)
 	}
-	if _, ok := oic.mutation.ID(); !ok {
-		if orderitem.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized orderitem.DefaultID (forgotten import ent/runtime?)")
+	if _, ok := oic.mutation.OrderID(); !ok {
+		if orderitem.DefaultOrderID == nil {
+			return fmt.Errorf("ent: uninitialized orderitem.DefaultOrderID (forgotten import ent/runtime?)")
 		}
-		v := orderitem.DefaultID()
-		oic.mutation.SetID(v)
+		v := orderitem.DefaultOrderID()
+		oic.mutation.SetOrderID(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (oic *OrderItemCreate) check() error {
+	if _, ok := oic.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "OrderItem.ent_id"`)}
+	}
 	if _, ok := oic.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "OrderItem.created_at"`)}
 	}
@@ -249,9 +272,6 @@ func (oic *OrderItemCreate) check() error {
 	}
 	if _, ok := oic.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OrderItem.deleted_at"`)}
-	}
-	if _, ok := oic.mutation.OrderID(); !ok {
-		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderItem.order_id"`)}
 	}
 	if _, ok := oic.mutation.OrderItemType(); !ok {
 		return &ValidationError{Name: "order_item_type", err: errors.New(`ent: missing required field "OrderItem.order_item_type"`)}
@@ -279,12 +299,9 @@ func (oic *OrderItemCreate) sqlSave(ctx context.Context) (*OrderItem, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -295,7 +312,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: orderitem.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderitem.FieldID,
 			},
 		}
@@ -303,7 +320,15 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = oic.conflict
 	if id, ok := oic.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := oic.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderitem.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := oic.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -331,7 +356,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := oic.mutation.OrderID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUUID,
 			Value:  value,
 			Column: orderitem.FieldOrderID,
 		})
@@ -392,7 +417,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.OrderItem.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -401,7 +426,7 @@ func (oic *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrderItemUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (oic *OrderItemCreate) OnConflict(opts ...sql.ConflictOption) *OrderItemUpsertOne {
@@ -436,6 +461,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderItemUpsert) SetEntID(v uuid.UUID) *OrderItemUpsert {
+	u.Set(orderitem.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderItemUpsert) UpdateEntID() *OrderItemUpsert {
+	u.SetExcluded(orderitem.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderItemUpsert) SetCreatedAt(v uint32) *OrderItemUpsert {
@@ -492,7 +529,7 @@ func (u *OrderItemUpsert) AddDeletedAt(v uint32) *OrderItemUpsert {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsert) SetOrderID(v string) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetOrderID(v uuid.UUID) *OrderItemUpsert {
 	u.Set(orderitem.FieldOrderID, v)
 	return u
 }
@@ -500,6 +537,12 @@ func (u *OrderItemUpsert) SetOrderID(v string) *OrderItemUpsert {
 // UpdateOrderID sets the "order_id" field to the value that was provided on create.
 func (u *OrderItemUpsert) UpdateOrderID() *OrderItemUpsert {
 	u.SetExcluded(orderitem.FieldOrderID)
+	return u
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderItemUpsert) ClearOrderID() *OrderItemUpsert {
+	u.SetNull(orderitem.FieldOrderID)
 	return u
 }
 
@@ -629,6 +672,20 @@ func (u *OrderItemUpsertOne) Update(set func(*OrderItemUpsert)) *OrderItemUpsert
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OrderItemUpsertOne) SetEntID(v uuid.UUID) *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderItemUpsertOne) UpdateEntID() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderItemUpsertOne) SetCreatedAt(v uint32) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
@@ -693,7 +750,7 @@ func (u *OrderItemUpsertOne) UpdateDeletedAt() *OrderItemUpsertOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsertOne) SetOrderID(v string) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetOrderID(v uuid.UUID) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetOrderID(v)
 	})
@@ -703,6 +760,13 @@ func (u *OrderItemUpsertOne) SetOrderID(v string) *OrderItemUpsertOne {
 func (u *OrderItemUpsertOne) UpdateOrderID() *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderItemUpsertOne) ClearOrderID() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.ClearOrderID()
 	})
 }
 
@@ -813,12 +877,7 @@ func (u *OrderItemUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderItemUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: OrderItemUpsertOne.ID is not supported by MySQL driver. Use OrderItemUpsertOne.Exec instead")
-	}
+func (u *OrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -827,7 +886,7 @@ func (u *OrderItemUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderItemUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *OrderItemUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -878,6 +937,10 @@ func (oicb *OrderItemCreateBulk) Save(ctx context.Context) ([]*OrderItem, error)
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -929,7 +992,7 @@ func (oicb *OrderItemCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrderItemUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (oicb *OrderItemCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderItemUpsertBulk {
@@ -1009,6 +1072,20 @@ func (u *OrderItemUpsertBulk) Update(set func(*OrderItemUpsert)) *OrderItemUpser
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OrderItemUpsertBulk) SetEntID(v uuid.UUID) *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderItemUpsertBulk) UpdateEntID() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderItemUpsertBulk) SetCreatedAt(v uint32) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
@@ -1073,7 +1150,7 @@ func (u *OrderItemUpsertBulk) UpdateDeletedAt() *OrderItemUpsertBulk {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsertBulk) SetOrderID(v string) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetOrderID(v uuid.UUID) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetOrderID(v)
 	})
@@ -1083,6 +1160,13 @@ func (u *OrderItemUpsertBulk) SetOrderID(v string) *OrderItemUpsertBulk {
 func (u *OrderItemUpsertBulk) UpdateOrderID() *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateOrderID()
+	})
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (u *OrderItemUpsertBulk) ClearOrderID() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.ClearOrderID()
 	})
 }
 

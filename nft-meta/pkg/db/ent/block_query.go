@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -87,8 +86,8 @@ func (bq *BlockQuery) FirstX(ctx context.Context) *Block {
 
 // FirstID returns the first Block ID from the query.
 // Returns a *NotFoundError when no Block ID was found.
-func (bq *BlockQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (bq *BlockQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = bq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (bq *BlockQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (bq *BlockQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (bq *BlockQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := bq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (bq *BlockQuery) OnlyX(ctx context.Context) *Block {
 // OnlyID is like Only, but returns the only Block ID in the query.
 // Returns a *NotSingularError when more than one Block ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (bq *BlockQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (bq *BlockQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = bq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (bq *BlockQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (bq *BlockQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (bq *BlockQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := bq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (bq *BlockQuery) AllX(ctx context.Context) []*Block {
 }
 
 // IDs executes the query and returns a list of Block IDs.
-func (bq *BlockQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (bq *BlockQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := bq.Select(block.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (bq *BlockQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (bq *BlockQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (bq *BlockQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := bq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -375,7 +374,7 @@ func (bq *BlockQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},

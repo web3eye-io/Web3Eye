@@ -12,7 +12,6 @@ import (
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
 	ctMessage "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
 
@@ -95,7 +94,7 @@ func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Start.String(),
+			Value: basetype.SyncState_Start.String(),
 			Op:    "eq",
 		},
 	}
@@ -169,7 +168,7 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				continue
 			}
-			if resp.Info.SyncState != cttype.SyncState_Start {
+			if resp.Info.SyncState != basetype.SyncState_Start {
 				return
 			}
 			retries++

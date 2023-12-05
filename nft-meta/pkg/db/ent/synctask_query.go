@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 )
@@ -87,8 +86,8 @@ func (stq *SyncTaskQuery) FirstX(ctx context.Context) *SyncTask {
 
 // FirstID returns the first SyncTask ID from the query.
 // Returns a *NotFoundError when no SyncTask ID was found.
-func (stq *SyncTaskQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (stq *SyncTaskQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = stq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (stq *SyncTaskQuery) FirstID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (stq *SyncTaskQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (stq *SyncTaskQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := stq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (stq *SyncTaskQuery) OnlyX(ctx context.Context) *SyncTask {
 // OnlyID is like Only, but returns the only SyncTask ID in the query.
 // Returns a *NotSingularError when more than one SyncTask ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (stq *SyncTaskQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (stq *SyncTaskQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = stq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (stq *SyncTaskQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (stq *SyncTaskQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (stq *SyncTaskQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := stq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (stq *SyncTaskQuery) AllX(ctx context.Context) []*SyncTask {
 }
 
 // IDs executes the query and returns a list of SyncTask IDs.
-func (stq *SyncTaskQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (stq *SyncTaskQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := stq.Select(synctask.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (stq *SyncTaskQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (stq *SyncTaskQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (stq *SyncTaskQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := stq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -375,7 +374,7 @@ func (stq *SyncTaskQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: synctask.FieldID,
 			},
 		},

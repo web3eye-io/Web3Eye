@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -80,6 +81,20 @@ func (bu *BlockUpdate) SetNillableDeletedAt(u *uint32) *BlockUpdate {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (bu *BlockUpdate) AddDeletedAt(u int32) *BlockUpdate {
 	bu.mutation.AddDeletedAt(u)
+	return bu
+}
+
+// SetEntID sets the "ent_id" field.
+func (bu *BlockUpdate) SetEntID(u uuid.UUID) *BlockUpdate {
+	bu.mutation.SetEntID(u)
+	return bu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEntID(u *uuid.UUID) *BlockUpdate {
+	if u != nil {
+		bu.SetEntID(*u)
+	}
 	return bu
 }
 
@@ -225,7 +240,7 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},
@@ -277,6 +292,13 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: block.FieldDeletedAt,
+		})
+	}
+	if value, ok := bu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: block.FieldEntID,
 		})
 	}
 	if value, ok := bu.mutation.ChainType(); ok {
@@ -415,6 +437,20 @@ func (buo *BlockUpdateOne) SetNillableDeletedAt(u *uint32) *BlockUpdateOne {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (buo *BlockUpdateOne) AddDeletedAt(u int32) *BlockUpdateOne {
 	buo.mutation.AddDeletedAt(u)
+	return buo
+}
+
+// SetEntID sets the "ent_id" field.
+func (buo *BlockUpdateOne) SetEntID(u uuid.UUID) *BlockUpdateOne {
+	buo.mutation.SetEntID(u)
+	return buo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEntID(u *uuid.UUID) *BlockUpdateOne {
+	if u != nil {
+		buo.SetEntID(*u)
+	}
 	return buo
 }
 
@@ -573,7 +609,7 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},
@@ -642,6 +678,13 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: block.FieldDeletedAt,
+		})
+	}
+	if value, ok := buo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: block.FieldEntID,
 		})
 	}
 	if value, ok := buo.mutation.ChainType(); ok {

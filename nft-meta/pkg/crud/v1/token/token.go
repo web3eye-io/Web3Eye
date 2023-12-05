@@ -1,547 +1,389 @@
 package token
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	enttoken "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	tokentype "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
-	var info *ent.Token
-	var err error
-
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		c := tx.Token.Create()
-		info, err = CreateSet(c, in).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Req struct {
+	ID              *uint32
+	EntID           *uuid.UUID
+	ChainType       *basetype.ChainType
+	ChainID         *string
+	Contract        *string
+	TokenType       *basetype.TokenType
+	TokenID         *string
+	Owner           *string
+	URI             *string
+	URIType         *string
+	ImageURL        *string
+	VideoURL        *string
+	Description     *string
+	Name            *string
+	VectorState     *tokentype.ConvertState
+	VectorID        *int64
+	IPFSImageURL    *string
+	ImageSnapshotID *string
+	Remark          *string
 }
 
-func Upsert(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
+func CreateSet(c *ent.TokenCreate, req *Req) *ent.TokenCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	var info *ent.Token
-	var err error
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		row, _ := tx.Token.Query().Where(
-			token.Contract(in.GetContract()),
-			token.TokenID(in.GetTokenID()),
-		).Only(ctx)
-		if row == nil {
-			info, err = CreateSet(tx.Token.Create(), in).Save(ctx)
-			return err
-		}
-		info, err = UpdateSet(tx.Token.UpdateOneID(row.ID), in).Save(ctx)
-		return err
-	})
-	return info, err
-}
-
-//nolint:gocyclo
-func CreateSet(c *ent.TokenCreate, in *npool.TokenReq) *ent.TokenCreate {
-	id, err := uuid.Parse(*in.ID)
-	if err != nil {
-		c.SetID(uuid.New())
-	} else {
-		c.SetID(id)
+	if req.ChainType != nil {
+		c.SetChainType((*req.ChainType).String())
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.Contract != nil {
+		c.SetContract(*req.Contract)
 	}
-	if in.Contract != nil {
-		c.SetContract(in.GetContract())
+	if req.TokenType != nil {
+		c.SetTokenType(req.TokenType.String())
 	}
-	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType().String())
+	if req.TokenID != nil {
+		c.SetTokenID(*req.TokenID)
 	}
-	if in.TokenID != nil {
-		c.SetTokenID(in.GetTokenID())
+	if req.Owner != nil {
+		c.SetOwner(*req.Owner)
 	}
-	if in.Owner != nil {
-		c.SetOwner(in.GetOwner())
+	if req.URI != nil {
+		c.SetURI(*req.URI)
 	}
-	if in.URI != nil {
-		c.SetURI(in.GetURI())
+	if req.URIType != nil {
+		c.SetURIType(*req.URIType)
 	}
-	if in.URIType != nil {
-		c.SetURIType(in.GetURIType())
+	if req.ImageURL != nil {
+		c.SetImageURL(*req.ImageURL)
 	}
-	if in.ImageURL != nil {
-		c.SetImageURL(in.GetImageURL())
+	if req.VideoURL != nil {
+		c.SetVideoURL(*req.VideoURL)
 	}
-	if in.VideoURL != nil {
-		c.SetVideoURL(in.GetVideoURL())
+	if req.Description != nil {
+		c.SetDescription(*req.Description)
 	}
-	if in.Description != nil {
-		c.SetDescription(in.GetDescription())
+	if req.Name != nil {
+		c.SetName(*req.Name)
 	}
-	if in.Name != nil {
-		c.SetName(in.GetName())
+	if req.VectorState != nil {
+		c.SetVectorState(req.VectorState.String())
 	}
-	if in.VectorState != nil {
-		c.SetVectorState(in.GetVectorState().String())
-	} else {
-		c.SetVectorState(npool.ConvertState_Default.String())
+	if req.VectorID != nil {
+		c.SetVectorID(*req.VectorID)
 	}
-	if in.VectorID != nil {
-		c.SetVectorID(in.GetVectorID())
+	if req.IPFSImageURL != nil {
+		c.SetIpfsImageURL(*req.IPFSImageURL)
 	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.ImageSnapshotID != nil {
+		c.SetImageSnapshotID(*req.ImageSnapshotID)
 	}
-	if in.IPFSImageURL != nil {
-		c.SetIpfsImageURL(in.GetIPFSImageURL())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
-	if in.ImageSnapshotID != nil {
-		c.SetImageSnapshotID(in.GetImageSnapshotID())
-	}
-
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.TokenReq) ([]*ent.Token, error) {
-	var err error
-	rows := []*ent.Token{}
+func UpdateSet(u *ent.TokenUpdateOne, req *Req) (*ent.TokenUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
+	}
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.Contract != nil {
+		u.SetContract(*req.Contract)
+	}
+	if req.TokenType != nil {
+		u.SetTokenType(req.TokenType.String())
+	}
+	if req.TokenID != nil {
+		u.SetTokenID(*req.TokenID)
+	}
+	if req.Owner != nil {
+		u.SetOwner(*req.Owner)
+	}
+	if req.URI != nil {
+		u.SetURI(*req.URI)
+	}
+	if req.URIType != nil {
+		u.SetURIType(*req.URIType)
+	}
+	if req.ImageURL != nil {
+		u.SetImageURL(*req.ImageURL)
+	}
+	if req.VideoURL != nil {
+		u.SetVideoURL(*req.VideoURL)
+	}
+	if req.Description != nil {
+		u.SetDescription(*req.Description)
+	}
+	if req.Name != nil {
+		u.SetName(*req.Name)
+	}
+	if req.VectorState != nil {
+		u.SetVectorState(req.VectorState.String())
+	}
+	if req.VectorID != nil {
+		u.SetVectorID(*req.VectorID)
+	}
+	if req.IPFSImageURL != nil {
+		u.SetIpfsImageURL(*req.IPFSImageURL)
+	}
+	if req.ImageSnapshotID != nil {
+		u.SetImageSnapshotID(*req.ImageSnapshotID)
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
+}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.TokenCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Token.Create(), info)
+type Conds struct {
+	EntID           *cruder.Cond
+	ChainType       *cruder.Cond
+	ChainID         *cruder.Cond
+	Contract        *cruder.Cond
+	TokenType       *cruder.Cond
+	TokenID         *cruder.Cond
+	Owner           *cruder.Cond
+	URI             *cruder.Cond
+	URIType         *cruder.Cond
+	ImageURL        *cruder.Cond
+	VideoURL        *cruder.Cond
+	Description     *cruder.Cond
+	Name            *cruder.Cond
+	VectorState     *cruder.Cond
+	VectorID        *cruder.Cond
+	IPFSImageURL    *cruder.Cond
+	ImageSnapshotID *cruder.Cond
+	Remark          *cruder.Cond
+}
+
+func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		rows, err = tx.Token.CreateBulk(bulk...).Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func Update(ctx context.Context, in *npool.TokenReq) (*ent.Token, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-	var err error
-	var info *ent.Token
-	id, err := uuid.Parse(in.GetID())
-	if err != nil {
-		return nil, err
-	}
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		u := tx.Token.UpdateOneID(id)
-		info, err = UpdateSet(u, in).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:gocyclo
-func UpdateSet(u *ent.TokenUpdateOne, in *npool.TokenReq) *ent.TokenUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.Contract != nil {
-		u.SetContract(in.GetContract())
-	}
-	if in.TokenType != nil {
-		u.SetTokenType(in.GetTokenType().String())
-	}
-	if in.TokenID != nil {
-		u.SetTokenID(in.GetTokenID())
-	}
-	if in.Owner != nil {
-		u.SetOwner(in.GetOwner())
-	}
-	if in.URI != nil {
-		u.SetURI(in.GetURI())
-	}
-	if in.URIType != nil {
-		u.SetURIType(in.GetURIType())
-	}
-	if in.ImageURL != nil {
-		u.SetImageURL(in.GetImageURL())
-	}
-	if in.VideoURL != nil {
-		u.SetVideoURL(in.GetVideoURL())
-	}
-	if in.Description != nil {
-		u.SetDescription(in.GetDescription())
-	}
-	if in.Name != nil {
-		u.SetName(in.GetName())
-	}
-	if in.VectorState != nil {
-		u.SetVectorState(in.GetVectorState().String())
-	}
-	if in.VectorID != nil {
-		u.SetVectorID(in.GetVectorID())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	if in.IPFSImageURL != nil {
-		u.SetIpfsImageURL(in.GetIPFSImageURL())
-	}
-	if in.ImageSnapshotID != nil {
-		u.SetImageSnapshotID(in.GetImageSnapshotID())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
-	var info *ent.Token
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Token.Query().Where(token.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TokenQuery, error) {
-	stm := cli.Token.Query()
-	if conds == nil {
-		return stm, nil
-	}
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(token.ID(id))
+			q.Where(enttoken.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid token field")
-		}
-	}
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(token.IDIn(ids...))
-		}
-	}
-	if conds.VectorIDs != nil {
-		vIDs := []int64{}
-		if conds.GetVectorIDs().GetOp() == cruder.IN {
-			vIDs = append(vIDs, conds.GetVectorIDs().GetValue()...)
-			stm.Where(token.VectorIDIn(vIDs...))
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(token.ChainType(conds.GetChainType().GetValue()))
+			q.Where(enttoken.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(token.ChainID(conds.GetChainID().GetValue()))
+			q.Where(enttoken.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.Contract != nil {
-		switch conds.GetContract().GetOp() {
+		contract, ok := conds.Contract.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid contract")
+		}
+		switch conds.Contract.Op {
 		case cruder.EQ:
-			stm.Where(token.Contract(conds.GetContract().GetValue()))
+			q.Where(enttoken.Contract(contract))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid contract field")
 		}
 	}
 	if conds.TokenType != nil {
-		switch conds.GetTokenType().GetOp() {
+		tokentype, ok := conds.TokenType.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid tokentype")
+		}
+		switch conds.TokenType.Op {
 		case cruder.EQ:
-			stm.Where(token.TokenType(conds.GetTokenType().GetValue()))
+			q.Where(enttoken.TokenType(tokentype))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid tokentype field")
 		}
 	}
 	if conds.TokenID != nil {
-		switch conds.GetTokenID().GetOp() {
+		tokenid, ok := conds.TokenID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid tokenid")
+		}
+		switch conds.TokenID.Op {
 		case cruder.EQ:
-			stm.Where(token.TokenID(conds.GetTokenID().GetValue()))
+			q.Where(enttoken.TokenID(tokenid))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid tokenid field")
 		}
 	}
 	if conds.Owner != nil {
-		switch conds.GetOwner().GetOp() {
+		owner, ok := conds.Owner.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid owner")
+		}
+		switch conds.Owner.Op {
 		case cruder.EQ:
-			stm.Where(token.Owner(conds.GetOwner().GetValue()))
+			q.Where(enttoken.Owner(owner))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid owner field")
 		}
 	}
 	if conds.URI != nil {
-		switch conds.GetURI().GetOp() {
+		uri, ok := conds.URI.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid uri")
+		}
+		switch conds.URI.Op {
 		case cruder.EQ:
-			stm.Where(token.URI(conds.GetURI().GetValue()))
+			q.Where(enttoken.URI(uri))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid uri field")
 		}
 	}
-
 	if conds.URIType != nil {
-		switch conds.GetURIType().GetOp() {
+		uritype, ok := conds.URIType.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid uritype")
+		}
+		switch conds.URIType.Op {
 		case cruder.EQ:
-			stm.Where(token.URIType(conds.GetURIType().GetValue()))
+			q.Where(enttoken.URIType(uritype))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid uritype field")
 		}
 	}
 	if conds.ImageURL != nil {
-		switch conds.GetImageURL().GetOp() {
+		imageurl, ok := conds.ImageURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid imageurl")
+		}
+		switch conds.ImageURL.Op {
 		case cruder.EQ:
-			stm.Where(token.ImageURL(conds.GetImageURL().GetValue()))
+			q.Where(enttoken.ImageURL(imageurl))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid imageurl field")
 		}
 	}
 	if conds.VideoURL != nil {
-		switch conds.GetVideoURL().GetOp() {
+		videourl, ok := conds.VideoURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid videourl")
+		}
+		switch conds.VideoURL.Op {
 		case cruder.EQ:
-			stm.Where(token.VideoURL(conds.GetVideoURL().GetValue()))
+			q.Where(enttoken.VideoURL(videourl))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid videourl field")
 		}
 	}
 	if conds.Description != nil {
-		switch conds.GetDescription().GetOp() {
+		description, ok := conds.Description.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid description")
+		}
+		switch conds.Description.Op {
 		case cruder.EQ:
-			stm.Where(token.Description(conds.GetDescription().GetValue()))
+			q.Where(enttoken.Description(description))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid description field")
 		}
 	}
 	if conds.Name != nil {
-		switch conds.GetName().GetOp() {
+		name, ok := conds.Name.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid name")
+		}
+		switch conds.Name.Op {
 		case cruder.EQ:
-			stm.Where(token.Name(conds.GetName().GetValue()))
+			q.Where(enttoken.Name(name))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid name field")
 		}
 	}
 	if conds.VectorState != nil {
-		switch conds.GetVectorState().GetOp() {
+		vectorstate, ok := conds.VectorState.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid vectorstate")
+		}
+		switch conds.VectorState.Op {
 		case cruder.EQ:
-			stm.Where(token.VectorState(conds.GetVectorState().GetValue()))
+			q.Where(enttoken.VectorState(vectorstate))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid vectorstate field")
 		}
 	}
 	if conds.VectorID != nil {
-		switch conds.GetVectorID().GetOp() {
-		case cruder.EQ:
-			stm.Where(token.VectorID(conds.GetVectorID().GetValue()))
-		default:
-			return nil, fmt.Errorf("invalid token field")
+		vectorid, ok := conds.VectorID.Val.(int64)
+		if !ok {
+			return nil, fmt.Errorf("invalid vectorid")
 		}
-	}
-	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		switch conds.VectorID.Op {
 		case cruder.EQ:
-			stm.Where(token.Remark(conds.GetRemark().GetValue()))
+			q.Where(enttoken.VectorID(vectorid))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid vectorid field")
 		}
 	}
 	if conds.IPFSImageURL != nil {
-		switch conds.GetIPFSImageURL().GetOp() {
+		ipfsimageurl, ok := conds.IPFSImageURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid ipfsimageurl")
+		}
+		switch conds.IPFSImageURL.Op {
 		case cruder.EQ:
-			stm.Where(token.IpfsImageURL(conds.GetIPFSImageURL().GetValue()))
+			q.Where(enttoken.IpfsImageURL(ipfsimageurl))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid ipfsimageurl field")
 		}
 	}
 	if conds.ImageSnapshotID != nil {
-		switch conds.GetImageSnapshotID().GetOp() {
+		imagesnapshotid, ok := conds.ImageSnapshotID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid imagesnapshotid")
+		}
+		switch conds.ImageSnapshotID.Op {
 		case cruder.EQ:
-			stm.Where(token.ImageSnapshotID(conds.GetImageSnapshotID().GetValue()))
+			q.Where(enttoken.ImageSnapshotID(imagesnapshotid))
 		default:
-			return nil, fmt.Errorf("invalid token field")
+			return nil, fmt.Errorf("invalid imagesnapshotid field")
 		}
 	}
-
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Token, int, error) {
-	var err error
-	rows := []*ent.Token{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
+	if conds.Remark != nil {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
 		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
+		switch conds.Remark.Op {
+		case cruder.EQ:
+			q.Where(enttoken.Remark(remark))
+		default:
+			return nil, fmt.Errorf("invalid remark field")
 		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(token.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
 	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.Token, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Token.Query().Where(token.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Token, error) {
-	var info *ent.Token
-	var err error
-
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Token.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

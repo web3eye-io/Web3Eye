@@ -24,7 +24,6 @@ import (
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	blockProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 	contractProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 	tokenProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	transferProto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
@@ -108,7 +107,7 @@ func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 			Op:    "eq",
 		},
 		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Start.String(),
+			Value: basetype.SyncState_Start.String(),
 			Op:    "eq",
 		},
 	}

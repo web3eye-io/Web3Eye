@@ -37,6 +37,8 @@ func init() {
 	}
 	blockMixinFields0 := blockMixin[0].Fields()
 	_ = blockMixinFields0
+	blockMixinFields1 := blockMixin[1].Fields()
+	_ = blockMixinFields1
 	blockFields := schema.Block{}.Fields()
 	_ = blockFields
 	// blockDescCreatedAt is the schema descriptor for created_at field.
@@ -53,10 +55,10 @@ func init() {
 	blockDescDeletedAt := blockMixinFields0[2].Descriptor()
 	// block.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	block.DefaultDeletedAt = blockDescDeletedAt.Default.(func() uint32)
-	// blockDescID is the schema descriptor for id field.
-	blockDescID := blockFields[0].Descriptor()
-	// block.DefaultID holds the default value on creation for the id field.
-	block.DefaultID = blockDescID.Default.(func() uuid.UUID)
+	// blockDescEntID is the schema descriptor for ent_id field.
+	blockDescEntID := blockMixinFields1[1].Descriptor()
+	// block.DefaultEntID holds the default value on creation for the ent_id field.
+	block.DefaultEntID = blockDescEntID.Default.(func() uuid.UUID)
 	contractMixin := schema.Contract{}.Mixin()
 	contract.Policy = privacy.NewPolicies(contractMixin[0], schema.Contract{})
 	contract.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -69,6 +71,8 @@ func init() {
 	}
 	contractMixinFields0 := contractMixin[0].Fields()
 	_ = contractMixinFields0
+	contractMixinFields1 := contractMixin[1].Fields()
+	_ = contractMixinFields1
 	contractFields := schema.Contract{}.Fields()
 	_ = contractFields
 	// contractDescCreatedAt is the schema descriptor for created_at field.
@@ -85,16 +89,16 @@ func init() {
 	contractDescDeletedAt := contractMixinFields0[2].Descriptor()
 	// contract.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	contract.DefaultDeletedAt = contractDescDeletedAt.Default.(func() uint32)
+	// contractDescEntID is the schema descriptor for ent_id field.
+	contractDescEntID := contractMixinFields1[1].Descriptor()
+	// contract.DefaultEntID holds the default value on creation for the ent_id field.
+	contract.DefaultEntID = contractDescEntID.Default.(func() uuid.UUID)
 	// contractDescDecimals is the schema descriptor for decimals field.
-	contractDescDecimals := contractFields[6].Descriptor()
+	contractDescDecimals := contractFields[5].Descriptor()
 	// contract.DefaultDecimals holds the default value on creation for the decimals field.
 	contract.DefaultDecimals = contractDescDecimals.Default.(uint32)
-	// contractDescID is the schema descriptor for id field.
-	contractDescID := contractFields[0].Descriptor()
-	// contract.DefaultID holds the default value on creation for the id field.
-	contract.DefaultID = contractDescID.Default.(func() uuid.UUID)
 	endpointMixin := schema.Endpoint{}.Mixin()
-	endpoint.Policy = privacy.NewPolicies(endpointMixin[0], schema.Endpoint{})
+	endpoint.Policy = privacy.NewPolicies(endpointMixin[1], schema.Endpoint{})
 	endpoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := endpoint.Policy.EvalMutation(ctx, m); err != nil {
@@ -105,28 +109,30 @@ func init() {
 	}
 	endpointMixinFields0 := endpointMixin[0].Fields()
 	_ = endpointMixinFields0
+	endpointMixinFields1 := endpointMixin[1].Fields()
+	_ = endpointMixinFields1
 	endpointFields := schema.Endpoint{}.Fields()
 	_ = endpointFields
+	// endpointDescEntID is the schema descriptor for ent_id field.
+	endpointDescEntID := endpointMixinFields0[1].Descriptor()
+	// endpoint.DefaultEntID holds the default value on creation for the ent_id field.
+	endpoint.DefaultEntID = endpointDescEntID.Default.(func() uuid.UUID)
 	// endpointDescCreatedAt is the schema descriptor for created_at field.
-	endpointDescCreatedAt := endpointMixinFields0[0].Descriptor()
+	endpointDescCreatedAt := endpointMixinFields1[0].Descriptor()
 	// endpoint.DefaultCreatedAt holds the default value on creation for the created_at field.
 	endpoint.DefaultCreatedAt = endpointDescCreatedAt.Default.(func() uint32)
 	// endpointDescUpdatedAt is the schema descriptor for updated_at field.
-	endpointDescUpdatedAt := endpointMixinFields0[1].Descriptor()
+	endpointDescUpdatedAt := endpointMixinFields1[1].Descriptor()
 	// endpoint.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	endpoint.DefaultUpdatedAt = endpointDescUpdatedAt.Default.(func() uint32)
 	// endpoint.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	endpoint.UpdateDefaultUpdatedAt = endpointDescUpdatedAt.UpdateDefault.(func() uint32)
 	// endpointDescDeletedAt is the schema descriptor for deleted_at field.
-	endpointDescDeletedAt := endpointMixinFields0[2].Descriptor()
+	endpointDescDeletedAt := endpointMixinFields1[2].Descriptor()
 	// endpoint.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	endpoint.DefaultDeletedAt = endpointDescDeletedAt.Default.(func() uint32)
-	// endpointDescID is the schema descriptor for id field.
-	endpointDescID := endpointFields[0].Descriptor()
-	// endpoint.DefaultID holds the default value on creation for the id field.
-	endpoint.DefaultID = endpointDescID.Default.(func() uuid.UUID)
 	orderMixin := schema.Order{}.Mixin()
-	order.Policy = privacy.NewPolicies(orderMixin[0], schema.Order{})
+	order.Policy = privacy.NewPolicies(orderMixin[1], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := order.Policy.EvalMutation(ctx, m); err != nil {
@@ -137,36 +143,38 @@ func init() {
 	}
 	orderMixinFields0 := orderMixin[0].Fields()
 	_ = orderMixinFields0
+	orderMixinFields1 := orderMixin[1].Fields()
+	_ = orderMixinFields1
 	orderFields := schema.Order{}.Fields()
 	_ = orderFields
+	// orderDescEntID is the schema descriptor for ent_id field.
+	orderDescEntID := orderMixinFields0[1].Descriptor()
+	// order.DefaultEntID holds the default value on creation for the ent_id field.
+	order.DefaultEntID = orderDescEntID.Default.(func() uuid.UUID)
 	// orderDescCreatedAt is the schema descriptor for created_at field.
-	orderDescCreatedAt := orderMixinFields0[0].Descriptor()
+	orderDescCreatedAt := orderMixinFields1[0].Descriptor()
 	// order.DefaultCreatedAt holds the default value on creation for the created_at field.
 	order.DefaultCreatedAt = orderDescCreatedAt.Default.(func() uint32)
 	// orderDescUpdatedAt is the schema descriptor for updated_at field.
-	orderDescUpdatedAt := orderMixinFields0[1].Descriptor()
+	orderDescUpdatedAt := orderMixinFields1[1].Descriptor()
 	// order.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	order.DefaultUpdatedAt = orderDescUpdatedAt.Default.(func() uint32)
 	// order.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	order.UpdateDefaultUpdatedAt = orderDescUpdatedAt.UpdateDefault.(func() uint32)
 	// orderDescDeletedAt is the schema descriptor for deleted_at field.
-	orderDescDeletedAt := orderMixinFields0[2].Descriptor()
+	orderDescDeletedAt := orderMixinFields1[2].Descriptor()
 	// order.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	order.DefaultDeletedAt = orderDescDeletedAt.Default.(func() uint32)
 	// orderDescTxHash is the schema descriptor for tx_hash field.
-	orderDescTxHash := orderFields[3].Descriptor()
+	orderDescTxHash := orderFields[2].Descriptor()
 	// order.TxHashValidator is a validator for the "tx_hash" field. It is called by the builders before save.
 	order.TxHashValidator = orderDescTxHash.Validators[0].(func(string) error)
 	// orderDescRecipient is the schema descriptor for recipient field.
-	orderDescRecipient := orderFields[7].Descriptor()
+	orderDescRecipient := orderFields[6].Descriptor()
 	// order.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
 	order.RecipientValidator = orderDescRecipient.Validators[0].(func(string) error)
-	// orderDescID is the schema descriptor for id field.
-	orderDescID := orderFields[0].Descriptor()
-	// order.DefaultID holds the default value on creation for the id field.
-	order.DefaultID = orderDescID.Default.(func() uuid.UUID)
 	orderitemMixin := schema.OrderItem{}.Mixin()
-	orderitem.Policy = privacy.NewPolicies(orderitemMixin[0], schema.OrderItem{})
+	orderitem.Policy = privacy.NewPolicies(orderitemMixin[1], schema.OrderItem{})
 	orderitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := orderitem.Policy.EvalMutation(ctx, m); err != nil {
@@ -177,28 +185,34 @@ func init() {
 	}
 	orderitemMixinFields0 := orderitemMixin[0].Fields()
 	_ = orderitemMixinFields0
+	orderitemMixinFields1 := orderitemMixin[1].Fields()
+	_ = orderitemMixinFields1
 	orderitemFields := schema.OrderItem{}.Fields()
 	_ = orderitemFields
+	// orderitemDescEntID is the schema descriptor for ent_id field.
+	orderitemDescEntID := orderitemMixinFields0[1].Descriptor()
+	// orderitem.DefaultEntID holds the default value on creation for the ent_id field.
+	orderitem.DefaultEntID = orderitemDescEntID.Default.(func() uuid.UUID)
 	// orderitemDescCreatedAt is the schema descriptor for created_at field.
-	orderitemDescCreatedAt := orderitemMixinFields0[0].Descriptor()
+	orderitemDescCreatedAt := orderitemMixinFields1[0].Descriptor()
 	// orderitem.DefaultCreatedAt holds the default value on creation for the created_at field.
 	orderitem.DefaultCreatedAt = orderitemDescCreatedAt.Default.(func() uint32)
 	// orderitemDescUpdatedAt is the schema descriptor for updated_at field.
-	orderitemDescUpdatedAt := orderitemMixinFields0[1].Descriptor()
+	orderitemDescUpdatedAt := orderitemMixinFields1[1].Descriptor()
 	// orderitem.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	orderitem.DefaultUpdatedAt = orderitemDescUpdatedAt.Default.(func() uint32)
 	// orderitem.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	orderitem.UpdateDefaultUpdatedAt = orderitemDescUpdatedAt.UpdateDefault.(func() uint32)
 	// orderitemDescDeletedAt is the schema descriptor for deleted_at field.
-	orderitemDescDeletedAt := orderitemMixinFields0[2].Descriptor()
+	orderitemDescDeletedAt := orderitemMixinFields1[2].Descriptor()
 	// orderitem.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	orderitem.DefaultDeletedAt = orderitemDescDeletedAt.Default.(func() uint32)
-	// orderitemDescID is the schema descriptor for id field.
-	orderitemDescID := orderitemFields[0].Descriptor()
-	// orderitem.DefaultID holds the default value on creation for the id field.
-	orderitem.DefaultID = orderitemDescID.Default.(func() uuid.UUID)
+	// orderitemDescOrderID is the schema descriptor for order_id field.
+	orderitemDescOrderID := orderitemFields[0].Descriptor()
+	// orderitem.DefaultOrderID holds the default value on creation for the order_id field.
+	orderitem.DefaultOrderID = orderitemDescOrderID.Default.(func() uuid.UUID)
 	snapshotMixin := schema.Snapshot{}.Mixin()
-	snapshot.Policy = privacy.NewPolicies(snapshotMixin[0], schema.Snapshot{})
+	snapshot.Policy = privacy.NewPolicies(snapshotMixin[1], schema.Snapshot{})
 	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := snapshot.Policy.EvalMutation(ctx, m); err != nil {
@@ -209,20 +223,26 @@ func init() {
 	}
 	snapshotMixinFields0 := snapshotMixin[0].Fields()
 	_ = snapshotMixinFields0
+	snapshotMixinFields1 := snapshotMixin[1].Fields()
+	_ = snapshotMixinFields1
 	snapshotFields := schema.Snapshot{}.Fields()
 	_ = snapshotFields
+	// snapshotDescEntID is the schema descriptor for ent_id field.
+	snapshotDescEntID := snapshotMixinFields0[1].Descriptor()
+	// snapshot.DefaultEntID holds the default value on creation for the ent_id field.
+	snapshot.DefaultEntID = snapshotDescEntID.Default.(func() uuid.UUID)
 	// snapshotDescCreatedAt is the schema descriptor for created_at field.
-	snapshotDescCreatedAt := snapshotMixinFields0[0].Descriptor()
+	snapshotDescCreatedAt := snapshotMixinFields1[0].Descriptor()
 	// snapshot.DefaultCreatedAt holds the default value on creation for the created_at field.
 	snapshot.DefaultCreatedAt = snapshotDescCreatedAt.Default.(func() uint32)
 	// snapshotDescUpdatedAt is the schema descriptor for updated_at field.
-	snapshotDescUpdatedAt := snapshotMixinFields0[1].Descriptor()
+	snapshotDescUpdatedAt := snapshotMixinFields1[1].Descriptor()
 	// snapshot.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	snapshot.DefaultUpdatedAt = snapshotDescUpdatedAt.Default.(func() uint32)
 	// snapshot.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	snapshot.UpdateDefaultUpdatedAt = snapshotDescUpdatedAt.UpdateDefault.(func() uint32)
 	// snapshotDescDeletedAt is the schema descriptor for deleted_at field.
-	snapshotDescDeletedAt := snapshotMixinFields0[2].Descriptor()
+	snapshotDescDeletedAt := snapshotMixinFields1[2].Descriptor()
 	// snapshot.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	snapshot.DefaultDeletedAt = snapshotDescDeletedAt.Default.(func() uint32)
 	synctaskMixin := schema.SyncTask{}.Mixin()
@@ -237,6 +257,8 @@ func init() {
 	}
 	synctaskMixinFields0 := synctaskMixin[0].Fields()
 	_ = synctaskMixinFields0
+	synctaskMixinFields1 := synctaskMixin[1].Fields()
+	_ = synctaskMixinFields1
 	synctaskFields := schema.SyncTask{}.Fields()
 	_ = synctaskFields
 	// synctaskDescCreatedAt is the schema descriptor for created_at field.
@@ -253,20 +275,20 @@ func init() {
 	synctaskDescDeletedAt := synctaskMixinFields0[2].Descriptor()
 	// synctask.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	synctask.DefaultDeletedAt = synctaskDescDeletedAt.Default.(func() uint32)
+	// synctaskDescEntID is the schema descriptor for ent_id field.
+	synctaskDescEntID := synctaskMixinFields1[1].Descriptor()
+	// synctask.DefaultEntID holds the default value on creation for the ent_id field.
+	synctask.DefaultEntID = synctaskDescEntID.Default.(func() uuid.UUID)
 	// synctaskDescChainType is the schema descriptor for chain_type field.
-	synctaskDescChainType := synctaskFields[1].Descriptor()
+	synctaskDescChainType := synctaskFields[0].Descriptor()
 	// synctask.DefaultChainType holds the default value on creation for the chain_type field.
 	synctask.DefaultChainType = synctaskDescChainType.Default.(string)
 	// synctaskDescSyncState is the schema descriptor for sync_state field.
-	synctaskDescSyncState := synctaskFields[8].Descriptor()
+	synctaskDescSyncState := synctaskFields[7].Descriptor()
 	// synctask.DefaultSyncState holds the default value on creation for the sync_state field.
 	synctask.DefaultSyncState = synctaskDescSyncState.Default.(string)
-	// synctaskDescID is the schema descriptor for id field.
-	synctaskDescID := synctaskFields[0].Descriptor()
-	// synctask.DefaultID holds the default value on creation for the id field.
-	synctask.DefaultID = synctaskDescID.Default.(func() uuid.UUID)
 	tokenMixin := schema.Token{}.Mixin()
-	token.Policy = privacy.NewPolicies(tokenMixin[0], schema.Token{})
+	token.Policy = privacy.NewPolicies(tokenMixin[1], schema.Token{})
 	token.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := token.Policy.EvalMutation(ctx, m); err != nil {
@@ -277,32 +299,34 @@ func init() {
 	}
 	tokenMixinFields0 := tokenMixin[0].Fields()
 	_ = tokenMixinFields0
+	tokenMixinFields1 := tokenMixin[1].Fields()
+	_ = tokenMixinFields1
 	tokenFields := schema.Token{}.Fields()
 	_ = tokenFields
+	// tokenDescEntID is the schema descriptor for ent_id field.
+	tokenDescEntID := tokenMixinFields0[1].Descriptor()
+	// token.DefaultEntID holds the default value on creation for the ent_id field.
+	token.DefaultEntID = tokenDescEntID.Default.(func() uuid.UUID)
 	// tokenDescCreatedAt is the schema descriptor for created_at field.
-	tokenDescCreatedAt := tokenMixinFields0[0].Descriptor()
+	tokenDescCreatedAt := tokenMixinFields1[0].Descriptor()
 	// token.DefaultCreatedAt holds the default value on creation for the created_at field.
 	token.DefaultCreatedAt = tokenDescCreatedAt.Default.(func() uint32)
 	// tokenDescUpdatedAt is the schema descriptor for updated_at field.
-	tokenDescUpdatedAt := tokenMixinFields0[1].Descriptor()
+	tokenDescUpdatedAt := tokenMixinFields1[1].Descriptor()
 	// token.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	token.DefaultUpdatedAt = tokenDescUpdatedAt.Default.(func() uint32)
 	// token.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	token.UpdateDefaultUpdatedAt = tokenDescUpdatedAt.UpdateDefault.(func() uint32)
 	// tokenDescDeletedAt is the schema descriptor for deleted_at field.
-	tokenDescDeletedAt := tokenMixinFields0[2].Descriptor()
+	tokenDescDeletedAt := tokenMixinFields1[2].Descriptor()
 	// token.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	token.DefaultDeletedAt = tokenDescDeletedAt.Default.(func() uint32)
 	// tokenDescVectorState is the schema descriptor for vector_state field.
-	tokenDescVectorState := tokenFields[14].Descriptor()
+	tokenDescVectorState := tokenFields[13].Descriptor()
 	// token.DefaultVectorState holds the default value on creation for the vector_state field.
 	token.DefaultVectorState = tokenDescVectorState.Default.(string)
-	// tokenDescID is the schema descriptor for id field.
-	tokenDescID := tokenFields[0].Descriptor()
-	// token.DefaultID holds the default value on creation for the id field.
-	token.DefaultID = tokenDescID.Default.(func() uuid.UUID)
 	transferMixin := schema.Transfer{}.Mixin()
-	transfer.Policy = privacy.NewPolicies(transferMixin[0], schema.Transfer{})
+	transfer.Policy = privacy.NewPolicies(transferMixin[1], schema.Transfer{})
 	transfer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := transfer.Policy.EvalMutation(ctx, m); err != nil {
@@ -313,38 +337,40 @@ func init() {
 	}
 	transferMixinFields0 := transferMixin[0].Fields()
 	_ = transferMixinFields0
+	transferMixinFields1 := transferMixin[1].Fields()
+	_ = transferMixinFields1
 	transferFields := schema.Transfer{}.Fields()
 	_ = transferFields
+	// transferDescEntID is the schema descriptor for ent_id field.
+	transferDescEntID := transferMixinFields0[1].Descriptor()
+	// transfer.DefaultEntID holds the default value on creation for the ent_id field.
+	transfer.DefaultEntID = transferDescEntID.Default.(func() uuid.UUID)
 	// transferDescCreatedAt is the schema descriptor for created_at field.
-	transferDescCreatedAt := transferMixinFields0[0].Descriptor()
+	transferDescCreatedAt := transferMixinFields1[0].Descriptor()
 	// transfer.DefaultCreatedAt holds the default value on creation for the created_at field.
 	transfer.DefaultCreatedAt = transferDescCreatedAt.Default.(func() uint32)
 	// transferDescUpdatedAt is the schema descriptor for updated_at field.
-	transferDescUpdatedAt := transferMixinFields0[1].Descriptor()
+	transferDescUpdatedAt := transferMixinFields1[1].Descriptor()
 	// transfer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	transfer.DefaultUpdatedAt = transferDescUpdatedAt.Default.(func() uint32)
 	// transfer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	transfer.UpdateDefaultUpdatedAt = transferDescUpdatedAt.UpdateDefault.(func() uint32)
 	// transferDescDeletedAt is the schema descriptor for deleted_at field.
-	transferDescDeletedAt := transferMixinFields0[2].Descriptor()
+	transferDescDeletedAt := transferMixinFields1[2].Descriptor()
 	// transfer.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	transfer.DefaultDeletedAt = transferDescDeletedAt.Default.(func() uint32)
 	// transferDescContract is the schema descriptor for contract field.
-	transferDescContract := transferFields[3].Descriptor()
+	transferDescContract := transferFields[2].Descriptor()
 	// transfer.ContractValidator is a validator for the "contract" field. It is called by the builders before save.
 	transfer.ContractValidator = transferDescContract.Validators[0].(func(string) error)
 	// transferDescFrom is the schema descriptor for from field.
-	transferDescFrom := transferFields[6].Descriptor()
+	transferDescFrom := transferFields[5].Descriptor()
 	// transfer.FromValidator is a validator for the "from" field. It is called by the builders before save.
 	transfer.FromValidator = transferDescFrom.Validators[0].(func(string) error)
 	// transferDescTo is the schema descriptor for to field.
-	transferDescTo := transferFields[7].Descriptor()
+	transferDescTo := transferFields[6].Descriptor()
 	// transfer.ToValidator is a validator for the "to" field. It is called by the builders before save.
 	transfer.ToValidator = transferDescTo.Validators[0].(func(string) error)
-	// transferDescID is the schema descriptor for id field.
-	transferDescID := transferFields[0].Descriptor()
-	// transfer.DefaultID holds the default value on creation for the id field.
-	transfer.DefaultID = transferDescID.Default.(func() uuid.UUID)
 }
 
 const (

@@ -15,7 +15,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
-	endpoint_0 "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/endpoint"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/endpoint"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -33,7 +33,7 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 func request_Manager_CreateEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.CreateEndpointRequest
+	var protoReq endpoint.CreateEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -50,7 +50,7 @@ func request_Manager_CreateEndpoint_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Manager_CreateEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.CreateEndpointRequest
+	var protoReq endpoint.CreateEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -67,7 +67,7 @@ func local_request_Manager_CreateEndpoint_0(ctx context.Context, marshaler runti
 }
 
 func request_Manager_UpdateEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.UpdateEndpointRequest
+	var protoReq endpoint.UpdateEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -84,7 +84,7 @@ func request_Manager_UpdateEndpoint_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Manager_UpdateEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.UpdateEndpointRequest
+	var protoReq endpoint.UpdateEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -101,7 +101,7 @@ func local_request_Manager_UpdateEndpoint_0(ctx context.Context, marshaler runti
 }
 
 func request_Manager_GetEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.GetEndpointRequest
+	var protoReq endpoint.GetEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -118,7 +118,7 @@ func request_Manager_GetEndpoint_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_Manager_GetEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.GetEndpointRequest
+	var protoReq endpoint.GetEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -135,7 +135,7 @@ func local_request_Manager_GetEndpoint_0(ctx context.Context, marshaler runtime.
 }
 
 func request_Manager_GetEndpoints_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.GetEndpointsRequest
+	var protoReq endpoint.GetEndpointsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -152,7 +152,7 @@ func request_Manager_GetEndpoints_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Manager_GetEndpoints_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.GetEndpointsRequest
+	var protoReq endpoint.GetEndpointsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -169,7 +169,7 @@ func local_request_Manager_GetEndpoints_0(ctx context.Context, marshaler runtime
 }
 
 func request_Manager_DeleteEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, client ManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.DeleteEndpointRequest
+	var protoReq endpoint.DeleteEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -186,7 +186,7 @@ func request_Manager_DeleteEndpoint_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Manager_DeleteEndpoint_0(ctx context.Context, marshaler runtime.Marshaler, server ManagerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq endpoint_0.DeleteEndpointRequest
+	var protoReq endpoint.DeleteEndpointRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

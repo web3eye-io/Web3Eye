@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 )
@@ -87,8 +86,8 @@ func (tq *TransferQuery) FirstX(ctx context.Context) *Transfer {
 
 // FirstID returns the first Transfer ID from the query.
 // Returns a *NotFoundError when no Transfer ID was found.
-func (tq *TransferQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (tq *TransferQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = tq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (tq *TransferQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TransferQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (tq *TransferQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (tq *TransferQuery) OnlyX(ctx context.Context) *Transfer {
 // OnlyID is like Only, but returns the only Transfer ID in the query.
 // Returns a *NotSingularError when more than one Transfer ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TransferQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (tq *TransferQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = tq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (tq *TransferQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TransferQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (tq *TransferQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (tq *TransferQuery) AllX(ctx context.Context) []*Transfer {
 }
 
 // IDs executes the query and returns a list of Transfer IDs.
-func (tq *TransferQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (tq *TransferQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := tq.Select(transfer.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (tq *TransferQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TransferQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (tq *TransferQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -257,12 +256,12 @@ func (tq *TransferQuery) Clone() *TransferQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Transfer.Query().
-//		GroupBy(transfer.FieldCreatedAt).
+//		GroupBy(transfer.FieldEntID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (tq *TransferQuery) GroupBy(field string, fields ...string) *TransferGroupBy {
@@ -285,11 +284,11 @@ func (tq *TransferQuery) GroupBy(field string, fields ...string) *TransferGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //	}
 //
 //	client.Transfer.Query().
-//		Select(transfer.FieldCreatedAt).
+//		Select(transfer.FieldEntID).
 //		Scan(ctx, &v)
 func (tq *TransferQuery) Select(fields ...string) *TransferSelect {
 	tq.fields = append(tq.fields, fields...)
@@ -375,7 +374,7 @@ func (tq *TransferQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},

@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/google/uuid"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/mixin"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
@@ -16,15 +16,13 @@ type Token struct {
 
 func (Token) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		crudermixin.AutoIDMixin{},
 		mixin.TimeMixin{},
 	}
 }
 
 func (Token) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).
-			Default(uuid.New).
-			Unique(),
 		field.String("chain_type"),
 		field.String("chain_id"),
 		field.String("contract"),

@@ -15,7 +15,9 @@ import (
 type OrderItem struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -23,7 +25,7 @@ type OrderItem struct {
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// OrderID holds the value of the "order_id" field.
-	OrderID string `json:"order_id,omitempty"`
+	OrderID uuid.UUID `json:"order_id,omitempty"`
 	// OrderItemType holds the value of the "order_item_type" field.
 	OrderItemType string `json:"order_item_type,omitempty"`
 	// Contract holds the value of the "contract" field.
@@ -43,11 +45,11 @@ func (*OrderItem) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt:
+		case orderitem.FieldID, orderitem.FieldCreatedAt, orderitem.FieldUpdatedAt, orderitem.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case orderitem.FieldOrderID, orderitem.FieldOrderItemType, orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldAmount, orderitem.FieldRemark:
+		case orderitem.FieldOrderItemType, orderitem.FieldContract, orderitem.FieldTokenType, orderitem.FieldTokenID, orderitem.FieldAmount, orderitem.FieldRemark:
 			values[i] = new(sql.NullString)
-		case orderitem.FieldID:
+		case orderitem.FieldEntID, orderitem.FieldOrderID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type OrderItem", columns[i])
@@ -65,10 +67,16 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 	for i := range columns {
 		switch columns[i] {
 		case orderitem.FieldID:
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
+			}
+			oi.ID = uint32(value.Int64)
+		case orderitem.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				oi.ID = *value
+				oi.EntID = *value
 			}
 		case orderitem.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -89,10 +97,10 @@ func (oi *OrderItem) assignValues(columns []string, values []interface{}) error 
 				oi.DeletedAt = uint32(value.Int64)
 			}
 		case orderitem.FieldOrderID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
-			} else if value.Valid {
-				oi.OrderID = value.String
+			} else if value != nil {
+				oi.OrderID = *value
 			}
 		case orderitem.FieldOrderItemType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -158,6 +166,9 @@ func (oi *OrderItem) String() string {
 	var builder strings.Builder
 	builder.WriteString("OrderItem(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", oi.ID))
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", oi.EntID))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", oi.CreatedAt))
 	builder.WriteString(", ")
@@ -168,7 +179,7 @@ func (oi *OrderItem) String() string {
 	builder.WriteString(fmt.Sprintf("%v", oi.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
-	builder.WriteString(oi.OrderID)
+	builder.WriteString(fmt.Sprintf("%v", oi.OrderID))
 	builder.WriteString(", ")
 	builder.WriteString("order_item_type=")
 	builder.WriteString(oi.OrderItemType)

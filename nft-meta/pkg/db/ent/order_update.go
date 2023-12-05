@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -25,6 +26,20 @@ type OrderUpdate struct {
 // Where appends a list predicates to the OrderUpdate builder.
 func (ou *OrderUpdate) Where(ps ...predicate.Order) *OrderUpdate {
 	ou.mutation.Where(ps...)
+	return ou
+}
+
+// SetEntID sets the "ent_id" field.
+func (ou *OrderUpdate) SetEntID(u uuid.UUID) *OrderUpdate {
+	ou.mutation.SetEntID(u)
+	return ou
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableEntID(u *uuid.UUID) *OrderUpdate {
+	if u != nil {
+		ou.SetEntID(*u)
+	}
 	return ou
 }
 
@@ -273,7 +288,7 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   order.Table,
 			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		},
@@ -284,6 +299,13 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ou.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldEntID,
+		})
 	}
 	if value, ok := ou.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -429,6 +451,20 @@ type OrderUpdateOne struct {
 	hooks     []Hook
 	mutation  *OrderMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (ouo *OrderUpdateOne) SetEntID(u uuid.UUID) *OrderUpdateOne {
+	ouo.mutation.SetEntID(u)
+	return ouo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderUpdateOne {
+	if u != nil {
+		ouo.SetEntID(*u)
+	}
+	return ouo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -689,7 +725,7 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 			Table:   order.Table,
 			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		},
@@ -717,6 +753,13 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ouo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldEntID,
+		})
 	}
 	if value, ok := ouo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

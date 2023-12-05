@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -87,8 +86,8 @@ func (cq *ContractQuery) FirstX(ctx context.Context) *Contract {
 
 // FirstID returns the first Contract ID from the query.
 // Returns a *NotFoundError when no Contract ID was found.
-func (cq *ContractQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (cq *ContractQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = cq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (cq *ContractQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (cq *ContractQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (cq *ContractQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := cq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (cq *ContractQuery) OnlyX(ctx context.Context) *Contract {
 // OnlyID is like Only, but returns the only Contract ID in the query.
 // Returns a *NotSingularError when more than one Contract ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (cq *ContractQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (cq *ContractQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = cq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (cq *ContractQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (cq *ContractQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (cq *ContractQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := cq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (cq *ContractQuery) AllX(ctx context.Context) []*Contract {
 }
 
 // IDs executes the query and returns a list of Contract IDs.
-func (cq *ContractQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (cq *ContractQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := cq.Select(contract.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (cq *ContractQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (cq *ContractQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (cq *ContractQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := cq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -375,7 +374,7 @@ func (cq *ContractQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   contract.Table,
 			Columns: contract.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: contract.FieldID,
 			},
 		},

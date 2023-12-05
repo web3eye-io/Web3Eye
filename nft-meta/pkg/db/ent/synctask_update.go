@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 )
@@ -80,6 +81,20 @@ func (stu *SyncTaskUpdate) SetNillableDeletedAt(u *uint32) *SyncTaskUpdate {
 // AddDeletedAt adds u to the "deleted_at" field.
 func (stu *SyncTaskUpdate) AddDeletedAt(u int32) *SyncTaskUpdate {
 	stu.mutation.AddDeletedAt(u)
+	return stu
+}
+
+// SetEntID sets the "ent_id" field.
+func (stu *SyncTaskUpdate) SetEntID(u uuid.UUID) *SyncTaskUpdate {
+	stu.mutation.SetEntID(u)
+	return stu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (stu *SyncTaskUpdate) SetNillableEntID(u *uuid.UUID) *SyncTaskUpdate {
+	if u != nil {
+		stu.SetEntID(*u)
+	}
 	return stu
 }
 
@@ -300,7 +315,7 @@ func (stu *SyncTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: synctask.FieldID,
 			},
 		},
@@ -352,6 +367,13 @@ func (stu *SyncTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: synctask.FieldDeletedAt,
+		})
+	}
+	if value, ok := stu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: synctask.FieldEntID,
 		})
 	}
 	if value, ok := stu.mutation.ChainType(); ok {
@@ -535,6 +557,20 @@ func (stuo *SyncTaskUpdateOne) SetNillableDeletedAt(u *uint32) *SyncTaskUpdateOn
 // AddDeletedAt adds u to the "deleted_at" field.
 func (stuo *SyncTaskUpdateOne) AddDeletedAt(u int32) *SyncTaskUpdateOne {
 	stuo.mutation.AddDeletedAt(u)
+	return stuo
+}
+
+// SetEntID sets the "ent_id" field.
+func (stuo *SyncTaskUpdateOne) SetEntID(u uuid.UUID) *SyncTaskUpdateOne {
+	stuo.mutation.SetEntID(u)
+	return stuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (stuo *SyncTaskUpdateOne) SetNillableEntID(u *uuid.UUID) *SyncTaskUpdateOne {
+	if u != nil {
+		stuo.SetEntID(*u)
+	}
 	return stuo
 }
 
@@ -768,7 +804,7 @@ func (stuo *SyncTaskUpdateOne) sqlSave(ctx context.Context) (_node *SyncTask, er
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: synctask.FieldID,
 			},
 		},
@@ -837,6 +873,13 @@ func (stuo *SyncTaskUpdateOne) sqlSave(ctx context.Context) (_node *SyncTask, er
 			Type:   field.TypeUint32,
 			Value:  value,
 			Column: synctask.FieldDeletedAt,
+		})
+	}
+	if value, ok := stuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: synctask.FieldEntID,
 		})
 	}
 	if value, ok := stuo.mutation.ChainType(); ok {

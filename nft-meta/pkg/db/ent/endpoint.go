@@ -15,7 +15,9 @@ import (
 type Endpoint struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -39,11 +41,11 @@ func (*Endpoint) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case endpoint.FieldCreatedAt, endpoint.FieldUpdatedAt, endpoint.FieldDeletedAt:
+		case endpoint.FieldID, endpoint.FieldCreatedAt, endpoint.FieldUpdatedAt, endpoint.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
 		case endpoint.FieldChainType, endpoint.FieldChainID, endpoint.FieldAddress, endpoint.FieldState, endpoint.FieldRemark:
 			values[i] = new(sql.NullString)
-		case endpoint.FieldID:
+		case endpoint.FieldEntID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Endpoint", columns[i])
@@ -61,10 +63,16 @@ func (e *Endpoint) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case endpoint.FieldID:
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
+			}
+			e.ID = uint32(value.Int64)
+		case endpoint.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				e.ID = *value
+				e.EntID = *value
 			}
 		case endpoint.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -142,6 +150,9 @@ func (e *Endpoint) String() string {
 	var builder strings.Builder
 	builder.WriteString("Endpoint(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", e.ID))
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", e.EntID))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", e.CreatedAt))
 	builder.WriteString(", ")

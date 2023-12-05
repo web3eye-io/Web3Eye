@@ -26,7 +26,8 @@ service Manager {
 }
 
 message TransferReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Contract = 40;
@@ -43,7 +44,8 @@ message TransferReq {
 }
 
 message Transfer {
-  string ID = 10;
+  uint32 ID = 10;
+  string EntID = 11;
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
@@ -60,7 +62,8 @@ message Transfer {
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
+  web3eye.Uint32Val ID = 10;
+  web3eye.StringVal EntID = 11;
   web3eye.StringVal ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Contract = 40;

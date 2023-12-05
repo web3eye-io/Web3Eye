@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type TransferCreate struct {
 	mutation *TransferMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (tc *TransferCreate) SetEntID(u uuid.UUID) *TransferCreate {
+	tc.mutation.SetEntID(u)
+	return tc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tc *TransferCreate) SetNillableEntID(u *uuid.UUID) *TransferCreate {
+	if u != nil {
+		tc.SetEntID(*u)
+	}
+	return tc
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -160,16 +173,8 @@ func (tc *TransferCreate) SetNillableRemark(s *string) *TransferCreate {
 }
 
 // SetID sets the "id" field.
-func (tc *TransferCreate) SetID(u uuid.UUID) *TransferCreate {
+func (tc *TransferCreate) SetID(u uint32) *TransferCreate {
 	tc.mutation.SetID(u)
-	return tc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (tc *TransferCreate) SetNillableID(u *uuid.UUID) *TransferCreate {
-	if u != nil {
-		tc.SetID(*u)
-	}
 	return tc
 }
 
@@ -252,6 +257,13 @@ func (tc *TransferCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TransferCreate) defaults() error {
+	if _, ok := tc.mutation.EntID(); !ok {
+		if transfer.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized transfer.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := transfer.DefaultEntID()
+		tc.mutation.SetEntID(v)
+	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		if transfer.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized transfer.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -273,18 +285,14 @@ func (tc *TransferCreate) defaults() error {
 		v := transfer.DefaultDeletedAt()
 		tc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := tc.mutation.ID(); !ok {
-		if transfer.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized transfer.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := transfer.DefaultID()
-		tc.mutation.SetID(v)
-	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TransferCreate) check() error {
+	if _, ok := tc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Transfer.ent_id"`)}
+	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transfer.created_at"`)}
 	}
@@ -353,12 +361,9 @@ func (tc *TransferCreate) sqlSave(ctx context.Context) (*Transfer, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -369,7 +374,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: transfer.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		}
@@ -377,7 +382,15 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = tc.conflict
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := tc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: transfer.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -514,7 +527,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Transfer.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -523,7 +536,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TransferUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (tc *TransferCreate) OnConflict(opts ...sql.ConflictOption) *TransferUpsertOne {
@@ -558,6 +571,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *TransferUpsert) SetEntID(v uuid.UUID) *TransferUpsert {
+	u.Set(transfer.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TransferUpsert) UpdateEntID() *TransferUpsert {
+	u.SetExcluded(transfer.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *TransferUpsert) SetCreatedAt(v uint32) *TransferUpsert {
@@ -839,6 +864,20 @@ func (u *TransferUpsertOne) Update(set func(*TransferUpsert)) *TransferUpsertOne
 		set(&TransferUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *TransferUpsertOne) SetEntID(v uuid.UUID) *TransferUpsertOne {
+	return u.Update(func(s *TransferUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TransferUpsertOne) UpdateEntID() *TransferUpsertOne {
+	return u.Update(func(s *TransferUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1130,12 +1169,7 @@ func (u *TransferUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TransferUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: TransferUpsertOne.ID is not supported by MySQL driver. Use TransferUpsertOne.Exec instead")
-	}
+func (u *TransferUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1144,7 +1178,7 @@ func (u *TransferUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TransferUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *TransferUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1195,6 +1229,10 @@ func (tcb *TransferCreateBulk) Save(ctx context.Context) ([]*Transfer, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1246,7 +1284,7 @@ func (tcb *TransferCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TransferUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (tcb *TransferCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransferUpsertBulk {
@@ -1324,6 +1362,20 @@ func (u *TransferUpsertBulk) Update(set func(*TransferUpsert)) *TransferUpsertBu
 		set(&TransferUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *TransferUpsertBulk) SetEntID(v uuid.UUID) *TransferUpsertBulk {
+	return u.Update(func(s *TransferUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TransferUpsertBulk) UpdateEntID() *TransferUpsertBulk {
+	return u.Update(func(s *TransferUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.

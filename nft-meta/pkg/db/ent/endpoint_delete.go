@@ -72,7 +72,7 @@ func (ed *EndpointDelete) sqlExec(ctx context.Context) (int, error) {
 		Node: &sqlgraph.NodeSpec{
 			Table: endpoint.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		},

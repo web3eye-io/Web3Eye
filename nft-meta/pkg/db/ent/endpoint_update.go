@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -25,6 +26,20 @@ type EndpointUpdate struct {
 // Where appends a list predicates to the EndpointUpdate builder.
 func (eu *EndpointUpdate) Where(ps ...predicate.Endpoint) *EndpointUpdate {
 	eu.mutation.Where(ps...)
+	return eu
+}
+
+// SetEntID sets the "ent_id" field.
+func (eu *EndpointUpdate) SetEntID(u uuid.UUID) *EndpointUpdate {
+	eu.mutation.SetEntID(u)
+	return eu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (eu *EndpointUpdate) SetNillableEntID(u *uuid.UUID) *EndpointUpdate {
+	if u != nil {
+		eu.SetEntID(*u)
+	}
 	return eu
 }
 
@@ -241,7 +256,7 @@ func (eu *EndpointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   endpoint.Table,
 			Columns: endpoint.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		},
@@ -252,6 +267,13 @@ func (eu *EndpointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := eu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: endpoint.FieldEntID,
+		})
 	}
 	if value, ok := eu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -367,6 +389,20 @@ type EndpointUpdateOne struct {
 	hooks     []Hook
 	mutation  *EndpointMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (euo *EndpointUpdateOne) SetEntID(u uuid.UUID) *EndpointUpdateOne {
+	euo.mutation.SetEntID(u)
+	return euo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (euo *EndpointUpdateOne) SetNillableEntID(u *uuid.UUID) *EndpointUpdateOne {
+	if u != nil {
+		euo.SetEntID(*u)
+	}
+	return euo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -595,7 +631,7 @@ func (euo *EndpointUpdateOne) sqlSave(ctx context.Context) (_node *Endpoint, err
 			Table:   endpoint.Table,
 			Columns: endpoint.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		},
@@ -623,6 +659,13 @@ func (euo *EndpointUpdateOne) sqlSave(ctx context.Context) (_node *Endpoint, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := euo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: endpoint.FieldEntID,
+		})
 	}
 	if value, ok := euo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

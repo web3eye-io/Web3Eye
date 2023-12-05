@@ -9,28 +9,28 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uuid.UUID) predicate.OrderItem {
+func ID(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uuid.UUID) predicate.OrderItem {
+func IDEQ(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uuid.UUID) predicate.OrderItem {
+func IDNEQ(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uuid.UUID) predicate.OrderItem {
+func IDIn(ids ...uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		v := make([]interface{}, len(ids))
 		for i := range v {
@@ -41,7 +41,7 @@ func IDIn(ids ...uuid.UUID) predicate.OrderItem {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uuid.UUID) predicate.OrderItem {
+func IDNotIn(ids ...uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		v := make([]interface{}, len(ids))
 		for i := range v {
@@ -52,30 +52,37 @@ func IDNotIn(ids ...uuid.UUID) predicate.OrderItem {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uuid.UUID) predicate.OrderItem {
+func IDGT(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uuid.UUID) predicate.OrderItem {
+func IDGTE(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uuid.UUID) predicate.OrderItem {
+func IDLT(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uuid.UUID) predicate.OrderItem {
+func IDLTE(id uint32) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
+	})
+}
+
+// EntID applies equality check predicate on the "ent_id" field. It's identical to EntIDEQ.
+func EntID(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
 	})
 }
 
@@ -101,7 +108,7 @@ func DeletedAt(v uint32) predicate.OrderItem {
 }
 
 // OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v string) predicate.OrderItem {
+func OrderID(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldOrderID), v))
 	})
@@ -146,6 +153,70 @@ func Amount(v string) predicate.OrderItem {
 func Remark(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRemark), v))
+	})
+}
+
+// EntIDEQ applies the EQ predicate on the "ent_id" field.
+func EntIDEQ(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDNEQ applies the NEQ predicate on the "ent_id" field.
+func EntIDNEQ(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDIn applies the In predicate on the "ent_id" field.
+func EntIDIn(vs ...uuid.UUID) predicate.OrderItem {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDNotIn applies the NotIn predicate on the "ent_id" field.
+func EntIDNotIn(vs ...uuid.UUID) predicate.OrderItem {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDGT applies the GT predicate on the "ent_id" field.
+func EntIDGT(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDGTE applies the GTE predicate on the "ent_id" field.
+func EntIDGTE(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLT applies the LT predicate on the "ent_id" field.
+func EntIDLT(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLTE applies the LTE predicate on the "ent_id" field.
+func EntIDLTE(v uuid.UUID) predicate.OrderItem {
+	return predicate.OrderItem(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntID), v))
 	})
 }
 
@@ -342,21 +413,21 @@ func DeletedAtLTE(v uint32) predicate.OrderItem {
 }
 
 // OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v string) predicate.OrderItem {
+func OrderIDEQ(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldOrderID), v))
 	})
 }
 
 // OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v string) predicate.OrderItem {
+func OrderIDNEQ(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldOrderID), v))
 	})
 }
 
 // OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...string) predicate.OrderItem {
+func OrderIDIn(vs ...uuid.UUID) predicate.OrderItem {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -367,7 +438,7 @@ func OrderIDIn(vs ...string) predicate.OrderItem {
 }
 
 // OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...string) predicate.OrderItem {
+func OrderIDNotIn(vs ...uuid.UUID) predicate.OrderItem {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -378,65 +449,44 @@ func OrderIDNotIn(vs ...string) predicate.OrderItem {
 }
 
 // OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v string) predicate.OrderItem {
+func OrderIDGT(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldOrderID), v))
 	})
 }
 
 // OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v string) predicate.OrderItem {
+func OrderIDGTE(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldOrderID), v))
 	})
 }
 
 // OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v string) predicate.OrderItem {
+func OrderIDLT(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldOrderID), v))
 	})
 }
 
 // OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v string) predicate.OrderItem {
+func OrderIDLTE(v uuid.UUID) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldOrderID), v))
 	})
 }
 
-// OrderIDContains applies the Contains predicate on the "order_id" field.
-func OrderIDContains(v string) predicate.OrderItem {
+// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
+func OrderIDIsNil() predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldOrderID), v))
+		s.Where(sql.IsNull(s.C(FieldOrderID)))
 	})
 }
 
-// OrderIDHasPrefix applies the HasPrefix predicate on the "order_id" field.
-func OrderIDHasPrefix(v string) predicate.OrderItem {
+// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
+func OrderIDNotNil() predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDHasSuffix applies the HasSuffix predicate on the "order_id" field.
-func OrderIDHasSuffix(v string) predicate.OrderItem {
-	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDEqualFold applies the EqualFold predicate on the "order_id" field.
-func OrderIDEqualFold(v string) predicate.OrderItem {
-	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldOrderID), v))
-	})
-}
-
-// OrderIDContainsFold applies the ContainsFold predicate on the "order_id" field.
-func OrderIDContainsFold(v string) predicate.OrderItem {
-	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldOrderID), v))
+		s.Where(sql.NotNull(s.C(FieldOrderID)))
 	})
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -43,7 +43,7 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 					ChainType: &info.ChainType,
 					ChainID:   &info.ChainID,
 					Address:   &info.Address,
-					State:     cttype.EndpointState_EndpointError.Enum(),
+					State:     basetype.EndpointState_EndpointError.Enum(),
 					Remark:    &remark,
 				})
 			}

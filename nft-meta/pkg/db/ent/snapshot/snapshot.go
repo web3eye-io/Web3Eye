@@ -4,6 +4,7 @@ package snapshot
 
 import (
 	"entgo.io/ent"
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,6 +12,8 @@ const (
 	Label = "snapshot"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldEntID holds the string denoting the ent_id field in the database.
+	FieldEntID = "ent_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -34,6 +37,7 @@ const (
 // Columns holds all SQL columns for snapshot fields.
 var Columns = []string{
 	FieldID,
+	FieldEntID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
@@ -62,6 +66,8 @@ func ValidColumn(column string) bool {
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
+	// DefaultEntID holds the default value on creation for the "ent_id" field.
+	DefaultEntID func() uuid.UUID
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() uint32
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.

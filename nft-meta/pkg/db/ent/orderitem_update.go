@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -25,6 +26,20 @@ type OrderItemUpdate struct {
 // Where appends a list predicates to the OrderItemUpdate builder.
 func (oiu *OrderItemUpdate) Where(ps ...predicate.OrderItem) *OrderItemUpdate {
 	oiu.mutation.Where(ps...)
+	return oiu
+}
+
+// SetEntID sets the "ent_id" field.
+func (oiu *OrderItemUpdate) SetEntID(u uuid.UUID) *OrderItemUpdate {
+	oiu.mutation.SetEntID(u)
+	return oiu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableEntID(u *uuid.UUID) *OrderItemUpdate {
+	if u != nil {
+		oiu.SetEntID(*u)
+	}
 	return oiu
 }
 
@@ -84,8 +99,22 @@ func (oiu *OrderItemUpdate) AddDeletedAt(u int32) *OrderItemUpdate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (oiu *OrderItemUpdate) SetOrderID(s string) *OrderItemUpdate {
-	oiu.mutation.SetOrderID(s)
+func (oiu *OrderItemUpdate) SetOrderID(u uuid.UUID) *OrderItemUpdate {
+	oiu.mutation.SetOrderID(u)
+	return oiu
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oiu *OrderItemUpdate) SetNillableOrderID(u *uuid.UUID) *OrderItemUpdate {
+	if u != nil {
+		oiu.SetOrderID(*u)
+	}
+	return oiu
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (oiu *OrderItemUpdate) ClearOrderID() *OrderItemUpdate {
+	oiu.mutation.ClearOrderID()
 	return oiu
 }
 
@@ -225,7 +254,7 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   orderitem.Table,
 			Columns: orderitem.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderitem.FieldID,
 			},
 		},
@@ -236,6 +265,13 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := oiu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderitem.FieldEntID,
+		})
 	}
 	if value, ok := oiu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -281,8 +317,14 @@ func (oiu *OrderItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := oiu.mutation.OrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUUID,
 			Value:  value,
+			Column: orderitem.FieldOrderID,
+		})
+	}
+	if oiu.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: orderitem.FieldOrderID,
 		})
 	}
@@ -355,6 +397,20 @@ type OrderItemUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
+// SetEntID sets the "ent_id" field.
+func (oiuo *OrderItemUpdateOne) SetEntID(u uuid.UUID) *OrderItemUpdateOne {
+	oiuo.mutation.SetEntID(u)
+	return oiuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableEntID(u *uuid.UUID) *OrderItemUpdateOne {
+	if u != nil {
+		oiuo.SetEntID(*u)
+	}
+	return oiuo
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (oiuo *OrderItemUpdateOne) SetCreatedAt(u uint32) *OrderItemUpdateOne {
 	oiuo.mutation.ResetCreatedAt()
@@ -411,8 +467,22 @@ func (oiuo *OrderItemUpdateOne) AddDeletedAt(u int32) *OrderItemUpdateOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (oiuo *OrderItemUpdateOne) SetOrderID(s string) *OrderItemUpdateOne {
-	oiuo.mutation.SetOrderID(s)
+func (oiuo *OrderItemUpdateOne) SetOrderID(u uuid.UUID) *OrderItemUpdateOne {
+	oiuo.mutation.SetOrderID(u)
+	return oiuo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oiuo *OrderItemUpdateOne) SetNillableOrderID(u *uuid.UUID) *OrderItemUpdateOne {
+	if u != nil {
+		oiuo.SetOrderID(*u)
+	}
+	return oiuo
+}
+
+// ClearOrderID clears the value of the "order_id" field.
+func (oiuo *OrderItemUpdateOne) ClearOrderID() *OrderItemUpdateOne {
+	oiuo.mutation.ClearOrderID()
 	return oiuo
 }
 
@@ -565,7 +635,7 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 			Table:   orderitem.Table,
 			Columns: orderitem.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderitem.FieldID,
 			},
 		},
@@ -593,6 +663,13 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := oiuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: orderitem.FieldEntID,
+		})
 	}
 	if value, ok := oiuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -638,8 +715,14 @@ func (oiuo *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, 
 	}
 	if value, ok := oiuo.mutation.OrderID(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUUID,
 			Value:  value,
+			Column: orderitem.FieldOrderID,
+		})
+	}
+	if oiuo.mutation.OrderIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
 			Column: orderitem.FieldOrderID,
 		})
 	}

@@ -15,7 +15,9 @@ import (
 type Transfer struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID uint32 `json:"id,omitempty"`
+	// EntID holds the value of the "ent_id" field.
+	EntID uuid.UUID `json:"ent_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt uint32 `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -55,11 +57,11 @@ func (*Transfer) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldBlockNumber, transfer.FieldTxTime:
+		case transfer.FieldID, transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldBlockNumber, transfer.FieldTxTime:
 			values[i] = new(sql.NullInt64)
 		case transfer.FieldChainType, transfer.FieldChainID, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldAmount, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
 			values[i] = new(sql.NullString)
-		case transfer.FieldID:
+		case transfer.FieldEntID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Transfer", columns[i])
@@ -77,10 +79,16 @@ func (t *Transfer) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case transfer.FieldID:
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
+			}
+			t.ID = uint32(value.Int64)
+		case transfer.FieldEntID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
+				return fmt.Errorf("unexpected type %T for field ent_id", values[i])
 			} else if value != nil {
-				t.ID = *value
+				t.EntID = *value
 			}
 		case transfer.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -206,6 +214,9 @@ func (t *Transfer) String() string {
 	var builder strings.Builder
 	builder.WriteString("Transfer(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("ent_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.EntID))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", t.CreatedAt))
 	builder.WriteString(", ")

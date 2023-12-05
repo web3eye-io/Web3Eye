@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 )
@@ -25,6 +26,20 @@ type TokenUpdate struct {
 // Where appends a list predicates to the TokenUpdate builder.
 func (tu *TokenUpdate) Where(ps ...predicate.Token) *TokenUpdate {
 	tu.mutation.Where(ps...)
+	return tu
+}
+
+// SetEntID sets the "ent_id" field.
+func (tu *TokenUpdate) SetEntID(u uuid.UUID) *TokenUpdate {
+	tu.mutation.SetEntID(u)
+	return tu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableEntID(u *uuid.UUID) *TokenUpdate {
+	if u != nil {
+		tu.SetEntID(*u)
+	}
 	return tu
 }
 
@@ -446,7 +461,7 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   token.Table,
 			Columns: token.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: token.FieldID,
 			},
 		},
@@ -457,6 +472,13 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: token.FieldEntID,
+		})
 	}
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -717,6 +739,20 @@ type TokenUpdateOne struct {
 	hooks     []Hook
 	mutation  *TokenMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (tuo *TokenUpdateOne) SetEntID(u uuid.UUID) *TokenUpdateOne {
+	tuo.mutation.SetEntID(u)
+	return tuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableEntID(u *uuid.UUID) *TokenUpdateOne {
+	if u != nil {
+		tuo.SetEntID(*u)
+	}
+	return tuo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1150,7 +1186,7 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 			Table:   token.Table,
 			Columns: token.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: token.FieldID,
 			},
 		},
@@ -1178,6 +1214,13 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: token.FieldEntID,
+		})
 	}
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

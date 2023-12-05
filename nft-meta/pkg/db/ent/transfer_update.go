@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 )
@@ -25,6 +26,20 @@ type TransferUpdate struct {
 // Where appends a list predicates to the TransferUpdate builder.
 func (tu *TransferUpdate) Where(ps ...predicate.Transfer) *TransferUpdate {
 	tu.mutation.Where(ps...)
+	return tu
+}
+
+// SetEntID sets the "ent_id" field.
+func (tu *TransferUpdate) SetEntID(u uuid.UUID) *TransferUpdate {
+	tu.mutation.SetEntID(u)
+	return tu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tu *TransferUpdate) SetNillableEntID(u *uuid.UUID) *TransferUpdate {
+	if u != nil {
+		tu.SetEntID(*u)
+	}
 	return tu
 }
 
@@ -315,7 +330,7 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},
@@ -326,6 +341,13 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: transfer.FieldEntID,
+		})
 	}
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -505,6 +527,20 @@ type TransferUpdateOne struct {
 	hooks     []Hook
 	mutation  *TransferMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (tuo *TransferUpdateOne) SetEntID(u uuid.UUID) *TransferUpdateOne {
+	tuo.mutation.SetEntID(u)
+	return tuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tuo *TransferUpdateOne) SetNillableEntID(u *uuid.UUID) *TransferUpdateOne {
+	if u != nil {
+		tuo.SetEntID(*u)
+	}
+	return tuo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -807,7 +843,7 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},
@@ -835,6 +871,13 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: transfer.FieldEntID,
+		})
 	}
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

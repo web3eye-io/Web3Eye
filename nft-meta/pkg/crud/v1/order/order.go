@@ -1,529 +1,208 @@
 package order
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
+	entorder "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-type OrderDetail struct {
-	Order       *ent.Order
-	TargetItems []*ent.OrderItem
-	OfferItems  []*ent.OrderItem
+type Req struct {
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	TxHash      *string
+	BlockNumber *uint64
+	TxIndex     *uint32
+	LogIndex    *uint32
+	Recipient   *string
+	Remark      *string
 }
 
-func Create(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
-	var entorder *ent.Order
-	var targetItems []*ent.OrderItem
-	var offerItems []*ent.OrderItem
-	var err error
-
-	if in == nil {
-		return nil, errors.New("input is nil")
+func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		id := uuid.NewString()
-		in.ID = &id
-		// Create
-		entorder, err = CreateSet(tx.Order.Create(), in).Save(ctx)
-		if err != nil {
-			return err
-		}
-		targetBulk := ItemCreateBulkSet(tx, entorder.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
-		targetItems, err = tx.OrderItem.CreateBulk(targetBulk...).Save(ctx)
-		if err != nil {
-			return err
-		}
-		offerBulk := ItemCreateBulkSet(tx, entorder.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
-		offerItems, err = tx.OrderItem.CreateBulk(offerBulk...).Save(ctx)
-		if err != nil {
-			return err
-		}
-		return err
-	})
-	if err != nil {
-		return nil, err
+	if req.ChainType != nil {
+		c.SetChainType((*req.ChainType).String())
 	}
-
-	return &OrderDetail{
-		Order:       entorder,
-		TargetItems: targetItems,
-		OfferItems:  offerItems,
-	}, nil
-}
-
-func CreateSet(c *ent.OrderCreate, in *npool.OrderReq) *ent.OrderCreate {
-	if in.ID != nil {
-		id, err := uuid.Parse(*in.ID)
-		if err != nil {
-			id = uuid.New()
-		}
-		c.SetID(id)
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.TxHash != nil {
+		c.SetTxHash(*req.TxHash)
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.BlockNumber != nil {
+		c.SetBlockNumber(*req.BlockNumber)
 	}
-	if in.TxHash != nil {
-		c.SetTxHash(in.GetTxHash())
+	if req.TxIndex != nil {
+		c.SetTxIndex(*req.TxIndex)
 	}
-	if in.BlockNumber != nil {
-		c.SetBlockNumber(in.GetBlockNumber())
+	if req.LogIndex != nil {
+		c.SetLogIndex(*req.LogIndex)
 	}
-	if in.TxIndex != nil {
-		c.SetTxIndex(in.GetTxIndex())
+	if req.Recipient != nil {
+		c.SetRecipient(*req.Recipient)
 	}
-	if in.LogIndex != nil {
-		c.SetLogIndex(in.GetLogIndex())
-	}
-	if in.Recipient != nil {
-		c.SetRecipient(in.GetRecipient())
-	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
 	return c
 }
 
-func CreateBulk(ctx context.Context, infos []*npool.OrderReq) ([]*OrderDetail, error) {
-	var err error
-	rows := make([]*OrderDetail, len(infos))
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for i, in := range infos {
-			id := uuid.NewString()
-			in.ID = &id
-			// Create
-			order, err := CreateSet(tx.Order.Create(), in).Save(ctx)
-			if err != nil {
-				return err
-			}
-			targetBulk := ItemCreateBulkSet(tx, order.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
-			targetItems, err := tx.OrderItem.CreateBulk(targetBulk...).Save(ctx)
-			if err != nil {
-				return err
-			}
-			offerBulk := ItemCreateBulkSet(tx, order.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
-			offerItems, err := tx.OrderItem.CreateBulk(offerBulk...).Save(ctx)
-			if err != nil {
-				return err
-			}
-			rows[i] = &OrderDetail{
-				Order:       order,
-				TargetItems: targetItems,
-				OfferItems:  offerItems,
-			}
-		}
-		return err
-	})
-	if err != nil {
-		return nil, err
+func UpdateSet(u *ent.OrderUpdateOne, req *Req) (*ent.OrderUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
 	}
-
-	return rows, nil
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.TxHash != nil {
+		u.SetTxHash(*req.TxHash)
+	}
+	if req.BlockNumber != nil {
+		u.SetBlockNumber(*req.BlockNumber)
+	}
+	if req.TxIndex != nil {
+		u.SetTxIndex(*req.TxIndex)
+	}
+	if req.LogIndex != nil {
+		u.SetLogIndex(*req.LogIndex)
+	}
+	if req.Recipient != nil {
+		u.SetRecipient(*req.Recipient)
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.OrderReq) (*OrderDetail, error) {
-	var err error
-	var entorder *ent.Order
-	var targetItems []*ent.OrderItem
-	var offerItems []*ent.OrderItem
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		return nil, err
-	}
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		u := tx.Order.UpdateOneID(uuid.MustParse(in.GetID()))
-		entorder, err = UpdateSet(u, in).Save(_ctx)
-		if err != nil {
-			return err
-		}
-
-		targetItems, err = ItemsUpdate(ctx, tx, entorder.ID, in.TargetItems, v1.OrderItemType_OrderItemTarget)
-		if err != nil {
-			return err
-		}
-
-		offerItems, err = ItemsUpdate(ctx, tx, entorder.ID, in.OfferItems, v1.OrderItemType_OrderItemOffer)
-		if err != nil {
-			return err
-		}
-
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &OrderDetail{
-		Order:       entorder,
-		TargetItems: targetItems,
-		OfferItems:  offerItems,
-	}, nil
+type Conds struct {
+	EntID       *cruder.Cond
+	ChainType   *cruder.Cond
+	ChainID     *cruder.Cond
+	TxHash      *cruder.Cond
+	BlockNumber *cruder.Cond
+	TxIndex     *cruder.Cond
+	LogIndex    *cruder.Cond
+	Recipient   *cruder.Cond
+	Remark      *cruder.Cond
 }
 
-func UpdateSet(u *ent.OrderUpdateOne, in *npool.OrderReq) *ent.OrderUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.TxHash != nil {
-		u.SetTxHash(in.GetTxHash())
-	}
-	if in.BlockNumber != nil {
-		u.SetBlockNumber(in.GetBlockNumber())
-	}
-	if in.TxIndex != nil {
-		u.SetTxIndex(in.GetTxIndex())
-	}
-	if in.LogIndex != nil {
-		u.SetLogIndex(in.GetLogIndex())
-	}
-	if in.Recipient != nil {
-		u.SetRecipient(in.GetRecipient())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
-	var info *ent.Order
-	var targetItems []*ent.OrderItem
-	var offerItems []*ent.OrderItem
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Order.Query().Where(order.ID(id)).Only(_ctx)
-		if err != nil {
-			return err
+func SetQueryConds(q *ent.OrderQuery, conds *Conds) (*ent.OrderQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		targetItems, err = cli.OrderItem.Query().Where(
-			orderitem.OrderID(info.ID.String()),
-			orderitem.OrderItemType(v1.OrderItemType_OrderItemTarget.String())).
-			All(ctx)
-		if err != nil {
-			return err
-		}
-		offerItems, err = cli.OrderItem.Query().Where(
-			orderitem.OrderID(info.ID.String()),
-			orderitem.OrderItemType(v1.OrderItemType_OrderItemOffer.String())).
-			All(ctx)
-		if err != nil {
-			return err
-		}
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &OrderDetail{
-		Order:       info,
-		TargetItems: targetItems,
-		OfferItems:  offerItems,
-	}, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.OrderQuery, error) {
-	stm := cli.Order.Query()
-	if conds == nil {
-		return stm, nil
-	}
-
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(order.ID(id))
+			q.Where(entorder.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(order.IDIn(ids...))
-		}
-	}
-
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(order.ChainType(conds.GetChainType().GetValue()))
+			q.Where(entorder.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(order.ChainID(conds.GetChainID().GetValue()))
+			q.Where(entorder.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.TxHash != nil {
-		switch conds.GetTxHash().GetOp() {
+		txhash, ok := conds.TxHash.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid txhash")
+		}
+		switch conds.TxHash.Op {
 		case cruder.EQ:
-			stm.Where(order.TxHash(conds.GetTxHash().GetValue()))
+			q.Where(entorder.TxHash(txhash))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid txhash field")
 		}
 	}
 	if conds.BlockNumber != nil {
-		switch conds.GetBlockNumber().GetOp() {
+		blocknumber, ok := conds.BlockNumber.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid blocknumber")
+		}
+		switch conds.BlockNumber.Op {
 		case cruder.EQ:
-			stm.Where(order.BlockNumber(conds.GetBlockNumber().GetValue()))
+			q.Where(entorder.BlockNumber(blocknumber))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid blocknumber field")
 		}
 	}
 	if conds.TxIndex != nil {
-		switch conds.GetTxIndex().GetOp() {
+		txindex, ok := conds.TxIndex.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid txindex")
+		}
+		switch conds.TxIndex.Op {
 		case cruder.EQ:
-			stm.Where(order.TxIndex(conds.GetTxIndex().GetValue()))
+			q.Where(entorder.TxIndex(txindex))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid txindex field")
 		}
 	}
 	if conds.LogIndex != nil {
-		switch conds.GetLogIndex().GetOp() {
+		logindex, ok := conds.LogIndex.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid logindex")
+		}
+		switch conds.LogIndex.Op {
 		case cruder.EQ:
-			stm.Where(order.LogIndex(conds.GetLogIndex().GetValue()))
+			q.Where(entorder.LogIndex(logindex))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid logindex field")
 		}
 	}
 	if conds.Recipient != nil {
-		switch conds.GetRecipient().GetOp() {
+		recipient, ok := conds.Recipient.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid recipient")
+		}
+		switch conds.Recipient.Op {
 		case cruder.EQ:
-			stm.Where(order.Recipient(conds.GetRecipient().GetValue()))
+			q.Where(entorder.Recipient(recipient))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid recipient field")
 		}
 	}
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(order.Remark(conds.GetRemark().GetValue()))
+			q.Where(entorder.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid order field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*OrderDetail, int, error) {
-	var err error
-	infos := []*OrderDetail{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		rows, err := stm.
-			Offset(offset).
-			Order(ent.Desc(order.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-		for _, info := range rows {
-			targetItems, err := cli.OrderItem.Query().Where(
-				orderitem.OrderID(info.ID.String()),
-				orderitem.OrderItemType(v1.OrderItemType_OrderItemTarget.String())).
-				All(ctx)
-			if err != nil {
-				return err
-			}
-			offerItems, err := cli.OrderItem.Query().Where(
-				orderitem.OrderID(info.ID.String()),
-				orderitem.OrderItemType(v1.OrderItemType_OrderItemOffer.String())).
-				All(ctx)
-			if err != nil {
-				return err
-			}
-			infos = append(infos, &OrderDetail{
-				Order:       info,
-				TargetItems: targetItems,
-				OfferItems:  offerItems,
-			})
-		}
-		return nil
-	})
-
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return infos, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (*OrderDetail, error) {
-	var info *ent.Order
-	var targetItems []*ent.OrderItem
-	var offerItems []*ent.OrderItem
-	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-		targetItems, err = cli.OrderItem.Query().Where(
-			orderitem.OrderID(info.ID.String()),
-			orderitem.OrderItemType(v1.OrderItemType_OrderItemTarget.String())).
-			All(ctx)
-		if err != nil {
-			return err
-		}
-		offerItems, err = cli.OrderItem.Query().Where(
-			orderitem.OrderID(info.ID.String()),
-			orderitem.OrderItemType(v1.OrderItemType_OrderItemOffer.String())).
-			All(ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &OrderDetail{
-		Order:       info,
-		TargetItems: targetItems,
-		OfferItems:  offerItems,
-	}, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Order.Query().Where(order.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*OrderDetail, error) {
-	var entorder *ent.Order
-	var err error
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		_, err = tx.OrderItem.Update().
-			Where(
-				orderitem.OrderID(id.String())).
-			SetDeletedAt(uint32(time.Now().Unix())).Save(ctx)
-		if err != nil {
-			return err
-		}
-		entorder, err = tx.Order.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &OrderDetail{
-		Order: entorder,
-	}, nil
+	return q, nil
 }

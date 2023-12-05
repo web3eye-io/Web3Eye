@@ -12,7 +12,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/utils"
 	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/synctask"
 	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/synctask"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -46,7 +46,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 	}
 
 	if _info.SyncState == nil {
-		syncS := cttype.SyncState_Default
+		syncS := basetype.SyncState_Default
 		_info.SyncState = &syncS
 	}
 
@@ -107,7 +107,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}()
 
 	// check state
-	if info.SyncState != cttype.SyncState_Start.String() {
+	if info.SyncState != basetype.SyncState_Start.String() {
 		return &npool.TriggerSyncTaskResponse{
 			Info: converter.Ent2Grpc(info),
 		}, nil
@@ -115,7 +115,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 
 	// check sync state
 	if info.End != 0 && info.Current >= info.End {
-		info.SyncState = cttype.SyncState_Finish.String()
+		info.SyncState = basetype.SyncState_Finish.String()
 		info, err = crud.Update(ctx, converter.Ent2GrpcReq(info))
 		if err != nil {
 			logger.Sugar().Errorw("TriggerSyncTask", "error", err)

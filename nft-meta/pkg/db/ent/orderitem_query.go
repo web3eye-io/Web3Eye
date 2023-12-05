@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/orderitem"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -87,8 +86,8 @@ func (oiq *OrderItemQuery) FirstX(ctx context.Context) *OrderItem {
 
 // FirstID returns the first OrderItem ID from the query.
 // Returns a *NotFoundError when no OrderItem ID was found.
-func (oiq *OrderItemQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oiq *OrderItemQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = oiq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (oiq *OrderItemQuery) FirstID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (oiq *OrderItemQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (oiq *OrderItemQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := oiq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (oiq *OrderItemQuery) OnlyX(ctx context.Context) *OrderItem {
 // OnlyID is like Only, but returns the only OrderItem ID in the query.
 // Returns a *NotSingularError when more than one OrderItem ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (oiq *OrderItemQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oiq *OrderItemQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = oiq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (oiq *OrderItemQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (oiq *OrderItemQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (oiq *OrderItemQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := oiq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (oiq *OrderItemQuery) AllX(ctx context.Context) []*OrderItem {
 }
 
 // IDs executes the query and returns a list of OrderItem IDs.
-func (oiq *OrderItemQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (oiq *OrderItemQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := oiq.Select(orderitem.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (oiq *OrderItemQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (oiq *OrderItemQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (oiq *OrderItemQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := oiq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -257,12 +256,12 @@ func (oiq *OrderItemQuery) Clone() *OrderItemQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.OrderItem.Query().
-//		GroupBy(orderitem.FieldCreatedAt).
+//		GroupBy(orderitem.FieldEntID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (oiq *OrderItemQuery) GroupBy(field string, fields ...string) *OrderItemGroupBy {
@@ -285,11 +284,11 @@ func (oiq *OrderItemQuery) GroupBy(field string, fields ...string) *OrderItemGro
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //	}
 //
 //	client.OrderItem.Query().
-//		Select(orderitem.FieldCreatedAt).
+//		Select(orderitem.FieldEntID).
 //		Scan(ctx, &v)
 func (oiq *OrderItemQuery) Select(fields ...string) *OrderItemSelect {
 	oiq.fields = append(oiq.fields, fields...)
@@ -375,7 +374,7 @@ func (oiq *OrderItemQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   orderitem.Table,
 			Columns: orderitem.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderitem.FieldID,
 			},
 		},

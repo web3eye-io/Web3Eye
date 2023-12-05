@@ -12,7 +12,6 @@ import (
 	common_sol "github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 	"golang.org/x/net/context"
 )
@@ -68,7 +67,7 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.StringVal{
 			Op:    "eq",
-			Value: cttype.EndpointState_EndpointDefault.String(),
+			Value: basetype.EndpointState_EndpointDefault.String(),
 		},
 	}
 
@@ -85,18 +84,18 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 			handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
 			if !ok {
 				logger.Sugar().Warnf("have not handler for chain type: %v", info.ChainType)
-				info.State = cttype.EndpointState_EndpointError
+				info.State = basetype.EndpointState_EndpointError
 				return
 			}
 
 			chainID, err := handler(ctx, info.Address)
 			if err != nil {
-				info.State = cttype.EndpointState_EndpointError
+				info.State = basetype.EndpointState_EndpointError
 				return
 			}
 
 			info.ChainID = chainID
-			info.State = cttype.EndpointState_EndpointAvaliable
+			info.State = basetype.EndpointState_EndpointAvaliable
 		}()
 
 		updateInfos = append(updateInfos, &endpoint.EndpointReq{
@@ -127,7 +126,7 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.StringVal{
 			Op:    "eq",
-			Value: cttype.EndpointState_EndpointAvaliable.String(),
+			Value: basetype.EndpointState_EndpointAvaliable.String(),
 		},
 	}
 

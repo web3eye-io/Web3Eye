@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -61,6 +60,20 @@ func (stc *SyncTaskCreate) SetDeletedAt(u uint32) *SyncTaskCreate {
 func (stc *SyncTaskCreate) SetNillableDeletedAt(u *uint32) *SyncTaskCreate {
 	if u != nil {
 		stc.SetDeletedAt(*u)
+	}
+	return stc
+}
+
+// SetEntID sets the "ent_id" field.
+func (stc *SyncTaskCreate) SetEntID(u uuid.UUID) *SyncTaskCreate {
+	stc.mutation.SetEntID(u)
+	return stc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (stc *SyncTaskCreate) SetNillableEntID(u *uuid.UUID) *SyncTaskCreate {
+	if u != nil {
+		stc.SetEntID(*u)
 	}
 	return stc
 }
@@ -152,16 +165,8 @@ func (stc *SyncTaskCreate) SetNillableRemark(s *string) *SyncTaskCreate {
 }
 
 // SetID sets the "id" field.
-func (stc *SyncTaskCreate) SetID(u uuid.UUID) *SyncTaskCreate {
+func (stc *SyncTaskCreate) SetID(u uint32) *SyncTaskCreate {
 	stc.mutation.SetID(u)
-	return stc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (stc *SyncTaskCreate) SetNillableID(u *uuid.UUID) *SyncTaskCreate {
-	if u != nil {
-		stc.SetID(*u)
-	}
 	return stc
 }
 
@@ -265,6 +270,13 @@ func (stc *SyncTaskCreate) defaults() error {
 		v := synctask.DefaultDeletedAt()
 		stc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := stc.mutation.EntID(); !ok {
+		if synctask.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized synctask.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := synctask.DefaultEntID()
+		stc.mutation.SetEntID(v)
+	}
 	if _, ok := stc.mutation.ChainType(); !ok {
 		v := synctask.DefaultChainType
 		stc.mutation.SetChainType(v)
@@ -272,13 +284,6 @@ func (stc *SyncTaskCreate) defaults() error {
 	if _, ok := stc.mutation.SyncState(); !ok {
 		v := synctask.DefaultSyncState
 		stc.mutation.SetSyncState(v)
-	}
-	if _, ok := stc.mutation.ID(); !ok {
-		if synctask.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized synctask.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := synctask.DefaultID()
-		stc.mutation.SetID(v)
 	}
 	return nil
 }
@@ -293,6 +298,9 @@ func (stc *SyncTaskCreate) check() error {
 	}
 	if _, ok := stc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "SyncTask.deleted_at"`)}
+	}
+	if _, ok := stc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "SyncTask.ent_id"`)}
 	}
 	if _, ok := stc.mutation.ChainID(); !ok {
 		return &ValidationError{Name: "chain_id", err: errors.New(`ent: missing required field "SyncTask.chain_id"`)}
@@ -320,12 +328,9 @@ func (stc *SyncTaskCreate) sqlSave(ctx context.Context) (*SyncTask, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -336,7 +341,7 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: synctask.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: synctask.FieldID,
 			},
 		}
@@ -344,7 +349,7 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = stc.conflict
 	if id, ok := stc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := stc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -369,6 +374,14 @@ func (stc *SyncTaskCreate) createSpec() (*SyncTask, *sqlgraph.CreateSpec) {
 			Column: synctask.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := stc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: synctask.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := stc.mutation.ChainType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -545,6 +558,18 @@ func (u *SyncTaskUpsert) UpdateDeletedAt() *SyncTaskUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *SyncTaskUpsert) AddDeletedAt(v uint32) *SyncTaskUpsert {
 	u.Add(synctask.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *SyncTaskUpsert) SetEntID(v uuid.UUID) *SyncTaskUpsert {
+	u.Set(synctask.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SyncTaskUpsert) UpdateEntID() *SyncTaskUpsert {
+	u.SetExcluded(synctask.FieldEntID)
 	return u
 }
 
@@ -809,6 +834,20 @@ func (u *SyncTaskUpsertOne) UpdateDeletedAt() *SyncTaskUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *SyncTaskUpsertOne) SetEntID(v uuid.UUID) *SyncTaskUpsertOne {
+	return u.Update(func(s *SyncTaskUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SyncTaskUpsertOne) UpdateEntID() *SyncTaskUpsertOne {
+	return u.Update(func(s *SyncTaskUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetChainType sets the "chain_type" field.
 func (u *SyncTaskUpsertOne) SetChainType(v string) *SyncTaskUpsertOne {
 	return u.Update(func(s *SyncTaskUpsert) {
@@ -1000,12 +1039,7 @@ func (u *SyncTaskUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SyncTaskUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: SyncTaskUpsertOne.ID is not supported by MySQL driver. Use SyncTaskUpsertOne.Exec instead")
-	}
+func (u *SyncTaskUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1014,7 +1048,7 @@ func (u *SyncTaskUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SyncTaskUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *SyncTaskUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1065,6 +1099,10 @@ func (stcb *SyncTaskCreateBulk) Save(ctx context.Context) ([]*SyncTask, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1256,6 +1294,20 @@ func (u *SyncTaskUpsertBulk) AddDeletedAt(v uint32) *SyncTaskUpsertBulk {
 func (u *SyncTaskUpsertBulk) UpdateDeletedAt() *SyncTaskUpsertBulk {
 	return u.Update(func(s *SyncTaskUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *SyncTaskUpsertBulk) SetEntID(v uuid.UUID) *SyncTaskUpsertBulk {
+	return u.Update(func(s *SyncTaskUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SyncTaskUpsertBulk) UpdateEntID() *SyncTaskUpsertBulk {
+	return u.Update(func(s *SyncTaskUpsert) {
+		s.UpdateEntID()
 	})
 }
 

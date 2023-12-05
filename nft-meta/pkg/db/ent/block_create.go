@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -65,6 +64,20 @@ func (bc *BlockCreate) SetNillableDeletedAt(u *uint32) *BlockCreate {
 	return bc
 }
 
+// SetEntID sets the "ent_id" field.
+func (bc *BlockCreate) SetEntID(u uuid.UUID) *BlockCreate {
+	bc.mutation.SetEntID(u)
+	return bc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (bc *BlockCreate) SetNillableEntID(u *uuid.UUID) *BlockCreate {
+	if u != nil {
+		bc.SetEntID(*u)
+	}
+	return bc
+}
+
 // SetChainType sets the "chain_type" field.
 func (bc *BlockCreate) SetChainType(s string) *BlockCreate {
 	bc.mutation.SetChainType(s)
@@ -108,16 +121,8 @@ func (bc *BlockCreate) SetRemark(s string) *BlockCreate {
 }
 
 // SetID sets the "id" field.
-func (bc *BlockCreate) SetID(u uuid.UUID) *BlockCreate {
+func (bc *BlockCreate) SetID(u uint32) *BlockCreate {
 	bc.mutation.SetID(u)
-	return bc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (bc *BlockCreate) SetNillableID(u *uuid.UUID) *BlockCreate {
-	if u != nil {
-		bc.SetID(*u)
-	}
 	return bc
 }
 
@@ -221,12 +226,12 @@ func (bc *BlockCreate) defaults() error {
 		v := block.DefaultDeletedAt()
 		bc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := bc.mutation.ID(); !ok {
-		if block.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized block.DefaultID (forgotten import ent/runtime?)")
+	if _, ok := bc.mutation.EntID(); !ok {
+		if block.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized block.DefaultEntID (forgotten import ent/runtime?)")
 		}
-		v := block.DefaultID()
-		bc.mutation.SetID(v)
+		v := block.DefaultEntID()
+		bc.mutation.SetEntID(v)
 	}
 	return nil
 }
@@ -241,6 +246,9 @@ func (bc *BlockCreate) check() error {
 	}
 	if _, ok := bc.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Block.deleted_at"`)}
+	}
+	if _, ok := bc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Block.ent_id"`)}
 	}
 	if _, ok := bc.mutation.ChainType(); !ok {
 		return &ValidationError{Name: "chain_type", err: errors.New(`ent: missing required field "Block.chain_type"`)}
@@ -274,12 +282,9 @@ func (bc *BlockCreate) sqlSave(ctx context.Context) (*Block, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -290,7 +295,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: block.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		}
@@ -298,7 +303,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = bc.conflict
 	if id, ok := bc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := bc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -323,6 +328,14 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldDeletedAt,
 		})
 		_node.DeletedAt = value
+	}
+	if value, ok := bc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: block.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := bc.mutation.ChainType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -483,6 +496,18 @@ func (u *BlockUpsert) UpdateDeletedAt() *BlockUpsert {
 // AddDeletedAt adds v to the "deleted_at" field.
 func (u *BlockUpsert) AddDeletedAt(v uint32) *BlockUpsert {
 	u.Add(block.FieldDeletedAt, v)
+	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *BlockUpsert) SetEntID(v uuid.UUID) *BlockUpsert {
+	u.Set(block.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *BlockUpsert) UpdateEntID() *BlockUpsert {
+	u.SetExcluded(block.FieldEntID)
 	return u
 }
 
@@ -693,6 +718,20 @@ func (u *BlockUpsertOne) UpdateDeletedAt() *BlockUpsertOne {
 	})
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *BlockUpsertOne) SetEntID(v uuid.UUID) *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *BlockUpsertOne) UpdateEntID() *BlockUpsertOne {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetChainType sets the "chain_type" field.
 func (u *BlockUpsertOne) SetChainType(v string) *BlockUpsertOne {
 	return u.Update(func(s *BlockUpsert) {
@@ -821,12 +860,7 @@ func (u *BlockUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BlockUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: BlockUpsertOne.ID is not supported by MySQL driver. Use BlockUpsertOne.Exec instead")
-	}
+func (u *BlockUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -835,7 +869,7 @@ func (u *BlockUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BlockUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *BlockUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -886,6 +920,10 @@ func (bcb *BlockCreateBulk) Save(ctx context.Context) ([]*Block, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1077,6 +1115,20 @@ func (u *BlockUpsertBulk) AddDeletedAt(v uint32) *BlockUpsertBulk {
 func (u *BlockUpsertBulk) UpdateDeletedAt() *BlockUpsertBulk {
 	return u.Update(func(s *BlockUpsert) {
 		s.UpdateDeletedAt()
+	})
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *BlockUpsertBulk) SetEntID(v uuid.UUID) *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *BlockUpsertBulk) UpdateEntID() *BlockUpsertBulk {
+	return u.Update(func(s *BlockUpsert) {
+		s.UpdateEntID()
 	})
 }
 

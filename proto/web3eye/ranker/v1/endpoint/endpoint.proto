@@ -5,7 +5,6 @@ package ranker.v1.endpoint;
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/endpoint";
 import "web3eye/nftmeta/v1/endpoint/endpoint.proto";
 import "web3eye/basetype/v1/chain.proto";
-import "web3eye/nftmeta/v1/cttype/cttype.proto";
 
 service Manager {
   rpc CreateEndpoint(CreateEndpointRequest) returns (CreateEndpointResponse) {}
@@ -27,7 +26,7 @@ message CreateEndpointResponse { nftmeta.v1.endpoint.Endpoint Info = 10; }
 message UpdateEndpointRequest {
   string ID = 10;
   optional string Address = 20;
-  optional cttype.EndpointState State = 30;
+  optional chain.EndpointState State = 30;
   optional string Remark = 40;
 }
 message UpdateEndpointResponse { nftmeta.v1.endpoint.Endpoint Info = 10; }
@@ -42,7 +41,7 @@ message GetEndpointsRequest {
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Address = 40;
-  optional cttype.EndpointState State = 50;
+  optional chain.EndpointState State = 50;
   optional string Remark = 60;
   int32 Offset = 70;
   int32 Limit = 80;

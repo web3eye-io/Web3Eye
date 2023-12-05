@@ -12,6 +12,8 @@ const (
 	Label = "transfer"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldEntID holds the string denoting the ent_id field in the database.
+	FieldEntID = "ent_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -51,6 +53,7 @@ const (
 // Columns holds all SQL columns for transfer fields.
 var Columns = []string{
 	FieldID,
+	FieldEntID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
@@ -87,6 +90,8 @@ func ValidColumn(column string) bool {
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
+	// DefaultEntID holds the default value on creation for the "ent_id" field.
+	DefaultEntID func() uuid.UUID
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() uint32
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -101,6 +106,4 @@ var (
 	FromValidator func(string) error
 	// ToValidator is a validator for the "to" field. It is called by the builders before save.
 	ToValidator func(string) error
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() uuid.UUID
 )

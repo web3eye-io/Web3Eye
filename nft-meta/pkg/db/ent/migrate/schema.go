@@ -10,10 +10,11 @@ import (
 var (
 	// BlocksColumns holds the columns for the "blocks" table.
 	BlocksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "chain_type", Type: field.TypeString},
 		{Name: "chain_id", Type: field.TypeString},
 		{Name: "block_number", Type: field.TypeUint64},
@@ -29,18 +30,24 @@ var (
 		PrimaryKey: []*schema.Column{BlocksColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "block_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[4]},
+			},
+			{
 				Name:    "block_chain_type_chain_id_block_number",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[5], BlocksColumns[6]},
+				Columns: []*schema.Column{BlocksColumns[5], BlocksColumns[6], BlocksColumns[7]},
 			},
 		},
 	}
 	// ContractsColumns holds the columns for the "contracts" table.
 	ContractsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "chain_type", Type: field.TypeString},
 		{Name: "chain_id", Type: field.TypeString},
 		{Name: "address", Type: field.TypeString},
@@ -64,15 +71,21 @@ var (
 		PrimaryKey: []*schema.Column{ContractsColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "contract_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{ContractsColumns[4]},
+			},
+			{
 				Name:    "contract_chain_type_chain_id_address",
 				Unique:  true,
-				Columns: []*schema.Column{ContractsColumns[4], ContractsColumns[5], ContractsColumns[6]},
+				Columns: []*schema.Column{ContractsColumns[5], ContractsColumns[6], ContractsColumns[7]},
 			},
 		},
 	}
 	// EndpointsColumns holds the columns for the "endpoints" table.
 	EndpointsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
@@ -87,10 +100,18 @@ var (
 		Name:       "endpoints",
 		Columns:    EndpointsColumns,
 		PrimaryKey: []*schema.Column{EndpointsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "endpoint_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{EndpointsColumns[1]},
+			},
+		},
 	}
 	// OrdersColumns holds the columns for the "orders" table.
 	OrdersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
@@ -110,19 +131,25 @@ var (
 		PrimaryKey: []*schema.Column{OrdersColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "order_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrdersColumns[1]},
+			},
+			{
 				Name:    "order_tx_hash_recipient_log_index",
 				Unique:  true,
-				Columns: []*schema.Column{OrdersColumns[6], OrdersColumns[10], OrdersColumns[9]},
+				Columns: []*schema.Column{OrdersColumns[7], OrdersColumns[11], OrdersColumns[10]},
 			},
 		},
 	}
 	// OrderItemsColumns holds the columns for the "order_items" table.
 	OrderItemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "order_id", Type: field.TypeString},
+		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "order_item_type", Type: field.TypeString},
 		{Name: "contract", Type: field.TypeString},
 		{Name: "token_type", Type: field.TypeString},
@@ -137,15 +164,21 @@ var (
 		PrimaryKey: []*schema.Column{OrderItemsColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "orderitem_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrderItemsColumns[1]},
+			},
+			{
 				Name:    "orderitem_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{OrderItemsColumns[4]},
+				Columns: []*schema.Column{OrderItemsColumns[5]},
 			},
 		},
 	}
 	// SnapshotsColumns holds the columns for the "snapshots" table.
 	SnapshotsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
@@ -162,18 +195,24 @@ var (
 		PrimaryKey: []*schema.Column{SnapshotsColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "snapshot_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{SnapshotsColumns[1]},
+			},
+			{
 				Name:    "snapshot_index_backup_state",
 				Unique:  true,
-				Columns: []*schema.Column{SnapshotsColumns[4], SnapshotsColumns[8]},
+				Columns: []*schema.Column{SnapshotsColumns[5], SnapshotsColumns[9]},
 			},
 		},
 	}
 	// SyncTasksColumns holds the columns for the "sync_tasks" table.
 	SyncTasksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "chain_type", Type: field.TypeString, Nullable: true, Default: "ChainUnkonwn"},
 		{Name: "chain_id", Type: field.TypeString},
 		{Name: "start", Type: field.TypeUint64},
@@ -191,15 +230,21 @@ var (
 		PrimaryKey: []*schema.Column{SyncTasksColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "synctask_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{SyncTasksColumns[4]},
+			},
+			{
 				Name:    "synctask_topic",
 				Unique:  false,
-				Columns: []*schema.Column{SyncTasksColumns[9]},
+				Columns: []*schema.Column{SyncTasksColumns[10]},
 			},
 		},
 	}
 	// TokensColumns holds the columns for the "tokens" table.
 	TokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
@@ -228,15 +273,21 @@ var (
 		PrimaryKey: []*schema.Column{TokensColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "token_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{TokensColumns[1]},
+			},
+			{
 				Name:    "token_contract_token_id",
 				Unique:  true,
-				Columns: []*schema.Column{TokensColumns[6], TokensColumns[8]},
+				Columns: []*schema.Column{TokensColumns[7], TokensColumns[9]},
 			},
 		},
 	}
 	// TransfersColumns holds the columns for the "transfers" table.
 	TransfersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "ent_id", Type: field.TypeUUID, Unique: true},
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
@@ -261,9 +312,14 @@ var (
 		PrimaryKey: []*schema.Column{TransfersColumns[0]},
 		Indexes: []*schema.Index{
 			{
+				Name:    "transfer_ent_id",
+				Unique:  true,
+				Columns: []*schema.Column{TransfersColumns[1]},
+			},
+			{
 				Name:    "transfer_contract_token_id_tx_hash_from",
 				Unique:  true,
-				Columns: []*schema.Column{TransfersColumns[6], TransfersColumns[8], TransfersColumns[13], TransfersColumns[9]},
+				Columns: []*schema.Column{TransfersColumns[7], TransfersColumns[9], TransfersColumns[14], TransfersColumns[10]},
 			},
 		},
 	}
