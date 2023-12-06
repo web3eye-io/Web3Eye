@@ -78,6 +78,7 @@ func UpdateSet(u *ent.BlockUpdateOne, req *Req) (*ent.BlockUpdateOne, error) {
 
 type Conds struct {
 	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
 	ChainType   *cruder.Cond
 	ChainID     *cruder.Cond
 	BlockNumber *cruder.Cond
@@ -96,6 +97,18 @@ func SetQueryConds(q *ent.BlockQuery, conds *Conds) (*ent.BlockQuery, error) { /
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entblock.EntID(entid))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entblock.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
 		}

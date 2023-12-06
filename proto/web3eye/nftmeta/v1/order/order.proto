@@ -64,7 +64,7 @@ message Order {
 message Conds {
   web3eye.Uint32Val ID = 10;
   web3eye.StringVal EntID = 11;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal TxHash = 40;
   web3eye.Uint64Val BlockNumber = 50;
@@ -81,7 +81,7 @@ message CreateOrderResponse { Order Info = 10; }
 message CreateOrdersRequest { repeated OrderReq Infos = 10; }
 message CreateOrdersResponse { repeated Order Infos = 10; }
 
-message GetOrderRequest { string ID = 10; }
+message GetOrderRequest { uint32 ID = 10; }
 message GetOrderResponse { Order Info = 10; }
 
 message GetOrdersRequest {
@@ -101,7 +101,7 @@ message GetOrderOnlyResponse { Order Info = 10; }
 message UpdateOrderRequest { OrderReq Info = 10; }
 message UpdateOrderResponse { Order Info = 10; }
 
-message ExistOrderRequest { string ID = 10; }
+message ExistOrderRequest { uint32 ID = 10; }
 message ExistOrderResponse { bool Exist = 10; }
 
 message ExistOrderCondsRequest { Conds Conds = 10; }
@@ -110,5 +110,5 @@ message ExistOrderCondsResponse { bool Exist = 10; }
 message CountOrdersRequest { Conds Conds = 10; }
 message CountOrdersResponse { uint32 Info = 10; }
 
-message DeleteOrderRequest { string ID = 10; }
+message DeleteOrderRequest { uint32 ID = 10; }
 message DeleteOrderResponse { Order Info = 10; }

@@ -63,6 +63,7 @@ func UpdateSet(u *ent.SnapshotUpdateOne, req *Req) (*ent.SnapshotUpdateOne, erro
 
 type Conds struct {
 	EntID         *cruder.Cond
+	EntIDs        *cruder.Cond
 	Index         *cruder.Cond
 	SnapshotCommP *cruder.Cond
 	SnapshotRoot  *cruder.Cond
@@ -79,6 +80,18 @@ func SetQueryConds(q *ent.SnapshotQuery, conds *Conds) (*ent.SnapshotQuery, erro
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entsnapshot.EntID(entid))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entsnapshot.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
 		}

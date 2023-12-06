@@ -92,6 +92,7 @@ func UpdateSet(u *ent.SyncTaskUpdateOne, req *Req) (*ent.SyncTaskUpdateOne, erro
 
 type Conds struct {
 	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
 	ChainType   *cruder.Cond
 	ChainID     *cruder.Cond
 	Start       *cruder.Cond
@@ -112,6 +113,18 @@ func SetQueryConds(q *ent.SyncTaskQuery, conds *Conds) (*ent.SyncTaskQuery, erro
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(entsynctask.EntID(entid))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(entsynctask.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
 		}

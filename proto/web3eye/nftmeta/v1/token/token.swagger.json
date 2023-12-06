@@ -143,7 +143,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -152,7 +152,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "TokenID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -179,7 +179,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "VectorState": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "VectorID": {
           "$ref": "#/definitions/web3eyeInt64Val"
@@ -445,7 +445,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "Vector": {
           "type": "array",

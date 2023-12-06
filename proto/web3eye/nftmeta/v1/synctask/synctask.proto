@@ -98,14 +98,14 @@ message SyncTask {
 message Conds {
   web3eye.Uint32Val ID = 10;
   web3eye.StringVal EntID = 11;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.Uint64Val Start = 40;
   web3eye.Uint64Val End = 50;
   web3eye.Uint64Val Current = 60;
   web3eye.StringVal Topic = 70;
   web3eye.StringVal Description = 80;
-  web3eye.StringVal SyncState = 90;
+  web3eye.Uint32Val SyncState = 90;
   web3eye.StringVal Remark = 100;
   web3eye.StringSliceVal IDs = 110;
 }
@@ -122,7 +122,7 @@ message TriggerSyncTaskResponse {
   SyncTask Info = 10;
 }
 
-message GetSyncTaskRequest { string ID = 10; }
+message GetSyncTaskRequest { uint32 ID = 10; }
 message GetSyncTaskResponse { SyncTask Info = 10; }
 
 message GetSyncTasksRequest {
@@ -142,7 +142,7 @@ message GetSyncTaskOnlyResponse { SyncTask Info = 10; }
 message UpdateSyncTaskRequest { SyncTaskReq Info = 10; }
 message UpdateSyncTaskResponse { SyncTask Info = 10; }
 
-message ExistSyncTaskRequest { string ID = 10; }
+message ExistSyncTaskRequest { uint32 ID = 10; }
 message ExistSyncTaskResponse { bool Exist = 10; }
 
 message ExistSyncTaskCondsRequest { Conds Conds = 10; }
@@ -151,5 +151,5 @@ message ExistSyncTaskCondsResponse { bool Exist = 10; }
 message CountSyncTasksRequest { Conds Conds = 10; }
 message CountSyncTasksResponse { uint32 Info = 10; }
 
-message DeleteSyncTaskRequest { string ID = 10; }
+message DeleteSyncTaskRequest { uint32 ID = 10; }
 message DeleteSyncTaskResponse { SyncTask Info = 10; }

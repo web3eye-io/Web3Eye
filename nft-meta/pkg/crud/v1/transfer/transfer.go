@@ -126,6 +126,7 @@ func UpdateSet(u *ent.TransferUpdateOne, req *Req) (*ent.TransferUpdateOne, erro
 
 type Conds struct {
 	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
 	ChainType   *cruder.Cond
 	ChainID     *cruder.Cond
 	Contract    *cruder.Cond
@@ -150,6 +151,18 @@ func SetQueryConds(q *ent.TransferQuery, conds *Conds) (*ent.TransferQuery, erro
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(enttransfer.EntID(entid))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(enttransfer.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
 		}

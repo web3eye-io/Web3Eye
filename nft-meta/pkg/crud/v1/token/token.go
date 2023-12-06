@@ -149,6 +149,7 @@ func UpdateSet(u *ent.TokenUpdateOne, req *Req) (*ent.TokenUpdateOne, error) {
 
 type Conds struct {
 	EntID           *cruder.Cond
+	EntIDs          *cruder.Cond
 	ChainType       *cruder.Cond
 	ChainID         *cruder.Cond
 	Contract        *cruder.Cond
@@ -177,6 +178,18 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 		switch conds.EntID.Op {
 		case cruder.EQ:
 			q.Where(enttoken.EntID(entid))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
+		case cruder.EQ:
+			q.Where(enttoken.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
 		}

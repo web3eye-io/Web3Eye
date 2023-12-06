@@ -4,33 +4,30 @@ import (
 	"context"
 	"fmt"
 
-	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
-	npool "github.com/NpoolPlatform/message/npool/chain/mw/v1/tx"
 	constant "github.com/web3eye-io/Web3Eye/nft-meta/pkg/const"
-	txcrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/tx"
+	blockcrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/block"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	blockproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	"github.com/google/uuid"
-	"github.com/shopspring/decimal"
 )
 
 type Handler struct {
-	ID            *uint32
-	EntID         *uuid.UUID
-	CoinTypeID    *uuid.UUID
-	FromAccountID *uuid.UUID
-	ToAccountID   *uuid.UUID
-	Amount        *decimal.Decimal
-	FeeAmount     *decimal.Decimal
-	ChainTxID     *string
-	State         *basetypes.TxState
-	Extra         *string
-	Type          *basetypes.TxType
-	Reqs          []*txcrud.Req
-	Conds         *txcrud.Conds
-	Offset        int32
-	Limit         int32
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	BlockNumber *uint64
+	BlockHash   *string
+	BlockTime   *int64
+	ParseState  *basetype.BlockParseState
+	Remark      *string
+	Reqs        []*blockcrud.Req
+	Conds       *blockcrud.Conds
+	Offset      int32
+	Limit       int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -72,173 +69,100 @@ func WithEntID(id *string, must bool) func(context.Context, *Handler) error {
 		return nil
 	}
 }
-
-func WithCoinTypeID(id *string, must bool) func(context.Context, *Handler) error {
+func WithChainType(u *basetype.ChainType, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid cointypeid")
+				return fmt.Errorf("invalid chaintype")
 			}
 			return nil
 		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.CoinTypeID = &_id
+		h.ChainType = u
 		return nil
 	}
 }
-
-func WithFromAccountID(id *string, must bool) func(context.Context, *Handler) error {
+func WithChainID(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid fromaccountid")
+				return fmt.Errorf("invalid chainid")
 			}
 			return nil
 		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.FromAccountID = &_id
+		h.ChainID = u
 		return nil
 	}
 }
-
-func WithToAccountID(id *string, must bool) func(context.Context, *Handler) error {
+func WithBlockNumber(u *uint64, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if id == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid toaccountid")
+				return fmt.Errorf("invalid blocknumber")
 			}
 			return nil
 		}
-		_id, err := uuid.Parse(*id)
-		if err != nil {
-			return err
-		}
-		h.ToAccountID = &_id
+		h.BlockNumber = u
 		return nil
 	}
 }
-
-func WithAmount(amount *string, must bool) func(context.Context, *Handler) error {
+func WithBlockHash(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if amount == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid amount")
+				return fmt.Errorf("invalid blockhash")
 			}
 			return nil
 		}
-		_amount, err := decimal.NewFromString(*amount)
-		if err != nil {
-			return err
-		}
-		h.Amount = &_amount
+		h.BlockHash = u
 		return nil
 	}
 }
-
-func WithFeeAmount(amount *string, must bool) func(context.Context, *Handler) error {
+func WithBlockTime(u *int64, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if amount == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid feeamount")
+				return fmt.Errorf("invalid blocktime")
 			}
 			return nil
 		}
-		_amount, err := decimal.NewFromString(*amount)
-		if err != nil {
-			return err
-		}
-		h.FeeAmount = &_amount
+		h.BlockTime = u
 		return nil
 	}
 }
-
-func WithChainTxID(txID *string, must bool) func(context.Context, *Handler) error {
+func WithParseState(u *basetype.BlockParseState, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if txID == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid chaintxid")
+				return fmt.Errorf("invalid parsestate")
 			}
 			return nil
 		}
-		if *txID == "" {
-			return fmt.Errorf("invalid txid")
+		if _, ok := basetype.BlockParseState_name[int32(*u)]; !ok {
+			return fmt.Errorf("invalid parsestate field")
 		}
-		h.ChainTxID = txID
+		h.ParseState = u
 		return nil
 	}
 }
-
-//nolint:dupl
-func WithState(state *basetypes.TxState, must bool) func(context.Context, *Handler) error {
+func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		if state == nil {
+		if u == nil {
 			if must {
-				return fmt.Errorf("invalid state")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
-		switch *state {
-		case basetypes.TxState_TxStateCreated:
-		case basetypes.TxState_TxStateCreatedCheck:
-		case basetypes.TxState_TxStateWait:
-		case basetypes.TxState_TxStateWaitCheck:
-		case basetypes.TxState_TxStateTransferring:
-		case basetypes.TxState_TxStateSuccessful:
-		case basetypes.TxState_TxStateFail:
-		default:
-			return fmt.Errorf("invalid txstate")
-		}
-		h.State = state
-		return nil
-	}
-}
-
-func WithExtra(extra *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		h.Extra = extra
-		return nil
-	}
-}
-
-//nolint:dupl
-func WithType(_type *basetypes.TxType, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if _type == nil {
-			if must {
-				return fmt.Errorf("invalid type")
-			}
-			return nil
-		}
-		switch *_type {
-		case basetypes.TxType_TxWithdraw:
-		case basetypes.TxType_TxFeedGas:
-		case basetypes.TxType_TxPaymentCollect:
-		case basetypes.TxType_TxBenefit:
-		case basetypes.TxType_TxLimitation:
-		case basetypes.TxType_TxPlatformBenefit:
-		case basetypes.TxType_TxUserBenefit:
-		default:
-			return fmt.Errorf("invalid txtype")
-		}
-		h.Type = _type
+		h.Remark = u
 		return nil
 	}
 }
 
 // nolint:gocyclo
-func WithReqs(reqs []*npool.TxReq, must bool) func(context.Context, *Handler) error {
+func WithReqs(reqs []*blockproto.BlockReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		_reqs := []*txcrud.Req{}
+		_reqs := []*blockcrud.Req{}
 		for _, req := range reqs {
-			_req := &txcrud.Req{
-				Extra: req.Extra,
-			}
+			_req := &blockcrud.Req{}
 			if req.EntID != nil {
 				id, err := uuid.Parse(req.GetEntID())
 				if err != nil {
@@ -246,66 +170,32 @@ func WithReqs(reqs []*npool.TxReq, must bool) func(context.Context, *Handler) er
 				}
 				_req.EntID = &id
 			}
-			if req.CoinTypeID != nil {
-				id, err := uuid.Parse(req.GetCoinTypeID())
-				if err != nil {
-					return err
+			if req.ChainType != nil {
+				if _, ok := basetype.ChainType_name[int32(*req.ChainType)]; !ok {
+					return fmt.Errorf("invalid parsestate field")
 				}
-				_req.CoinTypeID = &id
+				_req.ChainType = req.ChainType
 			}
-			if req.FromAccountID != nil {
-				id, err := uuid.Parse(req.GetFromAccountID())
-				if err != nil {
-					return err
-				}
-				_req.FromAccountID = &id
+			if req.ChainID != nil {
+				_req.ChainID = req.ChainID
 			}
-			if req.ToAccountID != nil {
-				id, err := uuid.Parse(req.GetToAccountID())
-				if err != nil {
-					return err
-				}
-				_req.ToAccountID = &id
+			if req.BlockNumber != nil {
+				_req.BlockNumber = req.BlockNumber
 			}
-			if req.Amount != nil {
-				amount, err := decimal.NewFromString(req.GetAmount())
-				if err != nil {
-					return err
-				}
-				_req.Amount = &amount
+			if req.BlockHash != nil {
+				_req.BlockHash = req.BlockHash
 			}
-			if req.FeeAmount != nil {
-				amount, err := decimal.NewFromString(req.GetFeeAmount())
-				if err != nil {
-					return err
-				}
-				_req.FeeAmount = &amount
+			if req.BlockTime != nil {
+				_req.BlockTime = req.BlockTime
 			}
-			if req.State != nil {
-				switch req.GetState() {
-				case basetypes.TxState_TxStateCreated:
-				case basetypes.TxState_TxStateWait:
-				case basetypes.TxState_TxStateTransferring:
-				case basetypes.TxState_TxStateSuccessful:
-				case basetypes.TxState_TxStateFail:
-				default:
-					return fmt.Errorf("invalid txstate")
+			if req.ParseState != nil {
+				if _, ok := basetype.BlockParseState_name[int32(*req.ParseState)]; !ok {
+					return fmt.Errorf("invalid parsestate field")
 				}
-				_req.State = req.State
+				_req.ParseState = req.ParseState
 			}
-			if req.Type != nil {
-				switch req.GetType() {
-				case basetypes.TxType_TxWithdraw:
-				case basetypes.TxType_TxFeedGas:
-				case basetypes.TxType_TxPaymentCollect:
-				case basetypes.TxType_TxBenefit:
-				case basetypes.TxType_TxLimitation:
-				case basetypes.TxType_TxPlatformBenefit:
-				case basetypes.TxType_TxUserBenefit:
-				default:
-					return fmt.Errorf("invalid txtype")
-				}
-				_req.Type = req.Type
+			if req.Remark != nil {
+				_req.Remark = req.Remark
 			}
 			_reqs = append(_reqs, _req)
 		}
@@ -315,9 +205,9 @@ func WithReqs(reqs []*npool.TxReq, must bool) func(context.Context, *Handler) er
 }
 
 //nolint:gocyclo
-func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
+func WithConds(conds *blockproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &txcrud.Conds{}
+		h.Conds = &blockcrud.Conds{}
 		if conds == nil {
 			return nil
 		}
@@ -345,60 +235,46 @@ func WithConds(conds *npool.Conds) func(context.Context, *Handler) error {
 				Val: ids,
 			}
 		}
-		if conds.CoinTypeID != nil {
-			id, err := uuid.Parse(conds.GetCoinTypeID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.CoinTypeID = &cruder.Cond{
-				Op:  conds.GetCoinTypeID().GetOp(),
-				Val: id,
+		if conds.ChainType != nil {
+			h.Conds.ChainType = &cruder.Cond{
+				Op:  conds.GetChainType().GetOp(),
+				Val: basetype.ChainType(conds.GetChainType().GetValue()),
 			}
 		}
-		if conds.AccountID != nil {
-			id, err := uuid.Parse(conds.GetAccountID().GetValue())
-			if err != nil {
-				return err
-			}
-			h.Conds.AccountID = &cruder.Cond{
-				Op:  conds.GetAccountID().GetOp(),
-				Val: id,
+		if conds.ChainID != nil {
+			h.Conds.ChainID = &cruder.Cond{
+				Op:  conds.GetChainID().GetOp(),
+				Val: conds.GetChainID().GetValue(),
 			}
 		}
-		if conds.AccountIDs != nil {
-			ids := []uuid.UUID{}
-			for _, id := range conds.GetAccountIDs().GetValue() {
-				_id, err := uuid.Parse(id)
-				if err != nil {
-					return err
-				}
-				ids = append(ids, _id)
-			}
-			h.Conds.AccountIDs = &cruder.Cond{
-				Op:  conds.GetAccountIDs().GetOp(),
-				Val: ids,
+		if conds.BlockNumber != nil {
+			h.Conds.BlockNumber = &cruder.Cond{
+				Op:  conds.GetBlockNumber().GetOp(),
+				Val: conds.GetBlockNumber().GetValue(),
 			}
 		}
-		if conds.State != nil {
-			h.Conds.State = &cruder.Cond{
-				Op:  conds.GetState().GetOp(),
-				Val: basetypes.TxState(conds.GetState().GetValue()),
+		if conds.BlockHash != nil {
+			h.Conds.BlockHash = &cruder.Cond{
+				Op:  conds.GetBlockHash().GetOp(),
+				Val: conds.GetBlockHash().GetValue(),
 			}
 		}
-		if conds.Type != nil {
-			h.Conds.Type = &cruder.Cond{
-				Op:  conds.GetType().GetOp(),
-				Val: basetypes.TxType(conds.GetType().GetValue()),
+		if conds.BlockTime != nil {
+			h.Conds.BlockTime = &cruder.Cond{
+				Op:  conds.GetBlockTime().GetOp(),
+				Val: conds.GetBlockTime().GetValue(),
 			}
 		}
-		if conds.States != nil {
-			states := []basetypes.TxState{}
-			for _, state := range conds.GetStates().GetValue() {
-				states = append(states, basetypes.TxState(state))
+		if conds.ParseState != nil {
+			h.Conds.ParseState = &cruder.Cond{
+				Op:  conds.GetParseState().GetOp(),
+				Val: basetype.BlockParseState(conds.GetParseState().GetValue()),
 			}
-			h.Conds.States = &cruder.Cond{
-				Op:  conds.GetStates().GetOp(),
-				Val: states,
+		}
+		if conds.Remark != nil {
+			h.Conds.Remark = &cruder.Cond{
+				Op:  conds.GetRemark().GetOp(),
+				Val: conds.GetRemark().GetValue(),
 			}
 		}
 		return nil

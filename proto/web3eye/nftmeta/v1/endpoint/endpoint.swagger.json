@@ -46,7 +46,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -55,7 +55,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "State": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"

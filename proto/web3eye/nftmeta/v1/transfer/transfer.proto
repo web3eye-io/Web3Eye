@@ -64,10 +64,10 @@ message Transfer {
 message Conds {
   web3eye.Uint32Val ID = 10;
   web3eye.StringVal EntID = 11;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Contract = 40;
-  web3eye.StringVal TokenType = 50;
+  web3eye.Uint32Val TokenType = 50;
   web3eye.StringVal TokenID = 60;
   web3eye.StringVal From = 70;
   web3eye.StringVal To = 80;
@@ -92,7 +92,7 @@ message CreateTransfersResponse { repeated Transfer Infos = 10; }
 message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
 message UpsertTransfersResponse { }
 
-message GetTransferRequest { string ID = 10; }
+message GetTransferRequest { uint32 ID = 10; }
 message GetTransferResponse { Transfer Info = 10; }
 
 message GetTransfersRequest {
@@ -112,7 +112,7 @@ message GetTransferOnlyResponse { Transfer Info = 10; }
 message UpdateTransferRequest { TransferReq Info = 10; }
 message UpdateTransferResponse { Transfer Info = 10; }
 
-message ExistTransferRequest { string ID = 10; }
+message ExistTransferRequest { uint32 ID = 10; }
 message ExistTransferResponse { bool Exist = 10; }
 
 message ExistTransferCondsRequest { Conds Conds = 10; }
@@ -121,5 +121,5 @@ message ExistTransferCondsResponse { bool Exist = 10; }
 message CountTransfersRequest { Conds Conds = 10; }
 message CountTransfersResponse { uint32 Info = 10; }
 
-message DeleteTransferRequest { string ID = 10; }
+message DeleteTransferRequest { uint32 ID = 10; }
 message DeleteTransferResponse { Transfer Info = 10; }

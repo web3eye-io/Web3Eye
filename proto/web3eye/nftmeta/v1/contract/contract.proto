@@ -66,7 +66,7 @@ message Contract {
 message Conds {
   optional web3eye.Uint32Val ID = 10;
   optional web3eye.StringVal EntID = 11;
-  optional web3eye.StringVal ChainType = 20;
+  optional web3eye.Uint32Val ChainType = 20;
   optional web3eye.StringVal ChainID = 30;
   optional web3eye.StringVal Address = 40;
   optional web3eye.StringVal Name = 50;
@@ -93,7 +93,7 @@ message UpsertContractResponse { Contract Info = 10; }
 message CreateContractsRequest { repeated ContractReq Infos = 10; }
 message CreateContractsResponse { repeated Contract Infos = 10; }
 
-message GetContractRequest { string ID = 10; }
+message GetContractRequest { uint32 ID = 10; }
 message GetContractResponse { Contract Info = 10; }
 
 message GetContractsRequest {
@@ -113,7 +113,7 @@ message GetContractOnlyResponse { Contract Info = 10; }
 message UpdateContractRequest { ContractReq Info = 10; }
 message UpdateContractResponse { Contract Info = 10; }
 
-message ExistContractRequest { string ID = 10; }
+message ExistContractRequest { uint32 ID = 10; }
 message ExistContractResponse { bool Exist = 10; }
 
 message ExistContractCondsRequest { Conds Conds = 10; }
@@ -122,5 +122,5 @@ message ExistContractCondsResponse { bool Exist = 10; }
 message CountContractsRequest { Conds Conds = 10; }
 message CountContractsResponse { uint32 Info = 10; }
 
-message DeleteContractRequest { string ID = 10; }
+message DeleteContractRequest { uint32 ID = 10; }
 message DeleteContractResponse { Contract Info = 10; }
