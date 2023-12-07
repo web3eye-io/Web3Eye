@@ -34,13 +34,26 @@ message EndpointReq {
 }
 
 message Endpoint {
+  // @inject_tag: sql:"id"
   uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
   string EntID = 11;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"address"
   string Address = 40;
-  chain.EndpointState State = 50;
+  // @inject_tag: sql:"state"
+  string StateStr = 50;
+  chain.EndpointState State = 51;
+  // @inject_tag: sql:"remark"
   string Remark = 60;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 70;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 80;
 }
 
 message Conds {

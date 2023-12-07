@@ -44,21 +44,42 @@ message TransferReq {
 }
 
 message Transfer {
+  // @inject_tag: sql:"id"
   uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
   string EntID = 11;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"contract"
   string Contract = 40;
-  chain.TokenType TokenType = 50;
+  // @inject_tag: sql:"token_type"
+  string TokenTypeStr = 50;
+  chain.TokenType TokenType = 51;
+  // @inject_tag: sql:"token_id"
   string TokenID = 60;
+  // @inject_tag: sql:"from"
   string From = 70;
+  // @inject_tag: sql:"to"
   string To = 80;
+  // @inject_tag: sql:"amount"
   uint64 Amount = 90;
+  // @inject_tag: sql:"block_number"
   uint64 BlockNumber = 100;
+  // @inject_tag: sql:"tx_hash"
   string TxHash = 110;
+  // @inject_tag: sql:"block_hash"
   string BlockHash = 120;
+  // @inject_tag: sql:"tx_time"
   uint32 TxTime = 130;
+  // @inject_tag: sql:"remark"
   string Remark = 140;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 150;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 260;
 }
 
 message Conds {
@@ -77,7 +98,7 @@ message Conds {
   web3eye.StringVal BlockHash = 120;
   web3eye.Uint32Val TxTime = 130;
   web3eye.StringVal Remark = 140;
-  web3eye.StringSliceVal IDs = 150;
+  web3eye.StringSliceVal EntIDs = 150;
 }
 
 message CreateTransferRequest { TransferReq Info = 10; }

@@ -116,7 +116,7 @@
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         }
       }
@@ -209,52 +209,83 @@
       "properties": {
         "ID": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
         },
         "EntID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Contract": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"contract\""
+        },
+        "TokenTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_type\""
         },
         "TokenType": {
           "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_id\""
         },
         "From": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"from\""
         },
         "To": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"to\""
         },
         "Amount": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"amount\""
         },
         "BlockNumber": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_number\""
         },
         "TxHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"tx_hash\""
         },
         "BlockHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"block_hash\""
         },
         "TxTime": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"tx_time\""
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },

@@ -82,17 +82,34 @@ message SyncTaskReq {
 }
 
 message SyncTask {
+  // @inject_tag: sql:"id"
   uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
   string EntID = 11;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"start"
   uint64 Start = 40;
+  // @inject_tag: sql:"end"
   uint64 End = 50;
+  // @inject_tag: sql:"current"
   uint64 Current = 60;
+  // @inject_tag: sql:"topic"
   string Topic = 70;
+  // @inject_tag: sql:"description"
   string Description = 80;
-  chain.SyncState SyncState = 90;
+  // @inject_tag: sql:"sync_state"
+  string SyncStateStr = 90;
+  chain.SyncState SyncState = 91;
+  // @inject_tag: sql:"remark"
   string Remark = 100;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 110;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 120;
 }
 
 message Conds {
@@ -107,7 +124,7 @@ message Conds {
   web3eye.StringVal Description = 80;
   web3eye.Uint32Val SyncState = 90;
   web3eye.StringVal Remark = 100;
-  web3eye.StringSliceVal IDs = 110;
+  web3eye.StringSliceVal EntIDs = 110;
 }
 
 message CreateSyncTaskRequest { SyncTaskReq Info = 10; }

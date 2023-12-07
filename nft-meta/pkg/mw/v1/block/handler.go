@@ -77,6 +77,9 @@ func WithChainType(u *basetype.ChainType, must bool) func(context.Context, *Hand
 			}
 			return nil
 		}
+		if _, ok := basetype.ChainType_name[int32(*u)]; !ok {
+			return fmt.Errorf("invalid chaintype field")
+		}
 		h.ChainType = u
 		return nil
 	}
@@ -172,7 +175,7 @@ func WithReqs(reqs []*blockproto.BlockReq, must bool) func(context.Context, *Han
 			}
 			if req.ChainType != nil {
 				if _, ok := basetype.ChainType_name[int32(*req.ChainType)]; !ok {
-					return fmt.Errorf("invalid parsestate field")
+					return fmt.Errorf("invalid chaintype field")
 				}
 				_req.ChainType = req.ChainType
 			}

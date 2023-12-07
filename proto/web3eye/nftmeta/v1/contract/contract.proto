@@ -44,23 +44,45 @@ message ContractReq {
 }
 
 message Contract {
+  // @inject_tag: sql:"id"
   uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
   string EntID = 11;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"address"
   string Address = 40;
+  // @inject_tag: sql:"name"
   string Name = 50;
+  // @inject_tag: sql:"symbol"
   string Symbol = 60;
+  // @inject_tag: sql:"decimals"
   uint32 Decimals = 61;
+  // @inject_tag: sql:"creator"
   string Creator = 70;
+  // @inject_tag: sql:"block_num"
   uint64 BlockNum = 80;
+  // @inject_tag: sql:"tx_hash"
   string TxHash = 90;
+  // @inject_tag: sql:"tx_time"
   uint32 TxTime = 100;
+  // @inject_tag: sql:"profile_url"
   string ProfileURL = 110;
+  // @inject_tag: sql:"base_url"
   string BaseURL = 120;
+  // @inject_tag: sql:"banner_url"
   string BannerURL = 130;
+  // @inject_tag: sql:"description"
   string Description = 140;
+  // @inject_tag: sql:"remark"
   string Remark = 150;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 160;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 170;
 }
 
 message Conds {

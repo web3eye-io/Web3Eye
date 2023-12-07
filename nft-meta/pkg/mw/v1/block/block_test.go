@@ -60,19 +60,19 @@ func create(t *testing.T) {
 
 	info, err := handler.CreateBlock(context.Background())
 	if assert.Nil(t, err) {
-		ret.ID = info.ID
-		ret.EntID = info.EntID
-		assert.Equal(t, info.ParseStateStr, ret.ParseState.String())
+		req.ID = &info.ID
+		req.EntID = &info.EntID
+		assert.Equal(t, info.ParseStateStr, req.ParseState.String())
 	}
 }
 
 func update(t *testing.T) {
-	ret.ChainType = basetype.ChainType_Solana
+	req.ChainType = basetype.ChainType_Solana.Enum()
 	req.ParseState = basetype.BlockParseState_BlockTypeStart.Enum()
 
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithID(req.ID, true),
 		WithChainType(req.ChainType, false),
 		WithChainID(req.ChainID, false),
 		WithParseState(req.ParseState, false),
@@ -81,14 +81,14 @@ func update(t *testing.T) {
 
 	info, err := handler.UpdateBlock(context.Background())
 	if assert.Nil(t, err) {
-		assert.Equal(t, info.ChainTypeStr, ret.ChainType.String())
+		assert.Equal(t, info.ChainTypeStr, req.ChainType.String())
 	}
 
-	ret.ParseState = basetype.BlockParseState_BlockTypeFailed
+	req.ParseState = basetype.BlockParseState_BlockTypeFailed.Enum()
 
 	handler, err = NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithID(req.ID, true),
 		WithChainID(req.ChainID, false),
 		WithParseState(req.ParseState, false),
 	)
@@ -101,7 +101,7 @@ func update(t *testing.T) {
 func query(t *testing.T) {
 	handler, err := NewHandler(
 		context.Background(),
-		WithID(&ret.ID, true),
+		WithID(req.ID, true),
 	)
 	assert.Nil(t, err)
 
@@ -145,7 +145,7 @@ func query(t *testing.T) {
 }
 
 func upsert(t *testing.T) {
-	// cannot success for upsert
+	// update
 	blockHash := "sssssss"
 	handler, err := NewHandler(context.Background(),
 		WithChainType(req.ChainType, true),
@@ -159,10 +159,13 @@ func upsert(t *testing.T) {
 	assert.Nil(t, err)
 
 	info1, err := handler.UpsertBlock(context.Background())
-	assert.NotNil(t, err)
-	assert.Nil(t, info1)
+	if assert.Nil(t, err) {
+		assert.NotNil(t, info1)
+		assert.Equal(t, blockHash, info1.BlockHash)
+		req.BlockHash = &blockHash
+	}
 
-	// can success for upsert
+	// create
 	chainID := "sssssss"
 	handler, err = NewHandler(context.Background(),
 		WithChainType(req.ChainType, true),

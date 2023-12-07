@@ -161,26 +161,43 @@
       "properties": {
         "ID": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
         },
         "EntID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
         },
         "Index": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"index\""
         },
         "SnapshotCommP": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_comm_p\""
         },
         "SnapshotRoot": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_root\""
         },
         "SnapshotURI": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_uri\""
         },
         "BackupState": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"backup_state\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },

@@ -12,8 +12,8 @@ import (
 
 func (h *Handler) UpsertBlock(ctx context.Context) (*blockproto.Block, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		row, _ := tx.Block.Query().Where(
-			blockent.ChainType(*h.BlockHash),
+		row, err := tx.Block.Query().Where(
+			blockent.ChainType(h.ChainType.String()),
 			blockent.ChainID(*h.ChainID),
 			blockent.BlockNumber(*h.BlockNumber),
 		).Only(ctx)
@@ -30,13 +30,13 @@ func (h *Handler) UpsertBlock(ctx context.Context) (*blockproto.Block, error) {
 					Remark:      h.Remark,
 				},
 			).Save(ctx)
-			if err != nil {
-				return err
+			if err == nil {
+				h.EntID = &info.EntID
+				h.ID = &info.ID
 			}
-			h.EntID = &info.EntID
-			h.ID = &info.ID
-			return nil
+			return err
 		}
+
 		stm, err := blockcrud.UpdateSet(
 			row.Update(),
 			&blockcrud.Req{
