@@ -7,6 +7,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	entorder "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+	orderproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
 
 	"github.com/google/uuid"
 )
@@ -21,6 +22,8 @@ type Req struct {
 	TxIndex     *uint32
 	LogIndex    *uint32
 	Recipient   *string
+	TargetItems []*orderproto.OrderItem
+	OfferItems  []*orderproto.OrderItem
 	Remark      *string
 }
 

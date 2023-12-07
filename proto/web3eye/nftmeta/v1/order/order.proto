@@ -24,11 +24,21 @@ service Manager {
 }
 
 message OrderItem{
+  // @inject_tag: sql:"contract"
   string Contract = 10;
-  chain.TokenType TokenType = 20;
+  // @inject_tag: sql:"token_type"
+  string TokenTypeStr = 20;
+  chain.TokenType TokenType = 21;
+  // @inject_tag: sql:"token_id"
   string TokenID = 30;
+  // @inject_tag: sql:"amount"
   uint64 Amount = 40;
+  // @inject_tag: sql:"remark"
   string Remark = 50;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 60;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 70;
 }
 
 message OrderReq {
@@ -47,18 +57,33 @@ message OrderReq {
 }
 
 message Order {
+  // @inject_tag: sql:"id"
   uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
   string EntID = 11;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"tx_hash"
   string TxHash = 40;
+  // @inject_tag: sql:"block_number"
   uint64 BlockNumber = 50;
+  // @inject_tag: sql:"tx_index"
   uint32 TxIndex = 60;
+  // @inject_tag: sql:"log_index"
   uint32 LogIndex = 70;
+  // @inject_tag: sql:"recipient"
   string Recipient = 80;
   repeated OrderItem TargetItems = 90;
   repeated OrderItem OfferItems = 100;
+  // @inject_tag: sql:"remark"
   string Remark = 110;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 120;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 130;
 }
 
 message Conds {

@@ -1,13 +1,13 @@
-package contract
+package order
 
 import (
 	"context"
 	"fmt"
 
 	constant "github.com/web3eye-io/Web3Eye/nft-meta/pkg/const"
-	contractcrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/contract"
+	ordercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/order"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	contractproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
+	orderproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
@@ -19,23 +19,19 @@ type Handler struct {
 	EntID       *uuid.UUID
 	ChainType   *basetype.ChainType
 	ChainID     *string
-	Address     *string
-	Name        *string
-	Symbol      *string
-	Decimals    *uint32
-	Creator     *string
-	BlockNum    *uint64
 	TxHash      *string
-	TxTime      *uint32
-	ProfileURL  *string
-	BaseURL     *string
-	BannerURL   *string
-	Description *string
+	BlockNumber *uint64
+	TxIndex     *uint32
+	LogIndex    *uint32
+	Recipient   *string
+	TargetItems []*orderproto.OrderItem
+	OfferItems  []*orderproto.OrderItem
 	Remark      *string
-	Reqs        []*contractcrud.Req
-	Conds       *contractcrud.Conds
-	Offset      int32
-	Limit       int32
+
+	Reqs   []*ordercrud.Req
+	Conds  *ordercrud.Conds
+	Offset int32
+	Limit  int32
 }
 
 func NewHandler(ctx context.Context, options ...func(context.Context, *Handler) error) (*Handler, error) {
@@ -105,83 +101,11 @@ func WithChainID(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-func WithAddress(u *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid address")
-			}
-			return nil
-		}
-		h.Address = u
-		return nil
-	}
-}
-func WithName(u *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid name")
-			}
-			return nil
-		}
-		h.Name = u
-		return nil
-	}
-}
-func WithSymbol(u *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid symbol")
-			}
-			return nil
-		}
-		h.Symbol = u
-		return nil
-	}
-}
-func WithDecimals(u *uint32, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid decimals")
-			}
-			return nil
-		}
-		h.Decimals = u
-		return nil
-	}
-}
-func WithCreator(u *string, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid creator")
-			}
-			return nil
-		}
-		h.Creator = u
-		return nil
-	}
-}
-func WithBlockNum(u *uint64, must bool) func(context.Context, *Handler) error {
-	return func(ctx context.Context, h *Handler) error {
-		if u == nil {
-			if must {
-				return fmt.Errorf("invalid blocknum")
-			}
-			return nil
-		}
-		h.BlockNum = u
-		return nil
-	}
-}
 func WithTxHash(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid txhash")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
@@ -189,63 +113,81 @@ func WithTxHash(u *string, must bool) func(context.Context, *Handler) error {
 		return nil
 	}
 }
-func WithTxTime(u *uint32, must bool) func(context.Context, *Handler) error {
+
+func WithBlockNumber(u *uint64, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid txtime")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
-		h.TxTime = u
+		h.BlockNumber = u
 		return nil
 	}
 }
-func WithProfileURL(u *string, must bool) func(context.Context, *Handler) error {
+
+func WithTxIndex(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid profileurl")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
-		h.ProfileURL = u
+		h.TxIndex = u
 		return nil
 	}
 }
-func WithBaseURL(u *string, must bool) func(context.Context, *Handler) error {
+
+func WithLogIndex(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid baseurl")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
-		h.BaseURL = u
+		h.LogIndex = u
 		return nil
 	}
 }
-func WithBannerURL(u *string, must bool) func(context.Context, *Handler) error {
+
+func WithRecipient(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid bannerurl")
+				return fmt.Errorf("invalid remark")
 			}
 			return nil
 		}
-		h.BannerURL = u
+		h.Recipient = u
 		return nil
 	}
 }
-func WithDescription(u *string, must bool) func(context.Context, *Handler) error {
+
+func WithTargetItems(u []*orderproto.OrderItem, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {
-				return fmt.Errorf("invalid description")
+				return fmt.Errorf("invalid targetitems")
 			}
 			return nil
 		}
-		h.Description = u
+		h.TargetItems = u
+		return nil
+	}
+}
+
+func WithOfferItems(u []*orderproto.OrderItem, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid offeritems")
+			}
+			return nil
+		}
+		h.OfferItems = u
 		return nil
 	}
 }
@@ -264,11 +206,11 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 }
 
 // nolint:gocyclo
-func WithReqs(reqs []*contractproto.ContractReq, must bool) func(context.Context, *Handler) error {
+func WithReqs(reqs []*orderproto.OrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		_reqs := []*contractcrud.Req{}
+		_reqs := []*ordercrud.Req{}
 		for _, req := range reqs {
-			_req := &contractcrud.Req{}
+			_req := &ordercrud.Req{}
 			if req.EntID != nil {
 				id, err := uuid.Parse(req.GetEntID())
 				if err != nil {
@@ -285,41 +227,26 @@ func WithReqs(reqs []*contractproto.ContractReq, must bool) func(context.Context
 			if req.ChainID != nil {
 				_req.ChainID = req.ChainID
 			}
-			if req.Address != nil {
-				_req.Address = req.Address
-			}
-			if req.Name != nil {
-				_req.Name = req.Name
-			}
-			if req.Symbol != nil {
-				_req.Symbol = req.Symbol
-			}
-			if req.Decimals != nil {
-				_req.Decimals = req.Decimals
-			}
-			if req.Creator != nil {
-				_req.Creator = req.Creator
-			}
-			if req.BlockNum != nil {
-				_req.BlockNum = req.BlockNum
-			}
 			if req.TxHash != nil {
 				_req.TxHash = req.TxHash
 			}
-			if req.TxTime != nil {
-				_req.TxTime = req.TxTime
+			if req.BlockNumber != nil {
+				_req.BlockNumber = req.BlockNumber
 			}
-			if req.ProfileURL != nil {
-				_req.ProfileURL = req.ProfileURL
+			if req.TxIndex != nil {
+				_req.TxIndex = req.TxIndex
 			}
-			if req.BaseURL != nil {
-				_req.BaseURL = req.BaseURL
+			if req.LogIndex != nil {
+				_req.LogIndex = req.LogIndex
 			}
-			if req.BannerURL != nil {
-				_req.BannerURL = req.BannerURL
+			if req.Recipient != nil {
+				_req.Recipient = req.Recipient
 			}
-			if req.Description != nil {
-				_req.Description = req.Description
+			if req.TargetItems != nil {
+				_req.TargetItems = req.TargetItems
+			}
+			if req.OfferItems != nil {
+				_req.OfferItems = req.OfferItems
 			}
 			if req.Remark != nil {
 				_req.Remark = req.Remark
@@ -332,9 +259,9 @@ func WithReqs(reqs []*contractproto.ContractReq, must bool) func(context.Context
 }
 
 //nolint:gocyclo
-func WithConds(conds *contractproto.Conds) func(context.Context, *Handler) error {
+func WithConds(conds *orderproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
-		h.Conds = &contractcrud.Conds{}
+		h.Conds = &ordercrud.Conds{}
 		if conds == nil {
 			return nil
 		}
@@ -374,76 +301,34 @@ func WithConds(conds *contractproto.Conds) func(context.Context, *Handler) error
 				Val: conds.GetChainID().GetValue(),
 			}
 		}
-		if conds.Address != nil {
-			h.Conds.Address = &cruder.Cond{
-				Op:  conds.GetAddress().GetOp(),
-				Val: conds.GetAddress().GetValue(),
-			}
-		}
-		if conds.Name != nil {
-			h.Conds.Name = &cruder.Cond{
-				Op:  conds.GetName().GetOp(),
-				Val: conds.GetName().GetValue(),
-			}
-		}
-		if conds.Symbol != nil {
-			h.Conds.Symbol = &cruder.Cond{
-				Op:  conds.GetSymbol().GetOp(),
-				Val: conds.GetSymbol().GetValue(),
-			}
-		}
-		if conds.Decimals != nil {
-			h.Conds.Decimals = &cruder.Cond{
-				Op:  conds.GetDecimals().GetOp(),
-				Val: conds.GetDecimals().GetValue(),
-			}
-		}
-		if conds.Creator != nil {
-			h.Conds.Creator = &cruder.Cond{
-				Op:  conds.GetCreator().GetOp(),
-				Val: conds.GetCreator().GetValue(),
-			}
-		}
-		if conds.BlockNum != nil {
-			h.Conds.BlockNum = &cruder.Cond{
-				Op:  conds.GetBlockNum().GetOp(),
-				Val: conds.GetBlockNum().GetValue(),
-			}
-		}
 		if conds.TxHash != nil {
 			h.Conds.TxHash = &cruder.Cond{
 				Op:  conds.GetTxHash().GetOp(),
 				Val: conds.GetTxHash().GetValue(),
 			}
 		}
-		if conds.TxTime != nil {
-			h.Conds.TxTime = &cruder.Cond{
-				Op:  conds.GetTxTime().GetOp(),
-				Val: conds.GetTxTime().GetValue(),
+		if conds.BlockNumber != nil {
+			h.Conds.BlockNumber = &cruder.Cond{
+				Op:  conds.GetBlockNumber().GetOp(),
+				Val: conds.GetBlockNumber().GetValue(),
 			}
 		}
-		if conds.ProfileURL != nil {
-			h.Conds.ProfileURL = &cruder.Cond{
-				Op:  conds.GetProfileURL().GetOp(),
-				Val: conds.GetProfileURL().GetValue(),
+		if conds.TxIndex != nil {
+			h.Conds.TxIndex = &cruder.Cond{
+				Op:  conds.GetTxIndex().GetOp(),
+				Val: conds.GetTxIndex().GetValue(),
 			}
 		}
-		if conds.BaseURL != nil {
-			h.Conds.BaseURL = &cruder.Cond{
-				Op:  conds.GetBaseURL().GetOp(),
-				Val: conds.GetBaseURL().GetValue(),
+		if conds.LogIndex != nil {
+			h.Conds.LogIndex = &cruder.Cond{
+				Op:  conds.GetLogIndex().GetOp(),
+				Val: conds.GetLogIndex().GetValue(),
 			}
 		}
-		if conds.BannerURL != nil {
-			h.Conds.BannerURL = &cruder.Cond{
-				Op:  conds.GetBannerURL().GetOp(),
-				Val: conds.GetBannerURL().GetValue(),
-			}
-		}
-		if conds.Description != nil {
-			h.Conds.Description = &cruder.Cond{
-				Op:  conds.GetDescription().GetOp(),
-				Val: conds.GetDescription().GetValue(),
+		if conds.Recipient != nil {
+			h.Conds.Recipient = &cruder.Cond{
+				Op:  conds.GetRecipient().GetOp(),
+				Val: conds.GetRecipient().GetValue(),
 			}
 		}
 		if conds.Remark != nil {

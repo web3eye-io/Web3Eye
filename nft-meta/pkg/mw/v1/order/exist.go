@@ -1,25 +1,25 @@
-package contract
+package order
 
 import (
 	"context"
 
-	contractcrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/contract"
+	ordercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/order"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	contractent "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	orderent "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/order"
 )
 
-func (h *Handler) ExistContract(ctx context.Context) (bool, error) {
+func (h *Handler) ExistOrder(ctx context.Context) (bool, error) {
 	exist := false
 	var err error
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		exist, err = cli.
-			Contract.
+			Order.
 			Query().
 			Where(
-				contractent.EntID(*h.EntID),
-				contractent.DeletedAt(0),
+				orderent.EntID(*h.EntID),
+				orderent.DeletedAt(0),
 			).
 			Exist(_ctx)
 		if err != nil {
@@ -33,10 +33,10 @@ func (h *Handler) ExistContract(ctx context.Context) (bool, error) {
 	return exist, nil
 }
 
-func (h *Handler) ExistContractConds(ctx context.Context) (bool, error) {
+func (h *Handler) ExistOrderConds(ctx context.Context) (bool, error) {
 	exist := false
 	err := db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := contractcrud.SetQueryConds(cli.Contract.Query(), h.Conds)
+		stm, err := ordercrud.SetQueryConds(cli.Order.Query(), h.Conds)
 		if err != nil {
 			return err
 		}

@@ -167,34 +167,46 @@
       "properties": {
         "ID": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
         },
         "EntID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "TxHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"tx_hash\""
         },
         "BlockNumber": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_number\""
         },
         "TxIndex": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"tx_index\""
         },
         "LogIndex": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"log_index\""
         },
         "Recipient": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"recipient\""
         },
         "TargetItems": {
           "type": "array",
@@ -209,7 +221,18 @@
           }
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -217,20 +240,38 @@
       "type": "object",
       "properties": {
         "Contract": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"contract\""
+        },
+        "TokenTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_type\""
         },
         "TokenType": {
           "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_id\""
         },
         "Amount": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"amount\""
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
