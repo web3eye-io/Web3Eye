@@ -100,14 +100,6 @@ func ExistOrderConds(ctx context.Context, in *npool.ExistOrderCondsRequest) (res
 	return resp, err
 }
 
-func CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (resp *npool.CountOrdersResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountOrders(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) (resp *npool.DeleteOrderResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteOrder(ctx, in)

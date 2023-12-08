@@ -11,10 +11,10 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
-	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
+	transferhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/transfer"
 	val "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	transfernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
@@ -30,8 +30,8 @@ const (
 )
 
 type SearchTokenBone struct {
-	ID            string
-	SiblingIDs    []string
+	EntID         string
+	SiblingEntIDs []string
 	SiblingsNum   uint32
 	Distance      float32
 	TranserferNum int32
@@ -176,6 +176,7 @@ func sortSroces(scores map[int64]float32) []*ScoreItem {
 }
 
 // TODO:too long,will be rewrite
+//
 //nolint:all
 func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN int) ([]*rankernpool.SearchToken, error) {
 	topScores := sortSroces(scores)
@@ -204,8 +205,11 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 			},
 		}
 
-		// query from db
-		rows, _, err := crud.Rows(ctx, conds, 0, len(vIDs))
+		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		if err != nil {
+			return nil, err
+		}
+		rows, _, err := h.GetTokens(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -230,7 +234,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 				}
 				result[contractRecord[v.Contract]].SiblingTokens = append(
 					result[contractRecord[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
-						ID:           v.ID,
+						EntID:        v.EntID,
 						TokenID:      v.TokenID,
 						ImageURL:     v.ImageURL,
 						IPFSImageURL: v.IPFSImageURL,
@@ -245,27 +249,35 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 	// full the siblinsTokens
 	for _, v := range result {
 		conds := &nftmetanpool.Conds{
-			ChainType: &val.StringVal{Op: "eq", Value: v.ChainType.String()},
+			ChainType: &val.Uint32Val{Op: "eq", Value: uint32(v.ChainType)},
 			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
 			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
 		}
 
+		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		if err != nil {
+			return nil, err
+		}
+		tokens, num, err := h.GetTokens(ctx)
+		if err != nil {
+			return nil, err
+		}
+
 		// query ShowSiblinsNum+1 records,because likely to query the v-self
-		tokens, num, err := crud.Rows(ctx, conds, 0, ShowSiblinsNum+1)
 		if err != nil {
 			return nil, err
 		}
 		v.SiblingsNum = uint32(num)
 
 		for _, token := range tokens {
-			if v.GetID() == token.ID.String() {
+			if v.GetID() == token.ID {
 				continue
 			}
 			v.SiblingTokens = append(v.SiblingTokens, &rankernpool.SiblingToken{
-				ID:           token.ID.String(),
+				EntID:        token.EntID,
 				TokenID:      token.TokenID,
 				ImageURL:     token.ImageURL,
-				IPFSImageURL: token.IpfsImageURL,
+				IPFSImageURL: token.IPFSImageURL,
 			})
 		}
 
@@ -282,10 +294,16 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 			Contract: &val.StringVal{Op: "eq", Value: v.GetContract()},
 			TokenID:  &val.StringVal{Op: "eq", Value: v.TokenID},
 		}
-
-		num, err := transfercrud.Count(ctx, conds)
+		h, err := transferhandler.NewHandler(ctx, transferhandler.WithConds(conds))
+		if err != nil {
+			logger.Sugar().Infow("QueryAndCollectTokens", "error", err)
+			continue
+		}
+		_, num, err := h.GetTransfers(ctx)
 		if err == nil {
 			v.TransfersNum = int32(num)
+		} else {
+			logger.Sugar().Infow("QueryAndCollectTokens", "error", err)
 		}
 	}
 
@@ -313,16 +331,16 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 	bones := make([]*SearchTokenBone, len(infos))
 	for i, v := range infos {
 		bones[i] = &SearchTokenBone{
-			ID:            v.ID,
+			EntID:         v.EntID,
 			SiblingsNum:   v.SiblingsNum,
 			Distance:      v.Distance,
 			TranserferNum: v.TransfersNum,
 		}
 		siblingIDs := make([]string, len(v.SiblingTokens))
 		for i, token := range v.SiblingTokens {
-			siblingIDs[i] = token.ID
+			siblingIDs[i] = token.EntID
 		}
-		bones[i].SiblingIDs = siblingIDs
+		bones[i].SiblingEntIDs = siblingIDs
 	}
 	return bones
 }
@@ -330,16 +348,22 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpool.SearchToken, error) {
 	tokens := make([]*rankernpool.SearchToken, len(bones))
 	for i, v := range bones {
-		IDs := []string{v.ID}
-		IDs = append(IDs, v.SiblingIDs...)
+		EntIDs := []string{v.EntID}
+		EntIDs = append(EntIDs, v.SiblingEntIDs...)
 		conds := &nftmetanpool.Conds{
-			IDs: &val.StringSliceVal{
+			EntIDs: &val.StringSliceVal{
 				Op:    "in",
-				Value: IDs,
+				Value: EntIDs,
 			},
 		}
+
+		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		if err != nil {
+			return nil, err
+		}
+
 		// query from db
-		rows, _, err := crud.Rows(ctx, conds, 0, len(IDs))
+		rows, _, err := h.GetTokens(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -352,10 +376,10 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 
 		for j := 1; j < len(rows); j++ {
 			tokens[i].SiblingTokens[j-1] = &rankernpool.SiblingToken{
-				ID:           rows[j].ID.String(),
+				EntID:        rows[j].EntID,
 				TokenID:      rows[j].TokenID,
 				ImageURL:     rows[j].ImageURL,
-				IPFSImageURL: rows[j].IpfsImageURL,
+				IPFSImageURL: rows[j].IPFSImageURL,
 			}
 		}
 	}

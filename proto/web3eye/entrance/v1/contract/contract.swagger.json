@@ -227,7 +227,8 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "TransfersNum": {
           "type": "integer",

@@ -27,7 +27,6 @@ const (
 	Manager_GetOrders_FullMethodName       = "/nftmeta.v1.order.Manager/GetOrders"
 	Manager_ExistOrder_FullMethodName      = "/nftmeta.v1.order.Manager/ExistOrder"
 	Manager_ExistOrderConds_FullMethodName = "/nftmeta.v1.order.Manager/ExistOrderConds"
-	Manager_CountOrders_FullMethodName     = "/nftmeta.v1.order.Manager/CountOrders"
 	Manager_DeleteOrder_FullMethodName     = "/nftmeta.v1.order.Manager/DeleteOrder"
 )
 
@@ -43,7 +42,6 @@ type ManagerClient interface {
 	GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error)
 	ExistOrder(ctx context.Context, in *ExistOrderRequest, opts ...grpc.CallOption) (*ExistOrderResponse, error)
 	ExistOrderConds(ctx context.Context, in *ExistOrderCondsRequest, opts ...grpc.CallOption) (*ExistOrderCondsResponse, error)
-	CountOrders(ctx context.Context, in *CountOrdersRequest, opts ...grpc.CallOption) (*CountOrdersResponse, error)
 	DeleteOrder(ctx context.Context, in *DeleteOrderRequest, opts ...grpc.CallOption) (*DeleteOrderResponse, error)
 }
 
@@ -127,15 +125,6 @@ func (c *managerClient) ExistOrderConds(ctx context.Context, in *ExistOrderConds
 	return out, nil
 }
 
-func (c *managerClient) CountOrders(ctx context.Context, in *CountOrdersRequest, opts ...grpc.CallOption) (*CountOrdersResponse, error) {
-	out := new(CountOrdersResponse)
-	err := c.cc.Invoke(ctx, Manager_CountOrders_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteOrder(ctx context.Context, in *DeleteOrderRequest, opts ...grpc.CallOption) (*DeleteOrderResponse, error) {
 	out := new(DeleteOrderResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteOrder_FullMethodName, in, out, opts...)
@@ -157,7 +146,6 @@ type ManagerServer interface {
 	GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error)
 	ExistOrder(context.Context, *ExistOrderRequest) (*ExistOrderResponse, error)
 	ExistOrderConds(context.Context, *ExistOrderCondsRequest) (*ExistOrderCondsResponse, error)
-	CountOrders(context.Context, *CountOrdersRequest) (*CountOrdersResponse, error)
 	DeleteOrder(context.Context, *DeleteOrderRequest) (*DeleteOrderResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -189,9 +177,6 @@ func (UnimplementedManagerServer) ExistOrder(context.Context, *ExistOrderRequest
 }
 func (UnimplementedManagerServer) ExistOrderConds(context.Context, *ExistOrderCondsRequest) (*ExistOrderCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistOrderConds not implemented")
-}
-func (UnimplementedManagerServer) CountOrders(context.Context, *CountOrdersRequest) (*CountOrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountOrders not implemented")
 }
 func (UnimplementedManagerServer) DeleteOrder(context.Context, *DeleteOrderRequest) (*DeleteOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
@@ -353,24 +338,6 @@ func _Manager_ExistOrderConds_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountOrdersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountOrders(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountOrders_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountOrders(ctx, req.(*CountOrdersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteOrderRequest)
 	if err := dec(in); err != nil {
@@ -427,10 +394,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistOrderConds",
 			Handler:    _Manager_ExistOrderConds_Handler,
-		},
-		{
-			MethodName: "CountOrders",
-			Handler:    _Manager_CountOrders_Handler,
 		},
 		{
 			MethodName: "DeleteOrder",

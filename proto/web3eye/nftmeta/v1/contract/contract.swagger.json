@@ -235,15 +235,6 @@
         }
       }
     },
-    "contractCountContractsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "contractCreateContractResponse": {
       "type": "object",
       "properties": {

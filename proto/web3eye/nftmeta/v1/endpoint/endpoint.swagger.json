@@ -65,15 +65,6 @@
         }
       }
     },
-    "endpointCountEndpointsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "endpointCreateEndpointResponse": {
       "type": "object",
       "properties": {

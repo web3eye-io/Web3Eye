@@ -16,38 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/count/snapshots": {
-      "post": {
-        "operationId": "Manager_CountSnapshots",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/snapshotCountSnapshotsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/snapshotCountSnapshotsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/create/backup": {
       "post": {
         "operationId": "Manager_CreateBackup",
@@ -182,7 +150,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "Index": {
           "type": "string",
@@ -271,23 +240,6 @@
         }
       }
     },
-    "snapshotCountSnapshotsRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/snapshotConds"
-        }
-      }
-    },
-    "snapshotCountSnapshotsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "snapshotGetSnapshotOnlyRequest": {
       "type": "object",
       "properties": {
@@ -338,7 +290,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "URI": {
           "type": "string"

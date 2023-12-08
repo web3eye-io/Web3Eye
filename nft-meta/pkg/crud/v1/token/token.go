@@ -30,7 +30,7 @@ type Req struct {
 	VectorState     *tokentype.ConvertState
 	VectorID        *int64
 	IPFSImageURL    *string
-	ImageSnapshotID *string
+	ImageSnapshotID *uint32
 	Remark          *string
 }
 
@@ -375,7 +375,7 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 		}
 	}
 	if conds.ImageSnapshotID != nil {
-		imagesnapshotid, ok := conds.ImageSnapshotID.Val.(string)
+		imagesnapshotid, ok := conds.ImageSnapshotID.Val.(uint32)
 		if !ok {
 			return nil, fmt.Errorf("invalid imagesnapshotid")
 		}

@@ -16,38 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/Count/synctasks": {
-      "post": {
-        "operationId": "Manager_CountSyncTasks",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/synctaskCountSyncTasksResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/synctaskCountSyncTasksRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/create/synctask": {
       "post": {
         "operationId": "Manager_CreateSyncTask",
@@ -391,23 +359,6 @@
         },
         "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "synctaskCountSyncTasksRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/synctaskConds"
-        }
-      }
-    },
-    "synctaskCountSyncTasksResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

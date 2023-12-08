@@ -1341,100 +1341,6 @@ func (x *ExistOrderCondsResponse) GetExist() bool {
 	return false
 }
 
-type CountOrdersRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Conds *Conds `protobuf:"bytes,10,opt,name=Conds,proto3" json:"Conds,omitempty"`
-}
-
-func (x *CountOrdersRequest) Reset() {
-	*x = CountOrdersRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[20]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountOrdersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountOrdersRequest) ProtoMessage() {}
-
-func (x *CountOrdersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[20]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountOrdersRequest.ProtoReflect.Descriptor instead.
-func (*CountOrdersRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *CountOrdersRequest) GetConds() *Conds {
-	if x != nil {
-		return x.Conds
-	}
-	return nil
-}
-
-type CountOrdersResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Info uint32 `protobuf:"varint,10,opt,name=Info,proto3" json:"Info,omitempty"`
-}
-
-func (x *CountOrdersResponse) Reset() {
-	*x = CountOrdersResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountOrdersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountOrdersResponse) ProtoMessage() {}
-
-func (x *CountOrdersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountOrdersResponse.ProtoReflect.Descriptor instead.
-func (*CountOrdersResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *CountOrdersResponse) GetInfo() uint32 {
-	if x != nil {
-		return x.Info
-	}
-	return 0
-}
-
 type DeleteOrderRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1446,7 +1352,7 @@ type DeleteOrderRequest struct {
 func (x *DeleteOrderRequest) Reset() {
 	*x = DeleteOrderRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[22]
+		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1459,7 +1365,7 @@ func (x *DeleteOrderRequest) String() string {
 func (*DeleteOrderRequest) ProtoMessage() {}
 
 func (x *DeleteOrderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[22]
+	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1472,7 +1378,7 @@ func (x *DeleteOrderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteOrderRequest.ProtoReflect.Descriptor instead.
 func (*DeleteOrderRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{22}
+	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DeleteOrderRequest) GetID() uint32 {
@@ -1493,7 +1399,7 @@ type DeleteOrderResponse struct {
 func (x *DeleteOrderResponse) Reset() {
 	*x = DeleteOrderResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[23]
+		mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1506,7 +1412,7 @@ func (x *DeleteOrderResponse) String() string {
 func (*DeleteOrderResponse) ProtoMessage() {}
 
 func (x *DeleteOrderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[23]
+	mi := &file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1519,7 +1425,7 @@ func (x *DeleteOrderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteOrderResponse.ProtoReflect.Descriptor instead.
 func (*DeleteOrderResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{23}
+	return file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteOrderResponse) GetInfo() *Order {
@@ -1722,21 +1628,14 @@ var file_web3eye_nftmeta_v1_order_order_proto_rawDesc = []byte{
 	0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x2f, 0x0a, 0x17, 0x45, 0x78,
 	0x69, 0x73, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x18, 0x0a,
-	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x43, 0x0a, 0x12, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x2d, 0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x17, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72,
-	0x64, 0x65, 0x72, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73,
-	0x22, 0x29, 0x0a, 0x13, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18,
-	0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x24, 0x0a, 0x12, 0x44,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x24, 0x0a, 0x12, 0x44,
 	0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x49,
 	0x44, 0x22, 0x42, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2b, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
 	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
 	0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52,
-	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x32, 0xb5, 0x07, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
+	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x32, 0xd7, 0x06, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
 	0x72, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
 	0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72,
 	0x64, 0x65, 0x72, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52,
@@ -1784,23 +1683,17 @@ var file_web3eye_nftmeta_v1_order_order_proto_rawDesc = []byte{
 	0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76,
 	0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x45, 0x78, 0x69, 0x73, 0x74, 0x4f, 0x72, 0x64,
 	0x65, 0x72, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73,
+	0x00, 0x12, 0x5c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
 	0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72,
-	0x64, 0x65, 0x72, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x52,
+	0x64, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
-	0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x4f,
-	0x72, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x5c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x24,
-	0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65,
-	0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76,
-	0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4f, 0x72,
-	0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x3e, 0x5a,
-	0x3c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65, 0x62, 0x33,
-	0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79, 0x65, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f, 0x6e, 0x66, 0x74,
-	0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2e, 0x76, 0x31, 0x2e, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42,
+	0x3e, 0x5a, 0x3c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65,
+	0x62, 0x33, 0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79, 0x65,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f, 0x6e,
+	0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1815,7 +1708,7 @@ func file_web3eye_nftmeta_v1_order_order_proto_rawDescGZIP() []byte {
 	return file_web3eye_nftmeta_v1_order_order_proto_rawDescData
 }
 
-var file_web3eye_nftmeta_v1_order_order_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_web3eye_nftmeta_v1_order_order_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_web3eye_nftmeta_v1_order_order_proto_goTypes = []interface{}{
 	(*OrderItem)(nil),               // 0: nftmeta.v1.order.OrderItem
 	(*OrderReq)(nil),                // 1: nftmeta.v1.order.OrderReq
@@ -1837,36 +1730,34 @@ var file_web3eye_nftmeta_v1_order_order_proto_goTypes = []interface{}{
 	(*ExistOrderResponse)(nil),      // 17: nftmeta.v1.order.ExistOrderResponse
 	(*ExistOrderCondsRequest)(nil),  // 18: nftmeta.v1.order.ExistOrderCondsRequest
 	(*ExistOrderCondsResponse)(nil), // 19: nftmeta.v1.order.ExistOrderCondsResponse
-	(*CountOrdersRequest)(nil),      // 20: nftmeta.v1.order.CountOrdersRequest
-	(*CountOrdersResponse)(nil),     // 21: nftmeta.v1.order.CountOrdersResponse
-	(*DeleteOrderRequest)(nil),      // 22: nftmeta.v1.order.DeleteOrderRequest
-	(*DeleteOrderResponse)(nil),     // 23: nftmeta.v1.order.DeleteOrderResponse
-	(v1.TokenType)(0),               // 24: chain.TokenType
-	(v1.ChainType)(0),               // 25: chain.ChainType
-	(*web3eye.Uint32Val)(nil),       // 26: web3eye.Uint32Val
-	(*web3eye.StringVal)(nil),       // 27: web3eye.StringVal
-	(*web3eye.Uint64Val)(nil),       // 28: web3eye.Uint64Val
-	(*web3eye.StringSliceVal)(nil),  // 29: web3eye.StringSliceVal
+	(*DeleteOrderRequest)(nil),      // 20: nftmeta.v1.order.DeleteOrderRequest
+	(*DeleteOrderResponse)(nil),     // 21: nftmeta.v1.order.DeleteOrderResponse
+	(v1.TokenType)(0),               // 22: chain.TokenType
+	(v1.ChainType)(0),               // 23: chain.ChainType
+	(*web3eye.Uint32Val)(nil),       // 24: web3eye.Uint32Val
+	(*web3eye.StringVal)(nil),       // 25: web3eye.StringVal
+	(*web3eye.Uint64Val)(nil),       // 26: web3eye.Uint64Val
+	(*web3eye.StringSliceVal)(nil),  // 27: web3eye.StringSliceVal
 }
 var file_web3eye_nftmeta_v1_order_order_proto_depIdxs = []int32{
-	24, // 0: nftmeta.v1.order.OrderItem.TokenType:type_name -> chain.TokenType
-	25, // 1: nftmeta.v1.order.OrderReq.ChainType:type_name -> chain.ChainType
+	22, // 0: nftmeta.v1.order.OrderItem.TokenType:type_name -> chain.TokenType
+	23, // 1: nftmeta.v1.order.OrderReq.ChainType:type_name -> chain.ChainType
 	0,  // 2: nftmeta.v1.order.OrderReq.TargetItems:type_name -> nftmeta.v1.order.OrderItem
 	0,  // 3: nftmeta.v1.order.OrderReq.OfferItems:type_name -> nftmeta.v1.order.OrderItem
-	25, // 4: nftmeta.v1.order.Order.ChainType:type_name -> chain.ChainType
+	23, // 4: nftmeta.v1.order.Order.ChainType:type_name -> chain.ChainType
 	0,  // 5: nftmeta.v1.order.Order.TargetItems:type_name -> nftmeta.v1.order.OrderItem
 	0,  // 6: nftmeta.v1.order.Order.OfferItems:type_name -> nftmeta.v1.order.OrderItem
-	26, // 7: nftmeta.v1.order.Conds.ID:type_name -> web3eye.Uint32Val
-	27, // 8: nftmeta.v1.order.Conds.EntID:type_name -> web3eye.StringVal
-	26, // 9: nftmeta.v1.order.Conds.ChainType:type_name -> web3eye.Uint32Val
-	27, // 10: nftmeta.v1.order.Conds.ChainID:type_name -> web3eye.StringVal
-	27, // 11: nftmeta.v1.order.Conds.TxHash:type_name -> web3eye.StringVal
-	28, // 12: nftmeta.v1.order.Conds.BlockNumber:type_name -> web3eye.Uint64Val
-	26, // 13: nftmeta.v1.order.Conds.TxIndex:type_name -> web3eye.Uint32Val
-	26, // 14: nftmeta.v1.order.Conds.LogIndex:type_name -> web3eye.Uint32Val
-	27, // 15: nftmeta.v1.order.Conds.Recipient:type_name -> web3eye.StringVal
-	27, // 16: nftmeta.v1.order.Conds.Remark:type_name -> web3eye.StringVal
-	29, // 17: nftmeta.v1.order.Conds.EntIDs:type_name -> web3eye.StringSliceVal
+	24, // 7: nftmeta.v1.order.Conds.ID:type_name -> web3eye.Uint32Val
+	25, // 8: nftmeta.v1.order.Conds.EntID:type_name -> web3eye.StringVal
+	24, // 9: nftmeta.v1.order.Conds.ChainType:type_name -> web3eye.Uint32Val
+	25, // 10: nftmeta.v1.order.Conds.ChainID:type_name -> web3eye.StringVal
+	25, // 11: nftmeta.v1.order.Conds.TxHash:type_name -> web3eye.StringVal
+	26, // 12: nftmeta.v1.order.Conds.BlockNumber:type_name -> web3eye.Uint64Val
+	24, // 13: nftmeta.v1.order.Conds.TxIndex:type_name -> web3eye.Uint32Val
+	24, // 14: nftmeta.v1.order.Conds.LogIndex:type_name -> web3eye.Uint32Val
+	25, // 15: nftmeta.v1.order.Conds.Recipient:type_name -> web3eye.StringVal
+	25, // 16: nftmeta.v1.order.Conds.Remark:type_name -> web3eye.StringVal
+	27, // 17: nftmeta.v1.order.Conds.EntIDs:type_name -> web3eye.StringSliceVal
 	1,  // 18: nftmeta.v1.order.CreateOrderRequest.Info:type_name -> nftmeta.v1.order.OrderReq
 	2,  // 19: nftmeta.v1.order.CreateOrderResponse.Info:type_name -> nftmeta.v1.order.Order
 	1,  // 20: nftmeta.v1.order.CreateOrdersRequest.Infos:type_name -> nftmeta.v1.order.OrderReq
@@ -1879,33 +1770,30 @@ var file_web3eye_nftmeta_v1_order_order_proto_depIdxs = []int32{
 	1,  // 27: nftmeta.v1.order.UpdateOrderRequest.Info:type_name -> nftmeta.v1.order.OrderReq
 	2,  // 28: nftmeta.v1.order.UpdateOrderResponse.Info:type_name -> nftmeta.v1.order.Order
 	3,  // 29: nftmeta.v1.order.ExistOrderCondsRequest.Conds:type_name -> nftmeta.v1.order.Conds
-	3,  // 30: nftmeta.v1.order.CountOrdersRequest.Conds:type_name -> nftmeta.v1.order.Conds
-	2,  // 31: nftmeta.v1.order.DeleteOrderResponse.Info:type_name -> nftmeta.v1.order.Order
-	4,  // 32: nftmeta.v1.order.Manager.CreateOrder:input_type -> nftmeta.v1.order.CreateOrderRequest
-	6,  // 33: nftmeta.v1.order.Manager.CreateOrders:input_type -> nftmeta.v1.order.CreateOrdersRequest
-	14, // 34: nftmeta.v1.order.Manager.UpdateOrder:input_type -> nftmeta.v1.order.UpdateOrderRequest
-	8,  // 35: nftmeta.v1.order.Manager.GetOrder:input_type -> nftmeta.v1.order.GetOrderRequest
-	12, // 36: nftmeta.v1.order.Manager.GetOrderOnly:input_type -> nftmeta.v1.order.GetOrderOnlyRequest
-	10, // 37: nftmeta.v1.order.Manager.GetOrders:input_type -> nftmeta.v1.order.GetOrdersRequest
-	16, // 38: nftmeta.v1.order.Manager.ExistOrder:input_type -> nftmeta.v1.order.ExistOrderRequest
-	18, // 39: nftmeta.v1.order.Manager.ExistOrderConds:input_type -> nftmeta.v1.order.ExistOrderCondsRequest
-	20, // 40: nftmeta.v1.order.Manager.CountOrders:input_type -> nftmeta.v1.order.CountOrdersRequest
-	22, // 41: nftmeta.v1.order.Manager.DeleteOrder:input_type -> nftmeta.v1.order.DeleteOrderRequest
-	5,  // 42: nftmeta.v1.order.Manager.CreateOrder:output_type -> nftmeta.v1.order.CreateOrderResponse
-	7,  // 43: nftmeta.v1.order.Manager.CreateOrders:output_type -> nftmeta.v1.order.CreateOrdersResponse
-	15, // 44: nftmeta.v1.order.Manager.UpdateOrder:output_type -> nftmeta.v1.order.UpdateOrderResponse
-	9,  // 45: nftmeta.v1.order.Manager.GetOrder:output_type -> nftmeta.v1.order.GetOrderResponse
-	13, // 46: nftmeta.v1.order.Manager.GetOrderOnly:output_type -> nftmeta.v1.order.GetOrderOnlyResponse
-	11, // 47: nftmeta.v1.order.Manager.GetOrders:output_type -> nftmeta.v1.order.GetOrdersResponse
-	17, // 48: nftmeta.v1.order.Manager.ExistOrder:output_type -> nftmeta.v1.order.ExistOrderResponse
-	19, // 49: nftmeta.v1.order.Manager.ExistOrderConds:output_type -> nftmeta.v1.order.ExistOrderCondsResponse
-	21, // 50: nftmeta.v1.order.Manager.CountOrders:output_type -> nftmeta.v1.order.CountOrdersResponse
-	23, // 51: nftmeta.v1.order.Manager.DeleteOrder:output_type -> nftmeta.v1.order.DeleteOrderResponse
-	42, // [42:52] is the sub-list for method output_type
-	32, // [32:42] is the sub-list for method input_type
-	32, // [32:32] is the sub-list for extension type_name
-	32, // [32:32] is the sub-list for extension extendee
-	0,  // [0:32] is the sub-list for field type_name
+	2,  // 30: nftmeta.v1.order.DeleteOrderResponse.Info:type_name -> nftmeta.v1.order.Order
+	4,  // 31: nftmeta.v1.order.Manager.CreateOrder:input_type -> nftmeta.v1.order.CreateOrderRequest
+	6,  // 32: nftmeta.v1.order.Manager.CreateOrders:input_type -> nftmeta.v1.order.CreateOrdersRequest
+	14, // 33: nftmeta.v1.order.Manager.UpdateOrder:input_type -> nftmeta.v1.order.UpdateOrderRequest
+	8,  // 34: nftmeta.v1.order.Manager.GetOrder:input_type -> nftmeta.v1.order.GetOrderRequest
+	12, // 35: nftmeta.v1.order.Manager.GetOrderOnly:input_type -> nftmeta.v1.order.GetOrderOnlyRequest
+	10, // 36: nftmeta.v1.order.Manager.GetOrders:input_type -> nftmeta.v1.order.GetOrdersRequest
+	16, // 37: nftmeta.v1.order.Manager.ExistOrder:input_type -> nftmeta.v1.order.ExistOrderRequest
+	18, // 38: nftmeta.v1.order.Manager.ExistOrderConds:input_type -> nftmeta.v1.order.ExistOrderCondsRequest
+	20, // 39: nftmeta.v1.order.Manager.DeleteOrder:input_type -> nftmeta.v1.order.DeleteOrderRequest
+	5,  // 40: nftmeta.v1.order.Manager.CreateOrder:output_type -> nftmeta.v1.order.CreateOrderResponse
+	7,  // 41: nftmeta.v1.order.Manager.CreateOrders:output_type -> nftmeta.v1.order.CreateOrdersResponse
+	15, // 42: nftmeta.v1.order.Manager.UpdateOrder:output_type -> nftmeta.v1.order.UpdateOrderResponse
+	9,  // 43: nftmeta.v1.order.Manager.GetOrder:output_type -> nftmeta.v1.order.GetOrderResponse
+	13, // 44: nftmeta.v1.order.Manager.GetOrderOnly:output_type -> nftmeta.v1.order.GetOrderOnlyResponse
+	11, // 45: nftmeta.v1.order.Manager.GetOrders:output_type -> nftmeta.v1.order.GetOrdersResponse
+	17, // 46: nftmeta.v1.order.Manager.ExistOrder:output_type -> nftmeta.v1.order.ExistOrderResponse
+	19, // 47: nftmeta.v1.order.Manager.ExistOrderConds:output_type -> nftmeta.v1.order.ExistOrderCondsResponse
+	21, // 48: nftmeta.v1.order.Manager.DeleteOrder:output_type -> nftmeta.v1.order.DeleteOrderResponse
+	40, // [40:49] is the sub-list for method output_type
+	31, // [31:40] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_web3eye_nftmeta_v1_order_order_proto_init() }
@@ -2155,30 +2043,6 @@ func file_web3eye_nftmeta_v1_order_order_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_order_order_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountOrdersRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountOrdersResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_order_order_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteOrderRequest); i {
 			case 0:
 				return &v.state
@@ -2190,7 +2054,7 @@ func file_web3eye_nftmeta_v1_order_order_proto_init() {
 				return nil
 			}
 		}
-		file_web3eye_nftmeta_v1_order_order_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_order_order_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteOrderResponse); i {
 			case 0:
 				return &v.state
@@ -2210,7 +2074,7 @@ func file_web3eye_nftmeta_v1_order_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_web3eye_nftmeta_v1_order_order_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

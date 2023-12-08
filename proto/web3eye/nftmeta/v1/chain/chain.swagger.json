@@ -91,15 +91,6 @@
         }
       }
     },
-    "chain1CountChainsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "chain1CreateChainResponse": {
       "type": "object",
       "properties": {

@@ -33,7 +33,7 @@ type BlockLogs struct {
 func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockProto.Block, error) {
 	blockOnly, err := blockNMCli.GetBlockOnly(ctx, &blockProto.GetBlockOnlyRequest{
 		Conds: &blockProto.Conds{
-			ChainType:   &ctMessage.StringVal{Op: "eq", Value: e.ChainType.String()},
+			ChainType:   &ctMessage.Uint32Val{Op: "eq", Value: uint32(e.ChainType)},
 			ChainID:     &ctMessage.StringVal{Op: "eq", Value: e.ChainID},
 			BlockNumber: &ctMessage.Uint64Val{Op: "eq", Value: inBlockNum},
 		},
@@ -166,8 +166,8 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		remark := ""
 		conds := &tokenProto.Conds{
-			ChainType: &ctMessage.StringVal{
-				Value: e.ChainType.String(),
+			ChainType: &ctMessage.Uint32Val{
+				Value: uint32(e.ChainType),
 				Op:    "eq",
 			},
 			ChainID: &ctMessage.StringVal{
@@ -293,8 +293,8 @@ func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist 
 	}
 	// check if the record exist
 	conds := &contractProto.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: e.ChainType.String(),
+		ChainType: &ctMessage.Uint32Val{
+			Value: uint32(e.ChainType),
 			Op:    "eq",
 		},
 		ChainID: &ctMessage.StringVal{

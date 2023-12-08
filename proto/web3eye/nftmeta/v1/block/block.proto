@@ -19,7 +19,6 @@ service Manager {
   rpc ExistBlock(ExistBlockRequest) returns (ExistBlockResponse) {}
   rpc ExistBlockConds(ExistBlockCondsRequest)
       returns (ExistBlockCondsResponse) {}
-  rpc CountBlocks(CountBlocksRequest) returns (CountBlocksResponse) {}
   rpc DeleteBlock(DeleteBlockRequest) returns (DeleteBlockResponse) {}
 }
 
@@ -109,9 +108,6 @@ message ExistBlockResponse { bool Exist = 10; }
 
 message ExistBlockCondsRequest { Conds Conds = 10; }
 message ExistBlockCondsResponse { bool Exist = 10; }
-
-message CountBlocksRequest { Conds Conds = 10; }
-message CountBlocksResponse { uint32 Info = 10; }
 
 message DeleteBlockRequest { uint32 ID = 10; }
 message DeleteBlockResponse { Block Info = 10; }

@@ -2,12 +2,11 @@ package contract
 
 import (
 	"context"
+	"fmt"
 
-	contractcrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/contract"
-	tokencrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
-	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
+	contracthandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/contract"
+	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
 
-	nftmetaconverter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/contract"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
@@ -22,32 +21,52 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 		Value: in.Contract,
 	}}
 
-	entcontract, err := contractcrud.RowOnly(ctx, contractconds)
+	contractHandler, err := contracthandler.NewHandler(ctx, contracthandler.WithConds(contractconds))
 	if err != nil {
 		return nil, err
 	}
+
+	contracts, num, err := contractHandler.GetContracts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if num != 1 {
+		return nil, fmt.Errorf("have more then one or have no contract, contract: %v", in.Contract)
+	}
+	contract := contracts[0]
 
 	tokensconds := &token.Conds{Contract: &web3eye.StringVal{
 		Op:    "eq",
 		Value: in.Contract,
 	}}
-	tokens, total, err := tokencrud.Rows(ctx, tokensconds, int(in.Offset), int(in.Limit))
+
+	tokenHandler, err := tokenhandler.NewHandler(ctx,
+		tokenhandler.WithConds(tokensconds),
+		tokenhandler.WithOffset(int32(in.Offset)),
+		tokenhandler.WithLimit(int32(in.Limit)),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	tokens, total, err := tokenHandler.GetTokens(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	transfersconds := &transfer.Conds{
-		ChainType: &web3eye.StringVal{
+		ChainType: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: entcontract.ChainType,
+			Value: uint32(*contract.ChainType.Enum()),
 		},
 		Contract: &web3eye.StringVal{
 			Op:    "eq",
-			Value: entcontract.Address,
+			Value: contract.Address,
 		},
 		ChainID: &web3eye.StringVal{
 			Op:    "eq",
-			Value: entcontract.ChainID,
+			Value: contract.ChainID,
 		},
 	}
 	shotTokens := rankerconverter.Ent2GrpcMany(tokens)
@@ -56,7 +75,12 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 			Op:    "eq",
 			Value: v.TokenID,
 		}
-		total, err := transfercrud.Count(ctx, transfersconds)
+		contractHandler, err := contracthandler.NewHandler(ctx, contracthandler.WithConds(contractconds))
+		if err != nil {
+			return nil, err
+		}
+
+		_, total, err := contractHandler.GetContracts(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -64,7 +88,7 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	}
 
 	return &rankernpool.GetContractAndTokensResp{
-		Contract:    nftmetaconverter.Ent2Grpc(entcontract),
+		Contract:    contract,
 		Tokens:      shotTokens,
 		TotalTokens: uint32(total),
 	}, nil

@@ -22,9 +22,9 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 		if inspectErr != nil {
 			logger.Sugar().Warnf("check the endpoint %v is unavailable,err: %v,has been removed", v, inspectErr)
 			conds := &endpoint.Conds{
-				ChainType: &web3eye.StringVal{
+				ChainType: &web3eye.Uint32Val{
 					Op:    "eq",
-					Value: e.ChainType.String(),
+					Value: uint32(e.ChainType),
 				},
 				Address: &web3eye.StringVal{
 					Op:    "eq",

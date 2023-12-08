@@ -108,14 +108,6 @@ func ExistBlockConds(ctx context.Context, in *npool.ExistBlockCondsRequest) (res
 	return resp, err
 }
 
-func CountBlocks(ctx context.Context, in *npool.CountBlocksRequest) (resp *npool.CountBlocksResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountBlocks(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteBlock(ctx context.Context, in *npool.DeleteBlockRequest) (resp *npool.DeleteBlockResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteBlock(ctx, in)

@@ -21,7 +21,6 @@ service Manager {
   rpc ExistTransfer(ExistTransferRequest) returns (ExistTransferResponse) {}
   rpc ExistTransferConds(ExistTransferCondsRequest)
       returns (ExistTransferCondsResponse) {}
-  rpc CountTransfers(CountTransfersRequest) returns (CountTransfersResponse) {}
   rpc DeleteTransfer(DeleteTransferRequest) returns (DeleteTransferResponse) {}
 }
 
@@ -138,9 +137,6 @@ message ExistTransferResponse { bool Exist = 10; }
 
 message ExistTransferCondsRequest { Conds Conds = 10; }
 message ExistTransferCondsResponse { bool Exist = 10; }
-
-message CountTransfersRequest { Conds Conds = 10; }
-message CountTransfersResponse { uint32 Info = 10; }
 
 message DeleteTransferRequest { uint32 ID = 10; }
 message DeleteTransferResponse { Transfer Info = 10; }

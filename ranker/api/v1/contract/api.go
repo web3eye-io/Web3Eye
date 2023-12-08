@@ -28,10 +28,6 @@ func (s *Server) GetContracts(ctx context.Context, in *nftmetanpool.GetContracts
 	return s.Server.GetContracts(ctx, in)
 }
 
-func (s *Server) CountContracts(ctx context.Context, in *nftmetanpool.CountContractsRequest) (*nftmetanpool.CountContractsResponse, error) {
-	return s.Server.CountContracts(ctx, in)
-}
-
 func Register(server grpc.ServiceRegistrar) {
 	rankernpool.RegisterManagerServer(server, &Server{})
 }

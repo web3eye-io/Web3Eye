@@ -27,7 +27,6 @@ const (
 	Manager_GetSnapshots_FullMethodName       = "/nftmeta.v1.snapshot.Manager/GetSnapshots"
 	Manager_ExistSnapshot_FullMethodName      = "/nftmeta.v1.snapshot.Manager/ExistSnapshot"
 	Manager_ExistSnapshotConds_FullMethodName = "/nftmeta.v1.snapshot.Manager/ExistSnapshotConds"
-	Manager_CountSnapshots_FullMethodName     = "/nftmeta.v1.snapshot.Manager/CountSnapshots"
 	Manager_DeleteSnapshot_FullMethodName     = "/nftmeta.v1.snapshot.Manager/DeleteSnapshot"
 )
 
@@ -43,7 +42,6 @@ type ManagerClient interface {
 	GetSnapshots(ctx context.Context, in *GetSnapshotsRequest, opts ...grpc.CallOption) (*GetSnapshotsResponse, error)
 	ExistSnapshot(ctx context.Context, in *ExistSnapshotRequest, opts ...grpc.CallOption) (*ExistSnapshotResponse, error)
 	ExistSnapshotConds(ctx context.Context, in *ExistSnapshotCondsRequest, opts ...grpc.CallOption) (*ExistSnapshotCondsResponse, error)
-	CountSnapshots(ctx context.Context, in *CountSnapshotsRequest, opts ...grpc.CallOption) (*CountSnapshotsResponse, error)
 	DeleteSnapshot(ctx context.Context, in *DeleteSnapshotRequest, opts ...grpc.CallOption) (*DeleteSnapshotResponse, error)
 }
 
@@ -127,15 +125,6 @@ func (c *managerClient) ExistSnapshotConds(ctx context.Context, in *ExistSnapsho
 	return out, nil
 }
 
-func (c *managerClient) CountSnapshots(ctx context.Context, in *CountSnapshotsRequest, opts ...grpc.CallOption) (*CountSnapshotsResponse, error) {
-	out := new(CountSnapshotsResponse)
-	err := c.cc.Invoke(ctx, Manager_CountSnapshots_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteSnapshot(ctx context.Context, in *DeleteSnapshotRequest, opts ...grpc.CallOption) (*DeleteSnapshotResponse, error) {
 	out := new(DeleteSnapshotResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteSnapshot_FullMethodName, in, out, opts...)
@@ -157,7 +146,6 @@ type ManagerServer interface {
 	GetSnapshots(context.Context, *GetSnapshotsRequest) (*GetSnapshotsResponse, error)
 	ExistSnapshot(context.Context, *ExistSnapshotRequest) (*ExistSnapshotResponse, error)
 	ExistSnapshotConds(context.Context, *ExistSnapshotCondsRequest) (*ExistSnapshotCondsResponse, error)
-	CountSnapshots(context.Context, *CountSnapshotsRequest) (*CountSnapshotsResponse, error)
 	DeleteSnapshot(context.Context, *DeleteSnapshotRequest) (*DeleteSnapshotResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -189,9 +177,6 @@ func (UnimplementedManagerServer) ExistSnapshot(context.Context, *ExistSnapshotR
 }
 func (UnimplementedManagerServer) ExistSnapshotConds(context.Context, *ExistSnapshotCondsRequest) (*ExistSnapshotCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistSnapshotConds not implemented")
-}
-func (UnimplementedManagerServer) CountSnapshots(context.Context, *CountSnapshotsRequest) (*CountSnapshotsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountSnapshots not implemented")
 }
 func (UnimplementedManagerServer) DeleteSnapshot(context.Context, *DeleteSnapshotRequest) (*DeleteSnapshotResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSnapshot not implemented")
@@ -353,24 +338,6 @@ func _Manager_ExistSnapshotConds_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountSnapshotsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountSnapshots(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountSnapshots_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountSnapshots(ctx, req.(*CountSnapshotsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteSnapshotRequest)
 	if err := dec(in); err != nil {
@@ -427,10 +394,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistSnapshotConds",
 			Handler:    _Manager_ExistSnapshotConds_Handler,
-		},
-		{
-			MethodName: "CountSnapshots",
-			Handler:    _Manager_CountSnapshots_Handler,
 		},
 		{
 			MethodName: "DeleteSnapshot",

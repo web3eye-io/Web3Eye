@@ -50,7 +50,7 @@ func (Token) Fields() []ent.Field {
 			Optional(),
 		field.Text("ipfs_image_url").
 			Optional(),
-		field.Text("image_snapshot_id").
+		field.Uint32("image_snapshot_id").
 			Optional(),
 	}
 }

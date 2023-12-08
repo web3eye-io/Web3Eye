@@ -116,14 +116,6 @@ func ExistTransferConds(ctx context.Context, in *npool.ExistTransferCondsRequest
 	return resp, err
 }
 
-func CountTransfers(ctx context.Context, in *npool.CountTransfersRequest) (resp *npool.CountTransfersResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountTransfers(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteTransfer(ctx context.Context, in *npool.DeleteTransferRequest) (resp *npool.DeleteTransferResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteTransfer(ctx, in)

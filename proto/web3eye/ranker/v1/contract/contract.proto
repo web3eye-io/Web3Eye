@@ -11,7 +11,6 @@ service Manager {
   rpc GetContractOnly(nftmeta.v1.contract.GetContractOnlyRequest)
       returns (nftmeta.v1.contract.GetContractOnlyResponse) {}
   rpc GetContracts(nftmeta.v1.contract.GetContractsRequest) returns (nftmeta.v1.contract.GetContractsResponse) {}
-  rpc CountContracts(nftmeta.v1.contract.CountContractsRequest) returns (nftmeta.v1.contract.CountContractsResponse) {}
   rpc GetContractAndTokens(GetContractAndTokensReq) returns (GetContractAndTokensResp) {}
 }
 
@@ -30,7 +29,7 @@ message ShotToken {
   string ImageURL = 60;
   string Name = 70;
   string IPFSImageURL = 80;
-  string ImageSnapshotID = 90;
+  uint32 ImageSnapshotID = 90;
   uint32 TransfersNum = 100;
 }
 

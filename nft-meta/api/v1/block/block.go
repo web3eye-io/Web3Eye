@@ -13,6 +13,13 @@ import (
 )
 
 func (s *Server) CreateBlock(ctx context.Context, in *npool.CreateBlockRequest) (*npool.CreateBlockResponse, error) {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"CreateCoin",
+			"In", in,
+		)
+		return &npool.CreateBlockResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
 	h, err := handler.NewHandler(ctx,
 		handler.WithChainType(in.Info.ChainType, true),
 		handler.WithChainID(in.Info.ChainID, true),
@@ -39,6 +46,13 @@ func (s *Server) CreateBlock(ctx context.Context, in *npool.CreateBlockRequest) 
 }
 
 func (s *Server) UpsertBlock(ctx context.Context, in *npool.UpsertBlockRequest) (*npool.UpsertBlockResponse, error) {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertBlock",
+			"In", in,
+		)
+		return &npool.UpsertBlockResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
 	h, err := handler.NewHandler(ctx,
 		handler.WithChainType(in.Info.ChainType, true),
 		handler.WithChainID(in.Info.ChainID, true),
@@ -90,6 +104,13 @@ func (s *Server) CreateBlocks(ctx context.Context, in *npool.CreateBlocksRequest
 }
 
 func (s *Server) UpdateBlock(ctx context.Context, in *npool.UpdateBlockRequest) (*npool.UpdateBlockResponse, error) {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertBlock",
+			"In", in,
+		)
+		return &npool.UpdateBlockResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
 	h, err := handler.NewHandler(ctx,
 		handler.WithID(in.Info.ID, true),
 		handler.WithChainType(in.Info.ChainType, false),
@@ -152,8 +173,8 @@ func (s *Server) GetBlockOnly(ctx context.Context, in *npool.GetBlockOnlyRequest
 		return &npool.GetBlockOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	if total > 1 {
-		errMsg := "more than one result"
+	if total != 1 {
+		errMsg := "more than one result or have no result"
 		logger.Sugar().Errorw("GetBlockOnly", "error", errMsg)
 		return &npool.GetBlockOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
@@ -181,7 +202,7 @@ func (s *Server) GetBlocks(ctx context.Context, in *npool.GetBlocksRequest) (*np
 
 	return &npool.GetBlocksResponse{
 		Infos: infos,
-		Total: uint32(total),
+		Total: total,
 	}, nil
 }
 
@@ -229,7 +250,7 @@ func (s *Server) DeleteBlock(ctx context.Context, in *npool.DeleteBlockRequest) 
 		handler.WithID(&in.ID, true),
 	)
 	if err != nil {
-		logger.Sugar().Errorw("ExistBlockConds", "error", err)
+		logger.Sugar().Errorw("DeleteBlock", "error", err)
 		return &npool.DeleteBlockResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 	info, err := h.DeleteBlock(ctx)

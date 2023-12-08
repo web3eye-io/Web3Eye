@@ -19,7 +19,6 @@ service Manager {
   rpc ExistEndpoint(ExistEndpointRequest) returns (ExistEndpointResponse) {}
   rpc ExistEndpointConds(ExistEndpointCondsRequest)
       returns (ExistEndpointCondsResponse) {}
-  rpc CountEndpoints(CountEndpointsRequest) returns (CountEndpointsResponse) {}
   rpc DeleteEndpoint(DeleteEndpointRequest) returns (DeleteEndpointResponse) {}
 }
 
@@ -106,9 +105,6 @@ message ExistEndpointResponse { bool Exist = 10; }
 
 message ExistEndpointCondsRequest { Conds Conds = 10; }
 message ExistEndpointCondsResponse { bool Exist = 10; }
-
-message CountEndpointsRequest { Conds Conds = 10; }
-message CountEndpointsResponse { uint32 Info = 10; }
 
 message DeleteEndpointRequest { uint32 ID = 10; }
 message DeleteEndpointResponse { Endpoint Info = 10; }

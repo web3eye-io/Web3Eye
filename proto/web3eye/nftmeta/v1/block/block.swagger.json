@@ -147,15 +147,6 @@
         }
       }
     },
-    "blockCountBlocksResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "blockCreateBlockResponse": {
       "type": "object",
       "properties": {

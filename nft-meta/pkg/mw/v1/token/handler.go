@@ -32,7 +32,7 @@ type Handler struct {
 	VectorState     *tokenproto.ConvertState
 	VectorID        *int64
 	IPFSImageURL    *string
-	ImageSnapshotID *string
+	ImageSnapshotID *uint32
 	Remark          *string
 	Reqs            []*tokencrud.Req
 	Conds           *tokencrud.Conds
@@ -269,7 +269,7 @@ func WithIPFSImageURL(u *string, must bool) func(context.Context, *Handler) erro
 		return nil
 	}
 }
-func WithImageSnapshotID(u *string, must bool) func(context.Context, *Handler) error {
+func WithImageSnapshotID(u *uint32, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {

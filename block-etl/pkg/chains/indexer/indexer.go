@@ -85,16 +85,16 @@ func (e *Indexer) StopIndex() {
 func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, err error) {
 	logger.Sugar().Info("start to index task for ethereum")
 	conds := &synctask.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: e.ChainType.String(),
+		ChainType: &ctMessage.Uint32Val{
+			Value: uint32(e.ChainType),
 			Op:    "eq",
 		},
 		ChainID: &ctMessage.StringVal{
 			Value: e.ChainID,
 			Op:    "eq",
 		},
-		SyncState: &ctMessage.StringVal{
-			Value: basetype.SyncState_Start.String(),
+		SyncState: &ctMessage.Uint32Val{
+			Value: uint32(basetype.SyncState_Start),
 			Op:    "eq",
 		},
 	}

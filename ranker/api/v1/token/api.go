@@ -26,10 +26,6 @@ func (s *Server) GetTokens(ctx context.Context, in *nftmetanpool.GetTokensReques
 	return s.Server.GetTokens(ctx, in)
 }
 
-func (s *Server) CountTokens(ctx context.Context, in *nftmetanpool.CountTokensRequest) (*nftmetanpool.CountTokensResponse, error) {
-	return s.Server.CountTokens(ctx, in)
-}
-
 func Register(server grpc.ServiceRegistrar) {
 	rankernpool.RegisterManagerServer(server, &Server{})
 }

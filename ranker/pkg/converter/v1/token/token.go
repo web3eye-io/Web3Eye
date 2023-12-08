@@ -1,24 +1,22 @@
 package token
 
 import (
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
-	ranker_npool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
+	nftmetaproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
 )
 
-func Ent2Grpc(row *ent.Token) *ranker_npool.SearchToken {
+func Ent2Grpc(row *nftmetaproto.Token) *rankerproto.SearchToken {
 	if row == nil {
 		return nil
 	}
 
-	return &ranker_npool.SearchToken{
-		ID:              row.ID.String(),
-		ChainType:       basetype.ChainType(basetype.ChainType_value[row.ChainType]),
+	return &rankerproto.SearchToken{
+		ID:              row.ID,
+		ChainType:       row.ChainType,
 		ChainID:         row.ChainID,
 		Contract:        row.Contract,
 		TokenID:         row.TokenID,
-		TokenType:       basetype.TokenType(basetype.TokenType_value[row.TokenType]),
+		TokenType:       row.TokenType,
 		Owner:           row.Owner,
 		URI:             row.URI,
 		URIType:         row.URIType,
@@ -26,16 +24,16 @@ func Ent2Grpc(row *ent.Token) *ranker_npool.SearchToken {
 		VideoURL:        row.VideoURL,
 		Description:     row.Description,
 		Name:            row.Name,
-		VectorState:     npool.ConvertState(npool.ConvertState_value[row.VectorState]),
+		VectorState:     row.VectorState,
 		VectorID:        row.VectorID,
 		Remark:          row.Remark,
-		IPFSImageURL:    row.IpfsImageURL,
+		IPFSImageURL:    row.IPFSImageURL,
 		ImageSnapshotID: row.ImageSnapshotID,
 	}
 }
 
-func Ent2GrpcMany(rows []*ent.Token) []*ranker_npool.SearchToken {
-	infos := []*ranker_npool.SearchToken{}
+func Ent2GrpcMany(rows []*nftmetaproto.Token) []*rankerproto.SearchToken {
+	infos := []*rankerproto.SearchToken{}
 	for _, row := range rows {
 		infos = append(infos, Ent2Grpc(row))
 	}

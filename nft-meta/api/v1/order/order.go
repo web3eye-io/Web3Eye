@@ -4,129 +4,189 @@ package order
 import (
 	"context"
 
-	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/order"
-	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/order"
-
+	handler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/order"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/order"
-
-	"github.com/google/uuid"
 )
 
 func (s *Server) CreateOrder(ctx context.Context, in *npool.CreateOrderRequest) (*npool.CreateOrderResponse, error) {
-	var err error
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"CreateOrder",
+			"In", in,
+		)
+		return &npool.CreateOrderResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
 
-	info, err := crud.Create(ctx, in.GetInfo())
+	h, err := handler.NewHandler(ctx,
+		handler.WithChainType(in.Info.ChainType, true),
+		handler.WithChainID(in.Info.ChainID, true),
+		handler.WithTxHash(in.Info.TxHash, true),
+		handler.WithBlockNumber(in.Info.BlockNumber, true),
+		handler.WithTxIndex(in.Info.TxIndex, true),
+		handler.WithLogIndex(in.Info.LogIndex, true),
+		handler.WithRecipient(in.Info.Recipient, true),
+		handler.WithTargetItems(in.Info.TargetItems, true),
+		handler.WithOfferItems(in.Info.OfferItems, true),
+		handler.WithRemark(in.Info.Remark, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateOrder", "error", err)
+		return &npool.CreateOrderResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	info, err := h.CreateOrder(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateOrder", "error", err)
 		return &npool.CreateOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateOrderResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) CreateOrders(ctx context.Context, in *npool.CreateOrdersRequest) (*npool.CreateOrdersResponse, error) {
-	var err error
-
 	if len(in.GetInfos()) == 0 {
 		logger.Sugar().Errorw("CreateOrders", "error", "Infos is empty")
 		return &npool.CreateOrdersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
-
-	rows, err := crud.CreateBulk(ctx, in.GetInfos())
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(in.Infos, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateOrders", "error", err)
+		return &npool.CreateOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, err := h.CreateOrders(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateOrders", "error", err)
 		return &npool.CreateOrdersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateOrdersResponse{
-		Infos: converter.Ent2GrpcMany(rows),
+		Infos: infos,
 	}, nil
 }
 
 func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) (*npool.UpdateOrderResponse, error) {
-	var err error
-
-	if _, err := uuid.Parse(in.Info.GetID()); err != nil {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertBlock",
+			"In", in,
+		)
+		return &npool.UpdateOrderResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(in.Info.ID, true),
+		handler.WithChainType(in.Info.ChainType, false),
+		handler.WithChainID(in.Info.ChainID, false),
+		handler.WithTxHash(in.Info.TxHash, false),
+		handler.WithBlockNumber(in.Info.BlockNumber, false),
+		handler.WithTxIndex(in.Info.TxIndex, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
+		handler.WithRecipient(in.Info.Recipient, false),
+		handler.WithTargetItems(in.Info.TargetItems, false),
+		handler.WithOfferItems(in.Info.OfferItems, false),
+		handler.WithRemark(in.Info.Remark, false),
+	)
+	if err != nil {
 		logger.Sugar().Errorw("UpdateOrder", "ID", in.Info.GetID(), "error", err)
-		return &npool.UpdateOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.UpdateOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	info, err := crud.Update(ctx, in.GetInfo())
+	info, err := h.UpdateOrder(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateOrder", "ID", in.Info.GetID(), "error", err)
 		return &npool.UpdateOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpdateOrderResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetOrder(ctx context.Context, in *npool.GetOrderRequest) (*npool.GetOrderResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("GetOrder", "ID", in.GetID(), "error", err)
-		return &npool.GetOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw("GetOrder", "error", err)
+		return &npool.GetOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	info, err := crud.Row(ctx, id)
+	info, err := h.GetOrder(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetOrder", "ID", in.GetID(), "error", err)
 		return &npool.GetOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetOrderResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest) (*npool.GetOrderOnlyResponse, error) {
-	var err error
-
-	info, err := crud.RowOnly(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(0),
+		handler.WithLimit(1),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetOrderOnly", "error", err)
+		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetOrders(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetOrderOnly", "error", err)
 		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	if total != 1 {
+		errMsg := "more than one result or have no result"
+		logger.Sugar().Errorw("GetOrderOnly", "error", errMsg)
+		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, errMsg)
+	}
+
 	return &npool.GetOrderOnlyResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: infos[0],
 	}, nil
 }
 
 func (s *Server) GetOrders(ctx context.Context, in *npool.GetOrdersRequest) (*npool.GetOrdersResponse, error) {
-	var err error
-
-	rows, total, err := crud.Rows(ctx, in.GetConds(), int(in.GetOffset()), int(in.GetLimit()))
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(in.Offset),
+		handler.WithLimit(in.Limit),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetOrders", "error", err)
+		return &npool.GetOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetOrders(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetOrders", "error", err)
 		return &npool.GetOrdersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetOrdersResponse{
-		Infos: converter.Ent2GrpcMany(rows),
-		Total: uint32(total),
+		Infos: infos,
+		Total: total,
 	}, nil
 }
 
 func (s *Server) ExistOrder(ctx context.Context, in *npool.ExistOrderRequest) (*npool.ExistOrderResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
 		logger.Sugar().Errorw("ExistOrder", "ID", in.GetID(), "error", err)
 		return &npool.ExistOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	exist, err := crud.Exist(ctx, id)
+	exist, err := h.ExistOrder(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistOrder", "ID", in.GetID(), "error", err)
 		return &npool.ExistOrderResponse{}, status.Error(codes.Internal, err.Error())
@@ -138,9 +198,14 @@ func (s *Server) ExistOrder(ctx context.Context, in *npool.ExistOrderRequest) (*
 }
 
 func (s *Server) ExistOrderConds(ctx context.Context, in *npool.ExistOrderCondsRequest) (*npool.ExistOrderCondsResponse, error) {
-	var err error
-
-	exist, err := crud.ExistConds(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("ExistOrderConds", "error", err)
+		return &npool.ExistOrderCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	exist, err := h.ExistOrderConds(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistOrderConds", "error", err)
 		return &npool.ExistOrderCondsResponse{}, status.Error(codes.Internal, err.Error())
@@ -151,36 +216,21 @@ func (s *Server) ExistOrderConds(ctx context.Context, in *npool.ExistOrderCondsR
 	}, nil
 }
 
-func (s *Server) CountOrders(ctx context.Context, in *npool.CountOrdersRequest) (*npool.CountOrdersResponse, error) {
-	var err error
-
-	total, err := crud.Count(ctx, in.GetConds())
-	if err != nil {
-		logger.Sugar().Errorw("Counts", "error", err)
-		return &npool.CountOrdersResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.CountOrdersResponse{
-		Info: total,
-	}, nil
-}
-
 func (s *Server) DeleteOrder(ctx context.Context, in *npool.DeleteOrderRequest) (*npool.DeleteOrderResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("DeleteOrder", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("DeleteOrder", "error", err)
 		return &npool.DeleteOrderResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	info, err := crud.Delete(ctx, id)
+	info, err := h.DeleteOrder(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("DeleteOrder", "ID", in.GetID(), "error", err)
 		return &npool.DeleteOrderResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.DeleteOrderResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }

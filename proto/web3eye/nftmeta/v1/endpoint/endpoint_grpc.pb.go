@@ -28,7 +28,6 @@ const (
 	Manager_GetEndpoints_FullMethodName       = "/nftmeta.v1.endpoint.Manager/GetEndpoints"
 	Manager_ExistEndpoint_FullMethodName      = "/nftmeta.v1.endpoint.Manager/ExistEndpoint"
 	Manager_ExistEndpointConds_FullMethodName = "/nftmeta.v1.endpoint.Manager/ExistEndpointConds"
-	Manager_CountEndpoints_FullMethodName     = "/nftmeta.v1.endpoint.Manager/CountEndpoints"
 	Manager_DeleteEndpoint_FullMethodName     = "/nftmeta.v1.endpoint.Manager/DeleteEndpoint"
 )
 
@@ -45,7 +44,6 @@ type ManagerClient interface {
 	GetEndpoints(ctx context.Context, in *GetEndpointsRequest, opts ...grpc.CallOption) (*GetEndpointsResponse, error)
 	ExistEndpoint(ctx context.Context, in *ExistEndpointRequest, opts ...grpc.CallOption) (*ExistEndpointResponse, error)
 	ExistEndpointConds(ctx context.Context, in *ExistEndpointCondsRequest, opts ...grpc.CallOption) (*ExistEndpointCondsResponse, error)
-	CountEndpoints(ctx context.Context, in *CountEndpointsRequest, opts ...grpc.CallOption) (*CountEndpointsResponse, error)
 	DeleteEndpoint(ctx context.Context, in *DeleteEndpointRequest, opts ...grpc.CallOption) (*DeleteEndpointResponse, error)
 }
 
@@ -138,15 +136,6 @@ func (c *managerClient) ExistEndpointConds(ctx context.Context, in *ExistEndpoin
 	return out, nil
 }
 
-func (c *managerClient) CountEndpoints(ctx context.Context, in *CountEndpointsRequest, opts ...grpc.CallOption) (*CountEndpointsResponse, error) {
-	out := new(CountEndpointsResponse)
-	err := c.cc.Invoke(ctx, Manager_CountEndpoints_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteEndpoint(ctx context.Context, in *DeleteEndpointRequest, opts ...grpc.CallOption) (*DeleteEndpointResponse, error) {
 	out := new(DeleteEndpointResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteEndpoint_FullMethodName, in, out, opts...)
@@ -169,7 +158,6 @@ type ManagerServer interface {
 	GetEndpoints(context.Context, *GetEndpointsRequest) (*GetEndpointsResponse, error)
 	ExistEndpoint(context.Context, *ExistEndpointRequest) (*ExistEndpointResponse, error)
 	ExistEndpointConds(context.Context, *ExistEndpointCondsRequest) (*ExistEndpointCondsResponse, error)
-	CountEndpoints(context.Context, *CountEndpointsRequest) (*CountEndpointsResponse, error)
 	DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*DeleteEndpointResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -204,9 +192,6 @@ func (UnimplementedManagerServer) ExistEndpoint(context.Context, *ExistEndpointR
 }
 func (UnimplementedManagerServer) ExistEndpointConds(context.Context, *ExistEndpointCondsRequest) (*ExistEndpointCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistEndpointConds not implemented")
-}
-func (UnimplementedManagerServer) CountEndpoints(context.Context, *CountEndpointsRequest) (*CountEndpointsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountEndpoints not implemented")
 }
 func (UnimplementedManagerServer) DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*DeleteEndpointResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEndpoint not implemented")
@@ -386,24 +371,6 @@ func _Manager_ExistEndpointConds_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountEndpoints_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountEndpointsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountEndpoints(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountEndpoints_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountEndpoints(ctx, req.(*CountEndpointsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteEndpointRequest)
 	if err := dec(in); err != nil {
@@ -464,10 +431,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistEndpointConds",
 			Handler:    _Manager_ExistEndpointConds_Handler,
-		},
-		{
-			MethodName: "CountEndpoints",
-			Handler:    _Manager_CountEndpoints_Handler,
 		},
 		{
 			MethodName: "DeleteEndpoint",

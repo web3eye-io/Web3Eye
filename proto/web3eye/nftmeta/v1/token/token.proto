@@ -29,7 +29,6 @@ service Manager {
   rpc ExistToken(ExistTokenRequest) returns (ExistTokenResponse) {}
   rpc ExistTokenConds(ExistTokenCondsRequest)
       returns (ExistTokenCondsResponse) {}
-  rpc CountTokens(CountTokensRequest) returns (CountTokensResponse) {}
   rpc DeleteToken(DeleteTokenRequest) returns (DeleteTokenResponse) {}
 }
 
@@ -62,7 +61,7 @@ message TokenReq {
   optional int64 VectorID = 150;
   optional string Remark = 160;
   optional string IPFSImageURL = 170;
-  optional string ImageSnapshotID = 180;
+  optional uint32 ImageSnapshotID = 180;
 }
 
 message Token {
@@ -106,7 +105,7 @@ message Token {
   // @inject_tag: sql:"ipfs_image_url"
   string IPFSImageURL = 170;
   // @inject_tag: sql:"image_snapshot_id"
-  string ImageSnapshotID = 180;
+  uint32 ImageSnapshotID = 180;
   // @inject_tag: sql:"created_at"
   uint32 CreatedAt = 190;
   // @inject_tag: sql:"updated_at"
@@ -132,7 +131,7 @@ message Conds {
   web3eye.Int64Val VectorID = 150;
   web3eye.StringVal Remark = 160;
   web3eye.StringVal IPFSImageURL = 170;
-  web3eye.StringVal ImageSnapshotID = 180;
+  web3eye.Uint32Val ImageSnapshotID = 180;
   web3eye.StringSliceVal EntIDs = 190;
   web3eye.Int64SliceVal VectorIDs = 200;
 }
@@ -179,9 +178,6 @@ message ExistTokenResponse { bool Exist = 10; }
 
 message ExistTokenCondsRequest { Conds Conds = 10; }
 message ExistTokenCondsResponse { bool Exist = 10; }
-
-message CountTokensRequest { Conds Conds = 10; }
-message CountTokensResponse { uint32 Info = 10; }
 
 message DeleteTokenRequest { uint32 ID = 10; }
 message DeleteTokenResponse { Token Info = 10; }

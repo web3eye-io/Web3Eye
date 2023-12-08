@@ -29,7 +29,6 @@ const (
 	Manager_GetTokens_FullMethodName         = "/nftmeta.v1.token.Manager/GetTokens"
 	Manager_ExistToken_FullMethodName        = "/nftmeta.v1.token.Manager/ExistToken"
 	Manager_ExistTokenConds_FullMethodName   = "/nftmeta.v1.token.Manager/ExistTokenConds"
-	Manager_CountTokens_FullMethodName       = "/nftmeta.v1.token.Manager/CountTokens"
 	Manager_DeleteToken_FullMethodName       = "/nftmeta.v1.token.Manager/DeleteToken"
 )
 
@@ -47,7 +46,6 @@ type ManagerClient interface {
 	GetTokens(ctx context.Context, in *GetTokensRequest, opts ...grpc.CallOption) (*GetTokensResponse, error)
 	ExistToken(ctx context.Context, in *ExistTokenRequest, opts ...grpc.CallOption) (*ExistTokenResponse, error)
 	ExistTokenConds(ctx context.Context, in *ExistTokenCondsRequest, opts ...grpc.CallOption) (*ExistTokenCondsResponse, error)
-	CountTokens(ctx context.Context, in *CountTokensRequest, opts ...grpc.CallOption) (*CountTokensResponse, error)
 	DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error)
 }
 
@@ -149,15 +147,6 @@ func (c *managerClient) ExistTokenConds(ctx context.Context, in *ExistTokenConds
 	return out, nil
 }
 
-func (c *managerClient) CountTokens(ctx context.Context, in *CountTokensRequest, opts ...grpc.CallOption) (*CountTokensResponse, error) {
-	out := new(CountTokensResponse)
-	err := c.cc.Invoke(ctx, Manager_CountTokens_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error) {
 	out := new(DeleteTokenResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteToken_FullMethodName, in, out, opts...)
@@ -181,7 +170,6 @@ type ManagerServer interface {
 	GetTokens(context.Context, *GetTokensRequest) (*GetTokensResponse, error)
 	ExistToken(context.Context, *ExistTokenRequest) (*ExistTokenResponse, error)
 	ExistTokenConds(context.Context, *ExistTokenCondsRequest) (*ExistTokenCondsResponse, error)
-	CountTokens(context.Context, *CountTokensRequest) (*CountTokensResponse, error)
 	DeleteToken(context.Context, *DeleteTokenRequest) (*DeleteTokenResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -219,9 +207,6 @@ func (UnimplementedManagerServer) ExistToken(context.Context, *ExistTokenRequest
 }
 func (UnimplementedManagerServer) ExistTokenConds(context.Context, *ExistTokenCondsRequest) (*ExistTokenCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistTokenConds not implemented")
-}
-func (UnimplementedManagerServer) CountTokens(context.Context, *CountTokensRequest) (*CountTokensResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountTokens not implemented")
 }
 func (UnimplementedManagerServer) DeleteToken(context.Context, *DeleteTokenRequest) (*DeleteTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteToken not implemented")
@@ -419,24 +404,6 @@ func _Manager_ExistTokenConds_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountTokens_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountTokensRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountTokens(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountTokens_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTokens(ctx, req.(*CountTokensRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTokenRequest)
 	if err := dec(in); err != nil {
@@ -501,10 +468,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistTokenConds",
 			Handler:    _Manager_ExistTokenConds_Handler,
-		},
-		{
-			MethodName: "CountTokens",
-			Handler:    _Manager_CountTokens_Handler,
 		},
 		{
 			MethodName: "DeleteToken",

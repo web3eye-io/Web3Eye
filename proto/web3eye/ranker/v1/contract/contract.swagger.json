@@ -190,15 +190,6 @@
         }
       }
     },
-    "contractCountContractsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "contractGetContractAndTokensResp": {
       "type": "object",
       "properties": {
@@ -277,7 +268,8 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "TransfersNum": {
           "type": "integer",

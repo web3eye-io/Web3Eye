@@ -44,7 +44,7 @@ type TokenResInfo struct {
 	FileName string
 	Size     int64
 	S3Key    string
-	ID       string
+	ID       uint32
 	ResType  string
 }
 

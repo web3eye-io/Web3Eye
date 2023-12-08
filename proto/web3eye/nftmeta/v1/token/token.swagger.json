@@ -191,7 +191,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ImageSnapshotID": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
@@ -213,15 +213,6 @@
       ],
       "default": "Default",
       "title": "for show the state that resource_addr is converted to vector"
-    },
-    "tokenCountTokensResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
     },
     "tokenCreateTokenResponse": {
       "type": "object",
@@ -400,7 +391,8 @@
           "title": "@inject_tag: sql:\"ipfs_image_url\""
         },
         "ImageSnapshotID": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "title": "@inject_tag: sql:\"image_snapshot_id\""
         },
         "CreatedAt": {
@@ -475,7 +467,8 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

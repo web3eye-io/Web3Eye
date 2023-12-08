@@ -228,7 +228,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldVectorState:     {Type: field.TypeString, Column: token.FieldVectorState},
 			token.FieldRemark:          {Type: field.TypeString, Column: token.FieldRemark},
 			token.FieldIpfsImageURL:    {Type: field.TypeString, Column: token.FieldIpfsImageURL},
-			token.FieldImageSnapshotID: {Type: field.TypeString, Column: token.FieldImageSnapshotID},
+			token.FieldImageSnapshotID: {Type: field.TypeUint32, Column: token.FieldImageSnapshotID},
 		},
 	}
 	graph.Nodes[8] = &sqlgraph.Node{
@@ -1110,8 +1110,8 @@ func (f *TokenFilter) WhereIpfsImageURL(p entql.StringP) {
 	f.Where(p.Field(token.FieldIpfsImageURL))
 }
 
-// WhereImageSnapshotID applies the entql string predicate on the image_snapshot_id field.
-func (f *TokenFilter) WhereImageSnapshotID(p entql.StringP) {
+// WhereImageSnapshotID applies the entql uint32 predicate on the image_snapshot_id field.
+func (f *TokenFilter) WhereImageSnapshotID(p entql.Uint32P) {
 	f.Where(p.Field(token.FieldImageSnapshotID))
 }
 

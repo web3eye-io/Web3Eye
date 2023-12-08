@@ -100,14 +100,6 @@ func ExistSyncTaskConds(ctx context.Context, in *npool.ExistSyncTaskCondsRequest
 	return resp, err
 }
 
-func CountSyncTasks(ctx context.Context, in *npool.CountSyncTasksRequest) (resp *npool.CountSyncTasksResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountSyncTasks(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteSyncTask(ctx context.Context, in *npool.DeleteSyncTaskRequest) (resp *npool.DeleteSyncTaskResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteSyncTask(ctx, in)

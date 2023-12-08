@@ -28,7 +28,6 @@ const (
 	Manager_GetBlocks_FullMethodName       = "/nftmeta.v1.block.Manager/GetBlocks"
 	Manager_ExistBlock_FullMethodName      = "/nftmeta.v1.block.Manager/ExistBlock"
 	Manager_ExistBlockConds_FullMethodName = "/nftmeta.v1.block.Manager/ExistBlockConds"
-	Manager_CountBlocks_FullMethodName     = "/nftmeta.v1.block.Manager/CountBlocks"
 	Manager_DeleteBlock_FullMethodName     = "/nftmeta.v1.block.Manager/DeleteBlock"
 )
 
@@ -45,7 +44,6 @@ type ManagerClient interface {
 	GetBlocks(ctx context.Context, in *GetBlocksRequest, opts ...grpc.CallOption) (*GetBlocksResponse, error)
 	ExistBlock(ctx context.Context, in *ExistBlockRequest, opts ...grpc.CallOption) (*ExistBlockResponse, error)
 	ExistBlockConds(ctx context.Context, in *ExistBlockCondsRequest, opts ...grpc.CallOption) (*ExistBlockCondsResponse, error)
-	CountBlocks(ctx context.Context, in *CountBlocksRequest, opts ...grpc.CallOption) (*CountBlocksResponse, error)
 	DeleteBlock(ctx context.Context, in *DeleteBlockRequest, opts ...grpc.CallOption) (*DeleteBlockResponse, error)
 }
 
@@ -138,15 +136,6 @@ func (c *managerClient) ExistBlockConds(ctx context.Context, in *ExistBlockConds
 	return out, nil
 }
 
-func (c *managerClient) CountBlocks(ctx context.Context, in *CountBlocksRequest, opts ...grpc.CallOption) (*CountBlocksResponse, error) {
-	out := new(CountBlocksResponse)
-	err := c.cc.Invoke(ctx, Manager_CountBlocks_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteBlock(ctx context.Context, in *DeleteBlockRequest, opts ...grpc.CallOption) (*DeleteBlockResponse, error) {
 	out := new(DeleteBlockResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteBlock_FullMethodName, in, out, opts...)
@@ -169,7 +158,6 @@ type ManagerServer interface {
 	GetBlocks(context.Context, *GetBlocksRequest) (*GetBlocksResponse, error)
 	ExistBlock(context.Context, *ExistBlockRequest) (*ExistBlockResponse, error)
 	ExistBlockConds(context.Context, *ExistBlockCondsRequest) (*ExistBlockCondsResponse, error)
-	CountBlocks(context.Context, *CountBlocksRequest) (*CountBlocksResponse, error)
 	DeleteBlock(context.Context, *DeleteBlockRequest) (*DeleteBlockResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -204,9 +192,6 @@ func (UnimplementedManagerServer) ExistBlock(context.Context, *ExistBlockRequest
 }
 func (UnimplementedManagerServer) ExistBlockConds(context.Context, *ExistBlockCondsRequest) (*ExistBlockCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistBlockConds not implemented")
-}
-func (UnimplementedManagerServer) CountBlocks(context.Context, *CountBlocksRequest) (*CountBlocksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountBlocks not implemented")
 }
 func (UnimplementedManagerServer) DeleteBlock(context.Context, *DeleteBlockRequest) (*DeleteBlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlock not implemented")
@@ -386,24 +371,6 @@ func _Manager_ExistBlockConds_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountBlocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountBlocksRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountBlocks(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountBlocks_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountBlocks(ctx, req.(*CountBlocksRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteBlockRequest)
 	if err := dec(in); err != nil {
@@ -464,10 +431,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistBlockConds",
 			Handler:    _Manager_ExistBlockConds_Handler,
-		},
-		{
-			MethodName: "CountBlocks",
-			Handler:    _Manager_CountBlocks_Handler,
 		},
 		{
 			MethodName: "DeleteBlock",

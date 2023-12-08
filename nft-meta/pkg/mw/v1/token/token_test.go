@@ -40,7 +40,7 @@ var ret = &tokenproto.Token{
 	VectorState:     tokenproto.ConvertState_Default,
 	VectorID:        10010,
 	IPFSImageURL:    "test_token",
-	ImageSnapshotID: "test_token",
+	ImageSnapshotID: 11111,
 	Remark:          "test_token",
 }
 

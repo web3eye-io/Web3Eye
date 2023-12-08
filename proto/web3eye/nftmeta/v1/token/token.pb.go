@@ -105,7 +105,7 @@ type TokenReq struct {
 	VectorID        *int64        `protobuf:"varint,150,opt,name=VectorID,proto3,oneof" json:"VectorID,omitempty"`
 	Remark          *string       `protobuf:"bytes,160,opt,name=Remark,proto3,oneof" json:"Remark,omitempty"`
 	IPFSImageURL    *string       `protobuf:"bytes,170,opt,name=IPFSImageURL,proto3,oneof" json:"IPFSImageURL,omitempty"`
-	ImageSnapshotID *string       `protobuf:"bytes,180,opt,name=ImageSnapshotID,proto3,oneof" json:"ImageSnapshotID,omitempty"`
+	ImageSnapshotID *uint32       `protobuf:"varint,180,opt,name=ImageSnapshotID,proto3,oneof" json:"ImageSnapshotID,omitempty"`
 }
 
 func (x *TokenReq) Reset() {
@@ -266,11 +266,11 @@ func (x *TokenReq) GetIPFSImageURL() string {
 	return ""
 }
 
-func (x *TokenReq) GetImageSnapshotID() string {
+func (x *TokenReq) GetImageSnapshotID() uint32 {
 	if x != nil && x.ImageSnapshotID != nil {
 		return *x.ImageSnapshotID
 	}
-	return ""
+	return 0
 }
 
 type Token struct {
@@ -318,7 +318,7 @@ type Token struct {
 	// @inject_tag: sql:"ipfs_image_url"
 	IPFSImageURL string `protobuf:"bytes,170,opt,name=IPFSImageURL,proto3" json:"IPFSImageURL,omitempty" sql:"ipfs_image_url"`
 	// @inject_tag: sql:"image_snapshot_id"
-	ImageSnapshotID string `protobuf:"bytes,180,opt,name=ImageSnapshotID,proto3" json:"ImageSnapshotID,omitempty" sql:"image_snapshot_id"`
+	ImageSnapshotID uint32 `protobuf:"varint,180,opt,name=ImageSnapshotID,proto3" json:"ImageSnapshotID,omitempty" sql:"image_snapshot_id"`
 	// @inject_tag: sql:"created_at"
 	CreatedAt uint32 `protobuf:"varint,190,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty" sql:"created_at"`
 	// @inject_tag: sql:"updated_at"
@@ -504,11 +504,11 @@ func (x *Token) GetIPFSImageURL() string {
 	return ""
 }
 
-func (x *Token) GetImageSnapshotID() string {
+func (x *Token) GetImageSnapshotID() uint32 {
 	if x != nil {
 		return x.ImageSnapshotID
 	}
-	return ""
+	return 0
 }
 
 func (x *Token) GetCreatedAt() uint32 {
@@ -548,7 +548,7 @@ type Conds struct {
 	VectorID        *web3eye.Int64Val       `protobuf:"bytes,150,opt,name=VectorID,proto3" json:"VectorID,omitempty"`
 	Remark          *web3eye.StringVal      `protobuf:"bytes,160,opt,name=Remark,proto3" json:"Remark,omitempty"`
 	IPFSImageURL    *web3eye.StringVal      `protobuf:"bytes,170,opt,name=IPFSImageURL,proto3" json:"IPFSImageURL,omitempty"`
-	ImageSnapshotID *web3eye.StringVal      `protobuf:"bytes,180,opt,name=ImageSnapshotID,proto3" json:"ImageSnapshotID,omitempty"`
+	ImageSnapshotID *web3eye.Uint32Val      `protobuf:"bytes,180,opt,name=ImageSnapshotID,proto3" json:"ImageSnapshotID,omitempty"`
 	EntIDs          *web3eye.StringSliceVal `protobuf:"bytes,190,opt,name=EntIDs,proto3" json:"EntIDs,omitempty"`
 	VectorIDs       *web3eye.Int64SliceVal  `protobuf:"bytes,200,opt,name=VectorIDs,proto3" json:"VectorIDs,omitempty"`
 }
@@ -711,7 +711,7 @@ func (x *Conds) GetIPFSImageURL() *web3eye.StringVal {
 	return nil
 }
 
-func (x *Conds) GetImageSnapshotID() *web3eye.StringVal {
+func (x *Conds) GetImageSnapshotID() *web3eye.Uint32Val {
 	if x != nil {
 		return x.ImageSnapshotID
 	}
@@ -1712,100 +1712,6 @@ func (x *ExistTokenCondsResponse) GetExist() bool {
 	return false
 }
 
-type CountTokensRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Conds *Conds `protobuf:"bytes,10,opt,name=Conds,proto3" json:"Conds,omitempty"`
-}
-
-func (x *CountTokensRequest) Reset() {
-	*x = CountTokensRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[23]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountTokensRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountTokensRequest) ProtoMessage() {}
-
-func (x *CountTokensRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[23]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountTokensRequest.ProtoReflect.Descriptor instead.
-func (*CountTokensRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{23}
-}
-
-func (x *CountTokensRequest) GetConds() *Conds {
-	if x != nil {
-		return x.Conds
-	}
-	return nil
-}
-
-type CountTokensResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Info uint32 `protobuf:"varint,10,opt,name=Info,proto3" json:"Info,omitempty"`
-}
-
-func (x *CountTokensResponse) Reset() {
-	*x = CountTokensResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountTokensResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountTokensResponse) ProtoMessage() {}
-
-func (x *CountTokensResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountTokensResponse.ProtoReflect.Descriptor instead.
-func (*CountTokensResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{24}
-}
-
-func (x *CountTokensResponse) GetInfo() uint32 {
-	if x != nil {
-		return x.Info
-	}
-	return 0
-}
-
 type DeleteTokenRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1817,7 +1723,7 @@ type DeleteTokenRequest struct {
 func (x *DeleteTokenRequest) Reset() {
 	*x = DeleteTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[25]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1830,7 +1736,7 @@ func (x *DeleteTokenRequest) String() string {
 func (*DeleteTokenRequest) ProtoMessage() {}
 
 func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[25]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1843,7 +1749,7 @@ func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTokenRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{25}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *DeleteTokenRequest) GetID() uint32 {
@@ -1864,7 +1770,7 @@ type DeleteTokenResponse struct {
 func (x *DeleteTokenResponse) Reset() {
 	*x = DeleteTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[26]
+		mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1877,7 +1783,7 @@ func (x *DeleteTokenResponse) String() string {
 func (*DeleteTokenResponse) ProtoMessage() {}
 
 func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[26]
+	mi := &file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1890,7 +1796,7 @@ func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTokenResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{26}
+	return file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *DeleteTokenResponse) GetInfo() *Token {
@@ -1954,7 +1860,7 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x18, 0xaa, 0x01, 0x20, 0x01, 0x28, 0x09, 0x48, 0x11, 0x52, 0x0c, 0x49, 0x50, 0x46, 0x53, 0x49,
 	0x6d, 0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x88, 0x01, 0x01, 0x12, 0x2e, 0x0a, 0x0f, 0x49, 0x6d,
 	0x61, 0x67, 0x65, 0x53, 0x6e, 0x61, 0x70, 0x73, 0x68, 0x6f, 0x74, 0x49, 0x44, 0x18, 0xb4, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x48, 0x12, 0x52, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e, 0x61,
+	0x20, 0x01, 0x28, 0x0d, 0x48, 0x12, 0x52, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e, 0x61,
 	0x70, 0x73, 0x68, 0x6f, 0x74, 0x49, 0x44, 0x88, 0x01, 0x01, 0x42, 0x05, 0x0a, 0x03, 0x5f, 0x49,
 	0x44, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x45, 0x6e, 0x74, 0x49, 0x44, 0x42, 0x0c, 0x0a, 0x0a, 0x5f,
 	0x43, 0x68, 0x61, 0x69, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x42, 0x0a, 0x0a, 0x08, 0x5f, 0x43, 0x68,
@@ -2014,7 +1920,7 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x67, 0x65, 0x55, 0x52, 0x4c, 0x18, 0xaa, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x49, 0x50,
 	0x46, 0x53, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x12, 0x29, 0x0a, 0x0f, 0x49, 0x6d,
 	0x61, 0x67, 0x65, 0x53, 0x6e, 0x61, 0x70, 0x73, 0x68, 0x6f, 0x74, 0x49, 0x44, 0x18, 0xb4, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e, 0x61, 0x70, 0x73,
+	0x20, 0x01, 0x28, 0x0d, 0x52, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e, 0x61, 0x70, 0x73,
 	0x68, 0x6f, 0x74, 0x49, 0x44, 0x12, 0x1d, 0x0a, 0x09, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64,
 	0x41, 0x74, 0x18, 0xbe, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x43, 0x72, 0x65, 0x61, 0x74,
 	0x65, 0x64, 0x41, 0x74, 0x12, 0x1d, 0x0a, 0x09, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41,
@@ -2074,7 +1980,7 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x72, 0x69, 0x6e, 0x67, 0x56, 0x61, 0x6c, 0x52, 0x0c, 0x49, 0x50, 0x46, 0x53, 0x49, 0x6d, 0x61,
 	0x67, 0x65, 0x55, 0x52, 0x4c, 0x12, 0x3d, 0x0a, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e,
 	0x61, 0x70, 0x73, 0x68, 0x6f, 0x74, 0x49, 0x44, 0x18, 0xb4, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x12, 0x2e, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67,
+	0x12, 0x2e, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2e, 0x55, 0x69, 0x6e, 0x74, 0x33, 0x32,
 	0x56, 0x61, 0x6c, 0x52, 0x0f, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x53, 0x6e, 0x61, 0x70, 0x73, 0x68,
 	0x6f, 0x74, 0x49, 0x44, 0x12, 0x30, 0x0a, 0x06, 0x45, 0x6e, 0x74, 0x49, 0x44, 0x73, 0x18, 0xbe,
 	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2e,
@@ -2168,14 +2074,7 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x2f, 0x0a, 0x17, 0x45, 0x78, 0x69, 0x73, 0x74, 0x54, 0x6f,
 	0x6b, 0x65, 0x6e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x12, 0x14, 0x0a, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x43, 0x0a, 0x12, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x54,
-	0x6f, 0x6b, 0x65, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2d, 0x0a, 0x05,
-	0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x6e, 0x66,
-	0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x43,
-	0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x29, 0x0a, 0x13, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0d,
-	0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x24, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x24, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
 	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02,
 	0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x49, 0x44, 0x22, 0x42, 0x0a, 0x13,
 	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
@@ -2187,8 +2086,8 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x07, 0x57, 0x61, 0x69, 0x74, 0x69, 0x6e, 0x67, 0x10, 0x0a, 0x12, 0x0e, 0x0a, 0x0a, 0x50, 0x72,
 	0x6f, 0x63, 0x65, 0x73, 0x73, 0x69, 0x6e, 0x67, 0x10, 0x14, 0x12, 0x09, 0x0a, 0x05, 0x50, 0x61,
 	0x75, 0x73, 0x65, 0x10, 0x1e, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73,
-	0x10, 0x28, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x32, 0x32, 0xbf,
-	0x09, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x72,
+	0x10, 0x28, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x32, 0x32, 0xe1,
+	0x08, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d,
 	0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x43, 0x72, 0x65,
 	0x61, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
@@ -2252,23 +2151,17 @@ var file_web3eye_nftmeta_v1_token_token_proto_rawDesc = []byte{
 	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74,
 	0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x45, 0x78, 0x69, 0x73, 0x74,
 	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x54, 0x6f, 0x6b,
-	0x65, 0x6e, 0x73, 0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31,
-	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d,
-	0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x43, 0x6f, 0x75,
-	0x6e, 0x74, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x00, 0x12, 0x5c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74,
-	0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74,
-	0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x42, 0x3e, 0x5a, 0x3c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77,
-	0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79,
-	0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f,
-	0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f,
+	0x6b, 0x65, 0x6e, 0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31,
+	0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b,
+	0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d,
+	0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x42, 0x3e, 0x5a, 0x3c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33,
+	0x45, 0x79, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79,
+	0x65, 0x2f, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x74, 0x6f, 0x6b,
+	0x65, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2284,7 +2177,7 @@ func file_web3eye_nftmeta_v1_token_token_proto_rawDescGZIP() []byte {
 }
 
 var file_web3eye_nftmeta_v1_token_token_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_web3eye_nftmeta_v1_token_token_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_web3eye_nftmeta_v1_token_token_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_web3eye_nftmeta_v1_token_token_proto_goTypes = []interface{}{
 	(ConvertState)(0),                 // 0: nftmeta.v1.token.ConvertState
 	(*TokenReq)(nil),                  // 1: nftmeta.v1.token.TokenReq
@@ -2310,46 +2203,44 @@ var file_web3eye_nftmeta_v1_token_token_proto_goTypes = []interface{}{
 	(*ExistTokenResponse)(nil),        // 21: nftmeta.v1.token.ExistTokenResponse
 	(*ExistTokenCondsRequest)(nil),    // 22: nftmeta.v1.token.ExistTokenCondsRequest
 	(*ExistTokenCondsResponse)(nil),   // 23: nftmeta.v1.token.ExistTokenCondsResponse
-	(*CountTokensRequest)(nil),        // 24: nftmeta.v1.token.CountTokensRequest
-	(*CountTokensResponse)(nil),       // 25: nftmeta.v1.token.CountTokensResponse
-	(*DeleteTokenRequest)(nil),        // 26: nftmeta.v1.token.DeleteTokenRequest
-	(*DeleteTokenResponse)(nil),       // 27: nftmeta.v1.token.DeleteTokenResponse
-	(v1.ChainType)(0),                 // 28: chain.ChainType
-	(v1.TokenType)(0),                 // 29: chain.TokenType
-	(*web3eye.Uint32Val)(nil),         // 30: web3eye.Uint32Val
-	(*web3eye.StringVal)(nil),         // 31: web3eye.StringVal
-	(*web3eye.Int64Val)(nil),          // 32: web3eye.Int64Val
-	(*web3eye.StringSliceVal)(nil),    // 33: web3eye.StringSliceVal
-	(*web3eye.Int64SliceVal)(nil),     // 34: web3eye.Int64SliceVal
+	(*DeleteTokenRequest)(nil),        // 24: nftmeta.v1.token.DeleteTokenRequest
+	(*DeleteTokenResponse)(nil),       // 25: nftmeta.v1.token.DeleteTokenResponse
+	(v1.ChainType)(0),                 // 26: chain.ChainType
+	(v1.TokenType)(0),                 // 27: chain.TokenType
+	(*web3eye.Uint32Val)(nil),         // 28: web3eye.Uint32Val
+	(*web3eye.StringVal)(nil),         // 29: web3eye.StringVal
+	(*web3eye.Int64Val)(nil),          // 30: web3eye.Int64Val
+	(*web3eye.StringSliceVal)(nil),    // 31: web3eye.StringSliceVal
+	(*web3eye.Int64SliceVal)(nil),     // 32: web3eye.Int64SliceVal
 }
 var file_web3eye_nftmeta_v1_token_token_proto_depIdxs = []int32{
-	28, // 0: nftmeta.v1.token.TokenReq.ChainType:type_name -> chain.ChainType
-	29, // 1: nftmeta.v1.token.TokenReq.TokenType:type_name -> chain.TokenType
+	26, // 0: nftmeta.v1.token.TokenReq.ChainType:type_name -> chain.ChainType
+	27, // 1: nftmeta.v1.token.TokenReq.TokenType:type_name -> chain.TokenType
 	0,  // 2: nftmeta.v1.token.TokenReq.VectorState:type_name -> nftmeta.v1.token.ConvertState
-	28, // 3: nftmeta.v1.token.Token.ChainType:type_name -> chain.ChainType
-	29, // 4: nftmeta.v1.token.Token.TokenType:type_name -> chain.TokenType
+	26, // 3: nftmeta.v1.token.Token.ChainType:type_name -> chain.ChainType
+	27, // 4: nftmeta.v1.token.Token.TokenType:type_name -> chain.TokenType
 	0,  // 5: nftmeta.v1.token.Token.VectorState:type_name -> nftmeta.v1.token.ConvertState
-	30, // 6: nftmeta.v1.token.Conds.ID:type_name -> web3eye.Uint32Val
-	31, // 7: nftmeta.v1.token.Conds.EntID:type_name -> web3eye.StringVal
-	30, // 8: nftmeta.v1.token.Conds.ChainType:type_name -> web3eye.Uint32Val
-	31, // 9: nftmeta.v1.token.Conds.ChainID:type_name -> web3eye.StringVal
-	31, // 10: nftmeta.v1.token.Conds.Contract:type_name -> web3eye.StringVal
-	30, // 11: nftmeta.v1.token.Conds.TokenType:type_name -> web3eye.Uint32Val
-	31, // 12: nftmeta.v1.token.Conds.TokenID:type_name -> web3eye.StringVal
-	31, // 13: nftmeta.v1.token.Conds.Owner:type_name -> web3eye.StringVal
-	31, // 14: nftmeta.v1.token.Conds.URI:type_name -> web3eye.StringVal
-	31, // 15: nftmeta.v1.token.Conds.URIType:type_name -> web3eye.StringVal
-	31, // 16: nftmeta.v1.token.Conds.ImageURL:type_name -> web3eye.StringVal
-	31, // 17: nftmeta.v1.token.Conds.VideoURL:type_name -> web3eye.StringVal
-	31, // 18: nftmeta.v1.token.Conds.Description:type_name -> web3eye.StringVal
-	31, // 19: nftmeta.v1.token.Conds.Name:type_name -> web3eye.StringVal
-	30, // 20: nftmeta.v1.token.Conds.VectorState:type_name -> web3eye.Uint32Val
-	32, // 21: nftmeta.v1.token.Conds.VectorID:type_name -> web3eye.Int64Val
-	31, // 22: nftmeta.v1.token.Conds.Remark:type_name -> web3eye.StringVal
-	31, // 23: nftmeta.v1.token.Conds.IPFSImageURL:type_name -> web3eye.StringVal
-	31, // 24: nftmeta.v1.token.Conds.ImageSnapshotID:type_name -> web3eye.StringVal
-	33, // 25: nftmeta.v1.token.Conds.EntIDs:type_name -> web3eye.StringSliceVal
-	34, // 26: nftmeta.v1.token.Conds.VectorIDs:type_name -> web3eye.Int64SliceVal
+	28, // 6: nftmeta.v1.token.Conds.ID:type_name -> web3eye.Uint32Val
+	29, // 7: nftmeta.v1.token.Conds.EntID:type_name -> web3eye.StringVal
+	28, // 8: nftmeta.v1.token.Conds.ChainType:type_name -> web3eye.Uint32Val
+	29, // 9: nftmeta.v1.token.Conds.ChainID:type_name -> web3eye.StringVal
+	29, // 10: nftmeta.v1.token.Conds.Contract:type_name -> web3eye.StringVal
+	28, // 11: nftmeta.v1.token.Conds.TokenType:type_name -> web3eye.Uint32Val
+	29, // 12: nftmeta.v1.token.Conds.TokenID:type_name -> web3eye.StringVal
+	29, // 13: nftmeta.v1.token.Conds.Owner:type_name -> web3eye.StringVal
+	29, // 14: nftmeta.v1.token.Conds.URI:type_name -> web3eye.StringVal
+	29, // 15: nftmeta.v1.token.Conds.URIType:type_name -> web3eye.StringVal
+	29, // 16: nftmeta.v1.token.Conds.ImageURL:type_name -> web3eye.StringVal
+	29, // 17: nftmeta.v1.token.Conds.VideoURL:type_name -> web3eye.StringVal
+	29, // 18: nftmeta.v1.token.Conds.Description:type_name -> web3eye.StringVal
+	29, // 19: nftmeta.v1.token.Conds.Name:type_name -> web3eye.StringVal
+	28, // 20: nftmeta.v1.token.Conds.VectorState:type_name -> web3eye.Uint32Val
+	30, // 21: nftmeta.v1.token.Conds.VectorID:type_name -> web3eye.Int64Val
+	29, // 22: nftmeta.v1.token.Conds.Remark:type_name -> web3eye.StringVal
+	29, // 23: nftmeta.v1.token.Conds.IPFSImageURL:type_name -> web3eye.StringVal
+	28, // 24: nftmeta.v1.token.Conds.ImageSnapshotID:type_name -> web3eye.Uint32Val
+	31, // 25: nftmeta.v1.token.Conds.EntIDs:type_name -> web3eye.StringSliceVal
+	32, // 26: nftmeta.v1.token.Conds.VectorIDs:type_name -> web3eye.Int64SliceVal
 	1,  // 27: nftmeta.v1.token.CreateTokenRequest.Info:type_name -> nftmeta.v1.token.TokenReq
 	2,  // 28: nftmeta.v1.token.CreateTokenResponse.Info:type_name -> nftmeta.v1.token.Token
 	1,  // 29: nftmeta.v1.token.UpsertTokenRequest.Info:type_name -> nftmeta.v1.token.TokenReq
@@ -2365,37 +2256,34 @@ var file_web3eye_nftmeta_v1_token_token_proto_depIdxs = []int32{
 	2,  // 39: nftmeta.v1.token.UpdateTokenResponse.Info:type_name -> nftmeta.v1.token.Token
 	2,  // 40: nftmeta.v1.token.UpdateImageVectorResponse.Info:type_name -> nftmeta.v1.token.Token
 	3,  // 41: nftmeta.v1.token.ExistTokenCondsRequest.Conds:type_name -> nftmeta.v1.token.Conds
-	3,  // 42: nftmeta.v1.token.CountTokensRequest.Conds:type_name -> nftmeta.v1.token.Conds
-	2,  // 43: nftmeta.v1.token.DeleteTokenResponse.Info:type_name -> nftmeta.v1.token.Token
-	4,  // 44: nftmeta.v1.token.Manager.CreateToken:input_type -> nftmeta.v1.token.CreateTokenRequest
-	8,  // 45: nftmeta.v1.token.Manager.CreateTokens:input_type -> nftmeta.v1.token.CreateTokensRequest
-	16, // 46: nftmeta.v1.token.Manager.UpdateToken:input_type -> nftmeta.v1.token.UpdateTokenRequest
-	6,  // 47: nftmeta.v1.token.Manager.UpsertToken:input_type -> nftmeta.v1.token.UpsertTokenRequest
-	18, // 48: nftmeta.v1.token.Manager.UpdateImageVector:input_type -> nftmeta.v1.token.UpdateImageVectorRequest
-	10, // 49: nftmeta.v1.token.Manager.GetToken:input_type -> nftmeta.v1.token.GetTokenRequest
-	14, // 50: nftmeta.v1.token.Manager.GetTokenOnly:input_type -> nftmeta.v1.token.GetTokenOnlyRequest
-	12, // 51: nftmeta.v1.token.Manager.GetTokens:input_type -> nftmeta.v1.token.GetTokensRequest
-	20, // 52: nftmeta.v1.token.Manager.ExistToken:input_type -> nftmeta.v1.token.ExistTokenRequest
-	22, // 53: nftmeta.v1.token.Manager.ExistTokenConds:input_type -> nftmeta.v1.token.ExistTokenCondsRequest
-	24, // 54: nftmeta.v1.token.Manager.CountTokens:input_type -> nftmeta.v1.token.CountTokensRequest
-	26, // 55: nftmeta.v1.token.Manager.DeleteToken:input_type -> nftmeta.v1.token.DeleteTokenRequest
-	5,  // 56: nftmeta.v1.token.Manager.CreateToken:output_type -> nftmeta.v1.token.CreateTokenResponse
-	9,  // 57: nftmeta.v1.token.Manager.CreateTokens:output_type -> nftmeta.v1.token.CreateTokensResponse
-	17, // 58: nftmeta.v1.token.Manager.UpdateToken:output_type -> nftmeta.v1.token.UpdateTokenResponse
-	7,  // 59: nftmeta.v1.token.Manager.UpsertToken:output_type -> nftmeta.v1.token.UpsertTokenResponse
-	19, // 60: nftmeta.v1.token.Manager.UpdateImageVector:output_type -> nftmeta.v1.token.UpdateImageVectorResponse
-	11, // 61: nftmeta.v1.token.Manager.GetToken:output_type -> nftmeta.v1.token.GetTokenResponse
-	15, // 62: nftmeta.v1.token.Manager.GetTokenOnly:output_type -> nftmeta.v1.token.GetTokenOnlyResponse
-	13, // 63: nftmeta.v1.token.Manager.GetTokens:output_type -> nftmeta.v1.token.GetTokensResponse
-	21, // 64: nftmeta.v1.token.Manager.ExistToken:output_type -> nftmeta.v1.token.ExistTokenResponse
-	23, // 65: nftmeta.v1.token.Manager.ExistTokenConds:output_type -> nftmeta.v1.token.ExistTokenCondsResponse
-	25, // 66: nftmeta.v1.token.Manager.CountTokens:output_type -> nftmeta.v1.token.CountTokensResponse
-	27, // 67: nftmeta.v1.token.Manager.DeleteToken:output_type -> nftmeta.v1.token.DeleteTokenResponse
-	56, // [56:68] is the sub-list for method output_type
-	44, // [44:56] is the sub-list for method input_type
-	44, // [44:44] is the sub-list for extension type_name
-	44, // [44:44] is the sub-list for extension extendee
-	0,  // [0:44] is the sub-list for field type_name
+	2,  // 42: nftmeta.v1.token.DeleteTokenResponse.Info:type_name -> nftmeta.v1.token.Token
+	4,  // 43: nftmeta.v1.token.Manager.CreateToken:input_type -> nftmeta.v1.token.CreateTokenRequest
+	8,  // 44: nftmeta.v1.token.Manager.CreateTokens:input_type -> nftmeta.v1.token.CreateTokensRequest
+	16, // 45: nftmeta.v1.token.Manager.UpdateToken:input_type -> nftmeta.v1.token.UpdateTokenRequest
+	6,  // 46: nftmeta.v1.token.Manager.UpsertToken:input_type -> nftmeta.v1.token.UpsertTokenRequest
+	18, // 47: nftmeta.v1.token.Manager.UpdateImageVector:input_type -> nftmeta.v1.token.UpdateImageVectorRequest
+	10, // 48: nftmeta.v1.token.Manager.GetToken:input_type -> nftmeta.v1.token.GetTokenRequest
+	14, // 49: nftmeta.v1.token.Manager.GetTokenOnly:input_type -> nftmeta.v1.token.GetTokenOnlyRequest
+	12, // 50: nftmeta.v1.token.Manager.GetTokens:input_type -> nftmeta.v1.token.GetTokensRequest
+	20, // 51: nftmeta.v1.token.Manager.ExistToken:input_type -> nftmeta.v1.token.ExistTokenRequest
+	22, // 52: nftmeta.v1.token.Manager.ExistTokenConds:input_type -> nftmeta.v1.token.ExistTokenCondsRequest
+	24, // 53: nftmeta.v1.token.Manager.DeleteToken:input_type -> nftmeta.v1.token.DeleteTokenRequest
+	5,  // 54: nftmeta.v1.token.Manager.CreateToken:output_type -> nftmeta.v1.token.CreateTokenResponse
+	9,  // 55: nftmeta.v1.token.Manager.CreateTokens:output_type -> nftmeta.v1.token.CreateTokensResponse
+	17, // 56: nftmeta.v1.token.Manager.UpdateToken:output_type -> nftmeta.v1.token.UpdateTokenResponse
+	7,  // 57: nftmeta.v1.token.Manager.UpsertToken:output_type -> nftmeta.v1.token.UpsertTokenResponse
+	19, // 58: nftmeta.v1.token.Manager.UpdateImageVector:output_type -> nftmeta.v1.token.UpdateImageVectorResponse
+	11, // 59: nftmeta.v1.token.Manager.GetToken:output_type -> nftmeta.v1.token.GetTokenResponse
+	15, // 60: nftmeta.v1.token.Manager.GetTokenOnly:output_type -> nftmeta.v1.token.GetTokenOnlyResponse
+	13, // 61: nftmeta.v1.token.Manager.GetTokens:output_type -> nftmeta.v1.token.GetTokensResponse
+	21, // 62: nftmeta.v1.token.Manager.ExistToken:output_type -> nftmeta.v1.token.ExistTokenResponse
+	23, // 63: nftmeta.v1.token.Manager.ExistTokenConds:output_type -> nftmeta.v1.token.ExistTokenCondsResponse
+	25, // 64: nftmeta.v1.token.Manager.DeleteToken:output_type -> nftmeta.v1.token.DeleteTokenResponse
+	54, // [54:65] is the sub-list for method output_type
+	43, // [43:54] is the sub-list for method input_type
+	43, // [43:43] is the sub-list for extension type_name
+	43, // [43:43] is the sub-list for extension extendee
+	0,  // [0:43] is the sub-list for field type_name
 }
 
 func init() { file_web3eye_nftmeta_v1_token_token_proto_init() }
@@ -2681,30 +2569,6 @@ func file_web3eye_nftmeta_v1_token_token_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountTokensRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountTokensResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTokenRequest); i {
 			case 0:
 				return &v.state
@@ -2716,7 +2580,7 @@ func file_web3eye_nftmeta_v1_token_token_proto_init() {
 				return nil
 			}
 		}
-		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_token_token_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTokenResponse); i {
 			case 0:
 				return &v.state
@@ -2736,7 +2600,7 @@ func file_web3eye_nftmeta_v1_token_token_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_web3eye_nftmeta_v1_token_token_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   27,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

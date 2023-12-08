@@ -8,10 +8,9 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
 	"github.com/web3eye-io/Web3Eye/config"
-	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/token"
-	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+	handler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -56,49 +55,110 @@ func getPulsar() (*PulsarProducer, error) {
 
 // if the VectorState is waiting,then will auto to transform imageUrl
 func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) (*npool.CreateTokenResponse, error) {
-	var err error
-	inInfo := in.GetInfo()
-	id := uuid.New().String()
-	inInfo.ID = &id
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"CreateToken",
+			"In", in,
+		)
+		return &npool.CreateTokenResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
 
-	err = TransformImage(ctx, inInfo)
+	inInfo := in.GetInfo()
+	entID := uuid.New().String()
+	inInfo.EntID = &entID
+
+	err := TransformImage(ctx, inInfo)
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithEntID(inInfo.EntID, true),
+		handler.WithChainType(inInfo.ChainType, true),
+		handler.WithChainID(inInfo.ChainID, true),
+		handler.WithContract(inInfo.Contract, true),
+		handler.WithTokenType(inInfo.TokenType, true),
+		handler.WithTokenID(inInfo.TokenID, true),
+		handler.WithOwner(inInfo.Owner, false),
+		handler.WithURI(inInfo.URI, false),
+		handler.WithURIType(inInfo.URIType, false),
+		handler.WithImageURL(inInfo.ImageURL, false),
+		handler.WithVideoURL(inInfo.VideoURL, false),
+		handler.WithName(inInfo.Name, false),
+		handler.WithDescription(inInfo.Description, false),
+		handler.WithVectorState(inInfo.VectorState, false),
+		handler.WithVectorID(inInfo.VectorID, false),
+		handler.WithIPFSImageURL(inInfo.IPFSImageURL, false),
+		handler.WithImageSnapshotID(inInfo.ImageSnapshotID, false),
+		handler.WithRemark(inInfo.Remark, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateToken", "error", err)
+		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
+	}
 
-	info, err := crud.Create(ctx, inInfo)
+	info, err := h.CreateToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "error", err)
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateTokenResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 // if the VectorState is waiting,then will auto to transform imageUrl
 func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) (*npool.UpsertTokenResponse, error) {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertToken",
+			"In", in,
+		)
+		return &npool.UpsertTokenResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+
 	err := TransformImage(ctx, in.Info)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertToken", "action", "publish imageurl to pulsar", "error", err)
 	}
 
-	row, err := crud.Upsert(ctx, in.GetInfo())
+	h, err := handler.NewHandler(ctx,
+		handler.WithChainType(in.Info.ChainType, true),
+		handler.WithChainID(in.Info.ChainID, true),
+		handler.WithContract(in.Info.Contract, true),
+		handler.WithTokenType(in.Info.TokenType, true),
+		handler.WithTokenID(in.Info.TokenID, true),
+		handler.WithOwner(in.Info.Owner, false),
+		handler.WithURI(in.Info.URI, false),
+		handler.WithURIType(in.Info.URIType, false),
+		handler.WithImageURL(in.Info.ImageURL, false),
+		handler.WithVideoURL(in.Info.VideoURL, false),
+		handler.WithName(in.Info.Name, false),
+		handler.WithDescription(in.Info.Description, false),
+		handler.WithVectorState(in.Info.VectorState, false),
+		handler.WithVectorID(in.Info.VectorID, false),
+		handler.WithIPFSImageURL(in.Info.IPFSImageURL, false),
+		handler.WithImageSnapshotID(in.Info.ImageSnapshotID, false),
+		handler.WithRemark(in.Info.Remark, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertToken", "error", err)
+		return &npool.UpsertTokenResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	info, err := h.UpsertToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertToken", "error", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpsertTokenResponse{
-		Info: converter.Ent2Grpc(row),
+		Info: info,
 	}, err
 }
 
 // if the VectorState is waiting,then will auto to transform imageUrl
 func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest) (*npool.CreateTokensResponse, error) {
-	var err error
-
 	if len(in.GetInfos()) == 0 {
 		logger.Sugar().Errorw("CreateTokens", "error", "Infos is empty")
 		return &npool.CreateTokensResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
@@ -106,41 +166,72 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	inInfos := in.GetInfos()
 
 	for i := 0; i < len(inInfos); i++ {
-		id := uuid.New().String()
-		inInfos[i].ID = &id
-		err = TransformImage(ctx, inInfos[i])
+		entID := uuid.New().String()
+		inInfos[i].EntID = &entID
+		err := TransformImage(ctx, inInfos[i])
 		if err != nil {
 			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 		}
 	}
 
-	rows, err := crud.CreateBulk(ctx, inInfos)
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(inInfos, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateTokens", "error", err)
+		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, err := h.CreateTokens(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateTokens", "error", err)
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateTokensResponse{
-		Infos: converter.Ent2GrpcMany(rows),
+		Infos: infos,
 	}, nil
 }
 
 func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) (*npool.UpdateTokenResponse, error) {
-	var err error
-
-	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
-		logger.Sugar().Errorw("UpdateToken", "ID", in.GetInfo().GetID(), "error", err)
-		return &npool.UpdateTokenResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpdateToken",
+			"In", in,
+		)
+		return &npool.UpdateTokenResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
 	}
-
-	info, err := crud.Update(ctx, in.GetInfo())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(in.Info.ID, true),
+		handler.WithChainType(in.Info.ChainType, false),
+		handler.WithChainID(in.Info.ChainID, false),
+		handler.WithContract(in.Info.Contract, false),
+		handler.WithTokenType(in.Info.TokenType, false),
+		handler.WithTokenID(in.Info.TokenID, false),
+		handler.WithOwner(in.Info.Owner, false),
+		handler.WithURI(in.Info.URI, false),
+		handler.WithURIType(in.Info.URIType, false),
+		handler.WithImageURL(in.Info.ImageURL, false),
+		handler.WithVideoURL(in.Info.VideoURL, false),
+		handler.WithName(in.Info.Name, false),
+		handler.WithDescription(in.Info.Description, false),
+		handler.WithVectorState(in.Info.VectorState, false),
+		handler.WithVectorID(in.Info.VectorID, false),
+		handler.WithIPFSImageURL(in.Info.IPFSImageURL, false),
+		handler.WithImageSnapshotID(in.Info.ImageSnapshotID, false),
+		handler.WithRemark(in.Info.Remark, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpdateBlock", "error", err)
+		return &npool.UpdateTokenResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	info, err := h.UpdateToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateToken", "ID", in.GetInfo().GetID(), "error", err)
 		return &npool.UpdateTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpdateTokenResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
@@ -155,9 +246,9 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		return nil
 	}
 
-	if inInfo.ID == nil {
-		id := uuid.New().String()
-		inInfo.ID = &id
+	if inInfo.EntID == nil {
+		entID := uuid.New().String()
+		inInfo.EntID = &entID
 	}
 
 	pProducer, err := getPulsar()
@@ -167,7 +258,7 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 
 	_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
 		Payload: []byte(*inInfo.ImageURL),
-		Key:     *inInfo.ID,
+		Key:     *inInfo.EntID,
 	})
 
 	if err != nil {
@@ -184,12 +275,16 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 	vID := int64(0)
 	vState := npool.ConvertState_Failed
 	remark := in.GetRemark()
-	if _, err := uuid.Parse(id); err != nil {
+	h, err := handler.NewHandler(
+		ctx,
+		handler.WithID(&in.ID, true),
+	)
+	if err != nil {
 		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	row, err := crud.Row(ctx, uuid.MustParse(id))
+	info, err := h.GetToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
@@ -198,8 +293,8 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 	if len(in.Vector) > 0 {
 		milvusmgr := milvusdb.NewNFTConllectionMGR()
 
-		if row.VectorID > 0 {
-			err := milvusmgr.Delete(ctx, []int64{row.VectorID})
+		if info.VectorID > 0 {
+			err := milvusmgr.Delete(ctx, []int64{info.VectorID})
 			if err != nil {
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			}
@@ -214,82 +309,108 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		}
 	}
 
-	info, err := crud.Update(ctx, &npool.TokenReq{
-		ID:          &id,
-		VectorID:    &vID,
-		VectorState: &vState,
-		Remark:      &remark,
-	})
+	h, err = handler.NewHandler(
+		ctx,
+		handler.WithID(&info.ID, true),
+		handler.WithVectorID(&vID, true),
+		handler.WithVectorState(&vState, true),
+		handler.WithRemark(&remark, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
+	}
 
+	info, err = h.UpdateToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpdateImageVectorResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetToken(ctx context.Context, in *npool.GetTokenRequest) (*npool.GetTokenResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("GetToken", "ID", in.GetID(), "error", err)
-		return &npool.GetTokenResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw("GetToken", "error", err)
+		return &npool.GetTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	info, err := crud.Row(ctx, id)
+	info, err := h.GetToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetToken", "ID", in.GetID(), "error", err)
 		return &npool.GetTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetTokenResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetTokenOnly(ctx context.Context, in *npool.GetTokenOnlyRequest) (*npool.GetTokenOnlyResponse, error) {
-	var err error
-
-	info, err := crud.RowOnly(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(0),
+		handler.WithLimit(1),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetTokenOnly", "error", err)
+		return &npool.GetTokenOnlyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetTokens(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetTokenOnly", "error", err)
 		return &npool.GetTokenOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	if total != 1 {
+		errMsg := "more than one result or have no result"
+		logger.Sugar().Errorw("GetTokenOnly", "error", errMsg)
+		return &npool.GetTokenOnlyResponse{}, status.Error(codes.Internal, errMsg)
+	}
+
 	return &npool.GetTokenOnlyResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: infos[0],
 	}, nil
 }
 
 func (s *Server) GetTokens(ctx context.Context, in *npool.GetTokensRequest) (*npool.GetTokensResponse, error) {
-	var err error
-
-	rows, total, err := crud.Rows(ctx, in.GetConds(), int(in.GetOffset()), int(in.GetLimit()))
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(in.Offset),
+		handler.WithLimit(in.Limit),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetTokens", "error", err)
+		return &npool.GetTokensResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetTokens(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetTokens", "error", err)
 		return &npool.GetTokensResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetTokensResponse{
-		Infos: converter.Ent2GrpcMany(rows),
-		Total: uint32(total),
+		Infos: infos,
+		Total: total,
 	}, nil
 }
 
 func (s *Server) ExistToken(ctx context.Context, in *npool.ExistTokenRequest) (*npool.ExistTokenResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
 		logger.Sugar().Errorw("ExistToken", "ID", in.GetID(), "error", err)
 		return &npool.ExistTokenResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	exist, err := crud.Exist(ctx, id)
+	exist, err := h.ExistToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistToken", "ID", in.GetID(), "error", err)
 		return &npool.ExistTokenResponse{}, status.Error(codes.Internal, err.Error())
@@ -301,9 +422,14 @@ func (s *Server) ExistToken(ctx context.Context, in *npool.ExistTokenRequest) (*
 }
 
 func (s *Server) ExistTokenConds(ctx context.Context, in *npool.ExistTokenCondsRequest) (*npool.ExistTokenCondsResponse, error) {
-	var err error
-
-	exist, err := crud.ExistConds(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("ExistTokenConds", "error", err)
+		return &npool.ExistTokenCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	exist, err := h.ExistTokenConds(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistTokenConds", "error", err)
 		return &npool.ExistTokenCondsResponse{}, status.Error(codes.Internal, err.Error())
@@ -314,36 +440,21 @@ func (s *Server) ExistTokenConds(ctx context.Context, in *npool.ExistTokenCondsR
 	}, nil
 }
 
-func (s *Server) CountTokens(ctx context.Context, in *npool.CountTokensRequest) (*npool.CountTokensResponse, error) {
-	var err error
-
-	total, err := crud.Count(ctx, in.GetConds())
-	if err != nil {
-		logger.Sugar().Errorw("Counts", "error", err)
-		return &npool.CountTokensResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.CountTokensResponse{
-		Info: total,
-	}, nil
-}
-
 func (s *Server) DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) (*npool.DeleteTokenResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("DeleteToken", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("DeleteToken", "error", err)
 		return &npool.DeleteTokenResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	info, err := crud.Delete(ctx, id)
+	info, err := h.DeleteToken(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("DeleteToken", "ID", in.GetID(), "error", err)
 		return &npool.DeleteTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.DeleteTokenResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }

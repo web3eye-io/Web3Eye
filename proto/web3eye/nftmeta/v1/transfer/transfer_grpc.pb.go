@@ -29,7 +29,6 @@ const (
 	Manager_GetTransfers_FullMethodName       = "/nftmeta.v1.transfer.Manager/GetTransfers"
 	Manager_ExistTransfer_FullMethodName      = "/nftmeta.v1.transfer.Manager/ExistTransfer"
 	Manager_ExistTransferConds_FullMethodName = "/nftmeta.v1.transfer.Manager/ExistTransferConds"
-	Manager_CountTransfers_FullMethodName     = "/nftmeta.v1.transfer.Manager/CountTransfers"
 	Manager_DeleteTransfer_FullMethodName     = "/nftmeta.v1.transfer.Manager/DeleteTransfer"
 )
 
@@ -47,7 +46,6 @@ type ManagerClient interface {
 	GetTransfers(ctx context.Context, in *GetTransfersRequest, opts ...grpc.CallOption) (*GetTransfersResponse, error)
 	ExistTransfer(ctx context.Context, in *ExistTransferRequest, opts ...grpc.CallOption) (*ExistTransferResponse, error)
 	ExistTransferConds(ctx context.Context, in *ExistTransferCondsRequest, opts ...grpc.CallOption) (*ExistTransferCondsResponse, error)
-	CountTransfers(ctx context.Context, in *CountTransfersRequest, opts ...grpc.CallOption) (*CountTransfersResponse, error)
 	DeleteTransfer(ctx context.Context, in *DeleteTransferRequest, opts ...grpc.CallOption) (*DeleteTransferResponse, error)
 }
 
@@ -149,15 +147,6 @@ func (c *managerClient) ExistTransferConds(ctx context.Context, in *ExistTransfe
 	return out, nil
 }
 
-func (c *managerClient) CountTransfers(ctx context.Context, in *CountTransfersRequest, opts ...grpc.CallOption) (*CountTransfersResponse, error) {
-	out := new(CountTransfersResponse)
-	err := c.cc.Invoke(ctx, Manager_CountTransfers_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteTransfer(ctx context.Context, in *DeleteTransferRequest, opts ...grpc.CallOption) (*DeleteTransferResponse, error) {
 	out := new(DeleteTransferResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteTransfer_FullMethodName, in, out, opts...)
@@ -181,7 +170,6 @@ type ManagerServer interface {
 	GetTransfers(context.Context, *GetTransfersRequest) (*GetTransfersResponse, error)
 	ExistTransfer(context.Context, *ExistTransferRequest) (*ExistTransferResponse, error)
 	ExistTransferConds(context.Context, *ExistTransferCondsRequest) (*ExistTransferCondsResponse, error)
-	CountTransfers(context.Context, *CountTransfersRequest) (*CountTransfersResponse, error)
 	DeleteTransfer(context.Context, *DeleteTransferRequest) (*DeleteTransferResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -219,9 +207,6 @@ func (UnimplementedManagerServer) ExistTransfer(context.Context, *ExistTransferR
 }
 func (UnimplementedManagerServer) ExistTransferConds(context.Context, *ExistTransferCondsRequest) (*ExistTransferCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistTransferConds not implemented")
-}
-func (UnimplementedManagerServer) CountTransfers(context.Context, *CountTransfersRequest) (*CountTransfersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountTransfers not implemented")
 }
 func (UnimplementedManagerServer) DeleteTransfer(context.Context, *DeleteTransferRequest) (*DeleteTransferResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTransfer not implemented")
@@ -419,24 +404,6 @@ func _Manager_ExistTransferConds_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountTransfers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountTransfersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountTransfers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountTransfers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountTransfers(ctx, req.(*CountTransfersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTransferRequest)
 	if err := dec(in); err != nil {
@@ -501,10 +468,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistTransferConds",
 			Handler:    _Manager_ExistTransferConds_Handler,
-		},
-		{
-			MethodName: "CountTransfers",
-			Handler:    _Manager_CountTransfers_Handler,
 		},
 		{
 			MethodName: "DeleteTransfer",

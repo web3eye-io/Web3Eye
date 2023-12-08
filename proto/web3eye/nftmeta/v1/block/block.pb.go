@@ -1276,100 +1276,6 @@ func (x *ExistBlockCondsResponse) GetExist() bool {
 	return false
 }
 
-type CountBlocksRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Conds *Conds `protobuf:"bytes,10,opt,name=Conds,proto3" json:"Conds,omitempty"`
-}
-
-func (x *CountBlocksRequest) Reset() {
-	*x = CountBlocksRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[21]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountBlocksRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountBlocksRequest) ProtoMessage() {}
-
-func (x *CountBlocksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[21]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountBlocksRequest.ProtoReflect.Descriptor instead.
-func (*CountBlocksRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{21}
-}
-
-func (x *CountBlocksRequest) GetConds() *Conds {
-	if x != nil {
-		return x.Conds
-	}
-	return nil
-}
-
-type CountBlocksResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Info uint32 `protobuf:"varint,10,opt,name=Info,proto3" json:"Info,omitempty"`
-}
-
-func (x *CountBlocksResponse) Reset() {
-	*x = CountBlocksResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CountBlocksResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CountBlocksResponse) ProtoMessage() {}
-
-func (x *CountBlocksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CountBlocksResponse.ProtoReflect.Descriptor instead.
-func (*CountBlocksResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *CountBlocksResponse) GetInfo() uint32 {
-	if x != nil {
-		return x.Info
-	}
-	return 0
-}
-
 type DeleteBlockRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1381,7 +1287,7 @@ type DeleteBlockRequest struct {
 func (x *DeleteBlockRequest) Reset() {
 	*x = DeleteBlockRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[23]
+		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1394,7 +1300,7 @@ func (x *DeleteBlockRequest) String() string {
 func (*DeleteBlockRequest) ProtoMessage() {}
 
 func (x *DeleteBlockRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[23]
+	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1407,7 +1313,7 @@ func (x *DeleteBlockRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBlockRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBlockRequest) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{23}
+	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *DeleteBlockRequest) GetID() uint32 {
@@ -1428,7 +1334,7 @@ type DeleteBlockResponse struct {
 func (x *DeleteBlockResponse) Reset() {
 	*x = DeleteBlockResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[24]
+		mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1441,7 +1347,7 @@ func (x *DeleteBlockResponse) String() string {
 func (*DeleteBlockResponse) ProtoMessage() {}
 
 func (x *DeleteBlockResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[24]
+	mi := &file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1454,7 +1360,7 @@ func (x *DeleteBlockResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBlockResponse.ProtoReflect.Descriptor instead.
 func (*DeleteBlockResponse) Descriptor() ([]byte, []int) {
-	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{24}
+	return file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteBlockResponse) GetInfo() *Block {
@@ -1645,21 +1551,14 @@ var file_web3eye_nftmeta_v1_block_block_proto_rawDesc = []byte{
 	0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x22, 0x2f, 0x0a, 0x17, 0x45, 0x78,
 	0x69, 0x73, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x18, 0x0a,
-	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x43, 0x0a, 0x12, 0x43,
-	0x6f, 0x75, 0x6e, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x12, 0x2d, 0x0a, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x17, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x62, 0x6c,
-	0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x05, 0x43, 0x6f, 0x6e, 0x64, 0x73,
-	0x22, 0x29, 0x0a, 0x13, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x18,
-	0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x22, 0x24, 0x0a, 0x12, 0x44,
+	0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x45, 0x78, 0x69, 0x73, 0x74, 0x22, 0x24, 0x0a, 0x12, 0x44,
 	0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x49,
 	0x44, 0x22, 0x42, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
 	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2b, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f,
 	0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61,
 	0x2e, 0x76, 0x31, 0x2e, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52,
-	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x32, 0x93, 0x08, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
+	0x04, 0x49, 0x6e, 0x66, 0x6f, 0x32, 0xb5, 0x07, 0x0a, 0x07, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
 	0x72, 0x12, 0x5c, 0x0a, 0x0b, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
 	0x12, 0x24, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x62, 0x6c,
 	0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52,
@@ -1713,23 +1612,17 @@ var file_web3eye_nftmeta_v1_block_block_proto_rawDesc = []byte{
 	0x73, 0x74, 0x1a, 0x29, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e,
 	0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x45, 0x78, 0x69, 0x73, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
 	0x43, 0x6f, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x5c, 0x0a, 0x0b, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x12, 0x24,
+	0x5c, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x24,
 	0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x62, 0x6c, 0x6f, 0x63,
-	0x6b, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x73, 0x52, 0x65, 0x71,
+	0x6b, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76,
-	0x31, 0x2e, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x5c, 0x0a,
-	0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x24, 0x2e, 0x6e,
-	0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x25, 0x2e, 0x6e, 0x66, 0x74, 0x6d, 0x65, 0x74, 0x61, 0x2e, 0x76, 0x31, 0x2e,
-	0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63,
-	0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x3e, 0x5a, 0x3c, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79,
-	0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79, 0x65, 0x2f, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f, 0x6e, 0x66, 0x74, 0x6d, 0x65,
-	0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x31, 0x2e, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x3e, 0x5a,
+	0x3c, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65, 0x62, 0x33,
+	0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79, 0x65, 0x2f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2f, 0x6e, 0x66, 0x74,
+	0x6d, 0x65, 0x74, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1744,7 +1637,7 @@ func file_web3eye_nftmeta_v1_block_block_proto_rawDescGZIP() []byte {
 	return file_web3eye_nftmeta_v1_block_block_proto_rawDescData
 }
 
-var file_web3eye_nftmeta_v1_block_block_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_web3eye_nftmeta_v1_block_block_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_web3eye_nftmeta_v1_block_block_proto_goTypes = []interface{}{
 	(*BlockReq)(nil),                // 0: nftmeta.v1.block.BlockReq
 	(*Block)(nil),                   // 1: nftmeta.v1.block.Block
@@ -1767,33 +1660,31 @@ var file_web3eye_nftmeta_v1_block_block_proto_goTypes = []interface{}{
 	(*ExistBlockResponse)(nil),      // 18: nftmeta.v1.block.ExistBlockResponse
 	(*ExistBlockCondsRequest)(nil),  // 19: nftmeta.v1.block.ExistBlockCondsRequest
 	(*ExistBlockCondsResponse)(nil), // 20: nftmeta.v1.block.ExistBlockCondsResponse
-	(*CountBlocksRequest)(nil),      // 21: nftmeta.v1.block.CountBlocksRequest
-	(*CountBlocksResponse)(nil),     // 22: nftmeta.v1.block.CountBlocksResponse
-	(*DeleteBlockRequest)(nil),      // 23: nftmeta.v1.block.DeleteBlockRequest
-	(*DeleteBlockResponse)(nil),     // 24: nftmeta.v1.block.DeleteBlockResponse
-	(v1.ChainType)(0),               // 25: chain.ChainType
-	(v1.BlockParseState)(0),         // 26: chain.BlockParseState
-	(*web3eye.Uint32Val)(nil),       // 27: web3eye.Uint32Val
-	(*web3eye.StringVal)(nil),       // 28: web3eye.StringVal
-	(*web3eye.Uint64Val)(nil),       // 29: web3eye.Uint64Val
-	(*web3eye.Int64Val)(nil),        // 30: web3eye.Int64Val
-	(*web3eye.StringSliceVal)(nil),  // 31: web3eye.StringSliceVal
+	(*DeleteBlockRequest)(nil),      // 21: nftmeta.v1.block.DeleteBlockRequest
+	(*DeleteBlockResponse)(nil),     // 22: nftmeta.v1.block.DeleteBlockResponse
+	(v1.ChainType)(0),               // 23: chain.ChainType
+	(v1.BlockParseState)(0),         // 24: chain.BlockParseState
+	(*web3eye.Uint32Val)(nil),       // 25: web3eye.Uint32Val
+	(*web3eye.StringVal)(nil),       // 26: web3eye.StringVal
+	(*web3eye.Uint64Val)(nil),       // 27: web3eye.Uint64Val
+	(*web3eye.Int64Val)(nil),        // 28: web3eye.Int64Val
+	(*web3eye.StringSliceVal)(nil),  // 29: web3eye.StringSliceVal
 }
 var file_web3eye_nftmeta_v1_block_block_proto_depIdxs = []int32{
-	25, // 0: nftmeta.v1.block.BlockReq.ChainType:type_name -> chain.ChainType
-	26, // 1: nftmeta.v1.block.BlockReq.ParseState:type_name -> chain.BlockParseState
-	25, // 2: nftmeta.v1.block.Block.ChainType:type_name -> chain.ChainType
-	26, // 3: nftmeta.v1.block.Block.ParseState:type_name -> chain.BlockParseState
-	27, // 4: nftmeta.v1.block.Conds.ID:type_name -> web3eye.Uint32Val
-	28, // 5: nftmeta.v1.block.Conds.EntID:type_name -> web3eye.StringVal
-	27, // 6: nftmeta.v1.block.Conds.ChainType:type_name -> web3eye.Uint32Val
-	28, // 7: nftmeta.v1.block.Conds.ChainID:type_name -> web3eye.StringVal
-	29, // 8: nftmeta.v1.block.Conds.BlockNumber:type_name -> web3eye.Uint64Val
-	28, // 9: nftmeta.v1.block.Conds.BlockHash:type_name -> web3eye.StringVal
-	30, // 10: nftmeta.v1.block.Conds.BlockTime:type_name -> web3eye.Int64Val
-	27, // 11: nftmeta.v1.block.Conds.ParseState:type_name -> web3eye.Uint32Val
-	28, // 12: nftmeta.v1.block.Conds.Remark:type_name -> web3eye.StringVal
-	31, // 13: nftmeta.v1.block.Conds.EntIDs:type_name -> web3eye.StringSliceVal
+	23, // 0: nftmeta.v1.block.BlockReq.ChainType:type_name -> chain.ChainType
+	24, // 1: nftmeta.v1.block.BlockReq.ParseState:type_name -> chain.BlockParseState
+	23, // 2: nftmeta.v1.block.Block.ChainType:type_name -> chain.ChainType
+	24, // 3: nftmeta.v1.block.Block.ParseState:type_name -> chain.BlockParseState
+	25, // 4: nftmeta.v1.block.Conds.ID:type_name -> web3eye.Uint32Val
+	26, // 5: nftmeta.v1.block.Conds.EntID:type_name -> web3eye.StringVal
+	25, // 6: nftmeta.v1.block.Conds.ChainType:type_name -> web3eye.Uint32Val
+	26, // 7: nftmeta.v1.block.Conds.ChainID:type_name -> web3eye.StringVal
+	27, // 8: nftmeta.v1.block.Conds.BlockNumber:type_name -> web3eye.Uint64Val
+	26, // 9: nftmeta.v1.block.Conds.BlockHash:type_name -> web3eye.StringVal
+	28, // 10: nftmeta.v1.block.Conds.BlockTime:type_name -> web3eye.Int64Val
+	25, // 11: nftmeta.v1.block.Conds.ParseState:type_name -> web3eye.Uint32Val
+	26, // 12: nftmeta.v1.block.Conds.Remark:type_name -> web3eye.StringVal
+	29, // 13: nftmeta.v1.block.Conds.EntIDs:type_name -> web3eye.StringSliceVal
 	0,  // 14: nftmeta.v1.block.CreateBlockRequest.Info:type_name -> nftmeta.v1.block.BlockReq
 	1,  // 15: nftmeta.v1.block.CreateBlockResponse.Info:type_name -> nftmeta.v1.block.Block
 	0,  // 16: nftmeta.v1.block.UpsertBlockRequest.Info:type_name -> nftmeta.v1.block.BlockReq
@@ -1808,35 +1699,32 @@ var file_web3eye_nftmeta_v1_block_block_proto_depIdxs = []int32{
 	0,  // 25: nftmeta.v1.block.UpdateBlockRequest.Info:type_name -> nftmeta.v1.block.BlockReq
 	1,  // 26: nftmeta.v1.block.UpdateBlockResponse.Info:type_name -> nftmeta.v1.block.Block
 	2,  // 27: nftmeta.v1.block.ExistBlockCondsRequest.Conds:type_name -> nftmeta.v1.block.Conds
-	2,  // 28: nftmeta.v1.block.CountBlocksRequest.Conds:type_name -> nftmeta.v1.block.Conds
-	1,  // 29: nftmeta.v1.block.DeleteBlockResponse.Info:type_name -> nftmeta.v1.block.Block
-	3,  // 30: nftmeta.v1.block.Manager.CreateBlock:input_type -> nftmeta.v1.block.CreateBlockRequest
-	7,  // 31: nftmeta.v1.block.Manager.CreateBlocks:input_type -> nftmeta.v1.block.CreateBlocksRequest
-	5,  // 32: nftmeta.v1.block.Manager.UpsertBlock:input_type -> nftmeta.v1.block.UpsertBlockRequest
-	15, // 33: nftmeta.v1.block.Manager.UpdateBlock:input_type -> nftmeta.v1.block.UpdateBlockRequest
-	9,  // 34: nftmeta.v1.block.Manager.GetBlock:input_type -> nftmeta.v1.block.GetBlockRequest
-	13, // 35: nftmeta.v1.block.Manager.GetBlockOnly:input_type -> nftmeta.v1.block.GetBlockOnlyRequest
-	11, // 36: nftmeta.v1.block.Manager.GetBlocks:input_type -> nftmeta.v1.block.GetBlocksRequest
-	17, // 37: nftmeta.v1.block.Manager.ExistBlock:input_type -> nftmeta.v1.block.ExistBlockRequest
-	19, // 38: nftmeta.v1.block.Manager.ExistBlockConds:input_type -> nftmeta.v1.block.ExistBlockCondsRequest
-	21, // 39: nftmeta.v1.block.Manager.CountBlocks:input_type -> nftmeta.v1.block.CountBlocksRequest
-	23, // 40: nftmeta.v1.block.Manager.DeleteBlock:input_type -> nftmeta.v1.block.DeleteBlockRequest
-	4,  // 41: nftmeta.v1.block.Manager.CreateBlock:output_type -> nftmeta.v1.block.CreateBlockResponse
-	8,  // 42: nftmeta.v1.block.Manager.CreateBlocks:output_type -> nftmeta.v1.block.CreateBlocksResponse
-	6,  // 43: nftmeta.v1.block.Manager.UpsertBlock:output_type -> nftmeta.v1.block.UpsertBlockResponse
-	16, // 44: nftmeta.v1.block.Manager.UpdateBlock:output_type -> nftmeta.v1.block.UpdateBlockResponse
-	10, // 45: nftmeta.v1.block.Manager.GetBlock:output_type -> nftmeta.v1.block.GetBlockResponse
-	14, // 46: nftmeta.v1.block.Manager.GetBlockOnly:output_type -> nftmeta.v1.block.GetBlockOnlyResponse
-	12, // 47: nftmeta.v1.block.Manager.GetBlocks:output_type -> nftmeta.v1.block.GetBlocksResponse
-	18, // 48: nftmeta.v1.block.Manager.ExistBlock:output_type -> nftmeta.v1.block.ExistBlockResponse
-	20, // 49: nftmeta.v1.block.Manager.ExistBlockConds:output_type -> nftmeta.v1.block.ExistBlockCondsResponse
-	22, // 50: nftmeta.v1.block.Manager.CountBlocks:output_type -> nftmeta.v1.block.CountBlocksResponse
-	24, // 51: nftmeta.v1.block.Manager.DeleteBlock:output_type -> nftmeta.v1.block.DeleteBlockResponse
-	41, // [41:52] is the sub-list for method output_type
-	30, // [30:41] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	1,  // 28: nftmeta.v1.block.DeleteBlockResponse.Info:type_name -> nftmeta.v1.block.Block
+	3,  // 29: nftmeta.v1.block.Manager.CreateBlock:input_type -> nftmeta.v1.block.CreateBlockRequest
+	7,  // 30: nftmeta.v1.block.Manager.CreateBlocks:input_type -> nftmeta.v1.block.CreateBlocksRequest
+	5,  // 31: nftmeta.v1.block.Manager.UpsertBlock:input_type -> nftmeta.v1.block.UpsertBlockRequest
+	15, // 32: nftmeta.v1.block.Manager.UpdateBlock:input_type -> nftmeta.v1.block.UpdateBlockRequest
+	9,  // 33: nftmeta.v1.block.Manager.GetBlock:input_type -> nftmeta.v1.block.GetBlockRequest
+	13, // 34: nftmeta.v1.block.Manager.GetBlockOnly:input_type -> nftmeta.v1.block.GetBlockOnlyRequest
+	11, // 35: nftmeta.v1.block.Manager.GetBlocks:input_type -> nftmeta.v1.block.GetBlocksRequest
+	17, // 36: nftmeta.v1.block.Manager.ExistBlock:input_type -> nftmeta.v1.block.ExistBlockRequest
+	19, // 37: nftmeta.v1.block.Manager.ExistBlockConds:input_type -> nftmeta.v1.block.ExistBlockCondsRequest
+	21, // 38: nftmeta.v1.block.Manager.DeleteBlock:input_type -> nftmeta.v1.block.DeleteBlockRequest
+	4,  // 39: nftmeta.v1.block.Manager.CreateBlock:output_type -> nftmeta.v1.block.CreateBlockResponse
+	8,  // 40: nftmeta.v1.block.Manager.CreateBlocks:output_type -> nftmeta.v1.block.CreateBlocksResponse
+	6,  // 41: nftmeta.v1.block.Manager.UpsertBlock:output_type -> nftmeta.v1.block.UpsertBlockResponse
+	16, // 42: nftmeta.v1.block.Manager.UpdateBlock:output_type -> nftmeta.v1.block.UpdateBlockResponse
+	10, // 43: nftmeta.v1.block.Manager.GetBlock:output_type -> nftmeta.v1.block.GetBlockResponse
+	14, // 44: nftmeta.v1.block.Manager.GetBlockOnly:output_type -> nftmeta.v1.block.GetBlockOnlyResponse
+	12, // 45: nftmeta.v1.block.Manager.GetBlocks:output_type -> nftmeta.v1.block.GetBlocksResponse
+	18, // 46: nftmeta.v1.block.Manager.ExistBlock:output_type -> nftmeta.v1.block.ExistBlockResponse
+	20, // 47: nftmeta.v1.block.Manager.ExistBlockConds:output_type -> nftmeta.v1.block.ExistBlockCondsResponse
+	22, // 48: nftmeta.v1.block.Manager.DeleteBlock:output_type -> nftmeta.v1.block.DeleteBlockResponse
+	39, // [39:49] is the sub-list for method output_type
+	29, // [29:39] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_web3eye_nftmeta_v1_block_block_proto_init() }
@@ -2098,30 +1986,6 @@ func file_web3eye_nftmeta_v1_block_block_proto_init() {
 			}
 		}
 		file_web3eye_nftmeta_v1_block_block_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountBlocksRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CountBlocksResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_web3eye_nftmeta_v1_block_block_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteBlockRequest); i {
 			case 0:
 				return &v.state
@@ -2133,7 +1997,7 @@ func file_web3eye_nftmeta_v1_block_block_proto_init() {
 				return nil
 			}
 		}
-		file_web3eye_nftmeta_v1_block_block_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+		file_web3eye_nftmeta_v1_block_block_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteBlockResponse); i {
 			case 0:
 				return &v.state
@@ -2154,7 +2018,7 @@ func file_web3eye_nftmeta_v1_block_block_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_web3eye_nftmeta_v1_block_block_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -263,15 +263,15 @@ func (tc *TokenCreate) SetNillableIpfsImageURL(s *string) *TokenCreate {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (tc *TokenCreate) SetImageSnapshotID(s string) *TokenCreate {
-	tc.mutation.SetImageSnapshotID(s)
+func (tc *TokenCreate) SetImageSnapshotID(u uint32) *TokenCreate {
+	tc.mutation.SetImageSnapshotID(u)
 	return tc
 }
 
 // SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
-func (tc *TokenCreate) SetNillableImageSnapshotID(s *string) *TokenCreate {
-	if s != nil {
-		tc.SetImageSnapshotID(*s)
+func (tc *TokenCreate) SetNillableImageSnapshotID(u *uint32) *TokenCreate {
+	if u != nil {
+		tc.SetImageSnapshotID(*u)
 	}
 	return tc
 }
@@ -621,7 +621,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ImageSnapshotID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUint32,
 			Value:  value,
 			Column: token.FieldImageSnapshotID,
 		})
@@ -1010,7 +1010,7 @@ func (u *TokenUpsert) ClearIpfsImageURL() *TokenUpsert {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsert) SetImageSnapshotID(v string) *TokenUpsert {
+func (u *TokenUpsert) SetImageSnapshotID(v uint32) *TokenUpsert {
 	u.Set(token.FieldImageSnapshotID, v)
 	return u
 }
@@ -1018,6 +1018,12 @@ func (u *TokenUpsert) SetImageSnapshotID(v string) *TokenUpsert {
 // UpdateImageSnapshotID sets the "image_snapshot_id" field to the value that was provided on create.
 func (u *TokenUpsert) UpdateImageSnapshotID() *TokenUpsert {
 	u.SetExcluded(token.FieldImageSnapshotID)
+	return u
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsert) AddImageSnapshotID(v uint32) *TokenUpsert {
+	u.Add(token.FieldImageSnapshotID, v)
 	return u
 }
 
@@ -1461,9 +1467,16 @@ func (u *TokenUpsertOne) ClearIpfsImageURL() *TokenUpsertOne {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsertOne) SetImageSnapshotID(v string) *TokenUpsertOne {
+func (u *TokenUpsertOne) SetImageSnapshotID(v uint32) *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetImageSnapshotID(v)
+	})
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsertOne) AddImageSnapshotID(v uint32) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.AddImageSnapshotID(v)
 	})
 }
 
@@ -2078,9 +2091,16 @@ func (u *TokenUpsertBulk) ClearIpfsImageURL() *TokenUpsertBulk {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsertBulk) SetImageSnapshotID(v string) *TokenUpsertBulk {
+func (u *TokenUpsertBulk) SetImageSnapshotID(v uint32) *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetImageSnapshotID(v)
+	})
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsertBulk) AddImageSnapshotID(v uint32) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.AddImageSnapshotID(v)
 	})
 }
 

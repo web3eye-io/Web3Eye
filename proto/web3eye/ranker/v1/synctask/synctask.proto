@@ -27,7 +27,7 @@ message CreateSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 
 message UpdateSyncTaskRequest {
-  string ID = 10;
+  uint32 ID = 10;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 Start = 40;
@@ -40,12 +40,12 @@ message UpdateSyncTaskRequest {
 message UpdateSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 message GetSyncTaskRequest {
-  string ID = 10;
+  uint32 ID = 10;
 }
 message GetSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 message GetSyncTasksRequest {
-  optional string ID = 10;
+  optional uint32 ID = 10;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 Start = 40;
@@ -63,5 +63,5 @@ message GetSyncTasksResponse {
   uint32 Total = 20;
 }
 
-message DeleteSyncTaskRequest { string ID = 10; }
+message DeleteSyncTaskRequest { uint32 ID = 10; }
 message DeleteSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }

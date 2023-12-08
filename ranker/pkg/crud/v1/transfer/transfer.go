@@ -114,20 +114,20 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 		if err != nil {
 			return err
 		}
-		rowIDOrderID := make(map[string]string, len(rows))
+		rowIDOrderID := make(map[uint32]string, len(rows))
 		for _, row := range rows {
 			orderItem, err := queryOrderItemAndOrder(row, cli).Only(ctx)
 			if err != nil {
 				continue
 			}
 			if orderItem != nil {
-				rowIDOrderID[row.ID.String()] = orderItem.OrderID
+				rowIDOrderID[row.ID] = orderItem.OrderID.String()
 			}
 		}
 
 		for _, row := range rows {
 			var qOrderItems []*OrderItem
-			if id, ok := rowIDOrderID[row.ID.String()]; ok {
+			if id, ok := rowIDOrderID[row.ID]; ok {
 				qOrderItems, err = queryOrderItemsAndContract(ctx, id, cli)
 				if err != nil {
 					return err
@@ -148,7 +148,7 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Transfer {
 	amount, _ := utils.DecStr2uint64(row.Amount)
 	rpctransfer := &rankernpool.Transfer{
-		ID:          row.ID.String(),
+		ID:          row.ID,
 		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
 		Contract:    row.Contract,

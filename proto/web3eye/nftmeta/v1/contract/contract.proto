@@ -19,7 +19,6 @@ service Manager {
   rpc ExistContract(ExistContractRequest) returns (ExistContractResponse) {}
   rpc ExistContractConds(ExistContractCondsRequest)
       returns (ExistContractCondsResponse) {}
-  rpc CountContracts(CountContractsRequest) returns (CountContractsResponse) {}
   rpc DeleteContract(DeleteContractRequest) returns (DeleteContractResponse) {}
 }
 
@@ -140,9 +139,6 @@ message ExistContractResponse { bool Exist = 10; }
 
 message ExistContractCondsRequest { Conds Conds = 10; }
 message ExistContractCondsResponse { bool Exist = 10; }
-
-message CountContractsRequest { Conds Conds = 10; }
-message CountContractsResponse { uint32 Info = 10; }
 
 message DeleteContractRequest { uint32 ID = 10; }
 message DeleteContractResponse { Contract Info = 10; }

@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 
@@ -145,11 +146,14 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		return nil, err
 	}
 
-	_id, err := _kv.Get(ctx, SnapshotID)
+	_id_bytes, err := _kv.Get(ctx, SnapshotID)
 	if err != nil {
 		return nil, err
 	}
-
+	_id, err := strconv.ParseUint(string(_id_bytes), 10, 32)
+	if err != nil {
+		return nil, err
+	}
 	_snapshotURI, err := _kv.Get(ctx, SnapshotURI)
 	if err != nil {
 		return nil, err
@@ -190,7 +194,7 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 	_dealIDI, _ := binary.Uvarint(_dealID)
 
 	return &dealerpb.Snapshot{
-		ID:            string(_id),
+		ID:            uint32(_id),
 		SnapshotCommP: string(_commP),
 		SnapshotRoot:  string(_cid),
 		SnapshotURI:   string(_snapshotURI),

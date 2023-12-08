@@ -26,12 +26,6 @@ service Manager {
       body : "*"
     };
   }
-  rpc CountSnapshots(nftmeta.v1.snapshot.CountSnapshotsRequest) returns (nftmeta.v1.snapshot.CountSnapshotsResponse) {
-    option (google.api.http) = {
-      post : "/v1/count/snapshots"
-      body : "*"
-    };
-  }
   rpc CreateBackup (dealer.v1.CreateBackupRequest) returns (dealer.v1.CreateBackupResponse) {
     option (google.api.http) = {
       post : "/v1/create/backup"

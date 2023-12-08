@@ -65,9 +65,9 @@ func (pmgr *indexMGR) Run(ctx context.Context) {
 // check for the newly created endpoints
 func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
-		State: &web3eye.StringVal{
+		State: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: basetype.EndpointState_EndpointDefault.String(),
+			Value: uint32(basetype.EndpointState_EndpointDefault),
 		},
 	}
 
@@ -124,9 +124,9 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 // check erver chantype-chainid available endpoints and update it to indexer
 func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
-		State: &web3eye.StringVal{
+		State: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: basetype.EndpointState_EndpointAvaliable.String(),
+			Value: uint32(basetype.EndpointState_EndpointAvaliable),
 		},
 	}
 

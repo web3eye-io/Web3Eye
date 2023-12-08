@@ -98,16 +98,16 @@ func (e *SolIndexer) StopIndex() {
 func (e *SolIndexer) IndexTasks(ctx context.Context, outBlockNum chan uint64) {
 	logger.Sugar().Info("start to index task for solana")
 	conds := &synctask.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: e.ChainType.String(),
+		ChainType: &ctMessage.Uint32Val{
 			Op:    "eq",
+			Value: uint32(e.ChainType),
 		},
 		ChainID: &ctMessage.StringVal{
 			Value: e.ChainID,
 			Op:    "eq",
 		},
-		SyncState: &ctMessage.StringVal{
-			Value: basetype.SyncState_Start.String(),
+		SyncState: &ctMessage.Uint32Val{
+			Value: uint32(basetype.SyncState_Start),
 			Op:    "eq",
 		},
 	}
@@ -384,9 +384,9 @@ func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTr
 	}
 
 	conds := &tokenProto.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: e.ChainType.String(),
+		ChainType: &ctMessage.Uint32Val{
 			Op:    "eq",
+			Value: uint32(e.ChainType),
 		},
 		ChainID: &ctMessage.StringVal{
 			Value: e.ChainID,

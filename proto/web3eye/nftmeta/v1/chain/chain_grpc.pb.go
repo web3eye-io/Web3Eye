@@ -27,7 +27,6 @@ const (
 	Manager_GetChains_FullMethodName       = "/nftmeta.v1.chain1.Manager/GetChains"
 	Manager_ExistChain_FullMethodName      = "/nftmeta.v1.chain1.Manager/ExistChain"
 	Manager_ExistChainConds_FullMethodName = "/nftmeta.v1.chain1.Manager/ExistChainConds"
-	Manager_CountChains_FullMethodName     = "/nftmeta.v1.chain1.Manager/CountChains"
 	Manager_DeleteChain_FullMethodName     = "/nftmeta.v1.chain1.Manager/DeleteChain"
 )
 
@@ -43,7 +42,6 @@ type ManagerClient interface {
 	GetChains(ctx context.Context, in *GetChainsRequest, opts ...grpc.CallOption) (*GetChainsResponse, error)
 	ExistChain(ctx context.Context, in *ExistChainRequest, opts ...grpc.CallOption) (*ExistChainResponse, error)
 	ExistChainConds(ctx context.Context, in *ExistChainCondsRequest, opts ...grpc.CallOption) (*ExistChainCondsResponse, error)
-	CountChains(ctx context.Context, in *CountChainsRequest, opts ...grpc.CallOption) (*CountChainsResponse, error)
 	DeleteChain(ctx context.Context, in *DeleteChainRequest, opts ...grpc.CallOption) (*DeleteChainResponse, error)
 }
 
@@ -127,15 +125,6 @@ func (c *managerClient) ExistChainConds(ctx context.Context, in *ExistChainConds
 	return out, nil
 }
 
-func (c *managerClient) CountChains(ctx context.Context, in *CountChainsRequest, opts ...grpc.CallOption) (*CountChainsResponse, error) {
-	out := new(CountChainsResponse)
-	err := c.cc.Invoke(ctx, Manager_CountChains_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteChain(ctx context.Context, in *DeleteChainRequest, opts ...grpc.CallOption) (*DeleteChainResponse, error) {
 	out := new(DeleteChainResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteChain_FullMethodName, in, out, opts...)
@@ -157,7 +146,6 @@ type ManagerServer interface {
 	GetChains(context.Context, *GetChainsRequest) (*GetChainsResponse, error)
 	ExistChain(context.Context, *ExistChainRequest) (*ExistChainResponse, error)
 	ExistChainConds(context.Context, *ExistChainCondsRequest) (*ExistChainCondsResponse, error)
-	CountChains(context.Context, *CountChainsRequest) (*CountChainsResponse, error)
 	DeleteChain(context.Context, *DeleteChainRequest) (*DeleteChainResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -189,9 +177,6 @@ func (UnimplementedManagerServer) ExistChain(context.Context, *ExistChainRequest
 }
 func (UnimplementedManagerServer) ExistChainConds(context.Context, *ExistChainCondsRequest) (*ExistChainCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistChainConds not implemented")
-}
-func (UnimplementedManagerServer) CountChains(context.Context, *CountChainsRequest) (*CountChainsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountChains not implemented")
 }
 func (UnimplementedManagerServer) DeleteChain(context.Context, *DeleteChainRequest) (*DeleteChainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteChain not implemented")
@@ -353,24 +338,6 @@ func _Manager_ExistChainConds_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountChains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountChainsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountChains(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountChains_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountChains(ctx, req.(*CountChainsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteChainRequest)
 	if err := dec(in); err != nil {
@@ -427,10 +394,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistChainConds",
 			Handler:    _Manager_ExistChainConds_Handler,
-		},
-		{
-			MethodName: "CountChains",
-			Handler:    _Manager_CountChains_Handler,
 		},
 		{
 			MethodName: "DeleteChain",

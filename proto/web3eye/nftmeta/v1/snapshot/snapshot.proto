@@ -17,7 +17,6 @@ service Manager {
   rpc ExistSnapshot(ExistSnapshotRequest) returns (ExistSnapshotResponse) {}
   rpc ExistSnapshotConds(ExistSnapshotCondsRequest)
       returns (ExistSnapshotCondsResponse) {}
-  rpc CountSnapshots(CountSnapshotsRequest) returns (CountSnapshotsResponse) {}
   rpc DeleteSnapshot(DeleteSnapshotRequest) returns (DeleteSnapshotResponse) {}
 }
 
@@ -95,8 +94,5 @@ message ExistSnapshotResponse { bool Exist = 10; }
 message ExistSnapshotCondsRequest { Conds Conds = 10; }
 message ExistSnapshotCondsResponse { bool Exist = 10; }
 
-message CountSnapshotsRequest { Conds Conds = 10; }
-message CountSnapshotsResponse { uint32 Info = 10; }
-
-message DeleteSnapshotRequest { SnapshotReq Info = 10; }
+message DeleteSnapshotRequest { uint32 ID = 10; }
 message DeleteSnapshotResponse { Snapshot Info = 10; }

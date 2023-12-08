@@ -109,14 +109,6 @@ func ExistContractConds(ctx context.Context, in *npool.ExistContractCondsRequest
 	return resp, err
 }
 
-func CountContracts(ctx context.Context, in *npool.CountContractsRequest) (resp *npool.CountContractsResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountContracts(_ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteContract(ctx context.Context, in *npool.DeleteContractRequest) (resp *npool.DeleteContractResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteContract(_ctx, in)

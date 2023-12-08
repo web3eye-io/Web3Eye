@@ -92,11 +92,11 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *rankernpool.GetSyncTasksR
 func buildConds(in *rankernpool.GetSyncTasksRequest) *nftmetanpool.Conds {
 	conds := &nftmetanpool.Conds{}
 	if in.ID != nil {
-		conds.ID = &web3eye.StringVal{Op: "eq", Value: *in.ID}
+		conds.ID = &web3eye.Uint32Val{Op: "eq", Value: *in.ID}
 	}
 
 	if in.ChainType != nil {
-		conds.ChainType = &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()}
+		conds.ChainType = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.ChainType.Enum())}
 	}
 
 	if in.ChainID != nil {
@@ -124,7 +124,7 @@ func buildConds(in *rankernpool.GetSyncTasksRequest) *nftmetanpool.Conds {
 	}
 
 	if in.SyncState != nil {
-		conds.SyncState = &web3eye.StringVal{Op: "eq", Value: in.SyncState.String()}
+		conds.SyncState = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.SyncState.Enum())}
 	}
 
 	if in.Remark != nil {

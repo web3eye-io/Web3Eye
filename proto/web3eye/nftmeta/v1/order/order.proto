@@ -19,7 +19,6 @@ service Manager {
   rpc ExistOrder(ExistOrderRequest) returns (ExistOrderResponse) {}
   rpc ExistOrderConds(ExistOrderCondsRequest)
       returns (ExistOrderCondsResponse) {}
-  rpc CountOrders(CountOrdersRequest) returns (CountOrdersResponse) {}
   rpc DeleteOrder(DeleteOrderRequest) returns (DeleteOrderResponse) {}
 }
 
@@ -131,9 +130,6 @@ message ExistOrderResponse { bool Exist = 10; }
 
 message ExistOrderCondsRequest { Conds Conds = 10; }
 message ExistOrderCondsResponse { bool Exist = 10; }
-
-message CountOrdersRequest { Conds Conds = 10; }
-message CountOrdersResponse { uint32 Info = 10; }
 
 message DeleteOrderRequest { uint32 ID = 10; }
 message DeleteOrderResponse { Order Info = 10; }

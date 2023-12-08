@@ -28,7 +28,6 @@ const (
 	Manager_GetContracts_FullMethodName       = "/nftmeta.v1.contract.Manager/GetContracts"
 	Manager_ExistContract_FullMethodName      = "/nftmeta.v1.contract.Manager/ExistContract"
 	Manager_ExistContractConds_FullMethodName = "/nftmeta.v1.contract.Manager/ExistContractConds"
-	Manager_CountContracts_FullMethodName     = "/nftmeta.v1.contract.Manager/CountContracts"
 	Manager_DeleteContract_FullMethodName     = "/nftmeta.v1.contract.Manager/DeleteContract"
 )
 
@@ -45,7 +44,6 @@ type ManagerClient interface {
 	GetContracts(ctx context.Context, in *GetContractsRequest, opts ...grpc.CallOption) (*GetContractsResponse, error)
 	ExistContract(ctx context.Context, in *ExistContractRequest, opts ...grpc.CallOption) (*ExistContractResponse, error)
 	ExistContractConds(ctx context.Context, in *ExistContractCondsRequest, opts ...grpc.CallOption) (*ExistContractCondsResponse, error)
-	CountContracts(ctx context.Context, in *CountContractsRequest, opts ...grpc.CallOption) (*CountContractsResponse, error)
 	DeleteContract(ctx context.Context, in *DeleteContractRequest, opts ...grpc.CallOption) (*DeleteContractResponse, error)
 }
 
@@ -138,15 +136,6 @@ func (c *managerClient) ExistContractConds(ctx context.Context, in *ExistContrac
 	return out, nil
 }
 
-func (c *managerClient) CountContracts(ctx context.Context, in *CountContractsRequest, opts ...grpc.CallOption) (*CountContractsResponse, error) {
-	out := new(CountContractsResponse)
-	err := c.cc.Invoke(ctx, Manager_CountContracts_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managerClient) DeleteContract(ctx context.Context, in *DeleteContractRequest, opts ...grpc.CallOption) (*DeleteContractResponse, error) {
 	out := new(DeleteContractResponse)
 	err := c.cc.Invoke(ctx, Manager_DeleteContract_FullMethodName, in, out, opts...)
@@ -169,7 +158,6 @@ type ManagerServer interface {
 	GetContracts(context.Context, *GetContractsRequest) (*GetContractsResponse, error)
 	ExistContract(context.Context, *ExistContractRequest) (*ExistContractResponse, error)
 	ExistContractConds(context.Context, *ExistContractCondsRequest) (*ExistContractCondsResponse, error)
-	CountContracts(context.Context, *CountContractsRequest) (*CountContractsResponse, error)
 	DeleteContract(context.Context, *DeleteContractRequest) (*DeleteContractResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
@@ -204,9 +192,6 @@ func (UnimplementedManagerServer) ExistContract(context.Context, *ExistContractR
 }
 func (UnimplementedManagerServer) ExistContractConds(context.Context, *ExistContractCondsRequest) (*ExistContractCondsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExistContractConds not implemented")
-}
-func (UnimplementedManagerServer) CountContracts(context.Context, *CountContractsRequest) (*CountContractsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountContracts not implemented")
 }
 func (UnimplementedManagerServer) DeleteContract(context.Context, *DeleteContractRequest) (*DeleteContractResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteContract not implemented")
@@ -386,24 +371,6 @@ func _Manager_ExistContractConds_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountContractsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountContracts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountContracts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountContracts(ctx, req.(*CountContractsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Manager_DeleteContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteContractRequest)
 	if err := dec(in); err != nil {
@@ -464,10 +431,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExistContractConds",
 			Handler:    _Manager_ExistContractConds_Handler,
-		},
-		{
-			MethodName: "CountContracts",
-			Handler:    _Manager_CountContracts_Handler,
 		},
 		{
 			MethodName: "DeleteContract",

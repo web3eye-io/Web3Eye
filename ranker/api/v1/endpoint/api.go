@@ -83,11 +83,11 @@ func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsR
 func buildConds(in *rankernpool.GetEndpointsRequest) *nftmetanpool.Conds {
 	conds := &nftmetanpool.Conds{}
 	if in.ID != nil {
-		conds.ID = &web3eye.StringVal{Op: "eq", Value: *in.ID}
+		conds.ID = &web3eye.Uint32Val{Op: "eq", Value: *in.ID}
 	}
 
 	if in.ChainType != nil {
-		conds.ChainType = &web3eye.StringVal{Op: "eq", Value: in.ChainType.String()}
+		conds.ChainType = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.ChainType.Enum())}
 	}
 
 	if in.ChainID != nil {
@@ -99,7 +99,7 @@ func buildConds(in *rankernpool.GetEndpointsRequest) *nftmetanpool.Conds {
 	}
 
 	if in.State != nil {
-		conds.State = &web3eye.StringVal{Op: "eq", Value: in.State.String()}
+		conds.State = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.State.Enum())}
 	}
 
 	if in.Remark != nil {

@@ -23,7 +23,6 @@ const (
 	Manager_GetSnapshot_FullMethodName     = "/ranker.v1.snapshot.Manager/GetSnapshot"
 	Manager_GetSnapshotOnly_FullMethodName = "/ranker.v1.snapshot.Manager/GetSnapshotOnly"
 	Manager_GetSnapshots_FullMethodName    = "/ranker.v1.snapshot.Manager/GetSnapshots"
-	Manager_CountSnapshots_FullMethodName  = "/ranker.v1.snapshot.Manager/CountSnapshots"
 )
 
 // ManagerClient is the client API for Manager service.
@@ -33,7 +32,6 @@ type ManagerClient interface {
 	GetSnapshot(ctx context.Context, in *snapshot.GetSnapshotRequest, opts ...grpc.CallOption) (*snapshot.GetSnapshotResponse, error)
 	GetSnapshotOnly(ctx context.Context, in *snapshot.GetSnapshotOnlyRequest, opts ...grpc.CallOption) (*snapshot.GetSnapshotOnlyResponse, error)
 	GetSnapshots(ctx context.Context, in *snapshot.GetSnapshotsRequest, opts ...grpc.CallOption) (*snapshot.GetSnapshotsResponse, error)
-	CountSnapshots(ctx context.Context, in *snapshot.CountSnapshotsRequest, opts ...grpc.CallOption) (*snapshot.CountSnapshotsResponse, error)
 }
 
 type managerClient struct {
@@ -71,15 +69,6 @@ func (c *managerClient) GetSnapshots(ctx context.Context, in *snapshot.GetSnapsh
 	return out, nil
 }
 
-func (c *managerClient) CountSnapshots(ctx context.Context, in *snapshot.CountSnapshotsRequest, opts ...grpc.CallOption) (*snapshot.CountSnapshotsResponse, error) {
-	out := new(snapshot.CountSnapshotsResponse)
-	err := c.cc.Invoke(ctx, Manager_CountSnapshots_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ManagerServer is the server API for Manager service.
 // All implementations must embed UnimplementedManagerServer
 // for forward compatibility
@@ -87,7 +76,6 @@ type ManagerServer interface {
 	GetSnapshot(context.Context, *snapshot.GetSnapshotRequest) (*snapshot.GetSnapshotResponse, error)
 	GetSnapshotOnly(context.Context, *snapshot.GetSnapshotOnlyRequest) (*snapshot.GetSnapshotOnlyResponse, error)
 	GetSnapshots(context.Context, *snapshot.GetSnapshotsRequest) (*snapshot.GetSnapshotsResponse, error)
-	CountSnapshots(context.Context, *snapshot.CountSnapshotsRequest) (*snapshot.CountSnapshotsResponse, error)
 	mustEmbedUnimplementedManagerServer()
 }
 
@@ -103,9 +91,6 @@ func (UnimplementedManagerServer) GetSnapshotOnly(context.Context, *snapshot.Get
 }
 func (UnimplementedManagerServer) GetSnapshots(context.Context, *snapshot.GetSnapshotsRequest) (*snapshot.GetSnapshotsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSnapshots not implemented")
-}
-func (UnimplementedManagerServer) CountSnapshots(context.Context, *snapshot.CountSnapshotsRequest) (*snapshot.CountSnapshotsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountSnapshots not implemented")
 }
 func (UnimplementedManagerServer) mustEmbedUnimplementedManagerServer() {}
 
@@ -174,24 +159,6 @@ func _Manager_GetSnapshots_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Manager_CountSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(snapshot.CountSnapshotsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagerServer).CountSnapshots(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Manager_CountSnapshots_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagerServer).CountSnapshots(ctx, req.(*snapshot.CountSnapshotsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Manager_ServiceDesc is the grpc.ServiceDesc for Manager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -210,10 +177,6 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSnapshots",
 			Handler:    _Manager_GetSnapshots_Handler,
-		},
-		{
-			MethodName: "CountSnapshots",
-			Handler:    _Manager_CountSnapshots_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -18,7 +18,6 @@ service Manager {
   rpc ExistChain(ExistChainRequest) returns (ExistChainResponse) {}
   rpc ExistChainConds(ExistChainCondsRequest)
       returns (ExistChainCondsResponse) {}
-  rpc CountChains(CountChainsRequest) returns (CountChainsResponse) {}
   rpc DeleteChain(DeleteChainRequest) returns (DeleteChainResponse) {}
 }
 
@@ -81,9 +80,6 @@ message ExistChainResponse { bool Exist = 10; }
 
 message ExistChainCondsRequest { Conds Conds = 10; }
 message ExistChainCondsResponse { bool Exist = 10; }
-
-message CountChainsRequest { Conds Conds = 10; }
-message CountChainsResponse { uint32 Info = 10; }
 
 message DeleteChainRequest { uint32 ID = 10; }
 message DeleteChainResponse { Chain Info = 10; }

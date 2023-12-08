@@ -209,8 +209,12 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "title": "nftmeta.v1.token.Token Token = 10;"
+        },
+        "EntID": {
+          "type": "string"
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
@@ -262,7 +266,8 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "TransfersNum": {
           "type": "integer",
@@ -287,7 +292,7 @@
     "tokenSiblingToken": {
       "type": "object",
       "properties": {
-        "ID": {
+        "EntID": {
           "type": "string"
         },
         "TokenID": {
@@ -388,7 +393,8 @@
           "title": "@inject_tag: sql:\"ipfs_image_url\""
         },
         "ImageSnapshotID": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "title": "@inject_tag: sql:\"image_snapshot_id\""
         },
         "CreatedAt": {

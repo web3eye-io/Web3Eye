@@ -79,15 +79,6 @@
         }
       }
     },
-    "orderCountOrdersResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "orderCreateOrderResponse": {
       "type": "object",
       "properties": {

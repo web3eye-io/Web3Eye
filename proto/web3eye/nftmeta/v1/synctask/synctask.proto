@@ -53,12 +53,6 @@ service Manager {
       body : "*"
     };
   }
-  rpc CountSyncTasks(CountSyncTasksRequest) returns (CountSyncTasksResponse) {
-    option (google.api.http) = {
-      post : "/v1/Count/synctasks"
-      body : "*"
-    };
-  }
   rpc DeleteSyncTask(DeleteSyncTaskRequest) returns (DeleteSyncTaskResponse) {
     option (google.api.http) = {
       post : "/v1/delete/synctask"
@@ -164,9 +158,6 @@ message ExistSyncTaskResponse { bool Exist = 10; }
 
 message ExistSyncTaskCondsRequest { Conds Conds = 10; }
 message ExistSyncTaskCondsResponse { bool Exist = 10; }
-
-message CountSyncTasksRequest { Conds Conds = 10; }
-message CountSyncTasksResponse { uint32 Info = 10; }
 
 message DeleteSyncTaskRequest { uint32 ID = 10; }
 message DeleteSyncTaskResponse { SyncTask Info = 10; }

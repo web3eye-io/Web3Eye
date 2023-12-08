@@ -57,7 +57,7 @@ type Token struct {
 	// IpfsImageURL holds the value of the "ipfs_image_url" field.
 	IpfsImageURL string `json:"ipfs_image_url,omitempty"`
 	// ImageSnapshotID holds the value of the "image_snapshot_id" field.
-	ImageSnapshotID string `json:"image_snapshot_id,omitempty"`
+	ImageSnapshotID uint32 `json:"image_snapshot_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -65,9 +65,9 @@ func (*Token) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case token.FieldID, token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID:
+		case token.FieldID, token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID, token.FieldImageSnapshotID:
 			values[i] = new(sql.NullInt64)
-		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL, token.FieldImageSnapshotID:
+		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL:
 			values[i] = new(sql.NullString)
 		case token.FieldEntID:
 			values[i] = new(uuid.UUID)
@@ -213,10 +213,10 @@ func (t *Token) assignValues(columns []string, values []interface{}) error {
 				t.IpfsImageURL = value.String
 			}
 		case token.FieldImageSnapshotID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field image_snapshot_id", values[i])
 			} else if value.Valid {
-				t.ImageSnapshotID = value.String
+				t.ImageSnapshotID = uint32(value.Int64)
 			}
 		}
 	}
@@ -307,7 +307,7 @@ func (t *Token) String() string {
 	builder.WriteString(t.IpfsImageURL)
 	builder.WriteString(", ")
 	builder.WriteString("image_snapshot_id=")
-	builder.WriteString(t.ImageSnapshotID)
+	builder.WriteString(fmt.Sprintf("%v", t.ImageSnapshotID))
 	builder.WriteByte(')')
 	return builder.String()
 }
