@@ -18,7 +18,7 @@ func (h *Handler) ExistBlock(ctx context.Context) (bool, error) {
 			Block.
 			Query().
 			Where(
-				blockent.EntID(*h.EntID),
+				blockent.ID(*h.ID),
 				blockent.DeletedAt(0),
 			).
 			Exist(_ctx)

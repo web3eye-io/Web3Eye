@@ -18,7 +18,7 @@ func (h *Handler) ExistToken(ctx context.Context) (bool, error) {
 			Token.
 			Query().
 			Where(
-				tokenent.EntID(*h.EntID),
+				tokenent.ID(*h.ID),
 				tokenent.DeletedAt(0),
 			).
 			Exist(_ctx)

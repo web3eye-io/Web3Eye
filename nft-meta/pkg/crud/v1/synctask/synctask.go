@@ -122,8 +122,8 @@ func SetQueryConds(q *ent.SyncTaskQuery, conds *Conds) (*ent.SyncTaskQuery, erro
 		if !ok {
 			return nil, fmt.Errorf("invalid entid")
 		}
-		switch conds.EntID.Op {
-		case cruder.EQ:
+		switch conds.EntIDs.Op {
+		case cruder.IN:
 			q.Where(entsynctask.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")

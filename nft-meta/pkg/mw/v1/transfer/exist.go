@@ -18,7 +18,7 @@ func (h *Handler) ExistTransfer(ctx context.Context) (bool, error) {
 			Transfer.
 			Query().
 			Where(
-				transferent.EntID(*h.EntID),
+				transferent.ID(*h.ID),
 				transferent.DeletedAt(0),
 			).
 			Exist(_ctx)

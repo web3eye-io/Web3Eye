@@ -18,7 +18,7 @@ func (h *Handler) ExistContract(ctx context.Context) (bool, error) {
 			Contract.
 			Query().
 			Where(
-				contractent.EntID(*h.EntID),
+				contractent.ID(*h.ID),
 				contractent.DeletedAt(0),
 			).
 			Exist(_ctx)

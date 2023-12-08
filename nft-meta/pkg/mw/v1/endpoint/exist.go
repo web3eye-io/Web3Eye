@@ -18,7 +18,7 @@ func (h *Handler) ExistEndpoint(ctx context.Context) (bool, error) {
 			Endpoint.
 			Query().
 			Where(
-				endpointent.EntID(*h.EntID),
+				endpointent.ID(*h.ID),
 				endpointent.DeletedAt(0),
 			).
 			Exist(_ctx)

@@ -18,7 +18,7 @@ func (h *Handler) ExistOrder(ctx context.Context) (bool, error) {
 			Order.
 			Query().
 			Where(
-				orderent.EntID(*h.EntID),
+				orderent.ID(*h.ID),
 				orderent.DeletedAt(0),
 			).
 			Exist(_ctx)

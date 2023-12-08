@@ -89,8 +89,8 @@ func SetQueryConds(q *ent.SnapshotQuery, conds *Conds) (*ent.SnapshotQuery, erro
 		if !ok {
 			return nil, fmt.Errorf("invalid entid")
 		}
-		switch conds.EntID.Op {
-		case cruder.EQ:
+		switch conds.EntIDs.Op {
+		case cruder.IN:
 			q.Where(entsnapshot.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")

@@ -18,7 +18,7 @@ func (h *Handler) ExistSyncTask(ctx context.Context) (bool, error) {
 			SyncTask.
 			Query().
 			Where(
-				synctaskent.EntID(*h.EntID),
+				synctaskent.ID(*h.ID),
 				synctaskent.DeletedAt(0),
 			).
 			Exist(_ctx)

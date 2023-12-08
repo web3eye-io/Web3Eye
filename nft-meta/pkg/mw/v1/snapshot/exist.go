@@ -18,7 +18,7 @@ func (h *Handler) ExistSnapshot(ctx context.Context) (bool, error) {
 			Snapshot.
 			Query().
 			Where(
-				snapshotent.EntID(*h.EntID),
+				snapshotent.ID(*h.ID),
 				snapshotent.DeletedAt(0),
 			).
 			Exist(_ctx)
