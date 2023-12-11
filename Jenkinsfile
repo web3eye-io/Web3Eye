@@ -263,6 +263,7 @@ pipeline {
       when {
         expression { RELEASE_TARGET == 'true' }
         expression { TAG_FOR == '' }
+        expression { BRANCH_NAME == 'master' }
       }
       steps {
         sh 'TAG=latest DOCKER_REGISTRY=$DOCKER_REGISTRY make release-docker'
