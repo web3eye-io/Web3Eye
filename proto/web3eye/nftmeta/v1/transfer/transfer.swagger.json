@@ -351,7 +351,15 @@
       }
     },
     "transferUpsertTransfersResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/transferTransfer"
+          }
+        }
+      }
     },
     "web3eyeStringSliceVal": {
       "type": "object",

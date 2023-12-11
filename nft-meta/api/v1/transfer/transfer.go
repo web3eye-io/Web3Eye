@@ -115,15 +115,29 @@ func (s *Server) UpsertTransfer(ctx context.Context, in *npool.UpsertTransferReq
 	}, err
 }
 
-// func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
-// 	err := crud.UpsertBulk(ctx, in.GetInfos())
-// 	if err != nil {
-// 		logger.Sugar().Errorw("UpsertTransfers", "error", err)
-// 		return nil, status.Error(codes.Internal, err.Error())
-// 	}
+func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
+	if len(in.GetInfos()) == 0 {
+		logger.Sugar().Warnw("UpsertTransfers", "error", "Infos is empty")
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(in.Infos, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertTransfers", "error", err)
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
+	}
 
-// 	return &npool.UpsertTransfersResponse{}, err
-// }
+	infos, err := h.UpsertTransfers(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertTransfers", "error", err)
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpsertTransfersResponse{
+		Infos: infos,
+	}, nil
+}
 
 func (s *Server) UpdateTransfer(ctx context.Context, in *npool.UpdateTransferRequest) (*npool.UpdateTransferResponse, error) {
 	if req := in.GetInfo(); req == nil {

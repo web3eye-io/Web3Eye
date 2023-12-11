@@ -110,7 +110,7 @@ message CreateTransfersRequest { repeated TransferReq Infos = 10; }
 message CreateTransfersResponse { repeated Transfer Infos = 10; }
 
 message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
-message UpsertTransfersResponse { }
+message UpsertTransfersResponse { repeated Transfer Infos = 10; }
 
 message GetTransferRequest { uint32 ID = 10; }
 message GetTransferResponse { Transfer Info = 10; }
