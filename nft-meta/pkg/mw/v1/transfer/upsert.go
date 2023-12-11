@@ -82,7 +82,7 @@ func (h *Handler) UpsertTransfer(ctx context.Context) (*transferproto.Transfer, 
 	return h.GetTransfer(ctx)
 }
 
-func (h Handler) UpsertTransfers(ctx context.Context) ([]*transferproto.Transfer, error) {
+func (h *Handler) UpsertTransfers(ctx context.Context) ([]*transferproto.Transfer, error) {
 	var entIDs []*uuid.UUID
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		bulk := make([]*ent.TransferCreate, len(h.Reqs))
