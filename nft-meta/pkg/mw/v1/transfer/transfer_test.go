@@ -157,7 +157,6 @@ func upsert(t *testing.T) {
 	_info2, err := handler.DeleteTransfer(context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, _info2.ID, info2.ID)
-
 }
 
 func query(t *testing.T) {

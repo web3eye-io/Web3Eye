@@ -65,7 +65,8 @@ func autoToTensor(ctx context.Context) error {
 	}
 
 	for msg := range output {
-		id, err := strconv.ParseUint(msg.Key(), 10, 32)
+		base, bitSize := 10, 32
+		id, err := strconv.ParseUint(msg.Key(), base, bitSize)
 		if err != nil {
 			logger.Sugar().Errorf("failed to parse id(%v), err %v", msg.Key(), err)
 			return err

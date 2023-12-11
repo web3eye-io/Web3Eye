@@ -146,11 +146,12 @@ func (kv *SnapshotKV) getSnapshot(ctx context.Context, kvStoreName string) (*dea
 		return nil, err
 	}
 
-	_id_bytes, err := _kv.Get(ctx, SnapshotID)
+	_idBytes, err := _kv.Get(ctx, SnapshotID)
 	if err != nil {
 		return nil, err
 	}
-	_id, err := strconv.ParseUint(string(_id_bytes), 10, 32)
+	base, bitSize := 10, 32
+	_id, err := strconv.ParseUint(string(_idBytes), base, bitSize)
 	if err != nil {
 		return nil, err
 	}

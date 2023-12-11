@@ -210,7 +210,6 @@ func upsert(t *testing.T) {
 	_info2, err := handler.DeleteContract(context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, _info2.ID, info2.ID)
-
 }
 
 func TestTx(t *testing.T) {

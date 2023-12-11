@@ -31,12 +31,13 @@ type Req struct {
 	Remark      *string
 }
 
+//nolint:gocyclo
 func CreateSet(c *ent.ContractCreate, req *Req) *ent.ContractCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)

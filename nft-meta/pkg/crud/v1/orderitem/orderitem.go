@@ -50,7 +50,6 @@ func CreateSet(c *ent.OrderItemCreate, req *Req) *ent.OrderItemCreate {
 }
 
 func UpdateSet(u *ent.OrderUpdateOne, req *Req) (*ent.OrderUpdateOne, error) {
-
 	if req.Remark != nil {
 		u.SetRemark(*req.Remark)
 	}

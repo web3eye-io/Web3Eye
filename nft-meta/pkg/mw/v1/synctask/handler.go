@@ -188,7 +188,6 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
 func WithReqs(reqs []*synctaskproto.SyncTaskReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*synctaskcrud.Req{}

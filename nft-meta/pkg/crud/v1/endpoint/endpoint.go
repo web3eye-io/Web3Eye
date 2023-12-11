@@ -26,7 +26,7 @@ func CreateSet(c *ent.EndpointCreate, req *Req) *ent.EndpointCreate {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)
@@ -35,7 +35,7 @@ func CreateSet(c *ent.EndpointCreate, req *Req) *ent.EndpointCreate {
 		c.SetAddress(*req.Address)
 	}
 	if req.State != nil {
-		c.SetState((*req.State).String())
+		c.SetState(req.State.String())
 	}
 	if req.Remark != nil {
 		c.SetRemark(*req.Remark)
@@ -54,7 +54,7 @@ func UpdateSet(u *ent.EndpointUpdateOne, req *Req) (*ent.EndpointUpdateOne, erro
 		u.SetAddress(*req.Address)
 	}
 	if req.State != nil {
-		u.SetState((*req.State).String())
+		u.SetState(req.State.String())
 	}
 	if req.Remark != nil {
 		u.SetRemark(*req.Remark)

@@ -160,7 +160,6 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
 func WithReqs(reqs []*blockproto.BlockReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*blockcrud.Req{}
@@ -207,7 +206,6 @@ func WithReqs(reqs []*blockproto.BlockReq, must bool) func(context.Context, *Han
 	}
 }
 
-//nolint:gocyclo
 func WithConds(conds *blockproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &blockcrud.Conds{}

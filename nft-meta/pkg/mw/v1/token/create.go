@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
+//nolint:dupl
 func (h *Handler) CreateToken(ctx context.Context) (*tokenproto.Token, error) {
 	entID := uuid.New()
 	if h.EntID == nil {

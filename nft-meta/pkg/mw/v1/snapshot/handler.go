@@ -129,7 +129,6 @@ func WithBackupState(u *string, must bool) func(context.Context, *Handler) error
 	}
 }
 
-// nolint:gocyclo
 func WithReqs(reqs []*snapshotproto.SnapshotReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*snapshotcrud.Req{}
@@ -164,7 +163,6 @@ func WithReqs(reqs []*snapshotproto.SnapshotReq, must bool) func(context.Context
 	}
 }
 
-//nolint:gocyclo
 func WithConds(conds *snapshotproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &snapshotcrud.Conds{}

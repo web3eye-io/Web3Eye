@@ -10,6 +10,7 @@ import (
 	tokenproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
 
+//nolint:dupl
 func (h *Handler) UpsertToken(ctx context.Context) (*tokenproto.Token, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		row, _ := tx.Token.Query().Where(

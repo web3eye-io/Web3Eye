@@ -263,7 +263,7 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func WithReqs(reqs []*contractproto.ContractReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*contractcrud.Req{}
@@ -331,7 +331,7 @@ func WithReqs(reqs []*contractproto.ContractReq, must bool) func(context.Context
 	}
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func WithConds(conds *contractproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &contractcrud.Conds{}

@@ -328,7 +328,7 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *npool.GetSyncTasksRequest
 
 	return &npool.GetSyncTasksResponse{
 		Infos: infos,
-		Total: uint32(total),
+		Total: total,
 	}, nil
 }
 

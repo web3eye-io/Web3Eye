@@ -12,7 +12,7 @@ import (
 
 func (h *Handler) UpsertBlock(ctx context.Context) (*blockproto.Block, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		row, err := tx.Block.Query().Where(
+		row, _ := tx.Block.Query().Where(
 			blockent.ChainType(h.ChainType.String()),
 			blockent.ChainID(*h.ChainID),
 			blockent.BlockNumber(*h.BlockNumber),

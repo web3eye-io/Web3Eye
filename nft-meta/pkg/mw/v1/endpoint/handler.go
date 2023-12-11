@@ -138,7 +138,6 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
 func WithReqs(reqs []*endpointproto.EndpointReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*endpointcrud.Req{}
@@ -179,7 +178,6 @@ func WithReqs(reqs []*endpointproto.EndpointReq, must bool) func(context.Context
 	}
 }
 
-//nolint:gocyclo
 func WithConds(conds *endpointproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &endpointcrud.Conds{}

@@ -32,7 +32,7 @@ func CreateSet(c *ent.OrderCreate, req *Req) *ent.OrderCreate {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)

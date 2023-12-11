@@ -241,7 +241,7 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func WithReqs(reqs []*transferproto.TransferReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*transfercrud.Req{}
@@ -306,7 +306,7 @@ func WithReqs(reqs []*transferproto.TransferReq, must bool) func(context.Context
 	}
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func WithConds(conds *transferproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &transfercrud.Conds{}

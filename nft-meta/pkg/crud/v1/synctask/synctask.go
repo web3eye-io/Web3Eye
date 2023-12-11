@@ -30,7 +30,7 @@ func CreateSet(c *ent.SyncTaskCreate, req *Req) *ent.SyncTaskCreate {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)
@@ -51,7 +51,7 @@ func CreateSet(c *ent.SyncTaskCreate, req *Req) *ent.SyncTaskCreate {
 		c.SetDescription(*req.Description)
 	}
 	if req.SyncState != nil {
-		c.SetSyncState((*req.SyncState).String())
+		c.SetSyncState(req.SyncState.String())
 	}
 	if req.Remark != nil {
 		c.SetRemark(*req.Remark)

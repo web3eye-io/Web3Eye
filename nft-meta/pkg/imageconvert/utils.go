@@ -155,7 +155,7 @@ func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) 
 	}
 	_, err = h.UpdateToken(ctx)
 
-	return
+	return err
 }
 
 // TODO:will be rewrite

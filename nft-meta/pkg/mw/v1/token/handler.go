@@ -295,7 +295,7 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func WithReqs(reqs []*tokenproto.TokenReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*tokencrud.Req{}
@@ -375,7 +375,7 @@ func WithReqs(reqs []*tokenproto.TokenReq, must bool) func(context.Context, *Han
 	}
 }
 
-//nolint:gocyclo
+//nolint:gocyclo,funlen
 func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &tokencrud.Conds{}

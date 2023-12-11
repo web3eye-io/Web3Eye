@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
+//nolint:dupl
 func (h *Handler) CreateContract(ctx context.Context) (*contractproto.Contract, error) {
 	entID := uuid.New()
 	if h.EntID == nil {

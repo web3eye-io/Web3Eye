@@ -205,7 +205,6 @@ func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	}
 }
 
-// nolint:gocyclo
 func WithReqs(reqs []*orderproto.OrderReq, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		_reqs := []*ordercrud.Req{}
@@ -258,7 +257,6 @@ func WithReqs(reqs []*orderproto.OrderReq, must bool) func(context.Context, *Han
 	}
 }
 
-//nolint:gocyclo
 func WithConds(conds *orderproto.Conds) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		h.Conds = &ordercrud.Conds{}

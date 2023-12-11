@@ -28,7 +28,7 @@ func CreateSet(c *ent.BlockCreate, req *Req) *ent.BlockCreate {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)
@@ -43,7 +43,7 @@ func CreateSet(c *ent.BlockCreate, req *Req) *ent.BlockCreate {
 		c.SetBlockTime(*req.BlockTime)
 	}
 	if req.ParseState != nil {
-		c.SetParseState((*req.ParseState).String())
+		c.SetParseState(req.ParseState.String())
 	}
 	if req.Remark != nil {
 		c.SetRemark(*req.Remark)

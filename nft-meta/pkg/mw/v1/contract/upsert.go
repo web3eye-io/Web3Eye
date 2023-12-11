@@ -10,6 +10,7 @@ import (
 	contractproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
 )
 
+//nolint:dupl
 func (h *Handler) UpsertContract(ctx context.Context) (*contractproto.Contract, error) {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		row, _ := tx.Contract.Query().Where(

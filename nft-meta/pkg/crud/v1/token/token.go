@@ -7,7 +7,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	enttoken "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/token"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	tokentype "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	tokenproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
 )
@@ -27,19 +27,20 @@ type Req struct {
 	VideoURL        *string
 	Description     *string
 	Name            *string
-	VectorState     *tokentype.ConvertState
+	VectorState     *tokenproto.ConvertState
 	VectorID        *int64
 	IPFSImageURL    *string
 	ImageSnapshotID *uint32
 	Remark          *string
 }
 
+//nolint:gocyclo
 func CreateSet(c *ent.TokenCreate, req *Req) *ent.TokenCreate {
 	if req.EntID != nil {
 		c.SetEntID(*req.EntID)
 	}
 	if req.ChainType != nil {
-		c.SetChainType((*req.ChainType).String())
+		c.SetChainType(req.ChainType.String())
 	}
 	if req.ChainID != nil {
 		c.SetChainID(*req.ChainID)
@@ -92,6 +93,7 @@ func CreateSet(c *ent.TokenCreate, req *Req) *ent.TokenCreate {
 	return c
 }
 
+//nolint:gocyclo
 func UpdateSet(u *ent.TokenUpdateOne, req *Req) (*ent.TokenUpdateOne, error) {
 	if req.ChainType != nil {
 		u.SetChainType(req.ChainType.String())
