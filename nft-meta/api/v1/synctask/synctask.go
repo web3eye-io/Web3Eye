@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 
@@ -94,32 +95,42 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	// TODO: will be rewrite,too long
 	// TODO: each state corresponds to a processing function
 	// query synctask
-	conds := &npool.Conds{
-		Topic: &web3eye.StringVal{
-			Value: in.Topic,
-			Op:    "eq",
-		},
-	}
-
-	h, err := handler.NewHandler(ctx,
-		handler.WithConds(conds),
-	)
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-	infos, total, err := h.GetSyncTasks(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
 	// lock
 	lockKey := "TriggerSyncTask_Lock"
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
 		return &npool.TriggerSyncTaskResponse{}, err
+	}
+
+	defer func() {
+		err := ctredis.Unlock(lockKey, lockID)
+		if err != nil {
+			logger.Sugar().Warn("TriggerSyncTask", "warning", err)
+		}
+	}()
+
+	conds := &npool.Conds{
+		Topic: &web3eye.StringVal{
+			Value: in.Topic,
+			Op:    cruder.EQ,
+		},
+	}
+
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(conds),
+		handler.WithOffset(0),
+		handler.WithLimit(1),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, total, err := h.GetSyncTasks(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	if total != 1 {
@@ -129,13 +140,6 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	}
 
 	info := infos[0]
-
-	defer func() {
-		err := ctredis.Unlock(lockKey, lockID)
-		if err != nil {
-			logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		}
-	}()
 
 	// check state
 	if info.SyncState != basetype.SyncState_Start {

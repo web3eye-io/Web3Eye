@@ -205,7 +205,11 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 			},
 		}
 
-		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		h, err := tokenhandler.NewHandler(ctx,
+			tokenhandler.WithConds(conds),
+			tokenhandler.WithOffset(0),
+			tokenhandler.WithLimit(int32(len(vIDs))),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -254,7 +258,12 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
 		}
 
-		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		h, err := tokenhandler.NewHandler(
+			ctx,
+			tokenhandler.WithConds(conds),
+			tokenhandler.WithOffset(0),
+			tokenhandler.WithLimit(int32(ShowSiblinsNum)),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -357,7 +366,12 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 			},
 		}
 
-		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithConds(conds))
+		h, err := tokenhandler.NewHandler(
+			ctx,
+			tokenhandler.WithConds(conds),
+			tokenhandler.WithOffset(0),
+			tokenhandler.WithLimit(int32(len(EntIDs))),
+		)
 		if err != nil {
 			return nil, err
 		}

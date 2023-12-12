@@ -6,6 +6,7 @@ import (
 
 	contracthandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/contract"
 	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
+	transferhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/transfer"
 
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	contractproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
@@ -21,7 +22,11 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 		Value: in.Contract,
 	}}
 
-	contractHandler, err := contracthandler.NewHandler(ctx, contracthandler.WithConds(contractconds))
+	contractHandler, err := contracthandler.NewHandler(ctx,
+		contracthandler.WithConds(contractconds),
+		contracthandler.WithOffset(0),
+		contracthandler.WithLimit(1),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -75,12 +80,15 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 			Op:    "eq",
 			Value: v.TokenID,
 		}
-		contractHandler, err := contracthandler.NewHandler(ctx, contracthandler.WithConds(contractconds))
+		transferHandler, err := transferhandler.NewHandler(
+			ctx,
+			transferhandler.WithConds(transfersconds),
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		_, total, err := contractHandler.GetContracts(ctx)
+		_, total, err := transferHandler.GetTransfers(ctx)
 		if err != nil {
 			return nil, err
 		}
