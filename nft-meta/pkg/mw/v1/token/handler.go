@@ -427,7 +427,7 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 		if conds.TokenType != nil {
 			h.Conds.TokenType = &cruder.Cond{
 				Op:  conds.GetTokenType().GetOp(),
-				Val: conds.GetTokenType().GetValue(),
+				Val: basetype.TokenType(conds.GetTokenType().GetValue()),
 			}
 		}
 		if conds.TokenID != nil {
@@ -481,7 +481,7 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 		if conds.VectorState != nil {
 			h.Conds.VectorState = &cruder.Cond{
 				Op:  conds.GetVectorState().GetOp(),
-				Val: conds.GetVectorState().GetValue(),
+				Val: tokenproto.ConvertState(conds.GetVectorState().GetValue()),
 			}
 		}
 		if conds.VectorID != nil {

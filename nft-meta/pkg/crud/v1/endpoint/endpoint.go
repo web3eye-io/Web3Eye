@@ -134,13 +134,13 @@ func SetQueryConds(q *ent.EndpointQuery, conds *Conds) (*ent.EndpointQuery, erro
 		}
 	}
 	if conds.State != nil {
-		state, ok := conds.State.Val.(string)
+		state, ok := conds.State.Val.(basetype.EndpointState)
 		if !ok {
 			return nil, fmt.Errorf("invalid state")
 		}
 		switch conds.State.Op {
 		case cruder.EQ:
-			q.Where(entendpoint.State(state))
+			q.Where(entendpoint.State(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid state field")
 		}

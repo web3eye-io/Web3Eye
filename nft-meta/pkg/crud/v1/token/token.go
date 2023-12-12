@@ -233,13 +233,13 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 		}
 	}
 	if conds.TokenType != nil {
-		tokentype, ok := conds.TokenType.Val.(string)
+		tokentype, ok := conds.TokenType.Val.(basetype.TokenType)
 		if !ok {
 			return nil, fmt.Errorf("invalid tokentype")
 		}
 		switch conds.TokenType.Op {
 		case cruder.EQ:
-			q.Where(enttoken.TokenType(tokentype))
+			q.Where(enttoken.TokenType(tokentype.String()))
 		default:
 			return nil, fmt.Errorf("invalid tokentype field")
 		}
@@ -341,13 +341,13 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 		}
 	}
 	if conds.VectorState != nil {
-		vectorstate, ok := conds.VectorState.Val.(string)
+		vectorstate, ok := conds.VectorState.Val.(tokenproto.ConvertState)
 		if !ok {
 			return nil, fmt.Errorf("invalid vectorstate")
 		}
 		switch conds.VectorState.Op {
 		case cruder.EQ:
-			q.Where(enttoken.VectorState(vectorstate))
+			q.Where(enttoken.VectorState(vectorstate.String()))
 		default:
 			return nil, fmt.Errorf("invalid vectorstate field")
 		}

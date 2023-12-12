@@ -229,7 +229,7 @@ func WithConds(conds *endpointproto.Conds) func(context.Context, *Handler) error
 		if conds.State != nil {
 			h.Conds.State = &cruder.Cond{
 				Op:  conds.GetState().GetOp(),
-				Val: conds.GetState().GetValue(),
+				Val: basetype.EndpointState(conds.GetState().GetValue()),
 			}
 		}
 		if conds.Remark != nil {

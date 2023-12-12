@@ -33,8 +33,9 @@ type indexMGR struct {
 }
 
 var (
-	pMGR           *indexMGR
-	UpdateInterval = time.Second * 10
+	pMGR              *indexMGR
+	UpdateInterval    = time.Second * 10
+	maxUsingEndpoints = 10
 )
 
 func init() {
@@ -71,7 +72,11 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 		},
 	}
 
-	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{
+		Conds:  conds,
+		Limit:  int32(maxUsingEndpoints),
+		Offset: 0,
+	})
 	if err != nil {
 		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
 		return

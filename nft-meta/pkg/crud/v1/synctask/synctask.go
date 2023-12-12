@@ -214,13 +214,13 @@ func SetQueryConds(q *ent.SyncTaskQuery, conds *Conds) (*ent.SyncTaskQuery, erro
 		}
 	}
 	if conds.SyncState != nil {
-		syncstate, ok := conds.SyncState.Val.(string)
+		syncstate, ok := conds.SyncState.Val.(basetype.SyncState)
 		if !ok {
 			return nil, fmt.Errorf("invalid syncstate")
 		}
 		switch conds.SyncState.Op {
 		case cruder.EQ:
-			q.Where(entsynctask.SyncState(syncstate))
+			q.Where(entsynctask.SyncState(syncstate.String()))
 		default:
 			return nil, fmt.Errorf("invalid syncstate field")
 		}

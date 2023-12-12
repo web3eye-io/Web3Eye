@@ -117,13 +117,13 @@ func SetQueryConds(q *ent.OrderItemQuery, conds *Conds) (*ent.OrderItemQuery, er
 		}
 	}
 	if conds.TokenType != nil {
-		tokentype, ok := conds.TokenType.Val.(string)
+		tokentype, ok := conds.TokenType.Val.(basetype.TokenType)
 		if !ok {
 			return nil, fmt.Errorf("invalid tokentype")
 		}
 		switch conds.TokenType.Op {
 		case cruder.EQ:
-			q.Where(entorderitem.TokenType(tokentype))
+			q.Where(entorderitem.TokenType(tokentype.String()))
 		default:
 			return nil, fmt.Errorf("invalid tokentype field")
 		}
