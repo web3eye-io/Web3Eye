@@ -9,7 +9,7 @@ ENV ENV_DATA_DIR=/data \
     ENV_INVERSTOR_KEY=""
 RUN mkdir $ENV_DATA_DIR
 
-RUN yum update -y
+# RUN yum update -y
 RUN yum install ca-certificates curl -y
 
 WORKDIR /usr/local/bin/
