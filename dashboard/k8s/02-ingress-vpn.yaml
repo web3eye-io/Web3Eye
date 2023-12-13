@@ -8,17 +8,9 @@ metadata:
     k8s.kuboard.cn/workload: web3eye-dashboard
     kubernetes.io/ingress.class: 'traefik-internet-vpn'
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.middlewares:
-      kube-system-http-redirect-https@kubernetescrd,
-      kube-system-http-redirect-https-testing@kubernetescrd,
-      kube-system-common-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-common-headers@kubernetescrd
 
 spec:
-  tls:
-    - hosts:
-        - '*.dashboard.web3eye.io'
-        - dashboard.web3eye.io
-      secretName: web3eye-io-tls
   rules:
     - host: dashboard.web3eye.io
       http: &http_rules

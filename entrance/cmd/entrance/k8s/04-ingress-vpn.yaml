@@ -8,8 +8,6 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares:
       kube-system-strip-entrance-prefix@kubernetescrd,
-      kube-system-http-redirect-https@kubernetescrd,
-      kube-system-http-redirect-https-testing@kubernetescrd,
       kube-system-common-headers@kubernetescrd
 
 spec:
@@ -24,5 +22,7 @@ spec:
                 name: entrance
                 port:
                   number: 30150
-    - host: api.npool.io
+    - host: api.web3eye.npool.top
+      http: *http_rules
+    - host: api.npool.top
       http: *http_rules
