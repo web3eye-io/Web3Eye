@@ -25,6 +25,8 @@ if [ "$user" == "root" ]; then
     SUDO=""
 fi
 
+$SUDO npm config set registry https://registry.npm.taobao.org
+
 if ! command -v n; then
     $SUDO npm install -g n -y
 fi
@@ -35,7 +37,6 @@ if ! command -v yarn; then
 fi
 
 PATH=/usr/local/bin:$PATH
-$SUDO npm config set registry https://registry.npm.taobao.org
 $SUDO n v16.14.0
 $SUDO npm install @typescript-eslint/eslint-plugin --save-dev
 $SUDO yarn lint
