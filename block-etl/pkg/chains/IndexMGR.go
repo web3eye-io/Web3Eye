@@ -112,6 +112,10 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 		})
 	}
 
+	if len(updateInfos) == 0 {
+		return
+	}
+
 	updateEResp, err := endpointNMCli.UpdateEndpoints(ctx, &endpoint.UpdateEndpointsRequest{
 		Infos: updateInfos,
 	})

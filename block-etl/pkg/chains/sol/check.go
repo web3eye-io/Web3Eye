@@ -53,6 +53,10 @@ func (e *SolIndexer) CheckEndpointAndDeal(ctx context.Context) {
 	// clean up the map
 	e.BadEndpoints = make(map[string]error)
 
+	if len(updateInfos) == 0 {
+		return
+	}
+
 	// update the infos to db
 	updateEResp, err := endpointNMCli.UpdateEndpoints(ctx, &endpoint.UpdateEndpointsRequest{
 		Infos: updateInfos,
