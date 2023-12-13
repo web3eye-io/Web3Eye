@@ -6,6 +6,6 @@ set -o pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
-exec "${REPO_ROOT}/hack/verify-golangci-lint.sh"
-exec "${REPO_ROOT}/hack/es-verify-eslint.sh"
+exec "${REPO_ROOT}/hack/go-verify-golangci-lint.sh"
+exec "${REPO_ROOT}/hack/eslint.sh"
 exec "${REPO_ROOT}/hack/verify-spelling.sh"
