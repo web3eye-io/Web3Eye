@@ -8,7 +8,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-es_projects=(webui)
+es_projects=(webui dashboard)
 
 for proj in ${es_projects[@]}
 do
@@ -35,6 +35,7 @@ if ! command -v yarn; then
 fi
 
 PATH=/usr/local/bin:$PATH
+$SUDO npm config set registry https://registry.npmmirror.com/
 $SUDO n v16.14.0
 $SUDO npm install @typescript-eslint/eslint-plugin --save-dev
 $SUDO yarn lint
