@@ -37,6 +37,7 @@ func (h *queryHandler) selectEndpoint(stm *ent.EndpointQuery) {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.ChainType = basetype.ChainType(basetype.ChainType_value[info.ChainTypeStr])
+		info.State = basetype.EndpointState(basetype.EndpointState_value[info.StateStr])
 	}
 }
 

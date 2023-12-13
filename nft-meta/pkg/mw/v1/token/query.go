@@ -49,6 +49,8 @@ func (h *queryHandler) selectToken(stm *ent.TokenQuery) {
 func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.ChainType = basetype.ChainType(basetype.ChainType_value[info.ChainTypeStr])
+		info.TokenType = basetype.TokenType(basetype.TokenType_value[info.TokenTypeStr])
+		info.VectorState = tokenproto.ConvertState(tokenproto.ConvertState_value[info.VectorStateStr])
 	}
 }
 
