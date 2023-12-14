@@ -271,22 +271,21 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVectorRequest) (*npool.UpdateImageVectorResponse, error) {
 	var err error
 
-	id := in.GetID()
 	vID := int64(0)
 	vState := npool.ConvertState_Failed
 	remark := in.GetRemark()
 	h, err := handler.NewHandler(
 		ctx,
-		handler.WithID(&in.ID, true),
+		handler.WithEntID(&in.EntID, true),
 	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := h.GetToken(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -317,13 +316,13 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		handler.WithRemark(&remark, true),
 	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	info, err = h.UpdateToken(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "ID", id, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
 	}
 

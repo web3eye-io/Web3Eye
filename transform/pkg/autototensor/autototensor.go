@@ -3,7 +3,6 @@ package autototensor
 import (
 	"context"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -65,12 +64,7 @@ func autoToTensor(ctx context.Context) error {
 	}
 
 	for msg := range output {
-		base, bitSize := 10, 32
-		id, err := strconv.ParseUint(msg.Key(), base, bitSize)
-		if err != nil {
-			logger.Sugar().Errorf("failed to parse id(%v), err %v", msg.Key(), err)
-			return err
-		}
+		entID := msg.Key()
 
 		imgURL := string(msg.Message.Payload())
 		errRecord := ""
@@ -93,7 +87,7 @@ func autoToTensor(ctx context.Context) error {
 		}()
 
 		_, err = token.UpdateImageVector(ctx, &tokenproto.UpdateImageVectorRequest{
-			ID:     uint32(id),
+			EntID:  entID,
 			Vector: vector,
 			Remark: errRecord,
 		})

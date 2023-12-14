@@ -166,7 +166,7 @@ message UpdateTokenRequest { TokenReq Info = 10; }
 message UpdateTokenResponse { Token Info = 10; }
 
 message UpdateImageVectorRequest { 
-  uint32 ID = 10;
+  string EntID = 10;
   repeated float Vector = 20;
   string Remark = 30;
 }
