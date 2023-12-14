@@ -31,17 +31,14 @@ type BlockLogs struct {
 }
 
 func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockProto.Block, error) {
-	blockOnly, err := blockNMCli.GetBlockOnly(ctx, &blockProto.GetBlockOnlyRequest{
+	// ignore err,just adjust if blockOnly is finished
+	blockOnly, _ := blockNMCli.GetBlockOnly(ctx, &blockProto.GetBlockOnlyRequest{
 		Conds: &blockProto.Conds{
 			ChainType:   &ctMessage.Uint32Val{Op: "eq", Value: uint32(e.ChainType)},
 			ChainID:     &ctMessage.StringVal{Op: "eq", Value: e.ChainID},
 			BlockNumber: &ctMessage.Uint64Val{Op: "eq", Value: inBlockNum},
 		},
 	})
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to get block only,err: %v", err)
-	}
 
 	if blockOnly.Info != nil && blockOnly.GetInfo().ParseState == basetype.BlockParseState_BlockTypeFinish {
 		return blockOnly.GetInfo(), nil
