@@ -40,7 +40,9 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		},
 	})
 
-	if blockOnly.Info != nil && blockOnly.GetInfo().ParseState == basetype.BlockParseState_BlockTypeFinish {
+	if blockOnly != nil &&
+		blockOnly.Info != nil &&
+		blockOnly.GetInfo().ParseState == basetype.BlockParseState_BlockTypeFinish {
 		return blockOnly.GetInfo(), nil
 	}
 
