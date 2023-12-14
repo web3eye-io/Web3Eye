@@ -93,8 +93,7 @@ func (h *Handler) UpsertTransfers(ctx context.Context) ([]*transferproto.Transfe
 			entIDs[i] = &entID
 			bulk[i] = transfercrud.CreateSet(tx.Transfer.Create(), req)
 		}
-		_, err := tx.Transfer.CreateBulk(bulk...).Save(_ctx)
-		return err
+		return tx.Transfer.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
 	})
 	if err != nil {
 		return nil, err
