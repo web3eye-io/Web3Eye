@@ -3,7 +3,6 @@ package transfer
 import (
 	"context"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/google/uuid"
 	transfercrud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
@@ -82,8 +81,7 @@ func (h *Handler) UpsertTransfer(ctx context.Context) (*transferproto.Transfer, 
 	return h.GetTransfer(ctx)
 }
 
-func (h *Handler) UpsertTransfers(ctx context.Context) ([]*transferproto.Transfer, error) {
-	var entIDs []*uuid.UUID
+func (h *Handler) UpsertTransfers(ctx context.Context) error {
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 		bulk := make([]*ent.TransferCreate, len(h.Reqs))
 		entIDs := make([]*uuid.UUID, len(h.Reqs))
@@ -95,16 +93,6 @@ func (h *Handler) UpsertTransfers(ctx context.Context) ([]*transferproto.Transfe
 		}
 		return tx.Transfer.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
 	})
-	if err != nil {
-		return nil, err
-	}
 
-	h.Conds = &transfercrud.Conds{
-		EntIDs: &cruder.Cond{Op: cruder.IN, Val: entIDs},
-	}
-	h.Offset = 0
-	h.Limit = int32(len(entIDs))
-
-	infos, _, err := h.GetTransfers(ctx)
-	return infos, err
+	return err
 }
