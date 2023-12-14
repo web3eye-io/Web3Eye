@@ -128,15 +128,13 @@ func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersR
 		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	infos, err := h.UpsertTransfers(ctx)
+	err = h.UpsertTransfers(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertTransfers", "error", err)
 		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpsertTransfersResponse{
-		Infos: infos,
-	}, nil
+	return &npool.UpsertTransfersResponse{}, nil
 }
 
 func (s *Server) UpdateTransfer(ctx context.Context, in *npool.UpdateTransferRequest) (*npool.UpdateTransferResponse, error) {
