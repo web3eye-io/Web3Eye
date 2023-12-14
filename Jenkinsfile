@@ -329,6 +329,7 @@ pipeline {
     stage('Deploy for dev') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
@@ -344,6 +345,7 @@ pipeline {
     stage('Deploy for test') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         anyOf{
           expression { TARGET_ENV ==~ /.*testing.*/ }
         }
@@ -373,6 +375,7 @@ pipeline {
     stage('Deploy for prod') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         anyOf{
           expression { TARGET_ENV ==~ /.*production.*/ }
         }
