@@ -169,6 +169,7 @@ type Conds struct {
 	IPFSImageURL    *cruder.Cond
 	ImageSnapshotID *cruder.Cond
 	Remark          *cruder.Cond
+	VectorIDs       *cruder.Cond
 }
 
 func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { //nolint
@@ -194,6 +195,18 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 			q.Where(enttoken.EntIDIn(entids...))
 		default:
 			return nil, fmt.Errorf("invalid entid field")
+		}
+	}
+	if conds.VectorIDs != nil {
+		vectorids, ok := conds.VectorIDs.Val.([]int64)
+		if !ok {
+			return nil, fmt.Errorf("invalid vectorids")
+		}
+		switch conds.VectorIDs.Op {
+		case cruder.IN:
+			q.Where(enttoken.VectorIDIn(vectorids...))
+		default:
+			return nil, fmt.Errorf("invalid vectorids field")
 		}
 	}
 	if conds.ChainType != nil {
