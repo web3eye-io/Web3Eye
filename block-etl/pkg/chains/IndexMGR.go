@@ -57,18 +57,19 @@ func GetIndexMGR() *indexMGR {
 
 func (pmgr *indexMGR) Run(ctx context.Context) {
 	for {
-		pmgr.checkNewEndpoints(ctx)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointDefault)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointAvaliable)
 		pmgr.checkAvaliableEndpoints(ctx)
 		<-time.NewTicker(UpdateInterval).C
 	}
 }
 
 // check for the newly created endpoints
-func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
+func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.EndpointState) {
 	conds := &endpoint.Conds{
 		State: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: uint32(basetype.EndpointState_EndpointDefault),
+			Value: uint32(state),
 		},
 	}
 
