@@ -34,7 +34,7 @@ type indexMGR struct {
 
 var (
 	pMGR              *indexMGR
-	UpdateInterval    = time.Second * 10
+	UpdateInterval    = time.Minute
 	maxUsingEndpoints = 10
 )
 
