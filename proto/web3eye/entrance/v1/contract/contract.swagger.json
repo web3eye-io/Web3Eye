@@ -205,6 +205,9 @@
           "type": "integer",
           "format": "int64"
         },
+        "EntID": {
+          "type": "string"
+        },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },

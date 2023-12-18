@@ -12,6 +12,7 @@ func Ent2Grpc(row *nftmetaproto.Token) *rankerproto.SearchToken {
 
 	return &rankerproto.SearchToken{
 		ID:              row.ID,
+		EntID:           row.EntID,
 		ChainType:       row.ChainType,
 		ChainID:         row.ChainID,
 		Contract:        row.Contract,

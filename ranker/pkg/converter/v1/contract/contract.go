@@ -12,6 +12,7 @@ func Ent2Grpc(row *tokenproto.Token) *rankerproto.ShotToken {
 
 	return &rankerproto.ShotToken{
 		ID:              row.ID,
+		EntID:           row.EntID,
 		ChainType:       row.ChainType,
 		TokenType:       row.TokenType,
 		TokenID:         row.TokenID,

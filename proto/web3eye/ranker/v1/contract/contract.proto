@@ -22,6 +22,7 @@ message GetContractAndTokensReq{
 
 message ShotToken {
   uint32 ID = 10;
+  string EntID = 11;
   chain.ChainType ChainType = 20;
   chain.TokenType TokenType = 30;
   string TokenID = 40;
