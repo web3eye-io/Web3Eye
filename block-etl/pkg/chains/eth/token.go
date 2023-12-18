@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
@@ -116,7 +117,7 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*c
 	infos := make([]*transferProto.TransferReq, len(transfers))
 
 	for i := range transfers {
-		transIdentifier := transferIdentifier(
+		transIdentifier := indexer.TransferIdentifier(
 			transfers[i].Contract,
 			transfers[i].TokenID,
 			transfers[i].TxHash,
@@ -153,7 +154,7 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*c
 func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*ContractMeta, error) {
 	outContractMetas := []*ContractMeta{}
 	for _, transfer := range inTransfers {
-		identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+		identifier := indexer.TokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
 		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 		if err != nil {
 			return nil, fmt.Errorf("lock the token indentifier failed, err: %v", err)
@@ -282,7 +283,7 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 }
 
 func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist bool, err error) {
-	identifier := contractIdentifier(e.ChainType, e.ChainID, contract)
+	identifier := indexer.ContractIdentifier(e.ChainType, e.ChainID, contract)
 	locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 	if err != nil {
 		return false, fmt.Errorf("lock the token indentifier failed, err: %v", err)

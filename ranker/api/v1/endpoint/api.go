@@ -77,7 +77,7 @@ func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsR
 		logger.Sugar().Errorw("GetEndpoints", "error", err)
 		return nil, err
 	}
-	return &rankernpool.GetEndpointsResponse{Infos: resp.Infos}, nil
+	return &rankernpool.GetEndpointsResponse{Infos: resp.Infos, Total: resp.Total}, nil
 }
 
 func buildConds(in *rankernpool.GetEndpointsRequest) *nftmetanpool.Conds {

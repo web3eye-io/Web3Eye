@@ -8,6 +8,7 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
@@ -373,7 +374,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfer chan *chains.
 }
 
 func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTransfer) (exist bool, err error) {
-	identifier := tokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+	identifier := indexer.TokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
 	locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 	if err != nil {
 		return false, fmt.Errorf("lock the token indentifier failed, err: %v", err)
@@ -457,8 +458,4 @@ func (e *SolIndexer) GetCurrentBlockNum(ctx context.Context, updateInterval time
 			return
 		}
 	}
-}
-
-func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
 }

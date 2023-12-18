@@ -86,7 +86,7 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *rankernpool.GetSyncTasksR
 		logger.Sugar().Errorw("GetSyncTasks", "error", err)
 		return nil, err
 	}
-	return &rankernpool.GetSyncTasksResponse{Infos: resp.Infos}, nil
+	return &rankernpool.GetSyncTasksResponse{Infos: resp.Infos, Total: resp.Total}, nil
 }
 
 func buildConds(in *rankernpool.GetSyncTasksRequest) *nftmetanpool.Conds {

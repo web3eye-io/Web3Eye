@@ -2,7 +2,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -125,16 +124,4 @@ func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
 			v()
 		}
 	}
-}
-
-func transferIdentifier(contract, tokenID, txHash, from string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
-}
-
-func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
-}
-
-func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
-	return fmt.Sprintf("%v:%v:%v", chain, chainID, contract)
 }
