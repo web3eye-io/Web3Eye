@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"errors"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -151,7 +150,6 @@ func (p *streamMGR) recvProxyResp(psResponse *npool.ToGrpcProxy) {
 
 		recvDone := make(chan struct{})
 		go func() {
-			time.Sleep(time.Duration(rand.Intn(1000) + 3000))
 			recvResp <- psResponse
 			recvDone <- struct{}{}
 		}()
