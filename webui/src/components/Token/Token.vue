@@ -49,10 +49,11 @@
                 </div>
               </div>
               <div class="total-transfers">
-                  <span>Transfers: {{ token?.TransfersNum }}</span>
+                <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token,item)" class="split-token">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                  class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
               </div>
@@ -111,18 +112,31 @@ const displayTokens = computed(() => tokens.value.filter((el) => {
 }))
 
 const groups = ref([])
-const options = computed(() => [
-  {
-    label: 'Ethereum',
-    value: 'Ethereum',
-    amount: ethereums.value,
-  },
-  {
-    label: 'Solana',
-    value: 'Solana',
-    amount: solanas.value,
-  }
-])
+const options = computed(() => {
+  const rows = token.SearchTokens.SearchTokens
+  let ethereums = 0
+  let solanas = 0
+  rows.forEach((el) => {
+    if (el.ChainType === ChainType.Ethereum) {
+      ethereums += 1
+    }
+    if (el.ChainType === ChainType.Solana) {
+      solanas += 1
+    }
+  })
+  return [
+    {
+      label: 'Ethereum',
+      value: 'Ethereum',
+      amount: ethereums,
+    },
+    {
+      label: 'Solana',
+      value: 'Solana',
+      amount: solanas,
+    }
+  ]
+})
 
 const target = ref({} as SearchToken)
 const targetTransfers = ref([] as Array<Transfer>)

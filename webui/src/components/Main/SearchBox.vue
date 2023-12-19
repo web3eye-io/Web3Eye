@@ -54,6 +54,7 @@ onMounted(() => {
         formData.append('Limit', '20')
         contract.value = file?.name as string
         const reqMessage = {} as SearchTokenMessage
+        token.$reset()
         token.searchTokens(formData, reqMessage, (error: boolean) => {
             if (!error) {
                 void router.push('/token')
