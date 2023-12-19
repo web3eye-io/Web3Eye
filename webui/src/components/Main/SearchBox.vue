@@ -29,6 +29,18 @@ const getContractAndTokens = (offset: number, limit: number) => {
 
 const router = useRouter()
 
+const getTokens = (page: number) => {
+  token.getTokens({
+    StorageKey: token.SearchTokens.StorageKey,
+    Page: page,
+    Message: {}
+  }, (error: boolean) => {
+    if (error || page >= token.SearchTokens.TotalPages) return
+    page += 1
+    getTokens(page)
+  })
+}
+
 const token = useTokenStore()
 
 onMounted(() => {
@@ -45,6 +57,9 @@ onMounted(() => {
         token.searchTokens(formData, reqMessage, (error: boolean) => {
             if (!error) {
                 void router.push('/token')
+                if (token.SearchTokens.SearchTokens.length < token.SearchTokens.TotalTokens) {
+                    getTokens(2)
+                }
             }
         })
     })

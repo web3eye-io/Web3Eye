@@ -52,6 +52,7 @@ export const useTokenStore = defineStore('token', {
         req.Message,
         (resp: GetTokensResponse): void => {
           this.SearchTokens.SearchTokens.push(...resp.Infos)
+          this.SearchTokens.StorageKey = resp.StorageKey
           done(false, resp.Infos)
         }, () => {
           done(true, [])
