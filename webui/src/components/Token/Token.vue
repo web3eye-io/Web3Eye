@@ -45,7 +45,7 @@
                   <span>Contract: {{ token.Contract }}</span>
                 </a>
                 <div class="copy">
-                  <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)" />
+                  <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
                 </div>
               </div>
               <div class="total-transfers">
@@ -80,7 +80,7 @@ import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
-
+import { Notify } from 'quasar'
 const token = useTokenStore()
 const tokens = computed(() => {
   const rows = token.SearchTokens.SearchTokens
@@ -184,6 +184,12 @@ const onContractClick = (token: SearchToken) => {
 
 const onCopyClick = (token: SearchToken) => {
   void copyToClipboard(token.Contract)
+  Notify.create({
+    position: 'bottom-right',
+    message: 'Contract Copied',
+    color: 'green',
+    timeout: 2000
+  })
 }
 
 </script>
@@ -240,6 +246,7 @@ const onCopyClick = (token: SearchToken) => {
             text-decoration: none
           .copy
             padding: 0 5px
+            cursor: pointer
         .transfers
           padding-top: 12px
           gap: 8px
