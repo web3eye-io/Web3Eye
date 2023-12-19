@@ -8,7 +8,7 @@ export default boot(({ app }) => {
     {
       appName: 'Web3Eye',
       config: {
-        id: 'G-4JNDBRTP3P'
+        id: 'G-R045T863KM'
       },
     },
   )
