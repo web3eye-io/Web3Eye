@@ -15,6 +15,7 @@ const (
 	CheckTopicInterval     = time.Second * 10
 	FindContractCreator    = false
 	redisExpireDefaultTime = time.Second * 10
+	W3EAddressPrefix       = "w3e_"
 )
 
 type SolIndexer struct {

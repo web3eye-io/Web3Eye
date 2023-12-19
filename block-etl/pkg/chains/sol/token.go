@@ -2,7 +2,9 @@ package sol
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -10,7 +12,6 @@ import (
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
 	"github.com/web3eye-io/Web3Eye/common/chains"
-	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
@@ -82,7 +83,7 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
 		e.checkErr(ctx, err)
-		return nil, fmt.Errorf("cannot get sol client,err: %v", err)
+		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 
 	transfers := sol.GetNFTTransfers(block)
@@ -92,10 +93,17 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 
 	infos := make([]*transferProto.TransferReq, len(transfers))
 	for i := range transfers {
+		metadata, err := cli.GetMetadata(ctx, transfers[i].TokenID)
+		if err != nil {
+			e.checkErr(ctx, err)
+			return nil, fmt.Errorf("cannot get sol token metadata,err: %v", err)
+		}
+		contract := GenCollectionAddr(metadata)
+
 		infos[i] = &transferProto.TransferReq{
 			ChainType:   &e.ChainType,
 			ChainID:     &e.ChainID,
-			Contract:    &transfers[i].Contract,
+			Contract:    &contract,
 			TokenType:   &transfers[i].TokenType,
 			TokenID:     &transfers[i].TokenID,
 			From:        &transfers[i].From,
@@ -118,6 +126,41 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*chains.TokenTransfer, error) {
 	outTransfers := []*chains.TokenTransfer{}
 	for _, transfer := range inTransfers {
+		identifier := indexer.TokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+		locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
+		if err != nil {
+			return nil, fmt.Errorf("lock the token indentifier failed, err: %v", err)
+		}
+
+		if !locked {
+			continue
+		}
+
+		conds := &tokenProto.Conds{
+			ChainType: &ctMessage.Uint32Val{
+				Value: uint32(e.ChainType),
+				Op:    "eq",
+			},
+			ChainID: &ctMessage.StringVal{
+				Value: e.ChainID,
+				Op:    "eq",
+			},
+			Contract: &ctMessage.StringVal{
+				Value: transfer.Contract,
+				Op:    "eq",
+			},
+			TokenID: &ctMessage.StringVal{
+				Value: transfer.TokenID,
+				Op:    "eq",
+			},
+		}
+
+		if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
+			continue
+		} else if err != nil {
+			return nil, fmt.Errorf("check if the token exist failed, err: %v", err)
+		}
+
 		cli, err := sol.Client(e.OkEndpoints)
 		if err != nil {
 			return nil, fmt.Errorf("cannot get sol client,err: %v", err)
@@ -138,9 +181,12 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 				tokenURIInfo = &token.TokenURIInfo{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			}
+		} else {
+			// if cannot get metadata,then set the default value
+			metadata = &token_metadata.Metadata{}
 		}
 
-		_, err = tokenNMCli.CreateToken(ctx, &tokenProto.CreateTokenRequest{
+		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
 			Info: &tokenProto.TokenReq{
 				ChainType:   &e.ChainType,
 				ChainID:     &e.ChainID,
@@ -180,11 +226,11 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 
 		contractMeta, creator, remark := e.getContractInfo(ctx, transfer)
 
-		from := creator.From.String()
-		txHash := creator.TxHash.Hex()
+		from := creator.From
+		txHash := creator.TxHash
 		blockNum := creator.BlockNumber
 		txTime := uint32(creator.TxTime)
-		_, err = contractNMCli.CreateContract(ctx, &contractProto.CreateContractRequest{
+		_, err = contractNMCli.UpsertContract(ctx, &contractProto.UpsertContractRequest{
 			Info: &contractProto.ContractReq{
 				ChainType: &e.ChainType,
 				ChainID:   &e.ChainID,
@@ -243,23 +289,33 @@ func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTr
 	return false, nil
 }
 
-func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.TokenTransfer) (*token_metadata.Metadata, *eth.ContractCreator, string) {
+func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.TokenTransfer) (*token_metadata.Metadata, *chains.ContractCreator, string) {
 	remark := ""
 	contractMeta := &token_metadata.Metadata{}
 
 	// TODO: support find creator
-	creator := &eth.ContractCreator{}
+	creator := &chains.ContractCreator{}
 
 	cli, err := sol.Client(e.OkEndpoints)
 	if err != nil {
 		return contractMeta, creator, fmt.Sprintf("cannot get sol client,err: %v", err)
 	}
 
-	contractMeta, err = cli.GetMetadata(ctx, transfer.Contract)
+	if IsW3EAddress(transfer.Contract) {
+		contractMeta, err = cli.GetMetadata(ctx, transfer.TokenID)
+	} else {
+		contractMeta, err = cli.GetMetadata(ctx, transfer.Contract)
+	}
+
 	if err != nil {
 		e.checkErr(ctx, err)
 		remark = err.Error()
 	}
+
+	if contractMeta.Data.Creators != nil && len(*contractMeta.Data.Creators) > 0 {
+		creator.From = (*contractMeta.Data.Creators)[0].Address.String()
+	}
+
 	return contractMeta, creator, remark
 }
 
@@ -294,4 +350,22 @@ func (e *SolIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 			return
 		}
 	}
+}
+
+func IsW3EAddress(addr string) bool {
+	return strings.HasPrefix(addr, W3EAddressPrefix)
+}
+
+// if have no collection info ,we will build it for token
+func GenCollectionAddr(info *token_metadata.Metadata) string {
+	if info.Collection != nil {
+		return info.Collection.Key.String()
+	}
+	h224 := sha256.New224()
+	h224.Write([]byte(info.Data.Name))
+	h224.Write([]byte(info.Data.Symbol))
+	if info.Data.Creators != nil && len(*info.Data.Creators) > 0 {
+		h224.Write([]byte((*info.Data.Creators)[0].Address.String()))
+	}
+	return fmt.Sprintf("%v%x", W3EAddressPrefix, h224.Sum(nil))
 }

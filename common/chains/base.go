@@ -15,3 +15,10 @@ type TokenTransfer struct {
 	TxHash      string
 	BlockHash   string
 }
+
+type ContractCreator struct {
+	From        string
+	BlockNumber uint64
+	TxHash      string
+	TxTime      uint64
+}

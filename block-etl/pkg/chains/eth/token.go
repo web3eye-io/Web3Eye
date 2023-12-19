@@ -203,6 +203,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
 		if err != nil {
+			// if cannot get tokenURIInfo,then set the default value
 			tokenURIInfo = &token.TokenURIInfo{}
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -254,8 +255,8 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		contractMeta, creator, remark := e.getContractInfo(ctx, contract, findContractCreator)
 
 		// store the result
-		from := creator.From.String()
-		txHash := creator.TxHash.Hex()
+		from := creator.From
+		txHash := creator.TxHash
 		blockNum := creator.BlockNumber
 		txTime := uint32(creator.TxTime)
 		_, err = contractNMCli.UpsertContract(ctx, &contractProto.UpsertContractRequest{
@@ -315,9 +316,9 @@ func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist 
 	return false, nil
 }
 
-func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *eth.ContractCreator, string) {
+func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *chains.ContractCreator, string) {
 	contractMeta := &eth.EthCurrencyMetadata{}
-	creator := &eth.ContractCreator{}
+	creator := &chains.ContractCreator{}
 	cli, err := eth.Client(e.OkEndpoints)
 	remark := ""
 	if err != nil {
