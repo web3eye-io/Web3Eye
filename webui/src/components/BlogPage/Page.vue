@@ -21,7 +21,7 @@
                 </q-list>
               </q-menu>
             </div>
-            <q-btn icon='download' flat dense rounded />
+            <!-- <q-btn icon='download' flat dense rounded /> -->
           </div>
         </div>
       </div>
