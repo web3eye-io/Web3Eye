@@ -81,11 +81,11 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 		return nil, fmt.Errorf("cannot get sol client,err: %v", err)
 	}
 	block, err := cli.GetBlock(ctx, inBlockNum)
-	txTime := uint64(block.BlockTime.Time().Unix())
 	if err != nil {
 		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
+	txTime := uint64(block.BlockTime.Time().Unix())
 
 	transfers := sol.GetNFTTransfers(block)
 	if len(transfers) == 0 {
