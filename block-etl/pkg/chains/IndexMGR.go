@@ -59,6 +59,8 @@ func (pmgr *indexMGR) Run(ctx context.Context) {
 	for {
 		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointDefault)
 		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointAvaliable)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointError)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
 		pmgr.checkAvaliableEndpoints(ctx)
 		<-time.NewTicker(UpdateInterval).C
 	}

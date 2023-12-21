@@ -98,12 +98,12 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 			e.checkErr(ctx, err)
 			return nil, fmt.Errorf("cannot get sol token metadata,err: %v", err)
 		}
-		contract := GenCollectionAddr(metadata)
+		transfers[i].Contract = GenCollectionAddr(metadata)
 
 		infos[i] = &transferProto.TransferReq{
 			ChainType:   &e.ChainType,
 			ChainID:     &e.ChainID,
-			Contract:    &contract,
+			Contract:    &transfers[i].Contract,
 			TokenType:   &transfers[i].TokenType,
 			TokenID:     &transfers[i].TokenID,
 			From:        &transfers[i].From,

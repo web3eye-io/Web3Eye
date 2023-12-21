@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	MaxPutTaskNumOnce = 10
+	MaxPutTaskNumOnce = 100
 	ReportInterval    = 100
 	RedisLockTimeout  = time.Second * 10
 )
@@ -142,7 +142,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	info := infos[0]
 
 	// check state
-	if info.SyncState != basetype.SyncState_Start {
+	if info.SyncState != basetype.SyncState_Start || in.CurrentBlockNum < info.Current {
 		return &npool.TriggerSyncTaskResponse{
 			Info: info,
 		}, nil
