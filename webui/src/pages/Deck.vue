@@ -1,4 +1,6 @@
 <template>
+    <div class='outer-bg'>
+    <div class='outer-container'>
   <q-page class='row items-center justify-evenly'>
     <div class='column'>
       <div class='row logo'>
@@ -18,6 +20,8 @@
       <div class='occupier' />
     </div>
   </q-page>
+  </div>
+  </div>
 </template>
 
 <script setup lang='ts'>
