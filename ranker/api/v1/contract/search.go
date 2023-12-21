@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	contracthandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/contract"
 	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
 	transferhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/transfer"
@@ -28,16 +29,20 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 		contracthandler.WithLimit(1),
 	)
 	if err != nil {
+		logger.Sugar().Errorw("GetContractAndTokens", "Error", err)
 		return nil, err
 	}
 
 	contracts, num, err := contractHandler.GetContracts(ctx)
 	if err != nil {
+		logger.Sugar().Errorw("GetContractAndTokens", "Error", err)
 		return nil, err
 	}
 
 	if num != 1 {
-		return nil, fmt.Errorf("have more then one or have no contract, contract: %v", in.Contract)
+		err := fmt.Errorf("have more then one or have no contract, contract: %v", in.Contract)
+		logger.Sugar().Errorw("GetContractAndTokens", "Error", err)
+		return nil, err
 	}
 	contract := contracts[0]
 
@@ -52,11 +57,13 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 		tokenhandler.WithLimit(int32(in.Limit)),
 	)
 	if err != nil {
+		logger.Sugar().Errorw("GetContractAndTokens", "Error", err)
 		return nil, err
 	}
 
 	tokens, total, err := tokenHandler.GetTokens(ctx)
 	if err != nil {
+		logger.Sugar().Errorw("GetContractAndTokens", "Error", err)
 		return nil, err
 	}
 
