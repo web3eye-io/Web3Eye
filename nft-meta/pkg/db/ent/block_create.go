@@ -103,8 +103,8 @@ func (bc *BlockCreate) SetBlockHash(s string) *BlockCreate {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (bc *BlockCreate) SetBlockTime(i int64) *BlockCreate {
-	bc.mutation.SetBlockTime(i)
+func (bc *BlockCreate) SetBlockTime(u uint64) *BlockCreate {
+	bc.mutation.SetBlockTime(u)
 	return bc
 }
 
@@ -371,7 +371,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := bc.mutation.BlockTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
@@ -566,7 +566,7 @@ func (u *BlockUpsert) UpdateBlockHash() *BlockUpsert {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (u *BlockUpsert) SetBlockTime(v int64) *BlockUpsert {
+func (u *BlockUpsert) SetBlockTime(v uint64) *BlockUpsert {
 	u.Set(block.FieldBlockTime, v)
 	return u
 }
@@ -578,7 +578,7 @@ func (u *BlockUpsert) UpdateBlockTime() *BlockUpsert {
 }
 
 // AddBlockTime adds v to the "block_time" field.
-func (u *BlockUpsert) AddBlockTime(v int64) *BlockUpsert {
+func (u *BlockUpsert) AddBlockTime(v uint64) *BlockUpsert {
 	u.Add(block.FieldBlockTime, v)
 	return u
 }
@@ -796,14 +796,14 @@ func (u *BlockUpsertOne) UpdateBlockHash() *BlockUpsertOne {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (u *BlockUpsertOne) SetBlockTime(v int64) *BlockUpsertOne {
+func (u *BlockUpsertOne) SetBlockTime(v uint64) *BlockUpsertOne {
 	return u.Update(func(s *BlockUpsert) {
 		s.SetBlockTime(v)
 	})
 }
 
 // AddBlockTime adds v to the "block_time" field.
-func (u *BlockUpsertOne) AddBlockTime(v int64) *BlockUpsertOne {
+func (u *BlockUpsertOne) AddBlockTime(v uint64) *BlockUpsertOne {
 	return u.Update(func(s *BlockUpsert) {
 		s.AddBlockTime(v)
 	})
@@ -1196,14 +1196,14 @@ func (u *BlockUpsertBulk) UpdateBlockHash() *BlockUpsertBulk {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (u *BlockUpsertBulk) SetBlockTime(v int64) *BlockUpsertBulk {
+func (u *BlockUpsertBulk) SetBlockTime(v uint64) *BlockUpsertBulk {
 	return u.Update(func(s *BlockUpsert) {
 		s.SetBlockTime(v)
 	})
 }
 
 // AddBlockTime adds v to the "block_time" field.
-func (u *BlockUpsertBulk) AddBlockTime(v int64) *BlockUpsertBulk {
+func (u *BlockUpsertBulk) AddBlockTime(v uint64) *BlockUpsertBulk {
 	return u.Update(func(s *BlockUpsert) {
 		s.AddBlockTime(v)
 	})

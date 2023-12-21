@@ -30,7 +30,7 @@ var ret = &blockproto.Block{
 	ChainID:     "test_block",
 	BlockNumber: 10010,
 	BlockHash:   "test_block",
-	BlockTime:   time.Now().Unix(),
+	BlockTime:   uint64(time.Now().Unix()),
 	ParseState:  basetype.BlockParseState_BlockTypeFinish,
 	Remark:      "test_block",
 }

@@ -54,12 +54,12 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
-				blockLogs, err := e.IndexBlockLogs(ctx, num)
+				blockLogs, err := e.IndexBlockLogs(ctx, block.BlockNumber)
 				if err != nil {
 					return err
 				}
 
-				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs)
+				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs, block.BlockTime)
 				if err != nil {
 					return err
 				}

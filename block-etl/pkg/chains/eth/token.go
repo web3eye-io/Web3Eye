@@ -59,7 +59,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	number := block.Number().Uint64()
 	blockHash := block.Hash().String()
-	blockTime := int64(block.Time())
+	blockTime := block.Time()
 	remark := ""
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{
@@ -102,7 +102,7 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 	}, nil
 }
 
-func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*chains.TokenTransfer, error) {
+func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log, blockTime uint64) ([]*chains.TokenTransfer, error) {
 	transfers, err := eth.LogsToTransfer(logs)
 	if err != nil {
 		e.checkErr(ctx, err)
@@ -138,6 +138,7 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log) ([]*c
 			Amount:      &transfers[i].Amount,
 			BlockNumber: &transfers[i].BlockNumber,
 			TxHash:      &transfers[i].TxHash,
+			TxTime:      &blockTime,
 			BlockHash:   &transfers[i].BlockHash,
 		}
 	}

@@ -19,7 +19,7 @@ var (
 		{Name: "chain_id", Type: field.TypeString},
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "block_hash", Type: field.TypeString},
-		{Name: "block_time", Type: field.TypeInt64},
+		{Name: "block_time", Type: field.TypeUint64},
 		{Name: "parse_state", Type: field.TypeString},
 		{Name: "remark", Type: field.TypeString},
 	}
@@ -302,7 +302,7 @@ var (
 		{Name: "block_number", Type: field.TypeUint64},
 		{Name: "tx_hash", Type: field.TypeString},
 		{Name: "block_hash", Type: field.TypeString},
-		{Name: "tx_time", Type: field.TypeUint32, Nullable: true},
+		{Name: "tx_time", Type: field.TypeUint64, Nullable: true},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// TransfersTable holds the schema information for the "transfers" table.

@@ -21,7 +21,7 @@ type Handler struct {
 	ChainID     *string
 	BlockNumber *uint64
 	BlockHash   *string
-	BlockTime   *int64
+	BlockTime   *uint64
 	ParseState  *basetype.BlockParseState
 	Remark      *string
 	Reqs        []*blockcrud.Req
@@ -120,7 +120,7 @@ func WithBlockHash(u *string, must bool) func(context.Context, *Handler) error {
 		return nil
 	}
 }
-func WithBlockTime(u *int64, must bool) func(context.Context, *Handler) error {
+func WithBlockTime(u *uint64, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {

@@ -111,7 +111,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "TxTime": {
-          "$ref": "#/definitions/web3eyeUint32Val"
+          "$ref": "#/definitions/web3eyeUint64Val"
         },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -260,8 +260,8 @@
           "title": "@inject_tag: sql:\"block_hash\""
         },
         "TxTime": {
-          "type": "integer",
-          "format": "int64",
+          "type": "string",
+          "format": "uint64",
           "title": "@inject_tag: sql:\"tx_time\""
         },
         "Remark": {
@@ -326,8 +326,8 @@
           "type": "string"
         },
         "TxTime": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string",
+          "format": "uint64"
         },
         "Remark": {
           "type": "string"

@@ -37,7 +37,7 @@ func (Transfer) Fields() []ent.Field {
 		field.Uint64("block_number"),
 		field.String("tx_hash"),
 		field.String("block_hash"),
-		field.Uint32("tx_time").
+		field.Uint64("tx_time").
 			Optional(),
 		field.Text("remark").
 			Optional(),

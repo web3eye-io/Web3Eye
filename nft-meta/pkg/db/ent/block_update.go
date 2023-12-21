@@ -130,15 +130,15 @@ func (bu *BlockUpdate) SetBlockHash(s string) *BlockUpdate {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (bu *BlockUpdate) SetBlockTime(i int64) *BlockUpdate {
+func (bu *BlockUpdate) SetBlockTime(u uint64) *BlockUpdate {
 	bu.mutation.ResetBlockTime()
-	bu.mutation.SetBlockTime(i)
+	bu.mutation.SetBlockTime(u)
 	return bu
 }
 
-// AddBlockTime adds i to the "block_time" field.
-func (bu *BlockUpdate) AddBlockTime(i int64) *BlockUpdate {
-	bu.mutation.AddBlockTime(i)
+// AddBlockTime adds u to the "block_time" field.
+func (bu *BlockUpdate) AddBlockTime(u int64) *BlockUpdate {
+	bu.mutation.AddBlockTime(u)
 	return bu
 }
 
@@ -338,14 +338,14 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := bu.mutation.BlockTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
 	}
 	if value, ok := bu.mutation.AddedBlockTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
@@ -486,15 +486,15 @@ func (buo *BlockUpdateOne) SetBlockHash(s string) *BlockUpdateOne {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (buo *BlockUpdateOne) SetBlockTime(i int64) *BlockUpdateOne {
+func (buo *BlockUpdateOne) SetBlockTime(u uint64) *BlockUpdateOne {
 	buo.mutation.ResetBlockTime()
-	buo.mutation.SetBlockTime(i)
+	buo.mutation.SetBlockTime(u)
 	return buo
 }
 
-// AddBlockTime adds i to the "block_time" field.
-func (buo *BlockUpdateOne) AddBlockTime(i int64) *BlockUpdateOne {
-	buo.mutation.AddBlockTime(i)
+// AddBlockTime adds u to the "block_time" field.
+func (buo *BlockUpdateOne) AddBlockTime(u int64) *BlockUpdateOne {
+	buo.mutation.AddBlockTime(u)
 	return buo
 }
 
@@ -724,14 +724,14 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 	}
 	if value, ok := buo.mutation.BlockTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
 	}
 	if value, ok := buo.mutation.AddedBlockTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})

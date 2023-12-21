@@ -47,7 +47,7 @@ type Transfer struct {
 	// BlockHash holds the value of the "block_hash" field.
 	BlockHash string `json:"block_hash,omitempty"`
 	// TxTime holds the value of the "tx_time" field.
-	TxTime uint32 `json:"tx_time,omitempty"`
+	TxTime uint64 `json:"tx_time,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -178,7 +178,7 @@ func (t *Transfer) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tx_time", values[i])
 			} else if value.Valid {
-				t.TxTime = uint32(value.Int64)
+				t.TxTime = uint64(value.Int64)
 			}
 		case transfer.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {

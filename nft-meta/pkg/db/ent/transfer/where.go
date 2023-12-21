@@ -185,7 +185,7 @@ func BlockHash(v string) predicate.Transfer {
 }
 
 // TxTime applies equality check predicate on the "tx_time" field. It's identical to TxTimeEQ.
-func TxTime(v uint32) predicate.Transfer {
+func TxTime(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxTime), v))
 	})
@@ -1509,21 +1509,21 @@ func BlockHashContainsFold(v string) predicate.Transfer {
 }
 
 // TxTimeEQ applies the EQ predicate on the "tx_time" field.
-func TxTimeEQ(v uint32) predicate.Transfer {
+func TxTimeEQ(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeNEQ applies the NEQ predicate on the "tx_time" field.
-func TxTimeNEQ(v uint32) predicate.Transfer {
+func TxTimeNEQ(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeIn applies the In predicate on the "tx_time" field.
-func TxTimeIn(vs ...uint32) predicate.Transfer {
+func TxTimeIn(vs ...uint64) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1534,7 +1534,7 @@ func TxTimeIn(vs ...uint32) predicate.Transfer {
 }
 
 // TxTimeNotIn applies the NotIn predicate on the "tx_time" field.
-func TxTimeNotIn(vs ...uint32) predicate.Transfer {
+func TxTimeNotIn(vs ...uint64) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1545,28 +1545,28 @@ func TxTimeNotIn(vs ...uint32) predicate.Transfer {
 }
 
 // TxTimeGT applies the GT predicate on the "tx_time" field.
-func TxTimeGT(v uint32) predicate.Transfer {
+func TxTimeGT(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeGTE applies the GTE predicate on the "tx_time" field.
-func TxTimeGTE(v uint32) predicate.Transfer {
+func TxTimeGTE(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeLT applies the LT predicate on the "tx_time" field.
-func TxTimeLT(v uint32) predicate.Transfer {
+func TxTimeLT(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeLTE applies the LTE predicate on the "tx_time" field.
-func TxTimeLTE(v uint32) predicate.Transfer {
+func TxTimeLTE(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTxTime), v))
 	})

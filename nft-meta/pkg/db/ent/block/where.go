@@ -136,7 +136,7 @@ func BlockHash(v string) predicate.Block {
 }
 
 // BlockTime applies equality check predicate on the "block_time" field. It's identical to BlockTimeEQ.
-func BlockTime(v int64) predicate.Block {
+func BlockTime(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldBlockTime), v))
 	})
@@ -774,21 +774,21 @@ func BlockHashContainsFold(v string) predicate.Block {
 }
 
 // BlockTimeEQ applies the EQ predicate on the "block_time" field.
-func BlockTimeEQ(v int64) predicate.Block {
+func BlockTimeEQ(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldBlockTime), v))
 	})
 }
 
 // BlockTimeNEQ applies the NEQ predicate on the "block_time" field.
-func BlockTimeNEQ(v int64) predicate.Block {
+func BlockTimeNEQ(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldBlockTime), v))
 	})
 }
 
 // BlockTimeIn applies the In predicate on the "block_time" field.
-func BlockTimeIn(vs ...int64) predicate.Block {
+func BlockTimeIn(vs ...uint64) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -799,7 +799,7 @@ func BlockTimeIn(vs ...int64) predicate.Block {
 }
 
 // BlockTimeNotIn applies the NotIn predicate on the "block_time" field.
-func BlockTimeNotIn(vs ...int64) predicate.Block {
+func BlockTimeNotIn(vs ...uint64) predicate.Block {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -810,28 +810,28 @@ func BlockTimeNotIn(vs ...int64) predicate.Block {
 }
 
 // BlockTimeGT applies the GT predicate on the "block_time" field.
-func BlockTimeGT(v int64) predicate.Block {
+func BlockTimeGT(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldBlockTime), v))
 	})
 }
 
 // BlockTimeGTE applies the GTE predicate on the "block_time" field.
-func BlockTimeGTE(v int64) predicate.Block {
+func BlockTimeGTE(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldBlockTime), v))
 	})
 }
 
 // BlockTimeLT applies the LT predicate on the "block_time" field.
-func BlockTimeLT(v int64) predicate.Block {
+func BlockTimeLT(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldBlockTime), v))
 	})
 }
 
 // BlockTimeLTE applies the LTE predicate on the "block_time" field.
-func BlockTimeLTE(v int64) predicate.Block {
+func BlockTimeLTE(v uint64) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldBlockTime), v))
 	})

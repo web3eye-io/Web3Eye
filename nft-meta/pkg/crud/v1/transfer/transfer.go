@@ -26,7 +26,7 @@ type Req struct {
 	BlockNumber *uint64
 	TxHash      *string
 	BlockHash   *string
-	TxTime      *uint32
+	TxTime      *uint64
 	Remark      *string
 }
 
@@ -301,7 +301,7 @@ func SetQueryConds(q *ent.TransferQuery, conds *Conds) (*ent.TransferQuery, erro
 		}
 	}
 	if conds.TxTime != nil {
-		txtime, ok := conds.TxTime.Val.(uint32)
+		txtime, ok := conds.TxTime.Val.(uint64)
 		if !ok {
 			return nil, fmt.Errorf("invalid txtime")
 		}

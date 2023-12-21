@@ -55,7 +55,7 @@ func (e *SolIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	number := block.BlockHeight
 	blockHash := block.Blockhash.String()
-	blockTime := block.BlockTime.Time().Unix()
+	blockTime := uint64(block.BlockTime.Time().Unix())
 	remark := ""
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{

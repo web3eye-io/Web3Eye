@@ -41,7 +41,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			block.FieldChainID:     {Type: field.TypeString, Column: block.FieldChainID},
 			block.FieldBlockNumber: {Type: field.TypeUint64, Column: block.FieldBlockNumber},
 			block.FieldBlockHash:   {Type: field.TypeString, Column: block.FieldBlockHash},
-			block.FieldBlockTime:   {Type: field.TypeInt64, Column: block.FieldBlockTime},
+			block.FieldBlockTime:   {Type: field.TypeUint64, Column: block.FieldBlockTime},
 			block.FieldParseState:  {Type: field.TypeString, Column: block.FieldParseState},
 			block.FieldRemark:      {Type: field.TypeString, Column: block.FieldRemark},
 		},
@@ -257,7 +257,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldBlockNumber: {Type: field.TypeUint64, Column: transfer.FieldBlockNumber},
 			transfer.FieldTxHash:      {Type: field.TypeString, Column: transfer.FieldTxHash},
 			transfer.FieldBlockHash:   {Type: field.TypeString, Column: transfer.FieldBlockHash},
-			transfer.FieldTxTime:      {Type: field.TypeUint32, Column: transfer.FieldTxTime},
+			transfer.FieldTxTime:      {Type: field.TypeUint64, Column: transfer.FieldTxTime},
 			transfer.FieldRemark:      {Type: field.TypeString, Column: transfer.FieldRemark},
 		},
 	}
@@ -350,8 +350,8 @@ func (f *BlockFilter) WhereBlockHash(p entql.StringP) {
 	f.Where(p.Field(block.FieldBlockHash))
 }
 
-// WhereBlockTime applies the entql int64 predicate on the block_time field.
-func (f *BlockFilter) WhereBlockTime(p entql.Int64P) {
+// WhereBlockTime applies the entql uint64 predicate on the block_time field.
+func (f *BlockFilter) WhereBlockTime(p entql.Uint64P) {
 	f.Where(p.Field(block.FieldBlockTime))
 }
 
@@ -1230,8 +1230,8 @@ func (f *TransferFilter) WhereBlockHash(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldBlockHash))
 }
 
-// WhereTxTime applies the entql uint32 predicate on the tx_time field.
-func (f *TransferFilter) WhereTxTime(p entql.Uint32P) {
+// WhereTxTime applies the entql uint64 predicate on the tx_time field.
+func (f *TransferFilter) WhereTxTime(p entql.Uint64P) {
 	f.Where(p.Field(transfer.FieldTxTime))
 }
 

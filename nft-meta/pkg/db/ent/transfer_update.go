@@ -172,14 +172,14 @@ func (tu *TransferUpdate) SetBlockHash(s string) *TransferUpdate {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (tu *TransferUpdate) SetTxTime(u uint32) *TransferUpdate {
+func (tu *TransferUpdate) SetTxTime(u uint64) *TransferUpdate {
 	tu.mutation.ResetTxTime()
 	tu.mutation.SetTxTime(u)
 	return tu
 }
 
 // SetNillableTxTime sets the "tx_time" field if the given value is not nil.
-func (tu *TransferUpdate) SetNillableTxTime(u *uint32) *TransferUpdate {
+func (tu *TransferUpdate) SetNillableTxTime(u *uint64) *TransferUpdate {
 	if u != nil {
 		tu.SetTxTime(*u)
 	}
@@ -187,7 +187,7 @@ func (tu *TransferUpdate) SetNillableTxTime(u *uint32) *TransferUpdate {
 }
 
 // AddTxTime adds u to the "tx_time" field.
-func (tu *TransferUpdate) AddTxTime(u int32) *TransferUpdate {
+func (tu *TransferUpdate) AddTxTime(u int64) *TransferUpdate {
 	tu.mutation.AddTxTime(u)
 	return tu
 }
@@ -477,21 +477,21 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.TxTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if value, ok := tu.mutation.AddedTxTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if tu.mutation.TxTimeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Column: transfer.FieldTxTime,
 		})
 	}
@@ -672,14 +672,14 @@ func (tuo *TransferUpdateOne) SetBlockHash(s string) *TransferUpdateOne {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (tuo *TransferUpdateOne) SetTxTime(u uint32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) SetTxTime(u uint64) *TransferUpdateOne {
 	tuo.mutation.ResetTxTime()
 	tuo.mutation.SetTxTime(u)
 	return tuo
 }
 
 // SetNillableTxTime sets the "tx_time" field if the given value is not nil.
-func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint64) *TransferUpdateOne {
 	if u != nil {
 		tuo.SetTxTime(*u)
 	}
@@ -687,7 +687,7 @@ func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint32) *TransferUpdateOne {
 }
 
 // AddTxTime adds u to the "tx_time" field.
-func (tuo *TransferUpdateOne) AddTxTime(u int32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) AddTxTime(u int64) *TransferUpdateOne {
 	tuo.mutation.AddTxTime(u)
 	return tuo
 }
@@ -1007,21 +1007,21 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 	}
 	if value, ok := tuo.mutation.TxTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if value, ok := tuo.mutation.AddedTxTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if tuo.mutation.TxTimeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Column: transfer.FieldTxTime,
 		})
 	}

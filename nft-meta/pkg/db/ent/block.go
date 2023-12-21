@@ -33,7 +33,7 @@ type Block struct {
 	// BlockHash holds the value of the "block_hash" field.
 	BlockHash string `json:"block_hash,omitempty"`
 	// BlockTime holds the value of the "block_time" field.
-	BlockTime int64 `json:"block_time,omitempty"`
+	BlockTime uint64 `json:"block_time,omitempty"`
 	// ParseState holds the value of the "parse_state" field.
 	ParseState string `json:"parse_state,omitempty"`
 	// Remark holds the value of the "remark" field.
@@ -124,7 +124,7 @@ func (b *Block) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field block_time", values[i])
 			} else if value.Valid {
-				b.BlockTime = value.Int64
+				b.BlockTime = uint64(value.Int64)
 			}
 		case block.FieldParseState:
 			if value, ok := values[i].(*sql.NullString); !ok {

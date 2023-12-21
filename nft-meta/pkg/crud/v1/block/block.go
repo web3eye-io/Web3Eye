@@ -18,7 +18,7 @@ type Req struct {
 	ChainID     *string
 	BlockNumber *uint64
 	BlockHash   *string
-	BlockTime   *int64
+	BlockTime   *uint64
 	ParseState  *basetype.BlockParseState
 	Remark      *string
 }
@@ -162,7 +162,7 @@ func SetQueryConds(q *ent.BlockQuery, conds *Conds) (*ent.BlockQuery, error) { /
 		}
 	}
 	if conds.BlockTime != nil {
-		blocktime, ok := conds.BlockTime.Val.(int64)
+		blocktime, ok := conds.BlockTime.Val.(uint64)
 		if !ok {
 			return nil, fmt.Errorf("invalid blocktime")
 		}

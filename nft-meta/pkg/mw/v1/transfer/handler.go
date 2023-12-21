@@ -28,7 +28,7 @@ type Handler struct {
 	BlockNumber *uint64
 	TxHash      *string
 	BlockHash   *string
-	TxTime      *uint32
+	TxTime      *uint64
 	Remark      *string
 
 	Reqs   []*transfercrud.Req
@@ -215,7 +215,7 @@ func WithBlockHash(u *string, must bool) func(context.Context, *Handler) error {
 		return nil
 	}
 }
-func WithTxTime(u *uint32, must bool) func(context.Context, *Handler) error {
+func WithTxTime(u *uint64, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
 			if must {

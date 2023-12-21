@@ -26,7 +26,7 @@ func (Block) Fields() []ent.Field {
 		field.String("chain_id"),
 		field.Uint64("block_number"),
 		field.String("block_hash"),
-		field.Int64("block_time"),
+		field.Uint64("block_time"),
 		field.String("parse_state"),
 		field.String("remark"),
 	}

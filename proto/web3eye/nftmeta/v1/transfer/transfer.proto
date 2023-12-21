@@ -38,7 +38,7 @@ message TransferReq {
   optional uint64 BlockNumber = 100;
   optional string TxHash = 110;
   optional string BlockHash = 120;
-  optional uint32 TxTime = 130;
+  optional uint64 TxTime = 130;
   optional string Remark = 140;
 }
 
@@ -72,7 +72,7 @@ message Transfer {
   // @inject_tag: sql:"block_hash"
   string BlockHash = 120;
   // @inject_tag: sql:"tx_time"
-  uint32 TxTime = 130;
+  uint64 TxTime = 130;
   // @inject_tag: sql:"remark"
   string Remark = 140;
   // @inject_tag: sql:"created_at"
@@ -95,7 +95,7 @@ message Conds {
   web3eye.Uint64Val BlockNumber = 100;
   web3eye.StringVal TxHash = 110;
   web3eye.StringVal BlockHash = 120;
-  web3eye.Uint32Val TxTime = 130;
+  web3eye.Uint64Val TxTime = 130;
   web3eye.StringVal Remark = 140;
   web3eye.StringSliceVal EntIDs = 150;
 }

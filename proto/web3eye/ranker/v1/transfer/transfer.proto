@@ -38,7 +38,7 @@ message Transfer {
   uint64 BlockNumber = 100;
   string TxHash = 110;
   string BlockHash = 120;
-  uint32 TxTime = 130;
+  uint64 TxTime = 130;
   string Remark = 140;
   repeated OrderItem TargetItems = 150;
   repeated OrderItem OfferItems = 160;

@@ -145,13 +145,13 @@ func (tc *TransferCreate) SetBlockHash(s string) *TransferCreate {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (tc *TransferCreate) SetTxTime(u uint32) *TransferCreate {
+func (tc *TransferCreate) SetTxTime(u uint64) *TransferCreate {
 	tc.mutation.SetTxTime(u)
 	return tc
 }
 
 // SetNillableTxTime sets the "tx_time" field if the given value is not nil.
-func (tc *TransferCreate) SetNillableTxTime(u *uint32) *TransferCreate {
+func (tc *TransferCreate) SetNillableTxTime(u *uint64) *TransferCreate {
 	if u != nil {
 		tc.SetTxTime(*u)
 	}
@@ -506,7 +506,7 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.TxTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
@@ -777,7 +777,7 @@ func (u *TransferUpsert) UpdateBlockHash() *TransferUpsert {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (u *TransferUpsert) SetTxTime(v uint32) *TransferUpsert {
+func (u *TransferUpsert) SetTxTime(v uint64) *TransferUpsert {
 	u.Set(transfer.FieldTxTime, v)
 	return u
 }
@@ -789,7 +789,7 @@ func (u *TransferUpsert) UpdateTxTime() *TransferUpsert {
 }
 
 // AddTxTime adds v to the "tx_time" field.
-func (u *TransferUpsert) AddTxTime(v uint32) *TransferUpsert {
+func (u *TransferUpsert) AddTxTime(v uint64) *TransferUpsert {
 	u.Add(transfer.FieldTxTime, v)
 	return u
 }
@@ -1105,14 +1105,14 @@ func (u *TransferUpsertOne) UpdateBlockHash() *TransferUpsertOne {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (u *TransferUpsertOne) SetTxTime(v uint32) *TransferUpsertOne {
+func (u *TransferUpsertOne) SetTxTime(v uint64) *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetTxTime(v)
 	})
 }
 
 // AddTxTime adds v to the "tx_time" field.
-func (u *TransferUpsertOne) AddTxTime(v uint32) *TransferUpsertOne {
+func (u *TransferUpsertOne) AddTxTime(v uint64) *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.AddTxTime(v)
 	})
@@ -1603,14 +1603,14 @@ func (u *TransferUpsertBulk) UpdateBlockHash() *TransferUpsertBulk {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (u *TransferUpsertBulk) SetTxTime(v uint32) *TransferUpsertBulk {
+func (u *TransferUpsertBulk) SetTxTime(v uint64) *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.SetTxTime(v)
 	})
 }
 
 // AddTxTime adds v to the "tx_time" field.
-func (u *TransferUpsertBulk) AddTxTime(v uint32) *TransferUpsertBulk {
+func (u *TransferUpsertBulk) AddTxTime(v uint64) *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.AddTxTime(v)
 	})

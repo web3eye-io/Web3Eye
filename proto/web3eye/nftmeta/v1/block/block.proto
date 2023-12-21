@@ -29,7 +29,7 @@ message BlockReq {
   optional string ChainID = 30;
   optional uint64 BlockNumber = 40;
   optional string BlockHash = 50;
-  optional int64 BlockTime = 60;
+  optional uint64 BlockTime = 60;
   optional chain.BlockParseState ParseState = 70;
   optional string Remark = 80;
 }
@@ -49,7 +49,7 @@ message Block {
   // @inject_tag: sql:"block_hash"
   string BlockHash = 50;
   // @inject_tag: sql:"block_time"
-  int64 BlockTime = 60;
+  uint64 BlockTime = 60;
   // @inject_tag: sql:"parse_state"
   string ParseStateStr = 70;
   chain.BlockParseState ParseState = 71;
@@ -68,7 +68,7 @@ message Conds {
   optional web3eye.StringVal ChainID = 30;
   optional web3eye.Uint64Val BlockNumber = 40;
   optional web3eye.StringVal BlockHash = 50;
-  optional web3eye.Int64Val BlockTime = 60;
+  optional web3eye.Uint64Val BlockTime = 60;
   optional web3eye.Uint32Val ParseState = 70;
   optional web3eye.StringVal Remark = 80;
   optional web3eye.StringSliceVal EntIDs = 160;

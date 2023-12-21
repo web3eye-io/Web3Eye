@@ -51,7 +51,7 @@
         },
         "BlockTime": {
           "type": "string",
-          "format": "int64",
+          "format": "uint64",
           "title": "@inject_tag: sql:\"block_time\""
         },
         "ParseStateStr": {
@@ -102,7 +102,7 @@
         },
         "BlockTime": {
           "type": "string",
-          "format": "int64"
+          "format": "uint64"
         },
         "ParseState": {
           "$ref": "#/definitions/chainBlockParseState"
@@ -134,7 +134,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "BlockTime": {
-          "$ref": "#/definitions/web3eyeInt64Val"
+          "$ref": "#/definitions/web3eyeUint64Val"
         },
         "ParseState": {
           "$ref": "#/definitions/web3eyeUint32Val"
@@ -280,18 +280,6 @@
           "items": {
             "$ref": "#/definitions/protobufAny"
           }
-        }
-      }
-    },
-    "web3eyeInt64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },

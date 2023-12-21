@@ -61,7 +61,7 @@ type BlockMutation struct {
 	block_number    *uint64
 	addblock_number *int64
 	block_hash      *string
-	block_time      *int64
+	block_time      *uint64
 	addblock_time   *int64
 	parse_state     *string
 	remark          *string
@@ -544,13 +544,13 @@ func (m *BlockMutation) ResetBlockHash() {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (m *BlockMutation) SetBlockTime(i int64) {
-	m.block_time = &i
+func (m *BlockMutation) SetBlockTime(u uint64) {
+	m.block_time = &u
 	m.addblock_time = nil
 }
 
 // BlockTime returns the value of the "block_time" field in the mutation.
-func (m *BlockMutation) BlockTime() (r int64, exists bool) {
+func (m *BlockMutation) BlockTime() (r uint64, exists bool) {
 	v := m.block_time
 	if v == nil {
 		return
@@ -561,7 +561,7 @@ func (m *BlockMutation) BlockTime() (r int64, exists bool) {
 // OldBlockTime returns the old "block_time" field's value of the Block entity.
 // If the Block object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BlockMutation) OldBlockTime(ctx context.Context) (v int64, err error) {
+func (m *BlockMutation) OldBlockTime(ctx context.Context) (v uint64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBlockTime is only allowed on UpdateOne operations")
 	}
@@ -575,12 +575,12 @@ func (m *BlockMutation) OldBlockTime(ctx context.Context) (v int64, err error) {
 	return oldValue.BlockTime, nil
 }
 
-// AddBlockTime adds i to the "block_time" field.
-func (m *BlockMutation) AddBlockTime(i int64) {
+// AddBlockTime adds u to the "block_time" field.
+func (m *BlockMutation) AddBlockTime(u int64) {
 	if m.addblock_time != nil {
-		*m.addblock_time += i
+		*m.addblock_time += u
 	} else {
-		m.addblock_time = &i
+		m.addblock_time = &u
 	}
 }
 
@@ -851,7 +851,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetBlockHash(v)
 		return nil
 	case block.FieldBlockTime:
-		v, ok := value.(int64)
+		v, ok := value.(uint64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9731,8 +9731,8 @@ type TransferMutation struct {
 	addblock_number *int64
 	tx_hash         *string
 	block_hash      *string
-	tx_time         *uint32
-	addtx_time      *int32
+	tx_time         *uint64
+	addtx_time      *int64
 	remark          *string
 	clearedFields   map[string]struct{}
 	done            bool
@@ -10465,13 +10465,13 @@ func (m *TransferMutation) ResetBlockHash() {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (m *TransferMutation) SetTxTime(u uint32) {
+func (m *TransferMutation) SetTxTime(u uint64) {
 	m.tx_time = &u
 	m.addtx_time = nil
 }
 
 // TxTime returns the value of the "tx_time" field in the mutation.
-func (m *TransferMutation) TxTime() (r uint32, exists bool) {
+func (m *TransferMutation) TxTime() (r uint64, exists bool) {
 	v := m.tx_time
 	if v == nil {
 		return
@@ -10482,7 +10482,7 @@ func (m *TransferMutation) TxTime() (r uint32, exists bool) {
 // OldTxTime returns the old "tx_time" field's value of the Transfer entity.
 // If the Transfer object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransferMutation) OldTxTime(ctx context.Context) (v uint32, err error) {
+func (m *TransferMutation) OldTxTime(ctx context.Context) (v uint64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTxTime is only allowed on UpdateOne operations")
 	}
@@ -10497,7 +10497,7 @@ func (m *TransferMutation) OldTxTime(ctx context.Context) (v uint32, err error) 
 }
 
 // AddTxTime adds u to the "tx_time" field.
-func (m *TransferMutation) AddTxTime(u int32) {
+func (m *TransferMutation) AddTxTime(u int64) {
 	if m.addtx_time != nil {
 		*m.addtx_time += u
 	} else {
@@ -10506,7 +10506,7 @@ func (m *TransferMutation) AddTxTime(u int32) {
 }
 
 // AddedTxTime returns the value that was added to the "tx_time" field in this mutation.
-func (m *TransferMutation) AddedTxTime() (r int32, exists bool) {
+func (m *TransferMutation) AddedTxTime() (r int64, exists bool) {
 	v := m.addtx_time
 	if v == nil {
 		return
@@ -10854,7 +10854,7 @@ func (m *TransferMutation) SetField(name string, value ent.Value) error {
 		m.SetBlockHash(v)
 		return nil
 	case transfer.FieldTxTime:
-		v, ok := value.(uint32)
+		v, ok := value.(uint64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -10946,7 +10946,7 @@ func (m *TransferMutation) AddField(name string, value ent.Value) error {
 		m.AddBlockNumber(v)
 		return nil
 	case transfer.FieldTxTime:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
