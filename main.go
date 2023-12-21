@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	cli, err := milvusdb.Client(context.Background())
 	if err != nil {
 		fmt.Println(err)
