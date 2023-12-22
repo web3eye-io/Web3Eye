@@ -14,7 +14,7 @@ export const useTokenStore = defineStore('token', {
       TotalPages: 0
     },
     Token: {
-      Token: new Map<string, Token>(),
+      Token: new Map<number, Token>(),
     }
   }),
 
@@ -25,11 +25,11 @@ export const useTokenStore = defineStore('token', {
       }
     },
     getTokenByID () {
-      return (tokenID: string) => {
-        return this.Token.Token.get(tokenID)
+      return (id: number) => {
+        return this.Token.Token.get(id)
       }
     },
-    addTokens (): (tokens: Array<SearchToken>) => void {
+    addSearchTokens (): (tokens: Array<SearchToken>) => void {
       return (tokens: Array<SearchToken>) => {
         tokens.forEach((token) => {
           const index = this.SearchTokens.SearchTokens.findIndex((el) => el.ID === token.ID)
@@ -45,7 +45,7 @@ export const useTokenStore = defineStore('token', {
         req,
         reqMessage.Message,
         (resp: SearchTokensResponse): void => {
-          this.addTokens(resp.Infos)
+          this.addSearchTokens(resp.Infos)
           this.SearchTokens.TotalPages = resp.TotalPages
           this.SearchTokens.TotalTokens = resp.TotalTokens
           this.SearchTokens.StorageKey = resp.StorageKey
@@ -67,7 +67,7 @@ export const useTokenStore = defineStore('token', {
         req,
         req.Message,
         (resp: GetTokensResponse): void => {
-          this.addTokens(resp.Infos)
+          this.addSearchTokens(resp.Infos)
           this.SearchTokens.StorageKey = resp.StorageKey
           done(false, resp.Infos)
         }, () => {
@@ -80,8 +80,7 @@ export const useTokenStore = defineStore('token', {
         req,
         req.Message,
         (resp: GetTokenResponse): void => {
-          const tokenID = resp.Info.TokenID
-          this.Token.Token.set(tokenID, resp.Info)
+          this.Token.Token.set(resp.Info.ID, resp.Info)
           done(false, resp.Info)
         }, () => {
           done(true, {} as Token)

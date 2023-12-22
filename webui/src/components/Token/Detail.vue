@@ -270,7 +270,7 @@ const getTransfers = (offset: number, limit: number) => {
 }
 
 const token = useTokenStore()
-const target = computed(() => token.getTokenByID(tokenID1.value))
+const target = computed(() => token.getTokenByID(Number(id1.value)))
 
 const getToken = () => {
   token.getToken(
