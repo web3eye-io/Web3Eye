@@ -43,8 +43,8 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	ctx.Done()
 	for {
 		select {
-		case num := <-taskBlockNum:
-			block, err := e.CheckBlock(ctx, num)
+		case slotNum := <-taskBlockNum:
+			block, err := e.CheckBlock(ctx, slotNum)
 			if err != nil {
 				logger.Sugar().Error(err)
 				continue
@@ -55,7 +55,7 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
-				outTransfers1, err := e.IndexTransfer(ctx, num)
+				outTransfers1, err := e.IndexTransfer(ctx, slotNum)
 				if err != nil {
 					return err
 				}

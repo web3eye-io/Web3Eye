@@ -53,15 +53,15 @@ func (e *SolIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		return nil, fmt.Errorf("cannot get sol client,err: %v", err)
 	}
 
-	number := block.BlockHeight
 	blockHash := block.Blockhash.String()
 	blockTime := uint64(block.BlockTime.Time().Unix())
 	remark := ""
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{
-			ChainType:   &e.ChainType,
-			ChainID:     &e.ChainID,
-			BlockNumber: number,
+			ChainType: &e.ChainType,
+			ChainID:   &e.ChainID,
+			// replace block height with slot height
+			BlockNumber: &inBlockNum,
 			BlockHash:   &blockHash,
 			BlockTime:   &blockTime,
 			ParseState:  basetype.BlockParseState_BlockTypeStart.Enum(),
@@ -209,9 +209,8 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		if err != nil {
 			return nil, fmt.Errorf("create token record failed, %v", err)
 		}
-		if transfer.Contract != "" {
-			outTransfers = append(outTransfers, transfer)
-		}
+
+		outTransfers = append(outTransfers, transfer)
 	}
 	return outTransfers, nil
 }
@@ -254,7 +253,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 }
 
 func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTransfer) (exist bool, err error) {
-	identifier := indexer.TokenIdentifier(e.ChainType, e.ChainID, transfer.Contract, transfer.TokenID)
+	identifier := indexer.ContractIdentifier(e.ChainType, e.ChainID, transfer.Contract)
 	locked, err := ctredis.TryPubLock(identifier, redisExpireDefaultTime)
 	if err != nil {
 		return false, fmt.Errorf("lock the token indentifier failed, err: %v", err)

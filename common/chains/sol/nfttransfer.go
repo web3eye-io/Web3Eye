@@ -82,7 +82,7 @@ func GetNFTTransfers(block *rpc.GetBlockResult) []*chains.TokenTransfer {
 					From:      transfer.From,
 					To:        transfer.To,
 					Amount:    1,
-					// cannot get the tx`s blocknum
+					// replace block height with slot height
 					BlockNumber: block.ParentSlot + 1,
 					TxHash:      signature,
 					BlockHash:   block.Blockhash.String(),
