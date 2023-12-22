@@ -1,9 +1,9 @@
 <template>
   <div class="outer-bg">
     <div class="outer-container">
-      <q-img :src="contractbg" />
+      <q-img :src="contractbg" :img-style='{borderRadius: "12px"}' />
       <div class="row items-center justify-center">
-        <q-avatar>
+        <q-avatar v-if='current.ProfileURL?.length > 0'>
           <img :src="current.ProfileURL">
         </q-avatar>
       </div>

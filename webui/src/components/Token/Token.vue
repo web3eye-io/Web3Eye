@@ -72,15 +72,16 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
-import { SearchToken, SiblingToken } from 'src/teststore/token/types';
-import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, ref } from 'vue';
-import { ChainType } from 'src/teststore/basetypes/const';
+import { SearchToken, SiblingToken } from 'src/teststore/token/types'
+import { Transfer } from 'src/teststore/transfer/types'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 import { Notify } from 'quasar'
+
 const token = useTokenStore()
 const tokens = computed(() => {
   const rows = token.SearchTokens.SearchTokens
@@ -192,6 +193,21 @@ const onCopyClick = (token: SearchToken) => {
   })
 }
 
+const getTokens = (page: number) => {
+  token.getTokens({
+    StorageKey: token.SearchTokens.StorageKey,
+    Page: page,
+    Message: {}
+  }, () => {
+    // TODO
+  })
+}
+
+onMounted(() => {
+  if (token.SearchTokens.SearchTokens?.length === 0) {
+    getTokens(1)
+  }
+})
 </script>
 <style lang="sass" scoped>
 .outer-container
