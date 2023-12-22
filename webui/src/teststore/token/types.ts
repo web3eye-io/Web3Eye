@@ -21,7 +21,8 @@ export interface SearchTokensResponse {
 }
 
 export interface SearchToken {
-    ID: string
+    ID: number
+    EntID: string
     ChainType: ChainType
     ChainID: string
     Contract: string
@@ -53,7 +54,8 @@ export interface SiblingToken {
 }
 
 export interface Token {
-    ID: string
+    ID: number
+    EntID: string
     ChainType: ChainType
     ChainID: string
     Contract: string
