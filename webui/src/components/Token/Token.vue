@@ -198,10 +198,8 @@ const getTokens = (page: number) => {
     StorageKey: token.SearchTokens.StorageKey,
     Page: page,
     Message: {}
-  }, (error: boolean) => {
-    if (error) {
-      void router.push('/')
-    }
+  }, () => {
+    // TODO
   })
 }
 
