@@ -69,6 +69,9 @@ func (sc *streamClient) recv(ctx context.Context, cancel context.CancelFunc) {
 	go func() {
 		for {
 			req, err := sc.client.Recv()
+			logger.Sugar().Info("recv:", req)
+			logger.Sugar().Info("err:", err)
+
 			if utils.CheckStreamErrCode(err) {
 				cancel()
 				return

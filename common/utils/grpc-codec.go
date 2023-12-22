@@ -29,9 +29,7 @@ func (cb RawCodec) Name() string { return "dtm_raw" }
 // check the connection of grpc stream err
 func CheckStreamErrCode(err error) bool {
 	if err == io.EOF ||
-		status.Code(err) == codes.Unavailable ||
-		status.Code(err) == codes.Canceled ||
-		status.Code(err) == codes.Unimplemented {
+		status.Code(err) != codes.OK {
 		return true
 	}
 	return false
