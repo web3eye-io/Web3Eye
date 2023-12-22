@@ -26,7 +26,7 @@ const (
 	TopN               = 100
 	MaxSearchN         = 10000
 	ShowSiblinsNum int = 10
-	StorageExpr        = time.Minute * 5
+	StorageExpr        = time.Minute * 30
 )
 
 type SearchTokenBone struct {
