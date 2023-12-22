@@ -39,6 +39,7 @@ func (Transfer) Fields() []ent.Field {
 		field.String("block_hash"),
 		field.Uint64("tx_time").
 			Optional(),
+		field.Uint32("log_index").Default(0),
 		field.Text("remark").
 			Optional(),
 	}
@@ -46,6 +47,6 @@ func (Transfer) Fields() []ent.Field {
 
 func (Transfer) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("contract", "token_id", "tx_hash", "from").Unique(),
+		index.Fields("contract", "token_id", "tx_hash", "from", "log_index").Unique(),
 	}
 }

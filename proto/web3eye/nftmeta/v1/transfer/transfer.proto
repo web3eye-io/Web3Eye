@@ -40,6 +40,7 @@ message TransferReq {
   optional string BlockHash = 120;
   optional uint64 TxTime = 130;
   optional string Remark = 140;
+  optional uint32 LogIndex = 150;
 }
 
 message Transfer {
@@ -75,8 +76,10 @@ message Transfer {
   uint64 TxTime = 130;
   // @inject_tag: sql:"remark"
   string Remark = 140;
+  // @inject_tag: sql:"log_index"
+  uint32 LogIndex = 150;
   // @inject_tag: sql:"created_at"
-  uint32 CreatedAt = 150;
+  uint32 CreatedAt = 250;
   // @inject_tag: sql:"updated_at"
   uint32 UpdatedAt = 260;
 }
@@ -97,7 +100,8 @@ message Conds {
   web3eye.StringVal BlockHash = 120;
   web3eye.Uint64Val TxTime = 130;
   web3eye.StringVal Remark = 140;
-  web3eye.StringSliceVal EntIDs = 150;
+  web3eye.Uint32Val LogIndex = 150;
+  web3eye.StringSliceVal EntIDs = 160;
 }
 
 message CreateTransferRequest { TransferReq Info = 10; }

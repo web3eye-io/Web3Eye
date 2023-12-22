@@ -30,6 +30,7 @@ type Handler struct {
 	BlockHash   *string
 	TxTime      *uint64
 	Remark      *string
+	LogIndex    *uint32
 
 	Reqs   []*transfercrud.Req
 	Conds  *transfercrud.Conds
@@ -228,6 +229,19 @@ func WithTxTime(u *uint64, must bool) func(context.Context, *Handler) error {
 	}
 }
 
+func WithLogIndex(u *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid logindex")
+			}
+			return nil
+		}
+		h.LogIndex = u
+		return nil
+	}
+}
+
 func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
@@ -298,6 +312,9 @@ func WithReqs(reqs []*transferproto.TransferReq, must bool) func(context.Context
 			}
 			if req.Remark != nil {
 				_req.Remark = req.Remark
+			}
+			if req.LogIndex != nil {
+				_req.LogIndex = req.LogIndex
 			}
 			_reqs = append(_reqs, _req)
 		}
@@ -413,6 +430,12 @@ func WithConds(conds *transferproto.Conds) func(context.Context, *Handler) error
 			h.Conds.Remark = &cruder.Cond{
 				Op:  conds.GetRemark().GetOp(),
 				Val: conds.GetRemark().GetValue(),
+			}
+		}
+		if conds.LogIndex != nil {
+			h.Conds.LogIndex = &cruder.Cond{
+				Op:  conds.GetLogIndex().GetOp(),
+				Val: conds.GetLogIndex().GetValue(),
 			}
 		}
 		return nil

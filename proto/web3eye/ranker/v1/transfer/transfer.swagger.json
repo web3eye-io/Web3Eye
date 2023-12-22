@@ -114,6 +114,10 @@
         "Remark": {
           "type": "string"
         },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
+        },
         "TargetItems": {
           "type": "array",
           "items": {

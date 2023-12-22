@@ -54,6 +54,7 @@ func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 				TokenType:   basetype.TokenType_ERC721,
 				TxHash:      pLog.TxHash.Hex(),
 				BlockHash:   pLog.BlockHash.Hex(),
+				LogIndex:    uint32(pLog.Index),
 			})
 		case strings.EqualFold(pLog.Topics[0].Hex(), string(transferSingleEventHash)):
 			if len(pLog.Topics) < transferEventArgsLen {
@@ -84,6 +85,7 @@ func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 				TokenType:   basetype.TokenType_ERC1155,
 				TxHash:      pLog.TxHash.Hex(),
 				BlockHash:   pLog.BlockHash.Hex(),
+				LogIndex:    uint32(pLog.Index),
 			})
 		case strings.EqualFold(pLog.Topics[0].Hex(), string(transferBatchEventHash)):
 			if len(pLog.Topics) < transferEventArgsLen {
@@ -117,6 +119,7 @@ func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 					TokenType:   basetype.TokenType_ERC1155,
 					TxHash:      pLog.TxHash.Hex(),
 					BlockHash:   pLog.BlockHash.Hex(),
+					LogIndex:    uint32(pLog.Index),
 				})
 			}
 		}

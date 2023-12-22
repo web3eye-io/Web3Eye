@@ -37,6 +37,7 @@ func (h *Handler) CreateTransfer(ctx context.Context) (*transferproto.Transfer, 
 				BlockHash:   h.BlockHash,
 				TxTime:      h.TxTime,
 				Remark:      h.Remark,
+				LogIndex:    h.LogIndex,
 			},
 		).Save(ctx)
 		if err != nil {

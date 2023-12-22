@@ -116,6 +116,9 @@
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
+        "LogIndex": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
         "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         }
@@ -268,6 +271,11 @@
           "type": "string",
           "title": "@inject_tag: sql:\"remark\""
         },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"log_index\""
+        },
         "CreatedAt": {
           "type": "integer",
           "format": "int64",
@@ -331,6 +339,10 @@
         },
         "Remark": {
           "type": "string"
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

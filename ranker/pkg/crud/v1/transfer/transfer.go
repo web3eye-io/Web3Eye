@@ -162,6 +162,7 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 		BlockHash:   row.BlockHash,
 		TxTime:      row.TxTime,
 		Remark:      row.Remark,
+		LogIndex:    row.LogIndex,
 		TargetItems: []*rankernpool.OrderItem{},
 		OfferItems:  []*rankernpool.OrderItem{},
 	}

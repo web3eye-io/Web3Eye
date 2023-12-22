@@ -44,6 +44,7 @@ func (h *Handler) UpdateTransfer(ctx context.Context) (*transferproto.Transfer, 
 				BlockHash:   h.BlockHash,
 				TxTime:      h.TxTime,
 				Remark:      h.Remark,
+				LogIndex:    h.LogIndex,
 			},
 		)
 		if err != nil {

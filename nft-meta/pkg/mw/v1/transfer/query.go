@@ -37,6 +37,7 @@ func (h *queryHandler) selectTransfer(stm *ent.TransferQuery) {
 		transferent.FieldBlockHash,
 		transferent.FieldTxTime,
 		transferent.FieldRemark,
+		transferent.FieldLogIndex,
 		transferent.FieldCreatedAt,
 		transferent.FieldUpdatedAt,
 	)

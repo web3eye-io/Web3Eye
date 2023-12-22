@@ -371,6 +371,10 @@ func init() {
 	transferDescTo := transferFields[6].Descriptor()
 	// transfer.ToValidator is a validator for the "to" field. It is called by the builders before save.
 	transfer.ToValidator = transferDescTo.Validators[0].(func(string) error)
+	// transferDescLogIndex is the schema descriptor for log_index field.
+	transferDescLogIndex := transferFields[12].Descriptor()
+	// transfer.DefaultLogIndex holds the default value on creation for the log_index field.
+	transfer.DefaultLogIndex = transferDescLogIndex.Default.(uint32)
 }
 
 const (

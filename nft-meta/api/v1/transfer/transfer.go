@@ -35,6 +35,7 @@ func (s *Server) CreateTransfer(ctx context.Context, in *npool.CreateTransferReq
 		handler.WithBlockHash(in.Info.BlockHash, false),
 		handler.WithTxTime(in.Info.TxTime, false),
 		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw("CreateTransfer", "error", err)
@@ -98,6 +99,7 @@ func (s *Server) UpsertTransfer(ctx context.Context, in *npool.UpsertTransferReq
 		handler.WithBlockHash(in.Info.BlockHash, false),
 		handler.WithTxTime(in.Info.TxTime, false),
 		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertTransfer", "error", err)
@@ -160,6 +162,7 @@ func (s *Server) UpdateTransfer(ctx context.Context, in *npool.UpdateTransferReq
 		handler.WithBlockHash(in.Info.BlockHash, false),
 		handler.WithTxTime(in.Info.TxTime, false),
 		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
 	)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateTransfer", "ID", in.GetInfo().GetID(), "error", err)

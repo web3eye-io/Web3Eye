@@ -176,8 +176,8 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 	}
 }
 
-func TransferIdentifier(contract, tokenID, txHash, from string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
+func TransferIdentifier(contract, tokenID, txHash, from string, logIndex uint32) string {
+	return fmt.Sprintf("%v:%v:%v:%v:%v", contract, tokenID, txHash, from, logIndex)
 }
 
 func TokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {

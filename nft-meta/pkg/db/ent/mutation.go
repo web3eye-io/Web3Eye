@@ -9733,6 +9733,8 @@ type TransferMutation struct {
 	block_hash      *string
 	tx_time         *uint64
 	addtx_time      *int64
+	log_index       *uint32
+	addlog_index    *int32
 	remark          *string
 	clearedFields   map[string]struct{}
 	done            bool
@@ -10534,6 +10536,62 @@ func (m *TransferMutation) ResetTxTime() {
 	delete(m.clearedFields, transfer.FieldTxTime)
 }
 
+// SetLogIndex sets the "log_index" field.
+func (m *TransferMutation) SetLogIndex(u uint32) {
+	m.log_index = &u
+	m.addlog_index = nil
+}
+
+// LogIndex returns the value of the "log_index" field in the mutation.
+func (m *TransferMutation) LogIndex() (r uint32, exists bool) {
+	v := m.log_index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogIndex returns the old "log_index" field's value of the Transfer entity.
+// If the Transfer object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransferMutation) OldLogIndex(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogIndex is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogIndex requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogIndex: %w", err)
+	}
+	return oldValue.LogIndex, nil
+}
+
+// AddLogIndex adds u to the "log_index" field.
+func (m *TransferMutation) AddLogIndex(u int32) {
+	if m.addlog_index != nil {
+		*m.addlog_index += u
+	} else {
+		m.addlog_index = &u
+	}
+}
+
+// AddedLogIndex returns the value that was added to the "log_index" field in this mutation.
+func (m *TransferMutation) AddedLogIndex() (r int32, exists bool) {
+	v := m.addlog_index
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLogIndex resets all changes to the "log_index" field.
+func (m *TransferMutation) ResetLogIndex() {
+	m.log_index = nil
+	m.addlog_index = nil
+}
+
 // SetRemark sets the "remark" field.
 func (m *TransferMutation) SetRemark(s string) {
 	m.remark = &s
@@ -10602,7 +10660,7 @@ func (m *TransferMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransferMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.ent_id != nil {
 		fields = append(fields, transfer.FieldEntID)
 	}
@@ -10651,6 +10709,9 @@ func (m *TransferMutation) Fields() []string {
 	if m.tx_time != nil {
 		fields = append(fields, transfer.FieldTxTime)
 	}
+	if m.log_index != nil {
+		fields = append(fields, transfer.FieldLogIndex)
+	}
 	if m.remark != nil {
 		fields = append(fields, transfer.FieldRemark)
 	}
@@ -10694,6 +10755,8 @@ func (m *TransferMutation) Field(name string) (ent.Value, bool) {
 		return m.BlockHash()
 	case transfer.FieldTxTime:
 		return m.TxTime()
+	case transfer.FieldLogIndex:
+		return m.LogIndex()
 	case transfer.FieldRemark:
 		return m.Remark()
 	}
@@ -10737,6 +10800,8 @@ func (m *TransferMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldBlockHash(ctx)
 	case transfer.FieldTxTime:
 		return m.OldTxTime(ctx)
+	case transfer.FieldLogIndex:
+		return m.OldLogIndex(ctx)
 	case transfer.FieldRemark:
 		return m.OldRemark(ctx)
 	}
@@ -10860,6 +10925,13 @@ func (m *TransferMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTxTime(v)
 		return nil
+	case transfer.FieldLogIndex:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogIndex(v)
+		return nil
 	case transfer.FieldRemark:
 		v, ok := value.(string)
 		if !ok {
@@ -10890,6 +10962,9 @@ func (m *TransferMutation) AddedFields() []string {
 	if m.addtx_time != nil {
 		fields = append(fields, transfer.FieldTxTime)
 	}
+	if m.addlog_index != nil {
+		fields = append(fields, transfer.FieldLogIndex)
+	}
 	return fields
 }
 
@@ -10908,6 +10983,8 @@ func (m *TransferMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedBlockNumber()
 	case transfer.FieldTxTime:
 		return m.AddedTxTime()
+	case transfer.FieldLogIndex:
+		return m.AddedLogIndex()
 	}
 	return nil, false
 }
@@ -10951,6 +11028,13 @@ func (m *TransferMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTxTime(v)
+		return nil
+	case transfer.FieldLogIndex:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLogIndex(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Transfer numeric field %s", name)
@@ -11041,6 +11125,9 @@ func (m *TransferMutation) ResetField(name string) error {
 		return nil
 	case transfer.FieldTxTime:
 		m.ResetTxTime()
+		return nil
+	case transfer.FieldLogIndex:
+		m.ResetLogIndex()
 		return nil
 	case transfer.FieldRemark:
 		m.ResetRemark()

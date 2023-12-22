@@ -36,6 +36,7 @@ func (h *Handler) UpsertTransfer(ctx context.Context) (*transferproto.Transfer, 
 					BlockHash:   h.BlockHash,
 					TxTime:      h.TxTime,
 					Remark:      h.Remark,
+					LogIndex:    h.LogIndex,
 				},
 			).Save(ctx)
 			if err != nil {
@@ -62,6 +63,7 @@ func (h *Handler) UpsertTransfer(ctx context.Context) (*transferproto.Transfer, 
 				BlockHash:   h.BlockHash,
 				TxTime:      h.TxTime,
 				Remark:      h.Remark,
+				LogIndex:    h.LogIndex,
 			},
 		)
 		if err != nil {

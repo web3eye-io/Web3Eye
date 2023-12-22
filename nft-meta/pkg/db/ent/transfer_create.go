@@ -158,6 +158,20 @@ func (tc *TransferCreate) SetNillableTxTime(u *uint64) *TransferCreate {
 	return tc
 }
 
+// SetLogIndex sets the "log_index" field.
+func (tc *TransferCreate) SetLogIndex(u uint32) *TransferCreate {
+	tc.mutation.SetLogIndex(u)
+	return tc
+}
+
+// SetNillableLogIndex sets the "log_index" field if the given value is not nil.
+func (tc *TransferCreate) SetNillableLogIndex(u *uint32) *TransferCreate {
+	if u != nil {
+		tc.SetLogIndex(*u)
+	}
+	return tc
+}
+
 // SetRemark sets the "remark" field.
 func (tc *TransferCreate) SetRemark(s string) *TransferCreate {
 	tc.mutation.SetRemark(s)
@@ -285,6 +299,10 @@ func (tc *TransferCreate) defaults() error {
 		v := transfer.DefaultDeletedAt()
 		tc.mutation.SetDeletedAt(v)
 	}
+	if _, ok := tc.mutation.LogIndex(); !ok {
+		v := transfer.DefaultLogIndex
+		tc.mutation.SetLogIndex(v)
+	}
 	return nil
 }
 
@@ -349,6 +367,9 @@ func (tc *TransferCreate) check() error {
 	}
 	if _, ok := tc.mutation.BlockHash(); !ok {
 		return &ValidationError{Name: "block_hash", err: errors.New(`ent: missing required field "Transfer.block_hash"`)}
+	}
+	if _, ok := tc.mutation.LogIndex(); !ok {
+		return &ValidationError{Name: "log_index", err: errors.New(`ent: missing required field "Transfer.log_index"`)}
 	}
 	return nil
 }
@@ -511,6 +532,14 @@ func (tc *TransferCreate) createSpec() (*Transfer, *sqlgraph.CreateSpec) {
 			Column: transfer.FieldTxTime,
 		})
 		_node.TxTime = value
+	}
+	if value, ok := tc.mutation.LogIndex(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: transfer.FieldLogIndex,
+		})
+		_node.LogIndex = value
 	}
 	if value, ok := tc.mutation.Remark(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -797,6 +826,24 @@ func (u *TransferUpsert) AddTxTime(v uint64) *TransferUpsert {
 // ClearTxTime clears the value of the "tx_time" field.
 func (u *TransferUpsert) ClearTxTime() *TransferUpsert {
 	u.SetNull(transfer.FieldTxTime)
+	return u
+}
+
+// SetLogIndex sets the "log_index" field.
+func (u *TransferUpsert) SetLogIndex(v uint32) *TransferUpsert {
+	u.Set(transfer.FieldLogIndex, v)
+	return u
+}
+
+// UpdateLogIndex sets the "log_index" field to the value that was provided on create.
+func (u *TransferUpsert) UpdateLogIndex() *TransferUpsert {
+	u.SetExcluded(transfer.FieldLogIndex)
+	return u
+}
+
+// AddLogIndex adds v to the "log_index" field.
+func (u *TransferUpsert) AddLogIndex(v uint32) *TransferUpsert {
+	u.Add(transfer.FieldLogIndex, v)
 	return u
 }
 
@@ -1129,6 +1176,27 @@ func (u *TransferUpsertOne) UpdateTxTime() *TransferUpsertOne {
 func (u *TransferUpsertOne) ClearTxTime() *TransferUpsertOne {
 	return u.Update(func(s *TransferUpsert) {
 		s.ClearTxTime()
+	})
+}
+
+// SetLogIndex sets the "log_index" field.
+func (u *TransferUpsertOne) SetLogIndex(v uint32) *TransferUpsertOne {
+	return u.Update(func(s *TransferUpsert) {
+		s.SetLogIndex(v)
+	})
+}
+
+// AddLogIndex adds v to the "log_index" field.
+func (u *TransferUpsertOne) AddLogIndex(v uint32) *TransferUpsertOne {
+	return u.Update(func(s *TransferUpsert) {
+		s.AddLogIndex(v)
+	})
+}
+
+// UpdateLogIndex sets the "log_index" field to the value that was provided on create.
+func (u *TransferUpsertOne) UpdateLogIndex() *TransferUpsertOne {
+	return u.Update(func(s *TransferUpsert) {
+		s.UpdateLogIndex()
 	})
 }
 
@@ -1627,6 +1695,27 @@ func (u *TransferUpsertBulk) UpdateTxTime() *TransferUpsertBulk {
 func (u *TransferUpsertBulk) ClearTxTime() *TransferUpsertBulk {
 	return u.Update(func(s *TransferUpsert) {
 		s.ClearTxTime()
+	})
+}
+
+// SetLogIndex sets the "log_index" field.
+func (u *TransferUpsertBulk) SetLogIndex(v uint32) *TransferUpsertBulk {
+	return u.Update(func(s *TransferUpsert) {
+		s.SetLogIndex(v)
+	})
+}
+
+// AddLogIndex adds v to the "log_index" field.
+func (u *TransferUpsertBulk) AddLogIndex(v uint32) *TransferUpsertBulk {
+	return u.Update(func(s *TransferUpsert) {
+		s.AddLogIndex(v)
+	})
+}
+
+// UpdateLogIndex sets the "log_index" field to the value that was provided on create.
+func (u *TransferUpsertBulk) UpdateLogIndex() *TransferUpsertBulk {
+	return u.Update(func(s *TransferUpsert) {
+		s.UpdateLogIndex()
 	})
 }
 

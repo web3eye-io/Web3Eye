@@ -10,7 +10,7 @@ import (
 
 // check if endpoints should be stoped by the err,and return weather to retry again
 func (e *SolIndexer) checkErr(ctx context.Context, err error) {
-	retryErrs := []string{"context deadline exceeded"}
+	retryErrs := []string{"context deadline exceeded", "context canceled"}
 	for _, v := range retryErrs {
 		if strings.Contains(err.Error(), v) {
 			return
