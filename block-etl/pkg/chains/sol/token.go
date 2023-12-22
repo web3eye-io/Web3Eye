@@ -50,7 +50,7 @@ func (e *SolIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
 		e.checkErr(ctx, err)
-		return nil, fmt.Errorf("cannot get sol client,err: %v", err)
+		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 
 	blockHash := block.Blockhash.String()
@@ -160,12 +160,12 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
 			continue
 		} else if err != nil {
-			return nil, fmt.Errorf("check if the token exist failed, err: %v", err)
+			return outTransfers, fmt.Errorf("check if the token exist failed, err: %v", err)
 		}
 
 		cli, err := sol.Client(e.OkEndpoints)
 		if err != nil {
-			return nil, fmt.Errorf("cannot get sol client,err: %v", err)
+			return outTransfers, fmt.Errorf("cannot get sol client,err: %v", err)
 		}
 		remark := ""
 
@@ -207,7 +207,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		})
 
 		if err != nil {
-			return nil, fmt.Errorf("create token record failed, %v", err)
+			return outTransfers, fmt.Errorf("create token record failed, %v", err)
 		}
 
 		outTransfers = append(outTransfers, transfer)
@@ -230,6 +230,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 		from := creator.From
 		txHash := creator.TxHash
 		blockNum := creator.BlockNumber
+		decimal := uint32(0)
 		txTime := uint32(creator.TxTime)
 		_, err = contractNMCli.UpsertContract(ctx, &contractProto.UpsertContractRequest{
 			Info: &contractProto.ContractReq{
@@ -238,6 +239,7 @@ func (e *SolIndexer) IndexContract(ctx context.Context, inTransfers []*chains.To
 				Address:   &transfer.Contract,
 				Name:      &contractMeta.Data.Name,
 				Symbol:    &contractMeta.Data.Symbol,
+				Decimals:  &decimal,
 				Creator:   &from,
 				BlockNum:  &blockNum,
 				TxHash:    &txHash,
@@ -263,7 +265,7 @@ func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTr
 		return true, nil
 	}
 
-	conds := &tokenProto.Conds{
+	conds := &contractProto.Conds{
 		ChainType: &ctMessage.Uint32Val{
 			Op:    "eq",
 			Value: uint32(e.ChainType),
@@ -272,20 +274,16 @@ func (e *SolIndexer) checkContract(ctx context.Context, transfer *chains.TokenTr
 			Value: e.ChainID,
 			Op:    "eq",
 		},
-		Contract: &ctMessage.StringVal{
+		Address: &ctMessage.StringVal{
 			Value: transfer.Contract,
-			Op:    "eq",
-		},
-		TokenID: &ctMessage.StringVal{
-			Value: transfer.TokenID,
 			Op:    "eq",
 		},
 	}
 
-	if resp, err := tokenNMCli.ExistTokenConds(ctx, &tokenProto.ExistTokenCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
+	if resp, err := contractNMCli.ExistContractConds(ctx, &contractProto.ExistContractCondsRequest{Conds: conds}); err == nil && resp != nil && resp.GetExist() {
 		return true, nil
 	} else if err != nil {
-		return false, fmt.Errorf("check if the token exist failed, err: %v", err)
+		return false, fmt.Errorf("check if the contract exist failed, err: %v", err)
 	}
 	return false, nil
 }

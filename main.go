@@ -2,27 +2,22 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
+	"time"
 
-	"github.com/web3eye-io/Web3Eye/config"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/sol"
 )
 
 func main() {
-	cli, err := milvusdb.Client(context.Background())
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	logger.Init(logger.DebugLevel, "./a.log")
+	indeser := sol.NewSolIndexer("")
+	indeser.UpdateEndpoints([]string{"https://ultra-weathered-patina.solana-mainnet.quiknode.pro/6d1f40b3a5315383bc3e9492e0e5e8b0fb4d1073/"})
+	start := 237150000
+	numChan := make(chan uint64)
+	go indeser.IndexBlock(context.Background(), numChan)
+	for i := 0; i < 10; i++ {
+		numChan <- uint64(start + i)
 	}
-	err = cli.DropCollection(context.Background(), config.GetConfig().NFTMeta.CollectionName)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	err = milvusdb.Init(context.Background())
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+
+	time.Sleep(10 * time.Second)
 }
