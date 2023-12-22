@@ -99,7 +99,7 @@ func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{
 			Time:                time.Second,
 			Timeout:             keepaliveTimeout,
-			PermitWithoutStream: false,
+			PermitWithoutStream: true,
 		}),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
