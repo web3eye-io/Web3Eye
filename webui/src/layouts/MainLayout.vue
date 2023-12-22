@@ -10,11 +10,11 @@
           <SearchBox  v-if="displaySearchBox" />
         </div>
         <q-space />
-        <a href='#/whitepaper'>White Paper</a>
-        <a  href='#/deck'>Deck</a>
-        <!-- <a  href='#/blog'>Blog</a>
-        <a  href='#/daily'>Daily</a>
-        <a  href='#/schedule'>Schedule</a> -->
+        <a href='/whitepaper'>White Paper</a>
+        <a  href='/deck'>Deck</a>
+        <!-- <a  href='/blog'>Blog</a>
+        <a  href='/daily'>Daily</a>
+        <a  href='/schedule'>Schedule</a> -->
         <q-btn v-if="!logined" size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
         <q-avatar v-if="logined">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
