@@ -20,6 +20,7 @@ import (
 	api "github.com/web3eye-io/Web3Eye/cloud-proxy/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -56,7 +57,11 @@ func runGRPCServer(grpcPort int) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(grpc.KeepaliveEnforcementPolicy(
+		keepalive.EnforcementPolicy{
+			PermitWithoutStream: true,
+		},
+	))
 	api.Register(server)
 	reflection.Register(server)
 	if err := server.Serve(lis); err != nil {
