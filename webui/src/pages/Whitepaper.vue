@@ -16,6 +16,6 @@ const BlogPage = defineAsyncComponent(() => import('../components/BlogPage/Page.
 const WhitepaperEN = defineAsyncComponent(() => import('../components/Whitepaper/EN/Whitepaper.vue'))
 const WhitepaperCN = defineAsyncComponent(() => import('../components/Whitepaper/CN/Whitepaper.vue'))
 
-const lang = ref('EN')
+const lang = ref('CN')
 
 </script>

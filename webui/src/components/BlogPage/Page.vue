@@ -1,5 +1,6 @@
 <template>
-  <div class='content'>
+  <div class='outer-bg'>
+    <div class='outer-container'>
     <div>
       <div class='title row'>
         <q-item-label>{{ title }}</q-item-label>
@@ -20,7 +21,7 @@
                 </q-list>
               </q-menu>
             </div>
-            <q-btn icon='download' flat dense rounded />
+            <!-- <q-btn icon='download' flat dense rounded /> -->
           </div>
         </div>
       </div>
@@ -36,6 +37,8 @@
       <slot name='CN' />
     </div>
   </div>
+  </div>
+  
 </template>
 
 <script setup lang='ts'>
@@ -73,7 +76,6 @@ watch(lang, () => {
   width: 100%
 
 .content
-  max-width: 1440px
   margin: 48px auto 0 auto
 
 .lang
