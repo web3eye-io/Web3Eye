@@ -62,7 +62,6 @@ onMounted(() => {
                     getTokens(2)
                 }
             }
-            void router.push('/')
         })
     })
     dropArea?.addEventListener('dragenter', (e) => {

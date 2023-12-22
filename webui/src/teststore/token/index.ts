@@ -28,7 +28,15 @@ export const useTokenStore = defineStore('token', {
       return (tokenID: string) => {
         return this.Token.Token.get(tokenID)
       }
-    }
+    },
+    addTokens (): (tokens: Array<SearchToken>) => void {
+      return (tokens: Array<SearchToken>) => {
+        tokens.forEach((token) => {
+          const index = this.SearchTokens.SearchTokens.findIndex((el) => el.ID === token.ID)
+          this.SearchTokens.SearchTokens.splice(index >= 0 ? index : 0, index >= 0 ? 1 : 0, token)
+        })
+      }
+    },
   },
   actions: {
     searchTokens (req: FormData, reqMessage: SearchTokenMessage, done: (error: boolean, rows?: SearchToken[]) => void) {
@@ -37,7 +45,7 @@ export const useTokenStore = defineStore('token', {
         req,
         reqMessage.Message,
         (resp: SearchTokensResponse): void => {
-          this.SearchTokens.SearchTokens = resp.Infos
+          this.addTokens(resp.Infos)
           this.SearchTokens.TotalPages = resp.TotalPages
           this.SearchTokens.TotalTokens = resp.TotalTokens
           this.SearchTokens.StorageKey = resp.StorageKey
@@ -59,7 +67,7 @@ export const useTokenStore = defineStore('token', {
         req,
         req.Message,
         (resp: GetTokensResponse): void => {
-          this.SearchTokens.SearchTokens.push(...resp.Infos)
+          this.addTokens(resp.Infos)
           this.SearchTokens.StorageKey = resp.StorageKey
           done(false, resp.Infos)
         }, () => {
