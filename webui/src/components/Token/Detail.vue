@@ -285,10 +285,9 @@ const getToken = () => {
 }
 
 const contract = useContractStore()
-const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const tokens = computed(() => contract.shotTokens(_contract.value))
 const getContract = () => {
-  contract.getContractAndTokens(
-    {
+  contract.getContractAndTokens({
       Contract: _contract.value,
       Offset: 0,
       Limit: 100,
