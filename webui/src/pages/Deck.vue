@@ -6,8 +6,8 @@
       <div class='row logo'>
         <q-img :src='logo' style='width: 640px;' />
       </div>
-      <q-btn flat class='btn btn1' label='Download English Version' rounded />
-      <q-btn flat class='btn btn2' label='下载中文版' rounded />
+      <q-btn flat class='btn btn1' label='Download English Version' rounded disable />
+      <q-btn flat class='btn btn2' label='下载中文版' rounded disable />
       <div class='row looking'>
         <q-space />
           <q-btn label='Request Other Language Copy' rounded flat>
