@@ -330,19 +330,19 @@ func (e *SolIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 		func() {
 			cli, err := sol.Client(e.OkEndpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get sol client,err: %v", err)
+				logger.Sugar().Errorf("sol cannot get sol client,err: %v", err)
 				return
 			}
 
 			blockNum, err := cli.GetSlotHeight(ctx)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("failed to get current block number: %v", err)
+				logger.Sugar().Errorf("sol failed to get current block number: %v", err)
 				return
 			}
 
 			e.CurrentBlockNum = blockNum
-			logger.Sugar().Infof("success get current block number: %v", blockNum)
+			logger.Sugar().Infof("sol success get current block number: %v", blockNum)
 		}()
 
 		select {

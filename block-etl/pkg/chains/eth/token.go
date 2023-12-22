@@ -362,19 +362,19 @@ func (e *EthIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 		func() {
 			cli, err := eth.Client(e.OkEndpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("eth cannot get eth client,err: %v", err)
 				return
 			}
 
 			blockNum, err := cli.CurrentBlockNum(ctx)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("failed to get current block number: %v", err)
+				logger.Sugar().Errorf("eth failed to get current block number: %v", err)
 				return
 			}
 
 			e.CurrentBlockNum = blockNum
-			logger.Sugar().Infof("success get current block number: %v", blockNum)
+			logger.Sugar().Infof("eth success get current block number: %v", blockNum)
 		}()
 
 		select {
