@@ -289,6 +289,10 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	if info == nil {
+		return nil, nil
+	}
+
 	if len(in.Vector) > 0 {
 		milvusmgr := milvusdb.NewNFTConllectionMGR()
 
