@@ -46,18 +46,20 @@
             </div>
             <div class="col-2" />
           </div>
-          <div class="contract column">
-            <div class="title">Contract</div>
-            <div class="address">{{ target?.Contract }}</div>
+          <div class='column' :class='[target && target?.Contract?.length > 42 ? "contract-container1" : "contract-container"]'>
+            <div class="contract">
+              <div class="title">Contract</div>
+              <div class="address">{{ target?.Contract }}</div>
+            </div>
+            <q-btn
+              class="buy"
+              disable
+              unelevated
+              rounded
+              color="primary"
+              label="BUY NOW"
+            />
           </div>
-          <q-btn
-            class="buy"
-            disable
-            unelevated
-            rounded
-            color="primary"
-            label="BUY NOW"
-          />
         </div>
       </div>
       <div class="transfer">Transfer</div>
@@ -360,8 +362,11 @@ onMounted(() => {
         opacity: 0.8
       .author
         padding-top: 20px
-      .contract
+      .contract-container
         width: 500px
+      .contract-container1
+        width: 580px
+      .contract
         margin-top: 25px
         border: 1px solid #efefef
         background-color: #f7f7f7
@@ -393,8 +398,7 @@ onMounted(() => {
           font-weight: 700
           font-size: 24px
       .buy
-        margin: 10px 0
-        width: 500px
+        margin: 20px 0
         margin-bottom: 20px
 .transfer,.collections
   margin-top: 40px
