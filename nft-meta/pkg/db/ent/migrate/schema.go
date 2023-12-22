@@ -303,6 +303,7 @@ var (
 		{Name: "tx_hash", Type: field.TypeString},
 		{Name: "block_hash", Type: field.TypeString},
 		{Name: "tx_time", Type: field.TypeUint64, Nullable: true},
+		{Name: "log_index", Type: field.TypeUint32, Default: 0},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// TransfersTable holds the schema information for the "transfers" table.
@@ -317,9 +318,9 @@ var (
 				Columns: []*schema.Column{TransfersColumns[1]},
 			},
 			{
-				Name:    "transfer_contract_token_id_tx_hash_from",
+				Name:    "transfer_contract_token_id_tx_hash_from_log_index",
 				Unique:  true,
-				Columns: []*schema.Column{TransfersColumns[7], TransfersColumns[9], TransfersColumns[14], TransfersColumns[10]},
+				Columns: []*schema.Column{TransfersColumns[7], TransfersColumns[9], TransfersColumns[14], TransfersColumns[10], TransfersColumns[17]},
 			},
 		},
 	}

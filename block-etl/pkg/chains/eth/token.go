@@ -120,13 +120,14 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log, block
 			transfers[i].Contract,
 			transfers[i].TokenID,
 			transfers[i].TxHash,
-			transfers[i].From)
+			transfers[i].From,
+			transfers[i].LogIndex,
+		)
 		// just for avoid  repetition,some token will be transfer many times
 		if _, ok := transfersMap[transIdentifier]; ok {
 			continue
 		}
 		transfersMap[transIdentifier] = struct{}{}
-
 		infos[i] = &transferProto.TransferReq{
 			ChainType:   &e.ChainType,
 			ChainID:     &e.ChainID,
@@ -139,6 +140,7 @@ func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log, block
 			BlockNumber: &transfers[i].BlockNumber,
 			TxHash:      &transfers[i].TxHash,
 			TxTime:      &blockTime,
+			LogIndex:    &transfers[i].LogIndex,
 			BlockHash:   &transfers[i].BlockHash,
 		}
 	}
@@ -360,19 +362,19 @@ func (e *EthIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 		func() {
 			cli, err := eth.Client(e.OkEndpoints)
 			if err != nil {
-				logger.Sugar().Errorf("cannot get eth client,err: %v", err)
+				logger.Sugar().Errorf("eth cannot get eth client,err: %v", err)
 				return
 			}
 
 			blockNum, err := cli.CurrentBlockNum(ctx)
 			if err != nil {
 				e.checkErr(ctx, err)
-				logger.Sugar().Errorf("failed to get current block number: %v", err)
+				logger.Sugar().Errorf("eth failed to get current block number: %v", err)
 				return
 			}
 
 			e.CurrentBlockNum = blockNum
-			logger.Sugar().Infof("success get current block number: %v", blockNum)
+			logger.Sugar().Infof("eth success get current block number: %v", blockNum)
 		}()
 
 		select {

@@ -28,6 +28,7 @@ type Req struct {
 	BlockHash   *string
 	TxTime      *uint64
 	Remark      *string
+	LogIndex    *uint32
 }
 
 //nolint:gocyclo
@@ -78,6 +79,9 @@ func CreateSet(c *ent.TransferCreate, req *Req) *ent.TransferCreate {
 	if req.Remark != nil {
 		c.SetRemark(*req.Remark)
 	}
+	if req.LogIndex != nil {
+		c.SetLogIndex(*req.LogIndex)
+	}
 	return c
 }
 
@@ -122,6 +126,9 @@ func UpdateSet(u *ent.TransferUpdateOne, req *Req) (*ent.TransferUpdateOne, erro
 	if req.Remark != nil {
 		u.SetRemark(*req.Remark)
 	}
+	if req.LogIndex != nil {
+		u.SetLogIndex(*req.LogIndex)
+	}
 	return u, nil
 }
 
@@ -141,6 +148,7 @@ type Conds struct {
 	BlockHash   *cruder.Cond
 	TxTime      *cruder.Cond
 	Remark      *cruder.Cond
+	LogIndex    *cruder.Cond
 }
 
 func SetQueryConds(q *ent.TransferQuery, conds *Conds) (*ent.TransferQuery, error) { //nolint
@@ -322,6 +330,18 @@ func SetQueryConds(q *ent.TransferQuery, conds *Conds) (*ent.TransferQuery, erro
 			q.Where(enttransfer.Remark(remark))
 		default:
 			return nil, fmt.Errorf("invalid remark field")
+		}
+	}
+	if conds.LogIndex != nil {
+		logindex, ok := conds.LogIndex.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid logindex")
+		}
+		switch conds.LogIndex.Op {
+		case cruder.EQ:
+			q.Where(enttransfer.LogIndex(logindex))
+		default:
+			return nil, fmt.Errorf("invalid logindex field")
 		}
 	}
 	return q, nil

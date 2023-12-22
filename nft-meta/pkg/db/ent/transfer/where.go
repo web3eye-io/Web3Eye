@@ -191,6 +191,13 @@ func TxTime(v uint64) predicate.Transfer {
 	})
 }
 
+// LogIndex applies equality check predicate on the "log_index" field. It's identical to LogIndexEQ.
+func LogIndex(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLogIndex), v))
+	})
+}
+
 // Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
 func Remark(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
@@ -1583,6 +1590,70 @@ func TxTimeIsNil() predicate.Transfer {
 func TxTimeNotNil() predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldTxTime)))
+	})
+}
+
+// LogIndexEQ applies the EQ predicate on the "log_index" field.
+func LogIndexEQ(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexNEQ applies the NEQ predicate on the "log_index" field.
+func LogIndexNEQ(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexIn applies the In predicate on the "log_index" field.
+func LogIndexIn(vs ...uint32) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLogIndex), v...))
+	})
+}
+
+// LogIndexNotIn applies the NotIn predicate on the "log_index" field.
+func LogIndexNotIn(vs ...uint32) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLogIndex), v...))
+	})
+}
+
+// LogIndexGT applies the GT predicate on the "log_index" field.
+func LogIndexGT(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexGTE applies the GTE predicate on the "log_index" field.
+func LogIndexGTE(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexLT applies the LT predicate on the "log_index" field.
+func LogIndexLT(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexLTE applies the LTE predicate on the "log_index" field.
+func LogIndexLTE(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLogIndex), v))
 	})
 }
 

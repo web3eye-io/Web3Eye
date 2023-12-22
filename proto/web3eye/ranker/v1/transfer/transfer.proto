@@ -40,7 +40,8 @@ message Transfer {
   string BlockHash = 120;
   uint64 TxTime = 130;
   string Remark = 140;
-  repeated OrderItem TargetItems = 150;
+  uint32 LogIndex = 150;
+  repeated OrderItem TargetItems = 250;
   repeated OrderItem OfferItems = 160;
 }
 

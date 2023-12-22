@@ -48,6 +48,8 @@ type Transfer struct {
 	BlockHash string `json:"block_hash,omitempty"`
 	// TxTime holds the value of the "tx_time" field.
 	TxTime uint64 `json:"tx_time,omitempty"`
+	// LogIndex holds the value of the "log_index" field.
+	LogIndex uint32 `json:"log_index,omitempty"`
 	// Remark holds the value of the "remark" field.
 	Remark string `json:"remark,omitempty"`
 }
@@ -57,7 +59,7 @@ func (*Transfer) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transfer.FieldID, transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldBlockNumber, transfer.FieldTxTime:
+		case transfer.FieldID, transfer.FieldCreatedAt, transfer.FieldUpdatedAt, transfer.FieldDeletedAt, transfer.FieldBlockNumber, transfer.FieldTxTime, transfer.FieldLogIndex:
 			values[i] = new(sql.NullInt64)
 		case transfer.FieldChainType, transfer.FieldChainID, transfer.FieldContract, transfer.FieldTokenType, transfer.FieldTokenID, transfer.FieldFrom, transfer.FieldTo, transfer.FieldAmount, transfer.FieldTxHash, transfer.FieldBlockHash, transfer.FieldRemark:
 			values[i] = new(sql.NullString)
@@ -180,6 +182,12 @@ func (t *Transfer) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.TxTime = uint64(value.Int64)
 			}
+		case transfer.FieldLogIndex:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field log_index", values[i])
+			} else if value.Valid {
+				t.LogIndex = uint32(value.Int64)
+			}
 		case transfer.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field remark", values[i])
@@ -261,6 +269,9 @@ func (t *Transfer) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tx_time=")
 	builder.WriteString(fmt.Sprintf("%v", t.TxTime))
+	builder.WriteString(", ")
+	builder.WriteString("log_index=")
+	builder.WriteString(fmt.Sprintf("%v", t.LogIndex))
 	builder.WriteString(", ")
 	builder.WriteString("remark=")
 	builder.WriteString(t.Remark)

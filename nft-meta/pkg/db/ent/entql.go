@@ -258,6 +258,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldTxHash:      {Type: field.TypeString, Column: transfer.FieldTxHash},
 			transfer.FieldBlockHash:   {Type: field.TypeString, Column: transfer.FieldBlockHash},
 			transfer.FieldTxTime:      {Type: field.TypeUint64, Column: transfer.FieldTxTime},
+			transfer.FieldLogIndex:    {Type: field.TypeUint32, Column: transfer.FieldLogIndex},
 			transfer.FieldRemark:      {Type: field.TypeString, Column: transfer.FieldRemark},
 		},
 	}
@@ -1233,6 +1234,11 @@ func (f *TransferFilter) WhereBlockHash(p entql.StringP) {
 // WhereTxTime applies the entql uint64 predicate on the tx_time field.
 func (f *TransferFilter) WhereTxTime(p entql.Uint64P) {
 	f.Where(p.Field(transfer.FieldTxTime))
+}
+
+// WhereLogIndex applies the entql uint32 predicate on the log_index field.
+func (f *TransferFilter) WhereLogIndex(p entql.Uint32P) {
+	f.Where(p.Field(transfer.FieldLogIndex))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.

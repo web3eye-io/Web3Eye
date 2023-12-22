@@ -44,6 +44,8 @@ const (
 	FieldBlockHash = "block_hash"
 	// FieldTxTime holds the string denoting the tx_time field in the database.
 	FieldTxTime = "tx_time"
+	// FieldLogIndex holds the string denoting the log_index field in the database.
+	FieldLogIndex = "log_index"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// Table holds the table name of the transfer in the database.
@@ -69,6 +71,7 @@ var Columns = []string{
 	FieldTxHash,
 	FieldBlockHash,
 	FieldTxTime,
+	FieldLogIndex,
 	FieldRemark,
 }
 
@@ -106,4 +109,6 @@ var (
 	FromValidator func(string) error
 	// ToValidator is a validator for the "to" field. It is called by the builders before save.
 	ToValidator func(string) error
+	// DefaultLogIndex holds the default value on creation for the "log_index" field.
+	DefaultLogIndex uint32
 )
