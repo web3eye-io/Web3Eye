@@ -14,7 +14,6 @@ import (
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/cloudproxy/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/keepalive"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -92,15 +91,9 @@ func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
 		config.GetConfig().CloudProxy.GrpcPort)
 	logger.Sugar().Infow("withNoConnClose", "action", "prepare to connect to cloudproxy", "address", addr)
 
-	keepaliveTimeout := time.Second * 3
 	conn, err := grpc.Dial(
 		addr,
 		grpc.WithBlock(),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                time.Second,
-			Timeout:             keepaliveTimeout,
-			PermitWithoutStream: true,
-		}),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Sugar().Errorw("withNoConnClose", "action", "failed to connect to cloudproxy", "address", addr)
