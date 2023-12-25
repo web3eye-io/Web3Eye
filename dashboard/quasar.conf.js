@@ -79,7 +79,7 @@ module.exports = configure(function (ctx) {
     devServer: {
       proxy: {
         '/api': {
-          target: 'https://vpn.testnet.web3eye.io:32443',
+          target: 'https://testnet.web3eye.io',
           pathRewrite: {
             '^/api': '/api'
           },
