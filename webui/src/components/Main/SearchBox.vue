@@ -6,7 +6,7 @@
                 v-model="contract" />
         </div>
         <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
-        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px"
+        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="22px"
                 @click='loadFileButton?.click()' /></div>
     </div>
 </template>
