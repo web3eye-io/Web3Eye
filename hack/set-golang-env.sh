@@ -1,6 +1,14 @@
  #!/bin/bash
 MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
+
+GOVERSION="1.19.12"
+GOTMPENV="/tmp/go-tmp-env/$GOVERSION"
+GOROOT="$GOTMPENV/goroot"
+GOPATH="$GOTMPENV/gopath"
+GOBIN="$GOROOT/bin"
+PATH="$GOBIN:$PATH"
+
 go_name=go$GOVERSION
 
 set +e
@@ -19,6 +27,11 @@ go_data=$GOTMPENV
 
 mkdir -p $GOPATH
 mkdir -p $GOROOT
+
+export GOROOT=$GOROOT
+export GOPATH=$GOPATH
+export GOBIN=$GOBIN
+export PATH=$PATH
 
 [ -z $GOPROXY ] && export GOPROXY="https://proxy.golang.org,direct"
 

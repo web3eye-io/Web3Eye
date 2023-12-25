@@ -4,9 +4,11 @@ package token
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
+	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -19,6 +21,12 @@ import (
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
+)
+
+const (
+	MaxPutTaskNumOnce = 100
+	ReportInterval    = 100
+	RedisLockTimeout  = time.Second * 10
 )
 
 type PulsarProducer struct {
@@ -460,4 +468,61 @@ func (s *Server) DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) 
 	return &npool.DeleteTokenResponse{
 		Info: info,
 	}, nil
+}
+
+//nolint:funlen,gocyclo
+func (s *Server) TriggerTokenTransform(ctx context.Context, conds *npool.Conds) error {
+	// TODO: will be rewrite,too long
+	// TODO: each state corresponds to a processing function
+	// query synctask
+	// lock
+	lockKey := "TriggerTokenTransform_Lock"
+	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
+	if err != nil {
+		logger.Sugar().Warn("TriggerTokenTransform", "warning", err)
+		return err
+	}
+
+	defer func() {
+		err := ctredis.Unlock(lockKey, lockID)
+		if err != nil {
+			logger.Sugar().Warn("TriggerTokenTransform", "warning", err)
+		}
+	}()
+
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(conds),
+		handler.WithOffset(0),
+		handler.WithLimit(MaxPutTaskNumOnce),
+	)
+
+	if err != nil {
+		logger.Sugar().Errorw("TriggerTokenTransform", "error", err)
+		return status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	infos, total, err := h.GetTokens(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerTokenTransform", "error", err)
+		return status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	pProducer, err := getPulsar()
+	if err != nil {
+		logger.Sugar().Errorw("TriggerTokenTransform", "error", err)
+		return status.Error(codes.Internal, err.Error())
+	}
+
+	logger.Sugar().Infof("put the task of transforming token image to vector,put %v tokens", total)
+	for _, info := range infos {
+		_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
+			Payload: []byte(info.ImageURL),
+			Key:     info.EntID,
+		})
+		if err != nil {
+			logger.Sugar().Errorw("TriggerTokenTransform", "msg", "faild to put task to pulsar", "error", err)
+			return err
+		}
+	}
+	return nil
 }
