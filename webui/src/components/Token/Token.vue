@@ -21,7 +21,7 @@
       </div>
       <div class="right">
         <div class="title">Collections</div>
-        <div id="tokens" @scroll="loadMore">
+        <div id="tokens">
           <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
             <div class="content-left" @click="onTokenClick(token)">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="loading">
-            <q-inner-loading :showing="loading" />
+            <q-inner-loading :showing="loading" style="color:#a3a3a3" />
           </div>
           <div v-if='haveMore' class="no-more row">no more content</div>
           <div id="bottom"></div>
@@ -78,7 +78,7 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken, SiblingToken } from 'src/teststore/token/types'
 import { Transfer } from 'src/teststore/transfer/types'
-import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
