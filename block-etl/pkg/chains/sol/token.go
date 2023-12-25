@@ -311,7 +311,7 @@ func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.Token
 		remark = err.Error()
 	}
 
-	if contractMeta.Data.Creators != nil && len(*contractMeta.Data.Creators) > 0 {
+	if contractMeta != nil && contractMeta.Data.Creators != nil && len(*contractMeta.Data.Creators) > 0 {
 		creator.From = (*contractMeta.Data.Creators)[0].Address.String()
 	}
 
