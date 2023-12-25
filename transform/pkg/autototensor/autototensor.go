@@ -53,7 +53,7 @@ func autoToTensor(ctx context.Context) error {
 	defer pulsarCli.Close()
 
 	output := make(chan pulsar.ConsumerMessage)
-	_, err = pulsarCli.Subscribe(pulsar.ConsumerOptions{
+	consumer, err := pulsarCli.Subscribe(pulsar.ConsumerOptions{
 		Topic:            config.GetConfig().Pulsar.TopicTransformImage,
 		SubscriptionName: "TransformImageConsummer",
 		Type:             pulsar.Shared,
@@ -93,6 +93,11 @@ func autoToTensor(ctx context.Context) error {
 		})
 		if err != nil {
 			logger.Sugar().Errorf("failed to update token to nftmeta, err %v", err)
+			return err
+		}
+		err = consumer.AckID(msg.ID())
+		if err != nil {
+			logger.Sugar().Errorf("failed to ask id to pulsar, err %v", err)
 			return err
 		}
 	}
