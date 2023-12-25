@@ -92,8 +92,9 @@ onMounted(() => {
 .main
   flex-grow: 1
   .search-box
+    padding: 4px
     width: 100%
-    line-height: 48px
+    height: 48px
     border-radius: 24px
     background: $white
     border: none
