@@ -1,4 +1,4 @@
-REPO_ROOT	:= $(shell git rev-parse --show-toplevel)
+REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
 .DEFAULT_GOAL:=help
 SHELL:=/usr/bin/env bash

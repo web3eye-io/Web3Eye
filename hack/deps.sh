@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
-source $MY_PATH/golang-env.sh
+source $MY_PATH/set-golang-env.sh
 
 set -o errexit
 set -o nounset
