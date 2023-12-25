@@ -1,12 +1,15 @@
 <template>
-    <div>
-        <input 
-            class="upload" 
-            id="drop-area" 
-            placeholder="search contract address or drag an image here"
-            v-model="contract" 
-        />
-        <q-icon name="img:icons/search.png" size="18px" class="search" />
+    <div class="row box">
+        <div class="left"><q-icon name="img:icons/search.png" size="20px" /></div>
+        <div class="main">
+            <input
+                class="search-box"
+                id="drop-area"
+                placeholder="search contract address or drag an image here"
+                v-model="contract" 
+            />
+        </div>
+        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px" /></div>
     </div>
 </template>
   
@@ -76,26 +79,29 @@ onMounted(() => {
 </script>
   
 <style lang='sass' scoped>
-  .upload,.input-container
-    margin: 0 auto
+.box
+  margin-top: 40px
+  border: 1px solid #3187FF
+  border-radius: 24px
+  background: $white
+  justify-content: center
+.left
+  width: 40px
+  align-self: center
+  padding-left: 20px
+.main
+  flex-grow: 1
+  .search-box
     width: 100%
-  .upload
-    display: block
-    position: relative
-    width: 100%
-    margin: 0 auto
-    margin-top: 40px
-    padding-left: 40px
-    height: 48px
+    line-height: 48px
     border-radius: 24px
-    border: 1px solid #3187FF
+    background: $white
+    border: none
     &:focus
-      outline: 1px solid #3187FF
-  .search
-    display: inline-block
-    position: relative
-    padding-left: 20px
-    line-height: 45px
-    top: -45px
+       outline: none
+.right
+  width: 40px
+  align-self: center
+  cursor: pointer
   </style>
   
