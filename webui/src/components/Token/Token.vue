@@ -1,69 +1,70 @@
 <template>
   <div class="token-container">
-      <div class="token row wrap">
-        <div class="left">
-          <q-list bordered class="rounded-borders">
-            <q-expansion-item expand-separator default-opened label="Chains">
-              <q-card>
-                <q-card-section>
-                  <q-option-group v-model="groups" :options="options" color="blue" type="checkbox">
-                    <template v-slot:label="row">
-                      <div class="row justify-between">
-                        <div>{{ row.label }}</div>
-                        <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
-                      </div>
-                    </template>
-                  </q-option-group>
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
-          </q-list>
-        </div>
-        <div class="right">
-          <div class="title">Collections</div>
-            <q-infinite-scroll @load="loadMore" ref="infiniteScroll" scroll-target='scrollTargetRef'>
-              <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
-                <div class="content-left" @click="onTokenClick(token)">
-                  <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
+    <div class="token row wrap">
+      <div class="left">
+        <q-list bordered class="rounded-borders">
+          <q-expansion-item expand-separator default-opened label="Chains">
+            <q-card>
+              <q-card-section>
+                <q-option-group v-model="groups" :options="options" color="blue" type="checkbox">
+                  <template v-slot:label="row">
+                    <div class="row justify-between">
+                      <div>{{ row.label }}</div>
+                      <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
+                    </div>
+                  </template>
+                </q-option-group>
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
+        </q-list>
+      </div>
+      <div class="right">
+        <div class="title">Collections</div>
+        <div id="tokens" @scroll="loadMore">
+          <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
+            <div class="content-left" @click="onTokenClick(token)">
+              <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
+            </div>
+            <div class="content-right column">
+              <div class="line-top row space-between items-center">
+                <div class="distance">Distance: {{ token.Distance }}</div>
+                <q-space />
+                <div>
+                  <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
+                  <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
                 </div>
-                <div class="content-right column">
-                  <div class="line-top row space-between items-center">
-                    <div class="distance">Distance: {{ token.Distance }}</div>
-                    <q-space />
-                    <div>
-                      <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
-                      <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
-                    </div>
-                    <div class="chain-logo">{{ token.ChainType }}</div>
-                  </div>
-                  <div class="name">
-                    <span>{{ token.Name }}</span>
-                  </div>
-                  <div class="contract row">
-                    <a href="#" @click.prevent @click="onContractClick(token)">
-                      <span>Contract: {{ token.Contract }}</span>
-                    </a>
-                    <div class="copy">
-                      <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
-                    </div>
-                  </div>
-                  <div class="total-transfers">
-                    <span>Transfers: {{ token?.TransfersNum }}</span>
-                  </div>
-                  <div class="transfers row">
-                    <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
-                      class="split-token">
-                      <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
-                    </div>
-                  </div>
+                <div class="chain-logo">{{ token.ChainType }}</div>
+              </div>
+              <div class="name">
+                <span>{{ token.Name }}</span>
+              </div>
+              <div class="contract row">
+                <a href="#" @click.prevent @click="onContractClick(token)">
+                  <span>Contract: {{ token.Contract }}</span>
+                </a>
+                <div class="copy">
+                  <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
                 </div>
               </div>
-              <template v-slot:loading>
-                <div class="row justify-center q-my-md">
-                  <q-spinner-dots color="primary" size="40px" />
+              <div class="total-transfers">
+                <span>Transfers: {{ token?.TransfersNum }}</span>
+              </div>
+              <div class="transfers row">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                  class="split-token">
+                  <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
-              </template>
-            </q-infinite-scroll>
+              </div>
+            </div>
+          </div>
+          <div class="row loading">
+            <q-inner-loading :showing="true" />
+          </div>
+          <div class="row" v-if="touchToBottom">
+            no more content
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -78,7 +79,7 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken, SiblingToken } from 'src/teststore/token/types'
 import { Transfer } from 'src/teststore/transfer/types'
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
 import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
@@ -197,18 +198,51 @@ const onCopyClick = (token: SearchToken) => {
   })
 }
 
-const loadMore = (index: number, done: (stop?: boolean) => void) => {
-  console.log('index: ', index)
-  token.getTokens({
-    Limit: 8,
-    Page: index,
-    Message: {}
-  }, (_error?: boolean, _rows?: Array<SearchToken>, totalPages?: number) => {
-    // TODO
-    done(index >= Number(totalPages))
-  })
+const waiting = ref(false)
+const isPulling = ref(false)
+const touchToBottom = ref(false)
+const loadMore = () => {
+  const container = document.getElementById('tokens')
+  if(!container) return
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+  if(scrollTop + container?.clientHeight >= container?.scrollHeight) {
+    if (isPulling.value || currentPage.value >= token.SearchTokens.TotalPages) return
+    waiting.value = true
+    isPulling.value = true
+    token.getTokens({
+      Limit: 8,
+      Page: currentPage.value + 1,
+      Message: {}
+    }, (error: boolean, _rows: SearchToken[], totalPages?: number) => {
+      waiting.value = false
+      isPulling.value = false
+      if (!error) {
+        currentPage.value += 1
+        if (currentPage.value + 1 >= Number(totalPages)) {
+          touchToBottom.value = true
+        }
+      }
+    })
+  }
 }
 
+const currentPage = ref(1)
+onMounted(() => {
+  if (!tokens.value?.length) {
+    token.getTokens({
+      Limit: 8,
+      Page: currentPage.value,
+      Message: {}
+    }, () => {
+      // TODO
+    })
+  }
+  window.addEventListener('scroll', loadMore)
+})
+
+onUnmounted(()=> {
+  window.removeEventListener('scroll', () => void{}, false)
+})
 </script>
 <style lang="sass" scoped>
 .token-container
@@ -233,6 +267,9 @@ const loadMore = (index: number, done: (stop?: boolean) => void) => {
       font-weight: 700
       font-size: 36px
       line-height: 33px
+    .loading
+      ::v-deep .absolute-full
+        top: auto
     .boxes
       height: 230px
       border: 1px solid #EFEFEF

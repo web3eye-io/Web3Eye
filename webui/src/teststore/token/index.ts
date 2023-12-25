@@ -69,6 +69,7 @@ export const useTokenStore = defineStore('token', {
         (resp: GetTokensResponse): void => {
           this.addSearchTokens(resp.Infos)
           this.SearchTokens.StorageKey = resp.StorageKey
+          this.SearchTokens.TotalPages = resp.TotalPages
           done(false, resp.Infos, resp.TotalPages)
         }, () => {
           done(true, [], 0)
