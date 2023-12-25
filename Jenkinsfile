@@ -2,12 +2,6 @@ pipeline {
   agent any
   environment {
     GOPROXY = 'https://goproxy.cn,direct'
-    GOVERSION = "1.19.12"
-    GOTMPENV = "/tmp/go-tmp-env/$GOVERSION"
-    GOROOT = "$GOTMPENV/goroot"
-    GOPATH = "$GOTMPENV/gopath"
-    GOBIN = "$GOROOT/bin"
-    PATH = "$GOBIN:$PATH"
   }
   stages {
     stage('Clone') {

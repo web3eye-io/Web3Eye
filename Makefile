@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform webui dashboard entrance # gen-car dealer 
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform entrance # gen-car dealer 
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform webui dashboard entrance gen-car dealer 
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform entrance gen-car dealer 
 
 ##@ init project
 init:
@@ -18,9 +18,8 @@ go.mod:
 	go mod init ${GITREPO}
 	go mod tidy -compat=1.19
 
-deps: ./extern/filecoin-ffi/filcrypto.pc
-	go get -d ./...
-	go mod tidy -compat=1.19
+deps: 
+	all_proxy=${all_proxy} ${REPO_ROOT}/hack/deps.sh
 
 ##@ Verify
 
