@@ -240,6 +240,7 @@ onMounted(() => {
   padding-top: 40px
 .token
   background-color: $white
+  height: 100vh
   .left
     width: 290px
     margin-left: 90px
