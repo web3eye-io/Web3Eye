@@ -44,7 +44,7 @@ function doAction<MyRequest, MyResponse> (
       }
     })
     .catch((err: AxiosError) => {
-      processError(err, message.Error)
+      processError(err, message?.Error)
     })
 }
 function doActionWithError<MyRequest, MyResponse> (
@@ -63,7 +63,7 @@ function doActionWithError<MyRequest, MyResponse> (
       }
     })
     .catch((err: AxiosError) => {
-      processError(err, message.Error)
+      processError(err, message?.Error)
       error()
     })
 }
@@ -83,7 +83,7 @@ function doGet<MyRequest, MyResponse> (
       }
     })
     .catch((err: AxiosError) => {
-      processError(err, message.Error)
+      processError(err, message?.Error)
     })
 }
 
@@ -103,7 +103,7 @@ function doGetWithError<MyRequest, MyResponse> (
       }
     })
     .catch((err: AxiosError) => {
-      processError(err, message.Error)
+      processError(err, message?.Error)
       error()
     })
 }

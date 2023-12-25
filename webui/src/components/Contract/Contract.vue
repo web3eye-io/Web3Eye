@@ -144,7 +144,7 @@ const TransferFloatItem = defineAsyncComponent(
 )
 const tab = ref('Collections')
 const contract = useContractStore()
-const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const tokens = computed(() => contract.shotTokens(_contract.value))
 const current = computed(() => contract.Contract)
 
 interface Query {

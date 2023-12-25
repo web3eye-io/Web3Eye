@@ -57,7 +57,7 @@ export const useTokenStore = defineStore('token', {
           done(true, [])
       })
     },
-    getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[]) => void) {
+    getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[], totalPages?: number) => void) {
       const key = Cookies.get('Storage-Key')
       if (key && key?.length > 0) {
         req.StorageKey = key
@@ -69,9 +69,9 @@ export const useTokenStore = defineStore('token', {
         (resp: GetTokensResponse): void => {
           this.addSearchTokens(resp.Infos)
           this.SearchTokens.StorageKey = resp.StorageKey
-          done(false, resp.Infos)
+          done(false, resp.Infos, resp.TotalPages)
         }, () => {
-          done(true, [])
+          done(true, [], 0)
       })
     },
     getToken (req: GetTokenRequest, done: (error: boolean, row: Token) => void) {

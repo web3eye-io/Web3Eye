@@ -12,6 +12,7 @@ import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
+
 const contract = ref('')
 const _contract = useContractStore()
 
@@ -28,19 +29,6 @@ const getContractAndTokens = (offset: number, limit: number) => {
 }
 
 const router = useRouter()
-
-const getTokens = (page: number) => {
-  token.getTokens({
-    StorageKey: token.SearchTokens.StorageKey,
-    Page: page,
-    Message: {}
-  }, (error: boolean) => {
-    if (error || page >= token.SearchTokens.TotalPages) return
-    page += 1
-    getTokens(page)
-  })
-}
-
 const token = useTokenStore()
 
 onMounted(() => {
@@ -51,16 +39,13 @@ onMounted(() => {
         let formData = new FormData()
         const file = e.dataTransfer?.files[0]
         formData.append('UploadFile', file as Blob)
-        formData.append('Limit', '20')
+        formData.append('Limit', '8')
         contract.value = file?.name as string
         const reqMessage = {} as SearchTokenMessage
         token.$reset()
         token.searchTokens(formData, reqMessage, (error: boolean) => {
             if (!error) {
                 void router.push('/token')
-                if (token.SearchTokens.SearchTokens.length < token.SearchTokens.TotalTokens) {
-                    getTokens(2)
-                }
             }
         })
     })

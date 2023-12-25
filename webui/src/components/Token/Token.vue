@@ -1,6 +1,5 @@
 <template>
-  <div class="outer-bg">
-    <div class="outer-container">
+  <div class="token-container">
       <div class="token row wrap">
         <div class="left">
           <q-list bordered class="rounded-borders">
@@ -22,44 +21,49 @@
         </div>
         <div class="right">
           <div class="title">Collections</div>
-          <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
-            <div class="content-left" @click="onTokenClick(token)">
-              <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
-            </div>
-            <div class="content-right column">
-              <div class="line-top row space-between items-center">
-                <div class="distance">Distance: {{ token.Distance }}</div>
-                <!-- <div class="block1">Block: {{ token.SiblingsNum }}</div> -->
-                <q-space />
-                <div>
-                  <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
-                  <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
+            <q-infinite-scroll @load="loadMore" ref="infiniteScroll" scroll-target='scrollTargetRef'>
+              <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
+                <div class="content-left" @click="onTokenClick(token)">
+                  <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
                 </div>
-                <div class="chain-logo">{{ token.ChainType }}</div>
-              </div>
-              <div class="name">
-                <span>{{ token.Name }}</span>
-              </div>
-              <div class="contract row">
-                <a href="#" @click.prevent @click="onContractClick(token)">
-                  <span>Contract: {{ token.Contract }}</span>
-                </a>
-                <div class="copy">
-                  <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
+                <div class="content-right column">
+                  <div class="line-top row space-between items-center">
+                    <div class="distance">Distance: {{ token.Distance }}</div>
+                    <q-space />
+                    <div>
+                      <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
+                      <q-icon v-if="token.ChainType === ChainType.Solana" name="img:icons/solana-sol-logo.png" />
+                    </div>
+                    <div class="chain-logo">{{ token.ChainType }}</div>
+                  </div>
+                  <div class="name">
+                    <span>{{ token.Name }}</span>
+                  </div>
+                  <div class="contract row">
+                    <a href="#" @click.prevent @click="onContractClick(token)">
+                      <span>Contract: {{ token.Contract }}</span>
+                    </a>
+                    <div class="copy">
+                      <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
+                    </div>
+                  </div>
+                  <div class="total-transfers">
+                    <span>Transfers: {{ token?.TransfersNum }}</span>
+                  </div>
+                  <div class="transfers row">
+                    <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                      class="split-token">
+                      <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="total-transfers">
-                <span>Transfers: {{ token?.TransfersNum }}</span>
-              </div>
-              <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
-                  class="split-token">
-                  <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
+              <template v-slot:loading>
+                <div class="row justify-center q-my-md">
+                  <q-spinner-dots color="primary" size="40px" />
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </template>
+            </q-infinite-scroll>
       </div>
     </div>
   </div>
@@ -193,29 +197,28 @@ const onCopyClick = (token: SearchToken) => {
   })
 }
 
-const getTokens = (page: number) => {
+const loadMore = (index: number, done: (stop?: boolean) => void) => {
+  console.log('index: ', index)
   token.getTokens({
-    StorageKey: token.SearchTokens.StorageKey,
-    Page: page,
+    Limit: 8,
+    Page: index,
     Message: {}
-  }, () => {
+  }, (_error?: boolean, _rows?: Array<SearchToken>, totalPages?: number) => {
     // TODO
+    done(index >= Number(totalPages))
   })
 }
 
-onMounted(() => {
-  if (token.SearchTokens.SearchTokens?.length === 0) {
-    getTokens(1)
-  }
-})
 </script>
 <style lang="sass" scoped>
-.outer-container
+.token-container
+  background: $white
   padding-top: 40px
 .token
   background-color: $white
   .left
     width: 290px
+    margin-left: 90px
     .rounded-borders
       border-radius: 10px
     ::v-deep .q-checkbox
@@ -224,6 +227,7 @@ onMounted(() => {
         flex-grow: 1
   .right
     margin-left: 40px
+    margin-right: 90px
     flex-grow: 1
     .title
       font-weight: 700

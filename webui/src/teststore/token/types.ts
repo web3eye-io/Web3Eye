@@ -84,8 +84,9 @@ export interface GetTokenResponse {
 }
   
 export interface GetTokensRequest extends BaseRequest {
-    StorageKey: string
+    StorageKey?: string
     Page: number
+    Limit: number
 }
 
 export interface GetTokensResponse {

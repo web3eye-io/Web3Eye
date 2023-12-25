@@ -158,7 +158,7 @@ onMounted(() => {
     height: 48px
     line-height: 48px
   .q-header
-    width: 90%
+    padding: 0 90px
     margin: 0 auto
     position: inherit
     a,button
