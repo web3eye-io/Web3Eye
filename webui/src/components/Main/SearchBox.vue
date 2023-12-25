@@ -1,8 +1,12 @@
 <template>
     <div>
-        <input class="upload" id="drop-area" placeholder="search contract address or drag an image here"
-        v-model="contract" />
-    <q-icon name="img:icons/search.png" size="18px" class="search" />
+        <input 
+            class="upload" 
+            id="drop-area" 
+            placeholder="search contract address or drag an image here"
+            v-model="contract" 
+        />
+        <q-icon name="img:icons/search.png" size="18px" class="search" />
     </div>
 </template>
   
