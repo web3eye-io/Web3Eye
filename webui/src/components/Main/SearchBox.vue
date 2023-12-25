@@ -6,7 +6,8 @@
                 v-model="contract" />
         </div>
         <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
-        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px" @click='loadFileButton?.click()' /></div>
+        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px"
+                @click='loadFileButton?.click()' /></div>
     </div>
 </template>
   
@@ -37,35 +38,40 @@ const loadFileButton = ref<HTMLInputElement>()
 const uploadFile = (evt: Event) => {
     const target = evt.target as unknown as HTMLInputElement
     if (target.files) {
-        const filename = target.files[0]
+        const file = target.files[0]
         const reader = new FileReader()
         reader.onload = () => {
-            // TODO
+            handleUploadFile(file)
         }
-        reader.readAsText(filename)
+        reader.readAsText(file)
     }
 }
 
 const router = useRouter()
 const token = useTokenStore()
 
+const handleUploadFile = (file: any) => {
+    let formData = new FormData()
+    formData.append('UploadFile', file as Blob)
+    formData.append('Limit', '8')
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    contract.value = file?.name 
+    const reqMessage = {} as SearchTokenMessage
+    token.$reset()
+    token.searchTokens(formData, reqMessage, (error: boolean) => {
+        if (!error) {
+            void router.push('/token')
+        }
+    })
+}
+
 onMounted(() => {
     const dropArea = document.getElementById('drop-area')
     dropArea?.addEventListener('drop', (e) => {
         e.stopPropagation()
         e.preventDefault()
-        let formData = new FormData()
         const file = e.dataTransfer?.files[0]
-        formData.append('UploadFile', file as Blob)
-        formData.append('Limit', '8')
-        contract.value = file?.name as string
-        const reqMessage = {} as SearchTokenMessage
-        token.$reset()
-        token.searchTokens(formData, reqMessage, (error: boolean) => {
-            if (!error) {
-                void router.push('/token')
-            }
-        })
+        handleUploadFile(file)
     })
     dropArea?.addEventListener('dragenter', (e) => {
         e.stopPropagation()
