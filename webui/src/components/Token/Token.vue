@@ -58,12 +58,11 @@
               </div>
             </div>
           </div>
-          <div class="row loading">
-            <q-inner-loading :showing="true" />
+          <div class="loading">
+            <q-inner-loading :showing="loading" />
           </div>
-          <div class="row" v-if="touchToBottom">
-            no more content
-          </div>
+          <div v-if='haveMore' class="no-more row">no more content</div>
+          <div id="bottom"></div>
         </div>
       </div>
     </div>
@@ -198,51 +197,42 @@ const onCopyClick = (token: SearchToken) => {
   })
 }
 
-const waiting = ref(false)
-const isPulling = ref(false)
-const touchToBottom = ref(false)
+const haveMore = ref(false)
+const currentPage = ref(1)
+const loading = ref(false)
+
 const loadMore = () => {
-  const container = document.getElementById('tokens')
-  if(!container) return
-  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-  if(scrollTop + container?.clientHeight >= container?.scrollHeight) {
-    if (isPulling.value || currentPage.value >= token.SearchTokens.TotalPages) return
-    waiting.value = true
-    isPulling.value = true
-    token.getTokens({
-      Limit: 8,
-      Page: currentPage.value + 1,
-      Message: {}
-    }, (error: boolean, _rows: SearchToken[], totalPages?: number) => {
-      waiting.value = false
-      isPulling.value = false
-      if (!error) {
-        currentPage.value += 1
-        if (currentPage.value + 1 >= Number(totalPages)) {
-          touchToBottom.value = true
-        }
-      }
-    })
+  if (currentPage.value >= token.SearchTokens.TotalPages && token.SearchTokens.TotalPages !== 0) {
+    haveMore.value = true
+    return
   }
+  loading.value = true
+  token.getTokens({
+    Limit: 8,
+    Page: currentPage.value + 1,
+    Message: {}
+  }, (error: boolean) => {
+    loading.value = false
+    if (!error) {
+      currentPage.value += 1
+    }
+  })
 }
 
-const currentPage = ref(1)
+const handleObserve = (entries: IntersectionObserverEntry[]) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      loadMore()
+    }
+  })
+}
+
 onMounted(() => {
-  if (!tokens.value?.length) {
-    token.getTokens({
-      Limit: 8,
-      Page: currentPage.value,
-      Message: {}
-    }, () => {
-      // TODO
-    })
-  }
-  window.addEventListener('scroll', loadMore)
+  const observer = new IntersectionObserver(handleObserve)
+  const target = document.getElementById('bottom')
+  observer.observe(target as Element)
 })
 
-onUnmounted(()=> {
-  window.removeEventListener('scroll', () => void{}, false)
-})
 </script>
 <style lang="sass" scoped>
 .token-container
@@ -267,9 +257,6 @@ onUnmounted(()=> {
       font-weight: 700
       font-size: 36px
       line-height: 33px
-    .loading
-      ::v-deep .absolute-full
-        top: auto
     .boxes
       height: 230px
       border: 1px solid #EFEFEF
@@ -309,6 +296,15 @@ onUnmounted(()=> {
           gap: 8px
           .split-token
             cursor: pointer
+    .loading
+      ::v-deep .absolute-full
+        position: relative
+        top: auto
+    .no-more
+      padding-top: 5px
+      display: block
+      text-align: center
+      color: #a3a3a3
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%
