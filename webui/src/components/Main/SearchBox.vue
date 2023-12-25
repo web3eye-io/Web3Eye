@@ -2,14 +2,11 @@
     <div class="row box">
         <div class="left"><q-icon name="img:icons/search.png" size="20px" /></div>
         <div class="main">
-            <input
-                class="search-box"
-                id="drop-area"
-                placeholder="search contract address or drag an image here"
-                v-model="contract" 
-            />
+            <input class="search-box" id="drop-area" placeholder="search contract address or drag an image here"
+                v-model="contract" />
         </div>
-        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px" /></div>
+        <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
+        <div class="right"><q-icon name="img:icons/camera.png" class="photography" size="20px" @click='loadFileButton?.click()' /></div>
     </div>
 </template>
   
@@ -33,6 +30,20 @@ const getContractAndTokens = (offset: number, limit: number) => {
         if (error) return
         void router.push('/contract')
     })
+}
+
+const loadFileButton = ref<HTMLInputElement>()
+
+const uploadFile = (evt: Event) => {
+    const target = evt.target as unknown as HTMLInputElement
+    if (target.files) {
+        const filename = target.files[0]
+        const reader = new FileReader()
+        reader.onload = () => {
+            // TODO
+        }
+        reader.readAsText(filename)
+    }
 }
 
 const router = useRouter()
