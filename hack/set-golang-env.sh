@@ -7,7 +7,7 @@ GOTMPENV="/tmp/.golang/$GOVERSION"
 GOROOT="$GOTMPENV/goroot"
 GOPATH="$GOTMPENV/gopath"
 GOBIN="$GOROOT/bin"
-PATH="$GOBIN:$PATH"
+PATH="$GOBIN:$PATH:$GOBIN"
 
 go_name=go$GOVERSION
 
