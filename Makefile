@@ -32,7 +32,7 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
 verify: ./extern/filecoin-ffi/filcrypto.pc go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
-	${REPO_ROOT}/hack/verify.sh
+	bash -x ${REPO_ROOT}/hack/verify.sh
 
 verify-shellcheck: ## Runs shellcheck
 	${REPO_ROOT}/hack/verify-shellcheck.sh
