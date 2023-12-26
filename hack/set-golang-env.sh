@@ -3,13 +3,14 @@ MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
 
 GOVERSION="1.19.13"
-GOTMPENV="~/.golang/$GOVERSION"
+go_name=go$GOVERSION
+GOTMPENV="~/.golang/$go_name"
 GOROOT="$GOTMPENV/goroot"
 GOPATH="$GOTMPENV/gopath"
 GOBIN="$GOROOT/bin"
 PATH="$PATH:$GOBIN"
 
-go_name=go$GOVERSION
+
 
 echo "Will change go version to $go_name"
 
