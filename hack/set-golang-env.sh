@@ -10,8 +10,6 @@ GOPATH="$GOTMPENV/gopath"
 GOBIN="$GOROOT/bin"
 PATH="$PATH:$GOBIN"
 
-
-
 echo "Will change go version to $go_name"
 
 go_tar="$go_name.linux-amd64.tar.gz"

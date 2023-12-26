@@ -166,12 +166,12 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.GetCurrentBlockNum()})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
+				retries++
 				continue
 			}
 			if resp.Info.SyncState != basetype.SyncState_Start {
 				return
 			}
-			retries++
 		}
 	}
 }
