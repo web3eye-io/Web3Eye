@@ -209,7 +209,9 @@ const getContractAndTokens = (offset: number, limit: number) => {
 .input-container
   margin: 0 auto
   width: 940px
-
+  position: absolute
+  left: 0 // important
+  right: 0 // important
 .box
   margin-top: 40px
   border: 1px solid #3187FF
