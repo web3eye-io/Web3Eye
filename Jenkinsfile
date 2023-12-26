@@ -3,7 +3,7 @@ pipeline {
   environment {
     GOPROXY = 'https://goproxy.cn,direct'
     // env info from hack/set-golang-env.sh
-    GOVERSION = "1.19.13"
+    GOVERSION = "1.19.12"
     GOTMPENV = "/tmp/go-tmp-env/$GOVERSION"
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
@@ -18,6 +18,7 @@ pipeline {
           git tag -l | xargs git tag -d
           git fetch origin --prune
           echo "update tags for repo"
+          \rm -rf /tmp/go-tmp-env
         '''.stripIndent())
         git(url: scm.userRemoteConfigs[0].url,credentialsId: 'KK-github-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
