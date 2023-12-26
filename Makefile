@@ -18,7 +18,7 @@ go.mod:
 	go mod init ${GITREPO}
 	go mod tidy -compat=1.19
 
-deps: 
+deps: ./extern/filecoin-ffi/filcrypto.pc
 	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/deps.sh
 
 ##@ Verify
