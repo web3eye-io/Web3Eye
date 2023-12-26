@@ -17,7 +17,6 @@ import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
-import { Notify } from 'quasar'
 
 const contract = ref('')
 const _contract = useContractStore()
@@ -30,7 +29,6 @@ const getContractAndTokens = (offset: number, limit: number) => {
         Message: {}
     }, (error: boolean) => {
         if (error) {
-            searchFailed()
             return
         }
         void router.push('/contract')
@@ -54,6 +52,7 @@ const uploadFile = (evt: Event) => {
 const router = useRouter()
 const token = useTokenStore()
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleUploadFile = (file: any) => {
     let formData = new FormData()
     formData.append('UploadFile', file as Blob)
@@ -66,7 +65,6 @@ const handleUploadFile = (file: any) => {
         if (!error) {
             void router.push('/token')
         }
-        searchFailed()
     })
 }
 
@@ -99,14 +97,6 @@ onMounted(() => {
     })
 })
 
-const searchFailed = () => {
-    Notify.create({
-        position: 'bottom-right',
-        message: 'Search Failed',
-        color: 'red',
-        timeout: 2000
-  })
-}
 </script>
   
 <style lang='sass' scoped>
