@@ -30,10 +30,6 @@ export PATH=$PATH
 
 [ -z $GOPROXY ] && export GOPROXY="https://proxy.golang.org,direct"
 
-shopt -s expand_aliases
-alias go="$GOROOT/bin/go"
-
-
 set +e
 rc=`go version | grep "$go_name"`
 if [ ! $? -eq 0 -o ! -f $GOROOT/.decompressed ]; then
