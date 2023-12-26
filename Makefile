@@ -102,7 +102,6 @@ deploy-to-k8s-cluster:
 	done
 
 prepare-golang-env:
-	rm -rf extern
 	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/set-golang-env.sh
 
 prepare-node-env:
