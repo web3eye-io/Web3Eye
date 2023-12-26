@@ -32,11 +32,12 @@ shopt -s expand_aliases
 alias go="$GOROOT/bin/go"
 
 set +e
-rc=`go version | grep $go_name`
-if [ ! $? -eq 0 ]; then
-  set -e
+rc=`go version | grep "$go_name"`
+if [ ! $? -eq 0 -o ! -f $GOROOT/.decompressed ]; then
+  rm -rf $GOROOT/.decompressed
   echo "Fetching $go_tar from $go_tar_url, stored to $go_data"
   curl -L $go_tar_url -o $go_data/$go_tar
   tar -zxvf $go_data/$go_tar --strip-components 1 -C $GOROOT
+  touch $GOROOT/.decompressed
 fi
 set -e
