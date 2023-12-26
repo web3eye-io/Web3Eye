@@ -18,7 +18,7 @@ pipeline {
           git tag -l | xargs git tag -d
           git fetch origin --prune
           echo "update tags for repo"
-          \rm -rf /tmp/go-tmp-env
+          rm -rf /tmp/go-tmp-env
         '''.stripIndent())
         git(url: scm.userRemoteConfigs[0].url,credentialsId: 'KK-github-key', branch: '$BRANCH_NAME', changelog: true, poll: true)
       }
