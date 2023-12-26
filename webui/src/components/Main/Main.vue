@@ -1,5 +1,5 @@
 <template>
-  <div view='lHh Lpr lF' class="main-container">
+  <div view='lHh Lpr lF' class="main-container" id="index">
     <div class="summary">
       <div class="easier row items-center">
         <q-space />
@@ -17,16 +17,150 @@
       </div>
     </div>
     <div class="column input-container">
-      <SearchBox />
+      <div class="row box" id="normal-box" :class="[opening? 'hidden' : '']">
+        <div class="left"><q-icon name="img:icons/search.png" size="20px" /></div>
+        <div class="main">
+            <input class="search-box" id="search-box" placeholder="search contract address or drag an image here" v-model="contract" />
+        </div>
+        <!-- camera start -->
+        <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
+        <div class="right">
+            <q-icon name="img:icons/camera.png" class="photography" size="22px" @click='loadFileButton?.click()' />
+        </div>
+        <!-- camera end -->
+    </div>
+    <!-- drop zone start -->
+    <div class="row big-box" id="drop-target" :class="[opening? '' : 'hidden']">
+        <q-icon name="img:icons/picture.png" size="42px" />
+        <div class="drag-image-here">Drag an image here</div>
+    </div>
+    <div class="row big-box" :class="[state === State.Drop ? '' : 'hidden']">
+        <Loading v-model:loading="loading" color="#1772F8" />
+    </div>
+    <!-- drop zone end -->
     </div>
   </div>
 </template>
 
 <script setup lang='ts'>
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, onMounted, ref } from 'vue'
 import largelogo from '../../assets/logo/large-logo.png'
-const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchBox.vue'))
+import { useRouter } from 'vue-router'
+import { useContractStore } from 'src/teststore/contract'
+import { useTokenStore } from 'src/teststore/token'
+import { SearchTokenMessage } from 'src/teststore/token/types'
+const Loading = defineAsyncComponent(() => import('src/components/Loading/Loading.vue'))
 
+const loadFileButton = ref<HTMLInputElement>()
+
+const uploadFile = (evt: Event) => {
+    const target = evt.target as unknown as HTMLInputElement
+    if (target.files) {
+        const file = target.files[0]
+        const reader = new FileReader()
+        reader.onload = () => {
+            handleUploadFile(file, false)
+        }
+        reader.readAsText(file)
+    }
+}
+
+const router = useRouter()
+const token = useTokenStore()
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleUploadFile = (file: any, fromDropArea: boolean) => {
+    let formData = new FormData()
+    formData.append('UploadFile', file as Blob)
+    formData.append('Limit', '8')
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    contract.value = file?.name 
+    const reqMessage = {} as SearchTokenMessage
+    token.$reset()
+    token.searchTokens(formData, reqMessage, (error: boolean) => {
+        loading.value = false
+        opening.value = false
+        if (error) {
+              state.value = State.Normal
+              const dropArea = document.getElementById('drop-target')
+              dropArea?.classList.remove('hidden')
+        }
+        if (!error) {
+            void router.push('/token')
+        }
+    })
+}
+
+const loading = ref(true)
+enum State {
+    Normal,
+    Dragging,
+    Drop,
+}
+const state = ref(State.Normal)
+
+onMounted(() => {
+    const dropArea = document.getElementById('drop-target')
+    dropArea?.addEventListener('drop', (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        state.value = State.Drop
+        dropArea?.classList.add('hidden')
+        const file = e.dataTransfer?.files[0]
+        handleUploadFile(file, true)
+    })
+    dropArea?.addEventListener('dragenter', (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        state.value = State.Dragging
+        dropArea.classList.add('highlight')
+    })
+
+    const searchBox = document.getElementById('search-box')
+    searchBox?.addEventListener('keypress', (e) => {
+        if (e.key != 'Enter') {
+            return
+        }
+        e.stopPropagation()
+        e.preventDefault()
+        if (contract.value?.length === 0) return
+        getContractAndTokens(0, 100)
+    })
+})
+
+const opening = ref(false)
+
+onMounted(() => {
+  const dropZone = document.getElementById('index')
+  dropZone?.addEventListener('dragover', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        opening.value = true
+  })
+  dropZone?.addEventListener('dragleave', (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        let relatedTarget = e.relatedTarget
+        if (!relatedTarget) { // leave window
+          opening.value = false
+        }
+  })
+})
+
+const contract = ref('')
+const _contract = useContractStore()
+
+const getContractAndTokens = (offset: number, limit: number) => {
+    _contract.getContractAndTokens({
+        Contract: contract.value,
+        Offset: offset,
+        Limit: limit,
+        Message: {}
+    }, (error: boolean) => {
+        if (error) return
+        void router.push('/contract')
+    })
+}
 </script>
 
 <style lang='sass' scoped>
@@ -38,7 +172,6 @@ const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchB
   .easier
     font-size: 16px
     color: #1772F8
-
     .left,.right
       width: 100px
       height: 4px
@@ -57,10 +190,7 @@ const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchB
 .logo
   margin: 10px 0 20px 0
 
-.icontainer,.upload-box
-  width: 850px
-.icontainer
-  margin-top: 50px
+
 .looking
   margin: 10px 0 10px 0
   color: $grey-8
@@ -68,20 +198,49 @@ const SearchBox = defineAsyncComponent(() => import('src/components/Main/SearchB
 .occupier
   height: 240px
 
-.input-padding
-  padding-bottom: 5px
-
-.upload-box
-  background: none
-  flex-direction: row
-.search-container
-  ::v-deep > div.q-uploader
-    width: auto
-    max-height: 160px
-.q-uploader 
-  ::v-deep .bg-white
-    background: none !important
-.upload,.input-container
+.input-container
   margin: 0 auto
   width: 940px
+
+.box
+  margin-top: 40px
+  border: 1px solid #3187FF
+  border-radius: 24px
+  background: $white
+  justify-content: center
+.left
+  width: 40px
+  align-self: center
+  padding-left: 20px
+.main
+  flex-grow: 1
+  .search-box
+    padding: 4px
+    width: 100%
+    height: 48px
+    border-radius: 24px
+    background: $white
+    border: none
+    &:focus
+       outline: none
+.right
+  width: 40px
+  align-self: center
+  cursor: pointer
+.big-box
+    margin-top: 40px
+    height: 130px
+    border: 1px dashed #a5a5a6
+    background: rgb(248,249,250)
+    border-radius: 19px
+    justify-content: center
+    align-items: center
+    .drag-image-here
+        padding-left: 8px
+        color: rgb(95,99,104)
+.hidden
+    display: none
+#drop-target.highlight
+    background: #f0f6ff
+    border: 1px dashed #1772F8
 </style>
