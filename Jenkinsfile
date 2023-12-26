@@ -3,12 +3,13 @@ pipeline {
   environment {
     GOPROXY = 'https://goproxy.cn,direct'
     // env info from hack/set-golang-env.sh
-    GOVERSION = "1.19.12"
-    GOTMPENV = "/tmp/go-tmp-env/$GOVERSION"
+    GOVERSION = "go1.19.13"
+    GOTMPENV = "~/.golang/$GOVERSION"
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
     PATH = "$PATH:$GOBIN"
+    GO111MODULE = "on"
   }
   stages {
     stage('Clone') {
