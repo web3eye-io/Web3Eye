@@ -19,7 +19,7 @@ go.mod:
 	go mod tidy -compat=1.19
 
 deps: 
-	all_proxy=${all_proxy} ${REPO_ROOT}/hack/deps.sh
+	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/deps.sh
 
 ##@ Verify
 
