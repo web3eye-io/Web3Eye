@@ -9,6 +9,7 @@ pipeline {
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
     PATH = "$PATH:$GOBIN"
+    GO111MODULE = "on"
   }
   stages {
     stage('Clone') {
