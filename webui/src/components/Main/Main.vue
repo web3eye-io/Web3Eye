@@ -17,27 +17,28 @@
       </div>
     </div>
     <div class="column input-container">
-      <div class="row box" id="normal-box" :class="[opening? 'hidden' : '']">
+      <div class="row box" id="normal-box" :class="[opening ? 'hidden' : '']">
         <div class="left"><q-icon name="img:icons/search.png" size="20px" /></div>
         <div class="main">
-            <input class="search-box" id="search-box" placeholder="search contract address or drag an image here" v-model="contract" />
+          <input class="search-box" id="search-box" placeholder="search contract address or drag an image here"
+            v-model="contract" />
         </div>
         <!-- camera start -->
         <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
         <div class="right">
-            <q-icon name="img:icons/camera.png" class="photography" size="22px" @click='loadFileButton?.click()' />
+          <q-icon name="img:icons/camera.png" class="photography" size="22px" @click='loadFileButton?.click()' />
         </div>
         <!-- camera end -->
-    </div>
-    <!-- drop zone start -->
-    <div class="row big-box" id="drop-target" :class="[opening? '' : 'hidden']">
+      </div>
+      <!-- drop zone start -->
+      <div class="row big-box" id="drop-target" :class="[opening ? '' : 'hidden']">
         <q-icon name="img:icons/picture.png" size="42px" />
         <div class="drag-image-here">Drag an image here</div>
-    </div>
-    <div class="row big-box" :class="[state === State.Drop ? '' : 'hidden']">
+      </div>
+      <div class="row big-box" :class="[state === State.Drop ? '' : 'hidden']">
         <Loading v-model:loading="loading" color="#1772F8" />
-    </div>
-    <!-- drop zone end -->
+      </div>
+      <!-- drop zone end -->
     </div>
   </div>
 </template>
@@ -54,15 +55,15 @@ const Loading = defineAsyncComponent(() => import('src/components/Loading/Loadin
 const loadFileButton = ref<HTMLInputElement>()
 
 const uploadFile = (evt: Event) => {
-    const target = evt.target as unknown as HTMLInputElement
-    if (target.files) {
-        const file = target.files[0]
-        const reader = new FileReader()
-        reader.onload = () => {
-            handleUploadFile(file, false)
-        }
-        reader.readAsText(file)
+  const target = evt.target as unknown as HTMLInputElement
+  if (target.files) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = () => {
+      handleUploadFile(file, false)
     }
+    reader.readAsText(file)
+  }
 }
 
 const router = useRouter()
@@ -70,66 +71,68 @@ const token = useTokenStore()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleUploadFile = (file: any, fromDropArea: boolean) => {
-    let formData = new FormData()
-    formData.append('UploadFile', file as Blob)
-    formData.append('Limit', '8')
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    contract.value = file?.name 
-    const reqMessage = {} as SearchTokenMessage
-    token.$reset()
-    token.searchTokens(formData, reqMessage, (error: boolean) => {
-        loading.value = false
-        opening.value = false
-        if (error) {
-          if (fromDropArea) {
-              state.value = State.Normal
-              const dropArea = document.getElementById('drop-target')
-              dropArea?.classList.remove('hidden')
-          }
-        }
-        if (!error) {
-          const normalBox = document.getElementById('normal-box')
-          normalBox?.classList?.add('hidden')
-            void router.push('/token')
-        }
-    })
+  let formData = new FormData()
+  formData.append('UploadFile', file as Blob)
+  formData.append('Limit', '8')
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  contract.value = file?.name
+  const reqMessage = {} as SearchTokenMessage
+  token.$reset()
+  token.searchTokens(formData, reqMessage, (error: boolean) => {
+    if (!error) {
+      const normalBox = document.getElementById('normal-box')
+      normalBox?.classList?.add('hidden')
+      loading.value = false
+      void router.push('/token')
+      return
+    }
+    opening.value = false
+    if (error) {
+      if (fromDropArea) {
+        state.value = State.Normal
+        const dropArea = document.getElementById('drop-target')
+        dropArea?.classList.remove('hidden')
+      }
+    }
+
+  })
 }
 
 const loading = ref(true)
 enum State {
-    Normal,
-    Dragging,
-    Drop,
+  Normal,
+  Dragging,
+  Drop,
 }
 const state = ref(State.Normal)
 
 onMounted(() => {
-    const dropArea = document.getElementById('drop-target')
-    dropArea?.addEventListener('drop', (e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        state.value = State.Drop
-        dropArea?.classList.add('hidden')
-        const file = e.dataTransfer?.files[0]
-        handleUploadFile(file, true)
-    })
-    dropArea?.addEventListener('dragenter', (e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        state.value = State.Dragging
-        dropArea.classList.add('highlight')
-    })
+  const dropArea = document.getElementById('drop-target')
+  dropArea?.addEventListener('drop', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    state.value = State.Drop
+    dropArea?.classList.add('hidden')
+    const file = e.dataTransfer?.files[0]
+    handleUploadFile(file, true)
+  })
+  dropArea?.addEventListener('dragenter', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    state.value = State.Dragging
+    dropArea.classList.add('highlight')
+  })
 
-    const searchBox = document.getElementById('search-box')
-    searchBox?.addEventListener('keypress', (e) => {
-        if (e.key != 'Enter') {
-            return
-        }
-        e.stopPropagation()
-        e.preventDefault()
-        if (contract.value?.length === 0) return
-        getContractAndTokens(0, 100)
-    })
+  const searchBox = document.getElementById('search-box')
+  searchBox?.addEventListener('keypress', (e) => {
+    if (e.key != 'Enter') {
+      return
+    }
+    e.stopPropagation()
+    e.preventDefault()
+    if (contract.value?.length === 0) return
+    getContractAndTokens(0, 100)
+  })
 })
 
 const opening = ref(false)
@@ -137,17 +140,17 @@ const opening = ref(false)
 onMounted(() => {
   const dropZone = document.getElementById('index')
   dropZone?.addEventListener('dragover', function (e) {
-        e.preventDefault()
-        e.stopPropagation()
-        opening.value = true
+    e.preventDefault()
+    e.stopPropagation()
+    opening.value = true
   })
   dropZone?.addEventListener('dragleave', (e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        let relatedTarget = e.relatedTarget
-        if (!relatedTarget) { // leave window
-          opening.value = false
-        }
+    e.stopPropagation()
+    e.preventDefault()
+    let relatedTarget = e.relatedTarget
+    if (!relatedTarget) { // leave window
+      opening.value = false
+    }
   })
 })
 
@@ -155,15 +158,15 @@ const contract = ref('')
 const _contract = useContractStore()
 
 const getContractAndTokens = (offset: number, limit: number) => {
-    _contract.getContractAndTokens({
-        Contract: contract.value,
-        Offset: offset,
-        Limit: limit,
-        Message: {}
-    }, (error: boolean) => {
-        if (error) return
-        void router.push('/contract')
-    })
+  _contract.getContractAndTokens({
+    Contract: contract.value,
+    Offset: offset,
+    Limit: limit,
+    Message: {}
+  }, (error: boolean) => {
+    if (error) return
+    void router.push('/contract')
+  })
 }
 
 </script>
