@@ -32,7 +32,7 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
 verify: ./extern/filecoin-ffi/filcrypto.pc go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
-	bash -x ${REPO_ROOT}/hack/verify.sh
+	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/verify.sh
 
 verify-shellcheck: ## Runs shellcheck
 	${REPO_ROOT}/hack/verify-shellcheck.sh
@@ -102,10 +102,10 @@ deploy-to-k8s-cluster:
 	done
 
 prepare-golang-env:
-	${REPO_ROOT}/hack/set-golang-env.sh
+	all_proxy=${all_proxy} ${REPO_ROOT}/hack/set-golang-env.sh
 
 prepare-node-env:
-	${REPO_ROOT}/hack/set-node-env.sh
+	all_proxy=${all_proxy} ${REPO_ROOT}/hack/set-node-env.sh
 
 ##@ Tests
 
