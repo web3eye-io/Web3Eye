@@ -193,14 +193,13 @@ onMounted(() => {
     min-height: 800px !important
 
 .search-box
-  width: 400px
-  height: 50px
-  ::v-deep .upload
+  width: 420px
+  height: 40px
+  line-height: 40px
+  ::v-deep .box
     margin-top: 0
-    height: 40px
-    margin-top: 45px
-  ::v-deep .search
-    top: -55px
+  ::v-deep .search-box
+    height: 40px !important
 
 .search
   height: 56px
