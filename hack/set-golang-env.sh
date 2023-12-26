@@ -3,7 +3,7 @@ MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
 
 GOVERSION="1.19.13"
-GOTMPENV="~/.golang/$GOVERSION"
+GOTMPENV="/tmp/.golang/$GOVERSION"
 GOROOT="$GOTMPENV/goroot"
 GOPATH="$GOTMPENV/gopath"
 GOBIN="$GOROOT/bin"

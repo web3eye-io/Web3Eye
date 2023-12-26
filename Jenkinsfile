@@ -4,7 +4,7 @@ pipeline {
     GOPROXY = 'https://goproxy.cn,direct'
     // env info from hack/set-golang-env.sh
     GOVERSION = "1.19.13"
-    GOTMPENV = "~/.golang/$GOVERSION"
+    GOTMPENV = "/tmp/.golang/$GOVERSION"
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
