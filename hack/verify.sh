@@ -4,6 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+go env
+exit 1
 # cd to the repo root
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "${REPO_ROOT}"
