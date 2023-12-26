@@ -2,12 +2,12 @@
 MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
 
-GOVERSION="1.19.13"
+GOVERSION="1.19.12"
 GOTMPENV="/tmp/.golang/$GOVERSION"
 GOROOT="$GOTMPENV/goroot"
 GOPATH="$GOTMPENV/gopath"
 GOBIN="$GOROOT/bin"
-PATH="$GOBIN:$PATH:$GOBIN"
+PATH="$PATH:$GOBIN"
 
 go_name=go$GOVERSION
 
@@ -17,8 +17,6 @@ go_tar="$go_name.linux-amd64.tar.gz"
 go_tar_url="https://go.dev/dl/$go_tar"
 
 go_data=$GOTMPENV
-
-rm -rf $GOTMPENV
 
 mkdir -p $GOPATH
 mkdir -p $GOROOT

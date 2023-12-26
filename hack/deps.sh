@@ -4,7 +4,7 @@ ROOT_PATH=$MY_PATH/../
 set -o errexit
 set -o nounset
 set -o pipefail
-env
+
 cd $ROOT_PATH
 go get -x github.com/ugorji/go/codec@v1.2.7
 go get -d ./...
