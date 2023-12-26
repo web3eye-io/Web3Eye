@@ -18,6 +18,8 @@ go_tar_url="https://go.dev/dl/$go_tar"
 
 go_data=$GOTMPENV
 
+rm -rf $GOTMPENV
+
 mkdir -p $GOPATH
 mkdir -p $GOROOT
 
