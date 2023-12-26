@@ -202,6 +202,7 @@ const currentPage = ref(1)
 const loading = ref(false)
 
 const loadMore = () => {
+  console.log('loadMore')
   if (currentPage.value >= token.SearchTokens.TotalPages && token.SearchTokens.TotalPages !== 0) {
     haveMore.value = true
     return
@@ -213,15 +214,19 @@ const loadMore = () => {
     Message: {}
   }, (error: boolean) => {
     loading.value = false
+    isLoading.value = false
     if (!error) {
       currentPage.value += 1
     }
   })
 }
 
+const isLoading = ref(false)
 const handleObserve = (entries: IntersectionObserverEntry[]) => {
   entries.forEach((entry) => {
+    if (isLoading.value) return
     if (entry.isIntersecting) {
+      isLoading.value = true
       loadMore()
     }
   })

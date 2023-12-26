@@ -49,7 +49,6 @@ import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
-import { Notify } from 'quasar'
 const Loading = defineAsyncComponent(() => import('src/components/Loading/Loading.vue'))
 
 const loadFileButton = ref<HTMLInputElement>()
@@ -82,7 +81,6 @@ const handleUploadFile = (file: any, fromDropArea: boolean) => {
         loading.value = false
         opening.value = false
         if (error) {
-          notifyFailed()
           if (fromDropArea) {
               state.value = State.Normal
               const dropArea = document.getElementById('drop-target')
@@ -90,6 +88,8 @@ const handleUploadFile = (file: any, fromDropArea: boolean) => {
           }
         }
         if (!error) {
+          const normalBox = document.getElementById('normal-box')
+          normalBox?.classList?.add('hidden')
             void router.push('/token')
         }
     })
@@ -166,14 +166,6 @@ const getContractAndTokens = (offset: number, limit: number) => {
     })
 }
 
-const notifyFailed = () => {
-    Notify.create({
-        position: 'bottom-right',
-        message: 'Search Failed',
-        color: 'red',
-        timeout: 2000
-  })
-}
 </script>
 
 <style lang='sass' scoped>
