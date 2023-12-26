@@ -61,7 +61,6 @@ endif
 .PHONY: build build-docker release-docker deploy-to-k8s-cluster
 
 ./extern/filecoin-ffi/filcrypto.pc:
-	rm -rf extern
 	mkdir extern -p
 	cd extern; git clone https://github.com/filecoin-project/filecoin-ffi.git || true
 	cd extern/filecoin-ffi; git pull; git checkout v1.23.0
