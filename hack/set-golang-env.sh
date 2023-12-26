@@ -11,13 +11,6 @@ PATH="$GOBIN:$PATH"
 
 go_name=go$GOVERSION
 
-set +e
-rc=`go version | grep $go_name`
-if [ $? -eq 0 ]; then
-    exit 0
-fi
-set -e
-
 echo "Will change go version to $go_name"
 
 go_tar="$go_name.linux-amd64.tar.gz"
