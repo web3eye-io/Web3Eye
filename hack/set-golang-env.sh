@@ -18,6 +18,8 @@ go_tar_url="https://go.dev/dl/$go_tar"
 
 go_data=$GOTMPENV
 
+rm -rf $GOTMPENV
+
 mkdir -p $GOPATH
 mkdir -p $GOROOT
 
@@ -30,6 +32,7 @@ export PATH=$PATH
 
 shopt -s expand_aliases
 alias go="$GOROOT/bin/go"
+
 
 set +e
 rc=`go version | grep "$go_name"`
