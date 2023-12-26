@@ -8,7 +8,7 @@ pipeline {
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    PATH = "$GOBIN:$PATH"
+    PATH = "$GOBIN:$PATH:$GOBIN"
     GO111MODULE = "on"
   }
   stages {
