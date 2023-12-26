@@ -2,6 +2,7 @@ package sol
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -71,6 +72,11 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				}
 				return nil
 			}()
+
+			// not err if slot have no block
+			if strings.Contains(err.Error(), "was skipped, or missing in long-term storage") {
+				err = nil
+			}
 
 			if err != nil {
 				logger.Sugar().Error(err)
