@@ -3,7 +3,8 @@ import { EndpointState } from '../basetypes/endpoint/const';
 import { BaseRequest } from '../local';
 
 export interface Endpoint {
-    ID: string;
+    ID: number;
+    EntID: string;
     ChainType: ChainType;
     ChainID: string;
     Address: string;
