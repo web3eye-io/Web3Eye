@@ -31,7 +31,7 @@ const getContractAndTokens = (offset: number, limit: number) => {
         if (error) {
             return
         }
-        void router.push('/contract')
+        void router.push({path: '/contract', query: {contract: contract.value} })
     })
 }
 

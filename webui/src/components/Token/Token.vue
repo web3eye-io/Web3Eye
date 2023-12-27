@@ -169,7 +169,7 @@ const onShotTokenClick = (token: SearchToken, shotToken: SiblingToken) => {
       chainType: token.ChainType,
       contract: token.Contract,
       tokenID: shotToken.TokenID,
-      id: shotToken.ID,
+      id: token.ID,
     }
   })
 }

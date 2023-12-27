@@ -14,7 +14,7 @@
             {{ target?.Name }}
           </div>
           <div class="content row">
-            <div>{{ target?.Name }} #{{ target?.TokenID }}</div>
+            <div>{{ target?.Name }} </div>
           </div>
           <div class="description row">
             {{ target?.Description }}
@@ -29,6 +29,12 @@
                 <div class="creator-name">
                   {{ target?.Owner }}
                 </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="chain-title">TokenID</div>
+              <div class="row items-center justify-center">
+                <div class="chain-name">#{{ target?.TokenID }}</div>
               </div>
             </div>
             <div class="column">
@@ -204,7 +210,7 @@ const id1 = ref(_id.value)
 
 const transfer = useTransferStore()
 const transferKey = computed(() =>
-  transfer.setKey(_chainID.value, tokenID1.value)
+  transfer.setKey(_chainID.value, _contract.value, tokenID1.value)
 )
 const transfers = computed(() =>
   transfer.Transfers.Transfers.get(transferKey.value)
