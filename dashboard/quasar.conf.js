@@ -80,7 +80,7 @@ module.exports = configure(function (ctx) {
       proxy: {
         '/api': {
           // target: 'https://testnet.web3eye.io',
-          target: 'https://api.npool.top:20402',
+          target: 'https://api.web3eye.npool.top',
           pathRewrite: {
             '^/api': '/api'
           },
