@@ -29,8 +29,8 @@ var (
 	erc1155ABI, _   = contracts.IERC1155MetaData.GetAbi()
 	TransfersTopics = []common.Hash{
 		common.HexToHash(transferEventHash),
-		common.HexToHash(transferSingleEventHash),
-		common.HexToHash(transferBatchEventHash),
+		// common.HexToHash(transferSingleEventHash),
+		// common.HexToHash(transferBatchEventHash),
 	}
 )
 
@@ -134,6 +134,7 @@ func LogsToTransfer(pLogs []*types.Log) ([]*chains.TokenTransfer, error) {
 // if topics={{A,B,C}} return {{A or B or C logs}}
 // if topics={{A,B,C},{D}} return {{A or B or C logs},{D logs}}
 func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, toBlock int64, topics [][]common.Hash) ([][]*types.Log, error) {
+	// the native func filterLogs cannot filter {{A...},{B...}}
 	logs, err := ethCli.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(fromBlock),
 		ToBlock:   big.NewInt(toBlock),
@@ -162,6 +163,9 @@ func (ethCli *ethClients) FilterLogsForTopics(ctx context.Context, fromBlock, to
 	}
 
 	for _, v := range logs {
+		if len(v.Topics) == 0 {
+			continue
+		}
 		if _, ok := allSets[v.Topics[0]]; !ok {
 			continue
 		}

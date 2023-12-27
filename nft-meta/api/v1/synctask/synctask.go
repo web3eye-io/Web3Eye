@@ -18,16 +18,18 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
-
 	"github.com/google/uuid"
+	blockhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/block"
+	"github.com/web3eye-io/Web3Eye/proto/web3eye"
+	blockproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
+	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
 
 const (
-	MaxPutTaskNumOnce = 100
-	ReportInterval    = 100
-	RedisLockTimeout  = time.Second * 10
+	MaxPutTaskNumOnce         = 100
+	MaxPutBadBlockTaskNumOnce = 50
+	ReportInterval            = 100
+	RedisLockTimeout          = time.Second * 10
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
@@ -92,8 +94,6 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 
 //nolint:funlen,gocyclo
 func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskRequest) (*npool.TriggerSyncTaskResponse, error) {
-	// TODO: will be rewrite,too long
-	// TODO: each state corresponds to a processing function
 	// query synctask
 	// lock
 	lockKey := "TriggerSyncTask_Lock"
@@ -117,29 +117,12 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		},
 	}
 
-	h, err := handler.NewHandler(ctx,
-		handler.WithConds(conds),
-		handler.WithOffset(0),
-		handler.WithLimit(1),
-	)
+	resp, err := s.GetSyncTaskOnly(ctx, &npool.GetSyncTaskOnlyRequest{Conds: conds})
 	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
 		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	infos, total, err := h.GetSyncTasks(ctx)
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	if total != 1 {
-		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("TriggerSyncTask", "error", errMsg)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, errMsg)
-	}
-
-	info := infos[0]
+	info := resp.Info
 
 	// check state
 	if info.SyncState != basetype.SyncState_Start || in.CurrentBlockNum < info.Current {
@@ -151,19 +134,18 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	// check sync state
 	if info.End != 0 && info.Current >= info.End {
 		info.SyncState = basetype.SyncState_Finish
-		h, err := handler.NewHandler(ctx,
-			handler.WithID(&info.ID, true),
-			handler.WithSyncState(&info.SyncState, true),
-		)
-		if err != nil {
-			logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-			return &npool.TriggerSyncTaskResponse{}, err
-		}
-		info, err = h.UpdateSyncTask(ctx)
+		_, err := s.UpdateSyncTask(ctx, &npool.UpdateSyncTaskRequest{
+			Info: &npool.SyncTaskReq{
+				ID:        &info.ID,
+				SyncState: &info.SyncState,
+			},
+		})
+
 		if err != nil {
 			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+			return &npool.TriggerSyncTaskResponse{Info: info}, status.Error(codes.Internal, err.Error())
 		}
+
 		return &npool.TriggerSyncTaskResponse{Info: info}, nil
 	}
 
@@ -178,46 +160,24 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		info.Current = syncEnd
 	}
 
-	pulsarCli, err := ctpulsar.Client()
+	blocks, err := getBadBlocksNum(ctx, info.ChainType, info.ChainID)
 	if err != nil {
 		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
 		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
-	defer pulsarCli.Close()
 
-	producer, err := pulsarCli.CreateProducer(pulsar.ProducerOptions{
-		Topic: in.Topic,
+	err = sendTasks(ctx, info.Topic, lastNum, info.Current, blocks)
+	if err != nil {
+		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
+		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	_, err = s.UpdateSyncTask(ctx, &npool.UpdateSyncTaskRequest{
+		Info: &npool.SyncTaskReq{
+			ID:      &info.ID,
+			Current: &info.Current,
+		},
 	})
-	if err != nil {
-		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-	}
-	defer producer.Close()
-
-	for ; lastNum < info.Current; lastNum++ {
-		payload, err := utils.Uint642Bytes(lastNum)
-		if err != nil {
-			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-		}
-
-		_, err = producer.Send(ctx, &pulsar.ProducerMessage{Payload: payload})
-		if err != nil {
-			logger.Sugar().Errorw("TriggerSyncTask", "error", err)
-			return &npool.TriggerSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
-		}
-	}
-
-	h, err = handler.NewHandler(ctx,
-		handler.WithID(&info.ID, true),
-		handler.WithCurrent(&info.Current, true),
-	)
-	if err != nil {
-		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.TriggerSyncTaskResponse{}, err
-	}
-
-	info, err = h.UpdateSyncTask(ctx)
 
 	if err != nil {
 		logger.Sugar().Errorw("TriggerSyncTask", "error", err)
@@ -227,6 +187,109 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	return &npool.TriggerSyncTaskResponse{
 		Info: info,
 	}, nil
+}
+
+// send to topic
+func sendTasks(ctx context.Context, topic string, start, end uint64, blocks []uint64) error {
+	pulsarCli, err := ctpulsar.Client()
+	if err != nil {
+		return err
+	}
+	defer pulsarCli.Close()
+
+	producer, err := pulsarCli.CreateProducer(pulsar.ProducerOptions{
+		Topic: topic,
+	})
+	if err != nil {
+		return err
+	}
+	defer producer.Close()
+
+	sendTask := func(num uint64) error {
+		payload, err := utils.Uint642Bytes(num)
+		if err != nil {
+			return err
+		}
+
+		_, err = producer.Send(ctx, &pulsar.ProducerMessage{Payload: payload})
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	for ; start < end; start++ {
+		err = sendTask(start)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, num := range blocks {
+		err = sendTask(num)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func getBadBlocksNum(ctx context.Context,
+	chainType basetype.ChainType,
+	chainID string,
+) ([]uint64, error) {
+	failedBlocks, err := getBlocksNum(ctx, chainType, chainID, basetype.BlockParseState_BlockTypeFailed, MaxPutBadBlockTaskNumOnce)
+	if err != nil {
+		return nil, err
+	}
+	notFinishBlocks, err := getBlocksNum(ctx, chainType, chainID, basetype.BlockParseState_BlockTypeStart, MaxPutBadBlockTaskNumOnce)
+	if err != nil {
+		return nil, err
+	}
+	return append(failedBlocks, notFinishBlocks...), nil
+}
+
+func getBlocksNum(
+	ctx context.Context,
+	chainType basetype.ChainType,
+	chainID string,
+	parseState basetype.BlockParseState,
+	limit int32) ([]uint64, error) {
+	conds := blockproto.Conds{
+		ChainType: &web3eye.Uint32Val{
+			Op:    cruder.EQ,
+			Value: uint32(*chainType.Enum()),
+		},
+		ChainID: &web3eye.StringVal{
+			Op:    cruder.EQ,
+			Value: chainID,
+		},
+		ParseState: &web3eye.Uint32Val{
+			Op:    cruder.EQ,
+			Value: uint32(*parseState.Enum()),
+		},
+	}
+	h, err := blockhandler.NewHandler(
+		ctx,
+		blockhandler.WithConds(&conds),
+		blockhandler.WithOffset(0),
+		blockhandler.WithLimit(limit),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	blocks, total, err := h.GetBlocks(ctx)
+	if err != nil || total == 0 {
+		return nil, err
+	}
+	taskNums := make([]uint64, len(blocks))
+	for i, item := range blocks {
+		taskNums[i] = item.BlockNumber
+	}
+	logger.Sugar().Info("find %v bloks in %v", total, parseState)
+	return taskNums, err
 }
 
 func (s *Server) UpdateSyncTask(ctx context.Context, in *npool.UpdateSyncTaskRequest) (*npool.UpdateSyncTaskResponse, error) {

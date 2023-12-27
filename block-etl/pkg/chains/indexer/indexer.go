@@ -21,6 +21,9 @@ const (
 	maxTopicNum            = 5
 	maxParseGoroutineNum   = 5
 	updateBlockNumInterval = time.Minute
+	// 3145728 = 3M
+	MaxTokenURILength    = 3145728
+	OverLimitStoreLength = 100
 )
 
 type IIndexer interface {
