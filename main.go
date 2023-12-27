@@ -1,61 +1,55 @@
 package main
 
-import (
-	"context"
-	"fmt"
-	"os"
-	"time"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"os"
+// 	"time"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	"github.com/apache/pulsar-client-go/pulsar"
-	"github.com/web3eye-io/Web3Eye/common/chains/sol"
-	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
-)
+// 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+// 	"github.com/apache/pulsar-client-go/pulsar"
+// 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
+// )
 
-func main() {
-	logger.Init(logger.DebugLevel, "./a.log")
+// func main() {
+// 	logger.Init(logger.DebugLevel, "./a.log")
 
-	cli, _ := sol.Client([]string{"https://ultra-weathered-patina.solana-mainnet.quiknode.pro/6d1f40b3a5315383bc3e9492e0e5e8b0fb4d1073/"})
-	for i := uint64(237150000); i < 237150010; i++ {
-		_, err := cli.GetBlock(context.Background(), i)
-		fmt.Println(err)
-	}
-	// go produce()
-	// consumer()
-}
-func consumer() {
-	cli, err := ctpulsar.Client()
-	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
-	defer cli.Close()
+// 	go produce()
+// 	consumer()
+// }
+// func consumer() {
+// 	cli, err := ctpulsar.Client()
+// 	if err != nil {
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
+// 	defer cli.Close()
 
-	consumChan := make(chan pulsar.ConsumerMessage)
+// 	consumChan := make(chan pulsar.ConsumerMessage)
 
-	_, err = cli.Subscribe(pulsar.ConsumerOptions{
-		Topic:            "token-image-bucket",
-		SubscriptionName: "ssss",
-		MessageChannel:   consumChan,
-	})
-	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
+// 	_, err = cli.Subscribe(pulsar.ConsumerOptions{
+// 		Topic:            "token-image-bucket",
+// 		SubscriptionName: "ssss",
+// 		MessageChannel:   consumChan,
+// 	})
+// 	if err != nil {
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
 
-	for {
-		num := <-consumChan
-		fmt.Println(num.Key())
-		// if num.Key() == "5" {
-		// 	continue
-		// }
-		// consum.AckID(num.ID())
-	}
-}
+// 	for {
+// 		num := <-consumChan
+// 		fmt.Println(num.Key())
+// 		// if num.Key() == "5" {
+// 		// 	continue
+// 		// }
+// 		// consum.AckID(num.ID())
+// 	}
+// }
 
-func produce() {
-	cli, err := ctpulsar.Client()
-	if err != nil {
+// func produce() {
+// 	cli, err := ctpulsar.Client()
+// 	if err != nil {
 		logger.Sugar().Error(err)
 		os.Exit(0)
 	}
