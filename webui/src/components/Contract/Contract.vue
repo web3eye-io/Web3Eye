@@ -178,7 +178,9 @@ const getContract = () => {
     Message: {}
   }, (error: boolean, row: Contract) => {
     if (!error) {
-      getTransfers(0, 100, row.ChainID, row.ChainType)
+      if (!_chainID.value|| !_chainType.value) {
+        getTransfers(0, 100, row.ChainID, row.ChainType)
+      }
     }
   })
 }
@@ -187,7 +189,7 @@ const transfer = useTransferStore()
 const key = computed(() => transfer.setKey(_chainID.value, _contract.value, undefined as unknown as string))
 const transfers = computed(() => transfer.getTransfersByKey(key.value))
 
-const getTransfers = (offset: number, limit: number, chainID: string, chainType:string) => {
+const getTransfers = (offset: number, limit: number, chainID: string, chainType: string) => {
   transfer.getTransfers({
     ChainID: chainID,
     ChainType: chainType as unknown as ChainType,
@@ -258,12 +260,12 @@ const onTokenClick = (token: ShotToken) => {
 }
 
 onMounted(() => {
-  if (transfers.value?.length === 0) {
-    if (_chainID.value?.length === 0 || _chainType.value?.length === 0) return
-    getTransfers(0, 100, _chainID.value, _chainType.value)
-  }
   if (_contract?.value?.length > 0) {
     getContract()
+  }
+  if (transfers.value?.length === 0) {
+    if (!_chainID.value || !_chainType.value) return
+    getTransfers(0, 100, _chainID.value, _chainType.value)
   }
 })
 </script>
