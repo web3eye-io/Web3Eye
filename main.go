@@ -50,44 +50,44 @@ package main
 // func produce() {
 // 	cli, err := ctpulsar.Client()
 // 	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
-	defer cli.Close()
-	producer, err := cli.CreateProducer(pulsar.ProducerOptions{
-		Topic: "token-image-bucket",
-	})
-	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
-	for i := 0; i < 10; i++ {
-		_, err := producer.Send(context.Background(), &pulsar.ProducerMessage{
-			Key: fmt.Sprintf("%v", i),
-		})
-		if err != nil {
-			logger.Sugar().Error(err)
-			os.Exit(0)
-		}
-		time.Sleep(time.Second)
-	}
-	fmt.Println("I finish produce")
-}
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
+// 	defer cli.Close()
+// 	producer, err := cli.CreateProducer(pulsar.ProducerOptions{
+// 		Topic: "token-image-bucket",
+// 	})
+// 	if err != nil {
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
+// 	for i := 0; i < 10; i++ {
+// 		_, err := producer.Send(context.Background(), &pulsar.ProducerMessage{
+// 			Key: fmt.Sprintf("%v", i),
+// 		})
+// 		if err != nil {
+// 			logger.Sugar().Error(err)
+// 			os.Exit(0)
+// 		}
+// 		time.Sleep(time.Second)
+// 	}
+// 	fmt.Println("I finish produce")
+// }
 
-func tableView() {
-	cli, err := ctpulsar.Client()
-	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
-	defer cli.Close()
-	tableView, err := cli.CreateTableView(pulsar.TableViewOptions{
-		Topic: "token-image-bucket",
-	})
-	if err != nil {
-		logger.Sugar().Error(err)
-		os.Exit(0)
-	}
-	fmt.Println(tableView.Keys())
-	fmt.Println(tableView.Size())
-}
+// func tableView() {
+// 	cli, err := ctpulsar.Client()
+// 	if err != nil {
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
+// 	defer cli.Close()
+// 	tableView, err := cli.CreateTableView(pulsar.TableViewOptions{
+// 		Topic: "token-image-bucket",
+// 	})
+// 	if err != nil {
+// 		logger.Sugar().Error(err)
+// 		os.Exit(0)
+// 	}
+// 	fmt.Println(tableView.Keys())
+// 	fmt.Println(tableView.Size())
+// }
