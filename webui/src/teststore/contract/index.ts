@@ -32,7 +32,7 @@ export const useContractStore = defineStore('contract', {
     }
   },
   actions: {
-    getContractAndTokens (req: GetContractAndTokensRequest, done: (error: boolean, rows: Contract, tokens: ShotToken[]) => void) {
+    getContractAndTokens (req: GetContractAndTokensRequest, done: (error: boolean, row: Contract, tokens: ShotToken[]) => void) {
       doActionWithError<GetContractAndTokensRequest, GetContractAndTokensResponse>(
         API.GET_CONTRACT_AND_TOKENS,
         req,
