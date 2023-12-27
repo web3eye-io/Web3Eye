@@ -45,7 +45,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 		case num := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, num)
 			if err != nil {
-				logger.Sugar().Error("IndexBlock", "BlockNum", num, "Error", err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 				continue
 			}
 
@@ -87,7 +87,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}()
 
 			if err != nil {
-				logger.Sugar().Error("IndexBlock", "BlockNum", num, "Error", err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 			}
 
 			remark := ""
@@ -105,7 +105,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				},
 			})
 			if err != nil {
-				logger.Sugar().Error("IndexBlock", "BlockNum", num, "Error", err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 			}
 		case <-ctx.Done():
 			return
