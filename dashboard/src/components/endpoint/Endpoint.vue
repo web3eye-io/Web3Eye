@@ -165,6 +165,7 @@ const selectedEndpoints = ref([] as Array<Endpoint>)
 const onDelete = (row: Endpoint) => {
     endpoint.deleteEndpoint({
         ID: row.ID,
+        EntID: row.EntID,
         Message: {}
     }, () => {
         // TODO

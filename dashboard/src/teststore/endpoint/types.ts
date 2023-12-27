@@ -26,7 +26,8 @@ export interface CreateEndpointResponse {
   
 
 export interface DeleteEndpointRequest extends BaseRequest{
-    ID: string;
+    ID: number;
+    EntID: string;
 }
   
 export interface DeleteEndpointResponse {
@@ -43,7 +44,8 @@ export interface GetEndpointsResponse {
 }
 
 export interface UpdateEndpointRequest extends BaseRequest{
-    ID: string;
+    ID: number;
+    EntID: string;
     ChainType: ChainType;
     ChainID: string;
     Address: string;
