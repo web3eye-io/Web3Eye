@@ -59,10 +59,10 @@
             </div>
           </div>
           <div class="loading">
-            <q-inner-loading :showing="loading" style="color:#a3a3a3" />
+            <q-inner-loading :showing="loading" style="color:#b8b1b1" />
           </div>
-          <div v-if='haveMore' class="no-more row">no more content</div>
-          <div id="bottom"></div>
+          <div v-if="haveMore" class="no-more row">no more content</div>
+          <div id="bottom" style="padding-bottom: 50px;"></div>
         </div>
       </div>
     </div>
