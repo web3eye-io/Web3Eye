@@ -18,7 +18,7 @@
     </div>
     <div class="column input-container">
       <div class="row box" id="normal-box" :class="[opening ? 'hidden' : '']">
-        <div class="left"><q-icon name="img:icons/search.png" size="20px" /></div>
+        <div class="left"><q-icon name="img:icons/search.png" size="18px" /></div>
         <div class="main">
           <input class="search-box" id="search-box" placeholder="search contract address or drag an image here"
             v-model="contract" />
@@ -26,7 +26,7 @@
         <!-- camera start -->
         <input ref='loadFileButton' type='file' style='display: none;' @change='uploadFile'>
         <div class="right">
-          <q-icon name="img:icons/camera.png" class="photography" size="22px" @click='loadFileButton?.click()' />
+          <q-icon name="img:icons/finder.png" class="photography" size="18px" @click='loadFileButton?.click()' />
         </div>
         <!-- camera end -->
       </div>
