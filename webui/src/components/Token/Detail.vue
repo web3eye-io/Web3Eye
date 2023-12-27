@@ -210,7 +210,7 @@ const id1 = ref(_id.value)
 
 const transfer = useTransferStore()
 const transferKey = computed(() =>
-  transfer.setKey(_chainID.value, tokenID1.value)
+  transfer.setKey(_chainID.value, _contract.value, tokenID1.value)
 )
 const transfers = computed(() =>
   transfer.Transfers.Transfers.get(transferKey.value)

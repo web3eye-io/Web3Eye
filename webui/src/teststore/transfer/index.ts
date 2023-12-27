@@ -12,9 +12,9 @@ export const useTransferStore = defineStore('Transfer', {
   }),
   getters: {
     setKey() {
-      return (chainID: string, tokenID: string) => {
+      return (chainID: string, contract: string, tokenID: string) => {
         // when get contract transfers, TokenID is Contract
-        return `${chainID}-${tokenID}`
+        return `${chainID}-${contract}-${tokenID}`
       }
     },
     getTransfersByKey() {
@@ -32,8 +32,6 @@ export const useTransferStore = defineStore('Transfer', {
         req.Message,
         (resp: GetTransfersResponse): void => {
           resp.Infos.forEach((el) => {
-            // key: ChainID-TokenID
-            // key: ChainID-Contract
             let transfers = this.Transfers.Transfers.get(key)
             if (!transfers) {
                 transfers = [] as Array<Transfer>
