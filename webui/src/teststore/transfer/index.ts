@@ -36,7 +36,8 @@ export const useTransferStore = defineStore('Transfer', {
             if (!transfers) {
                 transfers = [] as Array<Transfer>
             }
-            transfers.push(el)
+            const index = transfers.findIndex((al) => al.ID === el.ID)
+            transfers.splice(index > -1 ? index : 0, index > -1 ? index : 0, el)
             this.Transfers.Transfers.set(key, transfers)
           })
           this.Transfers.Total = resp.Total
