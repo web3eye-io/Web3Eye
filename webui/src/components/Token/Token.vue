@@ -59,10 +59,10 @@
             </div>
           </div>
           <div class="loading">
-            <q-inner-loading :showing="loading" style="color:#a3a3a3" />
+            <q-inner-loading :showing="loading" style="color:#b8b1b1" />
           </div>
-          <div v-if='haveMore' class="no-more row">no more content</div>
-          <div id="bottom"></div>
+          <div v-if="haveMore" class="no-more row">no more content</div>
+          <div id="bottom" style="padding-bottom: 50px;"></div>
         </div>
       </div>
     </div>
@@ -202,14 +202,17 @@ const currentPage = ref(1)
 const loading = ref(false)
 
 const loadMore = () => {
-  if (currentPage.value >= token.SearchTokens.TotalPages && token.SearchTokens.TotalPages !== 0) {
+  if (currentPage.value > token.SearchTokens.TotalPages && token.SearchTokens.TotalPages !== 0) {
     haveMore.value = true
     return
   }
   loading.value = true
+  if (currentPage.value === 1 && token.SearchTokens.SearchTokens?.length !== 0) {
+    currentPage.value += 1
+  }
   token.getTokens({
     Limit: 8,
-    Page: currentPage.value + 1,
+    Page: currentPage.value,
     Message: {}
   }, (error: boolean) => {
     loading.value = false

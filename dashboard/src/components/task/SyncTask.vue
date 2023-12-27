@@ -167,6 +167,7 @@ const selectedSyncTasks = ref([] as Array<SyncTask>)
 const onDelete = (row: SyncTask) => {
     task.deleteSyncTask({
         ID: row.ID,
+        EntID: row.EntID,
         Message: {}
     }, () => {
         // TODO
@@ -179,6 +180,12 @@ const columns = computed(() => [
         label: t('MSG_ID'),
         sortable: true,
         field: (row: SyncTask) => row.ID
+    },
+    {
+        name: 'EntID',
+        label: t('MSG_ENT_ID'),
+        sortable: true,
+        field: (row: SyncTask) => row.EntID
     },
     {
         name: 'ChainID',
