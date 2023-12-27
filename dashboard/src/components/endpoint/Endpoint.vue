@@ -180,6 +180,12 @@ const columns = computed(() => [
         field: (row: Endpoint) => row.ID
     },
     {
+        name: 'EntID',
+        label: t('MSG_ENT_ID'),
+        sortable: true,
+        field: (row: Endpoint) => row.EntID
+    },
+    {
         name: 'ChainID',
         label: t('MSG_CHAIN_ID'),
         sortable: true,
