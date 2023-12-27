@@ -182,7 +182,7 @@ const getContract = () => {
 }
 
 const transfer = useTransferStore()
-const key = computed(() => transfer.setKey(_chainID.value, _contract.value))
+const key = computed(() => transfer.setKey(_chainID.value, _contract.value, undefined as unknown as string))
 const transfers = computed(() => transfer.getTransfersByKey(key.value))
 
 const getTransfers = (offset: number, limit: number) => {
