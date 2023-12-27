@@ -188,6 +188,11 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			metadata = &token_metadata.Metadata{}
 		}
 
+		if len(metadata.Data.Uri) > indexer.MaxTokenURILength {
+			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(metadata.Data.Uri))
+			metadata.Data.Uri = metadata.Data.Uri[:indexer.OverLimitStoreLength]
+		}
+
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
 			Info: &tokenProto.TokenReq{
 				ChainType:   &e.ChainType,

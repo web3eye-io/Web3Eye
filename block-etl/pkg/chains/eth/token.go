@@ -211,6 +211,11 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
+		if len(tokenURI) > indexer.MaxTokenURILength {
+			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(tokenURI))
+			tokenURI = tokenURI[:indexer.OverLimitStoreLength]
+		}
+
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
 			Info: &tokenProto.TokenReq{
 				ChainType:   &e.ChainType,
