@@ -47,7 +47,6 @@
 import { defineAsyncComponent, onMounted, ref } from 'vue'
 import largelogo from '../../assets/logo/large-logo.png'
 import { useRouter } from 'vue-router'
-import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
 const Loading = defineAsyncComponent(() => import('src/components/Loading/Loading.vue'))
@@ -131,7 +130,7 @@ onMounted(() => {
     e.stopPropagation()
     e.preventDefault()
     if (contract.value?.length === 0) return
-    getContractAndTokens(0, 100)
+    void router.push({path: '/contract', query: {contract: contract.value} })
   })
 })
 
@@ -155,20 +154,6 @@ onMounted(() => {
 })
 
 const contract = ref('')
-const _contract = useContractStore()
-
-const getContractAndTokens = (offset: number, limit: number) => {
-  _contract.getContractAndTokens({
-    Contract: contract.value,
-    Offset: offset,
-    Limit: limit,
-    Message: {}
-  }, (error: boolean) => {
-    if (error) return
-    void router.push({path: '/contract', query: {contract: contract.value} })
-  })
-}
-
 </script>
 
 <style lang='sass' scoped>
