@@ -153,7 +153,12 @@ func MediaFromContentType(contentType string) MediaType {
 	if whereCharset != -1 {
 		contentType = contentType[:whereCharset]
 	}
-	spl := strings.Split(contentType, "/")
+	_spl := strings.Split(contentType, "/")
+
+	spl := []string{"", ""}
+	for i := 0; i < len(_spl) && i < len(spl); i++ {
+		spl[i] = _spl[i]
+	}
 
 	switch spl[0] {
 	case "image":
