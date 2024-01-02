@@ -428,4 +428,6 @@ onMounted(() => {
   font-size: 12px
 .token,.show-more
   padding-left: 5px
+.grid-container
+  padding-bottom: 48px
 </style>
