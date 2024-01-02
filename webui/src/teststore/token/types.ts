@@ -47,7 +47,8 @@ export interface SearchToken {
 }
 
 export interface SiblingToken {
-    ID: string
+    ID: number
+    EntID: string
     TokenID: string
     ImageURL: string
     IPFSImageURL: string
@@ -76,7 +77,7 @@ export interface Token {
 }
 
 export interface GetTokenRequest extends BaseRequest {
-    ID: string
+    ID: number
 }
   
 export interface GetTokenResponse {

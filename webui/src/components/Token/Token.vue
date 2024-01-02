@@ -51,7 +51,7 @@
                 <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                <div v-for="item in token.SiblingTokens" :key="item.EntID" @click="onShotTokenClick(token, item)"
                   class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
@@ -169,7 +169,7 @@ const onShotTokenClick = (token: SearchToken, shotToken: SiblingToken) => {
       chainType: token.ChainType,
       contract: token.Contract,
       tokenID: shotToken.TokenID,
-      id: token.ID,
+      id: shotToken.ID,
     }
   })
 }

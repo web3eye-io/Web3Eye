@@ -288,7 +288,7 @@ const target = computed(() => token.getTokenByID(Number(id1.value)))
 const getToken = () => {
   token.getToken(
     {
-      ID: id1.value,
+      ID: Number(id1.value),
       Message: {},
     },
     () => {
