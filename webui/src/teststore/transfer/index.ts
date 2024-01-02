@@ -13,7 +13,6 @@ export const useTransferStore = defineStore('Transfer', {
   getters: {
     setKey() {
       return (chainID: string, contract: string, tokenID: string) => {
-        // when get contract transfers, TokenID is Contract
         return `${chainID}-${contract}-${tokenID}`
       }
     },
