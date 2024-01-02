@@ -485,15 +485,12 @@ func (s *Server) DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) 
 
 //nolint:funlen,gocyclo
 func (s *Server) TriggerTokenTransform(ctx context.Context, conds *npool.Conds) error {
-	// TODO: will be rewrite,too long
-	// TODO: each state corresponds to a processing function
-	// query synctask
 	// lock
 	lockKey := "TriggerTokenTransform_Lock"
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerTokenTransform", "warning", err)
-		return err
+		return nil
 	}
 
 	defer func() {

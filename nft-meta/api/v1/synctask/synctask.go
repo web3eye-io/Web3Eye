@@ -100,7 +100,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.TriggerSyncTaskResponse{}, err
+		return &npool.TriggerSyncTaskResponse{}, nil
 	}
 
 	defer func() {
