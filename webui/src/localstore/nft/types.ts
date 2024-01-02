@@ -33,7 +33,7 @@ export interface UploadResponse {
   Msg: string
   Page: number
   StorageKey : string
-  TotalPages: number
-  TotalTokens: number
+  Pages: number
+  Total: number
   Limit: number
 }

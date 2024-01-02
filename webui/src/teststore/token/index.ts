@@ -8,10 +8,10 @@ export const useTokenStore = defineStore('token', {
   state: () => ({
     SearchTokens: {
       SearchTokens: [] as Array<SearchToken>,
-      TotalTokens: 0,
+      Total: 0,
       Current: '',
       StorageKey: '',
-      TotalPages: 0
+      Pages: 0
     },
     Token: {
       Token: new Map<number, Token>(),
@@ -46,8 +46,8 @@ export const useTokenStore = defineStore('token', {
         reqMessage.Message,
         (resp: SearchTokensResponse): void => {
           this.addSearchTokens(resp.Infos)
-          this.SearchTokens.TotalPages = resp.TotalPages
-          this.SearchTokens.TotalTokens = resp.TotalTokens
+          this.SearchTokens.Pages = resp.Pages
+          this.SearchTokens.Total = resp.Total
           this.SearchTokens.StorageKey = resp.StorageKey
           if (resp.StorageKey?.length > 0) {
             Cookies.set('Storage-Key', resp.StorageKey, { expires: '4h', secure: true, path: '/' })
@@ -69,8 +69,8 @@ export const useTokenStore = defineStore('token', {
         (resp: GetTokensResponse): void => {
           this.addSearchTokens(resp.Infos)
           this.SearchTokens.StorageKey = resp.StorageKey
-          this.SearchTokens.TotalPages = resp.TotalPages
-          done(false, resp.Infos, resp.TotalPages)
+          this.SearchTokens.Pages = resp.Pages
+          done(false, resp.Infos, resp.Pages)
         }, () => {
           done(true, [], 0)
       })

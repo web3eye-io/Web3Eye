@@ -15,8 +15,8 @@ export interface SearchTokensResponse {
     Infos: Array<SearchToken>
     StorageKey: string
     Page: number
-    TotalPages: number
-    TotalTokens: number
+    Pages: number
+    Total: number
     Limit: number
 }
 
@@ -93,7 +93,7 @@ export interface GetTokensResponse {
     Infos: SearchToken[]
     StorageKey: string
     Page: number
-    TotalPages: number
-    TotalTokens: number
+    Pages: number
+    Total: number
     Limit: number
 }
