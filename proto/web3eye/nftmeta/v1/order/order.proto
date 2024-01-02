@@ -11,6 +11,9 @@ service Manager {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
   rpc CreateOrders(CreateOrdersRequest)
       returns (CreateOrdersResponse) {}
+  rpc UpsertOrder(UpsertOrderRequest) returns (UpsertOrderResponse) {}
+  rpc UpsertOrders(UpsertOrdersRequest)
+      returns (UpsertOrdersResponse) {}
   rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {}
   rpc GetOrder(GetOrderRequest) returns (GetOrderResponse) {}
   rpc GetOrderOnly(GetOrderOnlyRequest)
@@ -104,6 +107,12 @@ message CreateOrderResponse { Order Info = 10; }
 
 message CreateOrdersRequest { repeated OrderReq Infos = 10; }
 message CreateOrdersResponse { repeated Order Infos = 10; }
+
+message UpsertOrderRequest { OrderReq Info = 10; }
+message UpsertOrderResponse { Order Info = 10; }
+
+message UpsertOrdersRequest { repeated OrderReq Infos = 10; }
+message UpsertOrdersResponse { repeated Order Infos = 10; }
 
 message GetOrderRequest { uint32 ID = 10; }
 message GetOrderResponse { Order Info = 10; }

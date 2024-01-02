@@ -202,7 +202,7 @@
             "$ref": "#/definitions/contractShotToken"
           }
         },
-        "TotalTokens": {
+        "Total": {
           "type": "integer",
           "format": "int64"
         }

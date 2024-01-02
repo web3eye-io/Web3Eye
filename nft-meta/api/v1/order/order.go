@@ -71,6 +71,66 @@ func (s *Server) CreateOrders(ctx context.Context, in *npool.CreateOrdersRequest
 	}, nil
 }
 
+func (s *Server) UpsertOrder(ctx context.Context, in *npool.UpsertOrderRequest) (*npool.UpsertOrderResponse, error) {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertOrder",
+			"In", in,
+		)
+		return &npool.UpsertOrderResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+
+	h, err := handler.NewHandler(ctx,
+		handler.WithEntID(in.Info.EntID, false),
+		handler.WithChainType(in.Info.ChainType, true),
+		handler.WithChainID(in.Info.ChainID, true),
+		handler.WithTxHash(in.Info.TxHash, true),
+		handler.WithBlockNumber(in.Info.BlockNumber, true),
+		handler.WithTxIndex(in.Info.TxIndex, true),
+		handler.WithLogIndex(in.Info.LogIndex, true),
+		handler.WithRecipient(in.Info.Recipient, true),
+		handler.WithTargetItems(in.Info.TargetItems, true),
+		handler.WithOfferItems(in.Info.OfferItems, true),
+		handler.WithRemark(in.Info.Remark, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertOrder", "error", err)
+		return &npool.UpsertOrderResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	info, err := h.UpdateOrder(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertOrder", "error", err)
+		return &npool.UpsertOrderResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpsertOrderResponse{
+		Info: info,
+	}, nil
+}
+
+func (s *Server) UpsertOrders(ctx context.Context, in *npool.UpsertOrdersRequest) (*npool.UpsertOrdersResponse, error) {
+	if len(in.GetInfos()) == 0 {
+		logger.Sugar().Errorw("UpsertOrders", "error", "Infos is empty")
+		return &npool.UpsertOrdersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(in.Infos, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertOrders", "error", err)
+		return &npool.UpsertOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, err := h.UpsertOrders(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertOrders", "error", err)
+		return &npool.UpsertOrdersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpsertOrdersResponse{
+		Infos: infos,
+	}, nil
+}
+
 func (s *Server) UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) (*npool.UpdateOrderResponse, error) {
 	if req := in.GetInfo(); req == nil {
 		logger.Sugar().Errorw(

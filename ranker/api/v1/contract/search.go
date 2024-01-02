@@ -103,8 +103,8 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	}
 
 	return &rankernpool.GetContractAndTokensResp{
-		Contract:    contract,
-		Tokens:      shotTokens,
-		TotalTokens: total,
+		Contract: contract,
+		Tokens:   shotTokens,
+		Total:    total,
 	}, nil
 }

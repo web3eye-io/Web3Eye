@@ -38,5 +38,5 @@ message ShotToken {
 message GetContractAndTokensResp{
   nftmeta.v1.contract.Contract Contract  = 10;
   repeated ShotToken Tokens = 20;
-  uint32 TotalTokens = 30;
+  uint32 Total = 30;
 }

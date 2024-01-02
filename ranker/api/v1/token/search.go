@@ -38,11 +38,11 @@ type SearchTokenBone struct {
 }
 
 type PageBone struct {
-	TokenBones  []*SearchTokenBone
-	Page        uint32
-	TotalPages  uint32
-	TotalTokens uint32
-	Limit       uint32
+	TokenBones []*SearchTokenBone
+	Page       uint32
+	Pages      uint32
+	Total      uint32
+	Limit      uint32
 }
 
 type ScoreItem struct {
@@ -84,11 +84,11 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 			end = totalTokens
 		}
 		pBone := &PageBone{
-			TokenBones:  ToTokenBones(infos[start:end]),
-			Page:        i + 1,
-			TotalPages:  totalPages,
-			TotalTokens: totalTokens,
-			Limit:       in.Limit,
+			TokenBones: ToTokenBones(infos[start:end]),
+			Page:       i + 1,
+			Pages:      totalPages,
+			Total:      totalTokens,
+			Limit:      in.Limit,
 		}
 
 		err = ctredis.Set(fmt.Sprintf("SearchToken:%v:%v", storageKey, pBone.Page), pBone, StorageExpr)
@@ -105,12 +105,12 @@ func (s *Server) Search(ctx context.Context, in *rankernpool.SearchTokenRequest)
 
 	logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
 	return &rankernpool.SearchResponse{
-		Infos:       infos[:limit],
-		StorageKey:  storageKey,
-		Page:        1,
-		TotalPages:  totalPages,
-		TotalTokens: totalTokens,
-		Limit:       in.Limit,
+		Infos:      infos[:limit],
+		StorageKey: storageKey,
+		Page:       1,
+		Pages:      totalPages,
+		Total:      totalTokens,
+		Limit:      in.Limit,
 	}, nil
 }
 
@@ -127,12 +127,12 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 	}
 
 	return &rankernpool.SearchResponse{
-		Infos:       tokens,
-		StorageKey:  in.StorageKey,
-		Page:        pBone.Page,
-		TotalPages:  pBone.TotalPages,
-		TotalTokens: pBone.TotalTokens,
-		Limit:       pBone.Limit,
+		Infos:      tokens,
+		StorageKey: in.StorageKey,
+		Page:       pBone.Page,
+		Pages:      pBone.Pages,
+		Total:      pBone.Total,
+		Limit:      pBone.Limit,
 	}, nil
 }
 

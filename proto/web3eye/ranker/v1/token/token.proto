@@ -62,8 +62,8 @@ message SearchResponse {
   repeated SearchToken Infos = 10;
   string StorageKey =20;
   uint32 Page = 30;
-  uint32 TotalPages = 40;
-  uint32 TotalTokens = 50;
+  uint32 Pages = 40;
+  uint32 Total = 50;
   uint32 Limit = 60;
 }
 

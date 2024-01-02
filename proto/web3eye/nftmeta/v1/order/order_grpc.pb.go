@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Manager_CreateOrder_FullMethodName     = "/nftmeta.v1.order.Manager/CreateOrder"
 	Manager_CreateOrders_FullMethodName    = "/nftmeta.v1.order.Manager/CreateOrders"
+	Manager_UpsertOrder_FullMethodName     = "/nftmeta.v1.order.Manager/UpsertOrder"
+	Manager_UpsertOrders_FullMethodName    = "/nftmeta.v1.order.Manager/UpsertOrders"
 	Manager_UpdateOrder_FullMethodName     = "/nftmeta.v1.order.Manager/UpdateOrder"
 	Manager_GetOrder_FullMethodName        = "/nftmeta.v1.order.Manager/GetOrder"
 	Manager_GetOrderOnly_FullMethodName    = "/nftmeta.v1.order.Manager/GetOrderOnly"
@@ -36,6 +38,8 @@ const (
 type ManagerClient interface {
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
 	CreateOrders(ctx context.Context, in *CreateOrdersRequest, opts ...grpc.CallOption) (*CreateOrdersResponse, error)
+	UpsertOrder(ctx context.Context, in *UpsertOrderRequest, opts ...grpc.CallOption) (*UpsertOrderResponse, error)
+	UpsertOrders(ctx context.Context, in *UpsertOrdersRequest, opts ...grpc.CallOption) (*UpsertOrdersResponse, error)
 	UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...grpc.CallOption) (*UpdateOrderResponse, error)
 	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
 	GetOrderOnly(ctx context.Context, in *GetOrderOnlyRequest, opts ...grpc.CallOption) (*GetOrderOnlyResponse, error)
@@ -65,6 +69,24 @@ func (c *managerClient) CreateOrder(ctx context.Context, in *CreateOrderRequest,
 func (c *managerClient) CreateOrders(ctx context.Context, in *CreateOrdersRequest, opts ...grpc.CallOption) (*CreateOrdersResponse, error) {
 	out := new(CreateOrdersResponse)
 	err := c.cc.Invoke(ctx, Manager_CreateOrders_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpsertOrder(ctx context.Context, in *UpsertOrderRequest, opts ...grpc.CallOption) (*UpsertOrderResponse, error) {
+	out := new(UpsertOrderResponse)
+	err := c.cc.Invoke(ctx, Manager_UpsertOrder_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managerClient) UpsertOrders(ctx context.Context, in *UpsertOrdersRequest, opts ...grpc.CallOption) (*UpsertOrdersResponse, error) {
+	out := new(UpsertOrdersResponse)
+	err := c.cc.Invoke(ctx, Manager_UpsertOrders_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,6 +162,8 @@ func (c *managerClient) DeleteOrder(ctx context.Context, in *DeleteOrderRequest,
 type ManagerServer interface {
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
 	CreateOrders(context.Context, *CreateOrdersRequest) (*CreateOrdersResponse, error)
+	UpsertOrder(context.Context, *UpsertOrderRequest) (*UpsertOrderResponse, error)
+	UpsertOrders(context.Context, *UpsertOrdersRequest) (*UpsertOrdersResponse, error)
 	UpdateOrder(context.Context, *UpdateOrderRequest) (*UpdateOrderResponse, error)
 	GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error)
 	GetOrderOnly(context.Context, *GetOrderOnlyRequest) (*GetOrderOnlyResponse, error)
@@ -159,6 +183,12 @@ func (UnimplementedManagerServer) CreateOrder(context.Context, *CreateOrderReque
 }
 func (UnimplementedManagerServer) CreateOrders(context.Context, *CreateOrdersRequest) (*CreateOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrders not implemented")
+}
+func (UnimplementedManagerServer) UpsertOrder(context.Context, *UpsertOrderRequest) (*UpsertOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrder not implemented")
+}
+func (UnimplementedManagerServer) UpsertOrders(context.Context, *UpsertOrdersRequest) (*UpsertOrdersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertOrders not implemented")
 }
 func (UnimplementedManagerServer) UpdateOrder(context.Context, *UpdateOrderRequest) (*UpdateOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrder not implemented")
@@ -226,6 +256,42 @@ func _Manager_CreateOrders_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagerServer).CreateOrders(ctx, req.(*CreateOrdersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpsertOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Manager_UpsertOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertOrder(ctx, req.(*UpsertOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Manager_UpsertOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertOrdersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagerServer).UpsertOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Manager_UpsertOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagerServer).UpsertOrders(ctx, req.(*UpsertOrdersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -370,6 +436,14 @@ var Manager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOrders",
 			Handler:    _Manager_CreateOrders_Handler,
+		},
+		{
+			MethodName: "UpsertOrder",
+			Handler:    _Manager_UpsertOrder_Handler,
+		},
+		{
+			MethodName: "UpsertOrders",
+			Handler:    _Manager_UpsertOrders_Handler,
 		},
 		{
 			MethodName: "UpdateOrder",

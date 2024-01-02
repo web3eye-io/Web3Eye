@@ -196,11 +196,11 @@
           "type": "integer",
           "format": "int64"
         },
-        "TotalPages": {
+        "Pages": {
           "type": "integer",
           "format": "int64"
         },
-        "TotalTokens": {
+        "Total": {
           "type": "integer",
           "format": "int64"
         },

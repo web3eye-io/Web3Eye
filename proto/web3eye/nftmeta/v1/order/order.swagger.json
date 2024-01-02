@@ -325,6 +325,25 @@
         }
       }
     },
+    "orderUpsertOrderResponse": {
+      "type": "object",
+      "properties": {
+        "Info": {
+          "$ref": "#/definitions/orderOrder"
+        }
+      }
+    },
+    "orderUpsertOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/orderOrder"
+          }
+        }
+      }
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
