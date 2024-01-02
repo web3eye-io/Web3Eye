@@ -21,14 +21,15 @@ if ! command -v gofumpt; then
     go install mvdan.cc/gofumpt@v0.3.1
 fi
 
+mkdir -p $LINT_BIN
 PATH=$LINT_BIN:$PATH
 set +e
-rc=`golangci-lint version | grep $VERSION_NUM`
-if [ ! $? -eq 0 ]; then
-  set -e
+golangci-lint version | grep $VERSION_NUM
+rc=$?
+set -e
+if [ ! $rc -eq 0 ]; then
   curl -sfL $URL | sh -s $VERSION -b $LINT_BIN
 fi
-set -e
 
 golangci-lint version
 golangci-lint linters
