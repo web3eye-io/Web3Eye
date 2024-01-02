@@ -35,7 +35,7 @@ func (e *EthIndexer) IndexOrder(ctx context.Context, logs []*types.Log) ([]*Cont
 		}
 	}
 
-	_, err := orderNMCli.CreateOrders(ctx, &order.CreateOrdersRequest{Infos: ordersReq})
+	_, err := orderNMCli.UpsertOrders(ctx, &order.UpsertOrdersRequest{Infos: ordersReq})
 	if err != nil {
 		return nil, fmt.Errorf("failed store orders to db,err: %v", err)
 	}
