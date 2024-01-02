@@ -178,7 +178,7 @@ import { formatTime } from 'src/teststore/util'
 import { Transfer } from 'src/teststore/transfer/types'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ShotToken } from 'src/teststore/contract/types'
+import { Contract, ShotToken } from 'src/teststore/contract/types'
 const MyImage = defineAsyncComponent(
   () => import('src/components/Token/Image.vue')
 )
@@ -263,8 +263,7 @@ const columns = computed(() => [
 ])
 
 const getTransfers = (offset: number, limit: number) => {
-  transfer.getTransfers(
-    {
+  transfer.getTransfers({
       ChainType: _chainType.value,
       ChainID: _chainID.value,
       Contract: _contract.value,
@@ -300,15 +299,17 @@ const getToken = () => {
 
 const contract = useContractStore()
 const tokens = computed(() => contract.shotTokens(_contract.value))
-const getContract = () => {
+const getContract = (offset: number, limit: number) => {
   contract.getContractAndTokens({
       Contract: _contract.value,
-      Offset: 0,
-      Limit: 100,
+      Offset: offset,
+      Limit: limit,
       Message: {},
-    },
-    () => {
-      // TODO
+    }, (error:boolean, _row: Contract, rows: ShotToken[]) => {
+      if(error || rows?.length === 0) {
+        return
+      }
+      getContract(offset, offset + limit)
     }
   )
 }
@@ -332,7 +333,7 @@ onMounted(() => {
     getTransfers(0, 100)
   }
   if (_contract?.value?.length > 0) {
-    getContract()
+    getContract(0, 100)
   }
 })
 </script>
