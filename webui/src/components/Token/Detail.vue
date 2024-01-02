@@ -79,6 +79,9 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props">
+            <q-td key="TokenID" :props="props">
+              {{ props.row.TokenID }}
+            </q-td>
             <q-td key="OfferItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
               <div v-else class="row justify-start">
@@ -217,6 +220,11 @@ const transfers = computed(() =>
 )
 
 const columns = computed(() => [
+  {
+    name: 'TokenID',
+    label: 'TokenID',
+    align: 'left',
+  },
   {
     name: 'OfferItems',
     label: 'Offer Items',
