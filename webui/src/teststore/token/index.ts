@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { doActionWithError } from '../action'
 import { API } from './const'
 import { GetTokenRequest, GetTokenResponse, GetTokensRequest, GetTokensResponse, SearchToken, SearchTokenMessage, SearchTokensResponse, Token } from './types' 
-import { Cookies } from 'quasar'
+import { useStorageKeyStore } from 'src/localstore/storagekey'
 
 export const useTokenStore = defineStore('token', {
   state: () => ({
@@ -49,8 +49,9 @@ export const useTokenStore = defineStore('token', {
           this.SearchTokens.Pages = resp.Pages
           this.SearchTokens.Total = resp.Total
           this.SearchTokens.StorageKey = resp.StorageKey
+          const localkey = useStorageKeyStore()
           if (resp.StorageKey?.length > 0) {
-            Cookies.set('Storage-Key', resp.StorageKey, { expires: '4h', secure: true, path: '/' })
+            localkey.setStorageKey(resp.StorageKey)
           }
           done(false, resp.Infos)
         }, () => {
@@ -58,7 +59,11 @@ export const useTokenStore = defineStore('token', {
       })
     },
     getTokens (req: GetTokensRequest, done: (error: boolean, rows: SearchToken[], totalPages?: number) => void) {
-      const key = Cookies.get('Storage-Key')
+      const localkey = useStorageKeyStore()
+      const key = localkey.getStorageKey()
+      if (key === null) {
+        return
+      }
       if (key && key?.length > 0) {
         req.StorageKey = key
       }

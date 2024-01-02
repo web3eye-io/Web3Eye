@@ -49,6 +49,7 @@ import largelogo from '../../assets/logo/large-logo.png'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
+import { useStorageKeyStore } from 'src/localstore/storagekey'
 const Loading = defineAsyncComponent(() => import('src/components/Loading/Loading.vue'))
 
 const loadFileButton = ref<HTMLInputElement>()
@@ -67,6 +68,7 @@ const uploadFile = (evt: Event) => {
 
 const router = useRouter()
 const token = useTokenStore()
+const localkey = useStorageKeyStore()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleUploadFile = (file: any, fromDropArea: boolean) => {
@@ -77,6 +79,7 @@ const handleUploadFile = (file: any, fromDropArea: boolean) => {
   contract.value = file?.name
   const reqMessage = {} as SearchTokenMessage
   token.$reset()
+  localkey.resetStorageKey()
   token.searchTokens(formData, reqMessage, (error: boolean) => {
     if (!error) {
       const normalBox = document.getElementById('normal-box')
@@ -147,9 +150,9 @@ onMounted(() => {
   })
   dropZone?.addEventListener('dragleave', (e) => {
     e.stopPropagation()
-    e.preventDefault()
+    // e.preventDefault()
     let relatedTarget = e.relatedTarget
-    if (!relatedTarget) { // leave window
+    if (!relatedTarget?.dispatchEvent) { // leave window
       opening.value = false
     }
   })

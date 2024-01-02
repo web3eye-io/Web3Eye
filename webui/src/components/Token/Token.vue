@@ -202,7 +202,7 @@ const currentPage = ref(1)
 const loading = ref(false)
 
 const loadMore = () => {
-  if (currentPage.value > token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
+  if (currentPage.value >= token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
     haveMore.value = true
     return
   }
