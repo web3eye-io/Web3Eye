@@ -150,9 +150,9 @@ onMounted(() => {
   })
   dropZone?.addEventListener('dragleave', (e) => {
     e.stopPropagation()
-    e.preventDefault()
+    // e.preventDefault()
     let relatedTarget = e.relatedTarget
-    if (!relatedTarget) { // leave window
+    if (!relatedTarget?.dispatchEvent) { // leave window
       opening.value = false
     }
   })
