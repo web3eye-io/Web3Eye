@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -83,6 +84,20 @@ func (bu *BlockUpdate) AddDeletedAt(u int32) *BlockUpdate {
 	return bu
 }
 
+// SetEntID sets the "ent_id" field.
+func (bu *BlockUpdate) SetEntID(u uuid.UUID) *BlockUpdate {
+	bu.mutation.SetEntID(u)
+	return bu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableEntID(u *uuid.UUID) *BlockUpdate {
+	if u != nil {
+		bu.SetEntID(*u)
+	}
+	return bu
+}
+
 // SetChainType sets the "chain_type" field.
 func (bu *BlockUpdate) SetChainType(s string) *BlockUpdate {
 	bu.mutation.SetChainType(s)
@@ -115,15 +130,15 @@ func (bu *BlockUpdate) SetBlockHash(s string) *BlockUpdate {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (bu *BlockUpdate) SetBlockTime(i int64) *BlockUpdate {
+func (bu *BlockUpdate) SetBlockTime(u uint64) *BlockUpdate {
 	bu.mutation.ResetBlockTime()
-	bu.mutation.SetBlockTime(i)
+	bu.mutation.SetBlockTime(u)
 	return bu
 }
 
-// AddBlockTime adds i to the "block_time" field.
-func (bu *BlockUpdate) AddBlockTime(i int64) *BlockUpdate {
-	bu.mutation.AddBlockTime(i)
+// AddBlockTime adds u to the "block_time" field.
+func (bu *BlockUpdate) AddBlockTime(u int64) *BlockUpdate {
+	bu.mutation.AddBlockTime(u)
 	return bu
 }
 
@@ -225,7 +240,7 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},
@@ -279,6 +294,13 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: block.FieldDeletedAt,
 		})
 	}
+	if value, ok := bu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: block.FieldEntID,
+		})
+	}
 	if value, ok := bu.mutation.ChainType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -316,14 +338,14 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := bu.mutation.BlockTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
 	}
 	if value, ok := bu.mutation.AddedBlockTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
@@ -418,6 +440,20 @@ func (buo *BlockUpdateOne) AddDeletedAt(u int32) *BlockUpdateOne {
 	return buo
 }
 
+// SetEntID sets the "ent_id" field.
+func (buo *BlockUpdateOne) SetEntID(u uuid.UUID) *BlockUpdateOne {
+	buo.mutation.SetEntID(u)
+	return buo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableEntID(u *uuid.UUID) *BlockUpdateOne {
+	if u != nil {
+		buo.SetEntID(*u)
+	}
+	return buo
+}
+
 // SetChainType sets the "chain_type" field.
 func (buo *BlockUpdateOne) SetChainType(s string) *BlockUpdateOne {
 	buo.mutation.SetChainType(s)
@@ -450,15 +486,15 @@ func (buo *BlockUpdateOne) SetBlockHash(s string) *BlockUpdateOne {
 }
 
 // SetBlockTime sets the "block_time" field.
-func (buo *BlockUpdateOne) SetBlockTime(i int64) *BlockUpdateOne {
+func (buo *BlockUpdateOne) SetBlockTime(u uint64) *BlockUpdateOne {
 	buo.mutation.ResetBlockTime()
-	buo.mutation.SetBlockTime(i)
+	buo.mutation.SetBlockTime(u)
 	return buo
 }
 
-// AddBlockTime adds i to the "block_time" field.
-func (buo *BlockUpdateOne) AddBlockTime(i int64) *BlockUpdateOne {
-	buo.mutation.AddBlockTime(i)
+// AddBlockTime adds u to the "block_time" field.
+func (buo *BlockUpdateOne) AddBlockTime(u int64) *BlockUpdateOne {
+	buo.mutation.AddBlockTime(u)
 	return buo
 }
 
@@ -573,7 +609,7 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},
@@ -644,6 +680,13 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Column: block.FieldDeletedAt,
 		})
 	}
+	if value, ok := buo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: block.FieldEntID,
+		})
+	}
 	if value, ok := buo.mutation.ChainType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -681,14 +724,14 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 	}
 	if value, ok := buo.mutation.BlockTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})
 	}
 	if value, ok := buo.mutation.AddedBlockTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: block.FieldBlockTime,
 		})

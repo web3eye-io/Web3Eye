@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth/contracts"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 )
@@ -104,15 +105,8 @@ func (ethCli ethClients) BlockByNumber(ctx context.Context, blockNum *big.Int) (
 	return block, err
 }
 
-type ContractCreator struct {
-	From        common.Address
-	BlockNumber uint64
-	TxHash      common.Hash
-	TxTime      uint64
-}
-
-func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr string) (*ContractCreator, error) {
-	var creator *ContractCreator
+func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr string) (*chains.ContractCreator, error) {
+	var creator *chains.ContractCreator
 	var err error
 	err = ethCli.WithClient(ctx, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		creator, err = ethCli.getContractCreator(ctx, c, contractAddr)
@@ -121,7 +115,7 @@ func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr st
 	return creator, err
 }
 
-func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*ContractCreator, error) {
+func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*chains.ContractCreator, error) {
 	rHeight, err := ethClient.BlockNumber(ctx)
 	if err != nil {
 		return nil, err
@@ -164,10 +158,10 @@ func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethc
 				return nil, err
 			}
 
-			return &ContractCreator{
-				From:        from,
+			return &chains.ContractCreator{
+				From:        from.String(),
 				BlockNumber: receipt.BlockNumber.Uint64(),
-				TxHash:      receipt.TxHash,
+				TxHash:      receipt.TxHash.Hex(),
 				TxTime:      block.Time(),
 			}, nil
 		}

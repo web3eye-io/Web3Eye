@@ -54,8 +54,8 @@ export const useEndpointStore = defineStore('endpoint', {
         req,
         req.Message,
         (resp: UpdateEndpointResponse): void => {
-          const index = this.Endpoints.Endpoints.findIndex((el) => el.ID === resp.Info.ID)
-          this.Endpoints.Endpoints.splice(index > 0 ? index : 0, index > 0 ? 1 : 0, resp.Info)
+          const index = this.Endpoints.Endpoints.findIndex((el) => el.ID === resp.Info.ID && el.EntID === resp.Info.EntID)
+          this.Endpoints.Endpoints.splice(index > -1 ? index : 0, index > -1 ? 1 : 0, resp.Info)
           this.Endpoints.Total += 1
           done(false, resp.Info)
         }, () => {

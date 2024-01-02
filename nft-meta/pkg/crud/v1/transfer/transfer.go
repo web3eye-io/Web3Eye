@@ -1,503 +1,348 @@
 package transfer
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/common/utils"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
+	enttransfer "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
-	var info *ent.Transfer
-	var err error
-
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		c := tx.Transfer.Create()
-		info, err = CreateSet(c, in).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Req struct {
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	Contract    *string
+	TokenType   *basetype.TokenType
+	TokenID     *string
+	From        *string
+	To          *string
+	Amount      *uint64
+	BlockNumber *uint64
+	TxHash      *string
+	BlockHash   *string
+	TxTime      *uint64
+	Remark      *string
+	LogIndex    *uint32
 }
 
-func Upsert(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
+//nolint:gocyclo
+func CreateSet(c *ent.TransferCreate, req *Req) *ent.TransferCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	var info *ent.Transfer
-	var err error
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		row, _ := tx.Transfer.Query().Where(
-			transfer.Contract(in.GetContract()),
-			transfer.TokenID(in.GetChainID()),
-			transfer.TxHash(in.GetTxHash()),
-			transfer.From(in.GetFrom()),
-		).Only(ctx)
-		if row == nil {
-			info, err = CreateSet(tx.Transfer.Create(), in).Save(ctx)
-			return err
-		}
-		info, err = UpdateSet(tx.Transfer.UpdateOneID(row.ID), in).Save(ctx)
-		return err
-	})
-	return info, err
-}
-
-func CreateSet(c *ent.TransferCreate, in *npool.TransferReq) *ent.TransferCreate {
-	if in.ID != nil {
-		c.SetID(uuid.New())
+	if req.ChainType != nil {
+		c.SetChainType(req.ChainType.String())
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.Contract != nil {
+		c.SetContract(*req.Contract)
 	}
-	if in.Contract != nil {
-		c.SetContract(in.GetContract())
+	if req.TokenType != nil {
+		c.SetTokenType(req.TokenType.String())
 	}
-	if in.TokenType != nil {
-		c.SetTokenType(in.GetTokenType().String())
+	if req.TokenID != nil {
+		c.SetTokenID(*req.TokenID)
 	}
-	if in.TokenID != nil {
-		c.SetTokenID(in.GetTokenID())
+	if req.From != nil {
+		c.SetFrom(*req.From)
 	}
-	if in.From != nil {
-		c.SetFrom(in.GetFrom())
+	if req.To != nil {
+		c.SetTo(*req.To)
 	}
-	if in.To != nil {
-		c.SetTo(in.GetTo())
-	}
-	if in.BlockNumber != nil {
-		c.SetBlockNumber(in.GetBlockNumber())
-	}
-	if in.Amount != nil {
-		amount := utils.Uint64ToDecStr(in.GetAmount())
+	if req.Amount != nil {
+		amount := utils.Uint64ToDecStr(*req.Amount)
 		c.SetAmount(amount)
 	}
-	if in.TxHash != nil {
-		c.SetTxHash(in.GetTxHash())
+	if req.BlockNumber != nil {
+		c.SetBlockNumber(*req.BlockNumber)
 	}
-	if in.BlockHash != nil {
-		c.SetBlockHash(in.GetBlockHash())
+	if req.TxHash != nil {
+		c.SetTxHash(*req.TxHash)
 	}
-	if in.TxTime != nil {
-		c.SetTxTime(in.GetTxTime())
+	if req.BlockHash != nil {
+		c.SetBlockHash(*req.BlockHash)
 	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.TxTime != nil {
+		c.SetTxTime(*req.TxTime)
+	}
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
+	}
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
+	}
+	if req.LogIndex != nil {
+		c.SetLogIndex(*req.LogIndex)
 	}
 	return c
 }
 
-func UpsertBulk(ctx context.Context, in []*npool.TransferReq) error {
-	var err error
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.TransferCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Transfer.Create(), info)
+func UpdateSet(u *ent.TransferUpdateOne, req *Req) (*ent.TransferUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
+	}
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.Contract != nil {
+		u.SetContract(*req.Contract)
+	}
+	if req.TokenType != nil {
+		u.SetTokenType(req.TokenType.String())
+	}
+	if req.TokenID != nil {
+		u.SetTokenID(*req.TokenID)
+	}
+	if req.From != nil {
+		u.SetFrom(*req.From)
+	}
+	if req.To != nil {
+		u.SetTo(*req.To)
+	}
+	if req.Amount != nil {
+		amount := utils.Uint64ToDecStr(*req.Amount)
+		u.SetAmount(amount)
+	}
+	if req.BlockNumber != nil {
+		u.SetBlockNumber(*req.BlockNumber)
+	}
+	if req.TxHash != nil {
+		u.SetTxHash(*req.TxHash)
+	}
+	if req.BlockHash != nil {
+		u.SetBlockHash(*req.BlockHash)
+	}
+	if req.TxTime != nil {
+		u.SetTxTime(*req.TxTime)
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	if req.LogIndex != nil {
+		u.SetLogIndex(*req.LogIndex)
+	}
+	return u, nil
+}
+
+type Conds struct {
+	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
+	ChainType   *cruder.Cond
+	ChainID     *cruder.Cond
+	Contract    *cruder.Cond
+	TokenType   *cruder.Cond
+	TokenID     *cruder.Cond
+	From        *cruder.Cond
+	To          *cruder.Cond
+	Amount      *cruder.Cond
+	BlockNumber *cruder.Cond
+	TxHash      *cruder.Cond
+	BlockHash   *cruder.Cond
+	TxTime      *cruder.Cond
+	Remark      *cruder.Cond
+	LogIndex    *cruder.Cond
+}
+
+func SetQueryConds(q *ent.TransferQuery, conds *Conds) (*ent.TransferQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		err = tx.Transfer.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
-		return err
-	})
-	return err
-}
-
-func CreateBulk(ctx context.Context, in []*npool.TransferReq) ([]*ent.Transfer, error) {
-	var err error
-	rows := []*ent.Transfer{}
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.TransferCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Transfer.Create(), info)
-		}
-		rows, err = tx.Transfer.CreateBulk(bulk...).Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func Update(ctx context.Context, in *npool.TransferReq) (*ent.Transfer, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-	var err error
-	var info *ent.Transfer
-	id, err := uuid.Parse(in.GetID())
-	if err != nil {
-		return nil, err
-	}
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		u := tx.Transfer.UpdateOneID(id)
-		info, err = UpdateSet(u, in).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func UpdateSet(u *ent.TransferUpdateOne, in *npool.TransferReq) *ent.TransferUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.Contract != nil {
-		u.SetContract(in.GetContract())
-	}
-	if in.TokenType != nil {
-		u.SetTokenType(in.GetTokenType().String())
-	}
-	if in.TokenID != nil {
-		u.SetTokenID(in.GetTokenID())
-	}
-	if in.From != nil {
-		u.SetFrom(in.GetFrom())
-	}
-	if in.To != nil {
-		u.SetTo(in.GetTo())
-	}
-	if in.BlockNumber != nil {
-		u.SetBlockNumber(in.GetBlockNumber())
-	}
-	if in.Amount != nil {
-		u.SetAmount(utils.Uint64ToDecStr(in.GetAmount()))
-	}
-	if in.TxHash != nil {
-		u.SetTxHash(in.GetTxHash())
-	}
-	if in.BlockHash != nil {
-		u.SetBlockHash(in.GetBlockHash())
-	}
-	if in.TxTime != nil {
-		u.SetTxTime(in.GetTxTime())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
-	var info *ent.Transfer
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Transfer.Query().Where(transfer.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TransferQuery, error) {
-	stm := cli.Transfer.Query()
-	if conds == nil {
-		return stm, nil
-	}
-
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(transfer.ID(id))
+			q.Where(enttransfer.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(transfer.IDIn(ids...))
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntIDs.Op {
+		case cruder.IN:
+			q.Where(enttransfer.EntIDIn(entids...))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(transfer.ChainType(conds.GetChainType().GetValue()))
+			q.Where(enttransfer.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(transfer.ChainID(conds.GetChainID().GetValue()))
+			q.Where(enttransfer.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.Contract != nil {
-		switch conds.GetContract().GetOp() {
+		contract, ok := conds.Contract.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid contract")
+		}
+		switch conds.Contract.Op {
 		case cruder.EQ:
-			stm.Where(transfer.Contract(conds.GetContract().GetValue()))
+			q.Where(enttransfer.Contract(contract))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid contract field")
 		}
 	}
 	if conds.TokenType != nil {
-		switch conds.GetTokenType().GetOp() {
+		tokentype, ok := conds.TokenType.Val.(basetype.TokenType)
+		if !ok {
+			return nil, fmt.Errorf("invalid tokentype")
+		}
+		switch conds.TokenType.Op {
 		case cruder.EQ:
-			stm.Where(transfer.TokenType(conds.GetTokenType().GetValue()))
+			q.Where(enttransfer.TokenType(tokentype.String()))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid tokentype field")
 		}
 	}
 	if conds.TokenID != nil {
-		switch conds.GetTokenID().GetOp() {
-		case cruder.EQ:
-			stm.Where(transfer.TokenID(conds.GetTokenID().GetValue()))
-		default:
-			return nil, fmt.Errorf("invalid transfer field")
+		tokenid, ok := conds.TokenID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid tokenid")
 		}
-	}
-	if conds.TokenID != nil {
-		switch conds.GetTokenID().GetOp() {
+		switch conds.TokenID.Op {
 		case cruder.EQ:
-			stm.Where(transfer.TokenID(conds.GetTokenID().GetValue()))
+			q.Where(enttransfer.TokenID(tokenid))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid tokenid field")
 		}
 	}
 	if conds.From != nil {
-		switch conds.GetFrom().GetOp() {
+		from, ok := conds.From.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid from")
+		}
+		switch conds.From.Op {
 		case cruder.EQ:
-			stm.Where(transfer.From(conds.GetFrom().GetValue()))
+			q.Where(enttransfer.From(from))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid from field")
 		}
 	}
 	if conds.To != nil {
-		switch conds.GetTo().GetOp() {
+		to, ok := conds.To.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid to")
+		}
+		switch conds.To.Op {
 		case cruder.EQ:
-			stm.Where(transfer.To(conds.GetTo().GetValue()))
+			q.Where(enttransfer.To(to))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid to field")
 		}
 	}
 	if conds.Amount != nil {
-		switch conds.GetAmount().GetOp() {
+		amount, ok := conds.Amount.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid amount")
+		}
+		switch conds.Amount.Op {
 		case cruder.EQ:
-			stm.Where(transfer.Amount(utils.Uint64ToDecStr(conds.GetAmount().GetValue())))
+			q.Where(enttransfer.Amount(amount))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid amount field")
 		}
 	}
 	if conds.BlockNumber != nil {
-		switch conds.GetBlockNumber().GetOp() {
+		blocknumber, ok := conds.BlockNumber.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid blocknumber")
+		}
+		switch conds.BlockNumber.Op {
 		case cruder.EQ:
-			stm.Where(transfer.BlockNumber(conds.GetBlockNumber().GetValue()))
+			q.Where(enttransfer.BlockNumber(blocknumber))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid blocknumber field")
 		}
 	}
 	if conds.TxHash != nil {
-		switch conds.GetTxHash().GetOp() {
+		txhash, ok := conds.TxHash.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid txhash")
+		}
+		switch conds.TxHash.Op {
 		case cruder.EQ:
-			stm.Where(transfer.TxHash(conds.GetTxHash().GetValue()))
+			q.Where(enttransfer.TxHash(txhash))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid txhash field")
 		}
 	}
 	if conds.BlockHash != nil {
-		switch conds.GetBlockHash().GetOp() {
+		blockhash, ok := conds.BlockHash.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid blockhash")
+		}
+		switch conds.BlockHash.Op {
 		case cruder.EQ:
-			stm.Where(transfer.BlockHash(conds.GetBlockHash().GetValue()))
+			q.Where(enttransfer.BlockHash(blockhash))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid blockhash field")
 		}
 	}
 	if conds.TxTime != nil {
-		switch conds.GetTxTime().GetOp() {
+		txtime, ok := conds.TxTime.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid txtime")
+		}
+		switch conds.TxTime.Op {
 		case cruder.EQ:
-			stm.Where(transfer.TxTime(conds.GetTxTime().GetValue()))
+			q.Where(enttransfer.TxTime(txtime))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid txtime field")
 		}
 	}
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(transfer.Remark(conds.GetRemark().GetValue()))
+			q.Where(enttransfer.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid transfer field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Transfer, int, error) {
-	var err error
-	rows := []*ent.Transfer{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
+	if conds.LogIndex != nil {
+		logindex, ok := conds.LogIndex.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid logindex")
 		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
+		switch conds.LogIndex.Op {
+		case cruder.EQ:
+			q.Where(enttransfer.LogIndex(logindex))
+		default:
+			return nil, fmt.Errorf("invalid logindex field")
 		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(transfer.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
 	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.Transfer, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Transfer.Query().Where(transfer.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Transfer, error) {
-	var info *ent.Transfer
-	var err error
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Transfer.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

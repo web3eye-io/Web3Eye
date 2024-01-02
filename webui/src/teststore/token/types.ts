@@ -15,13 +15,14 @@ export interface SearchTokensResponse {
     Infos: Array<SearchToken>
     StorageKey: string
     Page: number
-    TotalPages: number
-    TotalTokens: number
+    Pages: number
+    Total: number
     Limit: number
 }
 
 export interface SearchToken {
-    ID: string
+    ID: number
+    EntID: string
     ChainType: ChainType
     ChainID: string
     Contract: string
@@ -53,7 +54,8 @@ export interface SiblingToken {
 }
 
 export interface Token {
-    ID: string
+    ID: number
+    EntID: string
     ChainType: ChainType
     ChainID: string
     Contract: string
@@ -82,15 +84,16 @@ export interface GetTokenResponse {
 }
   
 export interface GetTokensRequest extends BaseRequest {
-    StorageKey: string
+    StorageKey?: string
     Page: number
+    Limit: number
 }
 
 export interface GetTokensResponse {
     Infos: SearchToken[]
     StorageKey: string
     Page: number
-    TotalPages: number
-    TotalTokens: number
+    Pages: number
+    Total: number
     Limit: number
 }

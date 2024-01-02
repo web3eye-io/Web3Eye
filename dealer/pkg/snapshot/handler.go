@@ -61,9 +61,9 @@ func WithItems(items []*dealerpb.ContentItem) func(*Handler) error {
 			return fmt.Errorf("invalid items")
 		}
 		for _, item := range items {
-			if item.ID == "" {
-				return fmt.Errorf("invalid id")
-			}
+			// if item.ID == "" {
+			// 	return fmt.Errorf("invalid id")
+			// }
 			if item.URI == "" {
 				return fmt.Errorf("invalid uri")
 			}

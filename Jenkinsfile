@@ -2,12 +2,14 @@ pipeline {
   agent any
   environment {
     GOPROXY = 'https://goproxy.cn,direct'
-    GOVERSION = "1.19.12"
-    GOTMPENV = "/tmp/go-tmp-env/$GOVERSION"
+    // env info from hack/set-golang-env.sh
+    GOVERSION = "go1.19.13"
+    GOTMPENV = "/opt/.golang/$GOVERSION"
     GOROOT = "$GOTMPENV/goroot"
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
-    PATH = "$GOBIN:$PATH"
+    PATH = "$PATH:$GOBIN"
+    GO111MODULE = "on"
   }
   stages {
     stage('Clone') {
@@ -329,6 +331,7 @@ pipeline {
     stage('Deploy for dev') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         expression { TARGET_ENV ==~ /.*development.*/ }
       }
       steps {
@@ -344,6 +347,7 @@ pipeline {
     stage('Deploy for test') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         anyOf{
           expression { TARGET_ENV ==~ /.*testing.*/ }
         }
@@ -373,6 +377,7 @@ pipeline {
     stage('Deploy for prod') {
       when {
         expression { DEPLOY_TARGET == 'true' }
+        expression { BRANCH_NAME == 'master' }
         anyOf{
           expression { TARGET_ENV ==~ /.*production.*/ }
         }

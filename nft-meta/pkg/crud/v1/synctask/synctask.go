@@ -1,405 +1,241 @@
 package synctask
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
+	entsynctask "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/synctask"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.SyncTaskReq) (*ent.SyncTask, error) {
-	var info *ent.SyncTask
-	var err error
-
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.SyncTask.Create(), in)
-		info, err = c.Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Req struct {
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	Start       *uint64
+	End         *uint64
+	Current     *uint64
+	Topic       *string
+	Description *string
+	SyncState   *basetype.SyncState
+	Remark      *string
 }
 
-func CreateSet(c *ent.SyncTaskCreate, in *npool.SyncTaskReq) *ent.SyncTaskCreate {
-	if in.ID != nil {
-		id, err := uuid.Parse(*in.ID)
-		if err != nil {
-			id = uuid.New()
-		}
-		c.SetID(id)
+func CreateSet(c *ent.SyncTaskCreate, req *Req) *ent.SyncTaskCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainType != nil {
+		c.SetChainType(req.ChainType.String())
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.Start != nil {
-		c.SetStart(in.GetStart())
+	if req.Start != nil {
+		c.SetStart(*req.Start)
 	}
-	if in.End != nil {
-		c.SetEnd(in.GetEnd())
+	if req.End != nil {
+		c.SetEnd(*req.End)
 	}
-	if in.Current != nil {
-		c.SetCurrent(in.GetCurrent())
+	if req.Current != nil {
+		c.SetCurrent(*req.Current)
 	}
-	if in.Topic != nil {
-		c.SetTopic(in.GetTopic())
+	if req.Topic != nil {
+		c.SetTopic(*req.Topic)
 	}
-	if in.Description != nil {
-		c.SetDescription(in.GetDescription())
+	if req.Description != nil {
+		c.SetDescription(*req.Description)
 	}
-	if in.SyncState != nil {
-		c.SetSyncState(in.GetSyncState().String())
+	if req.SyncState != nil {
+		c.SetSyncState(req.SyncState.String())
 	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.SyncTaskReq) ([]*ent.SyncTask, error) {
-	var err error
-	rows := []*ent.SyncTask{}
-
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.SyncTaskCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.SyncTask.Create(), info)
-		}
-		rows, err = tx.SyncTask.CreateBulk(bulk...).Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
+func UpdateSet(u *ent.SyncTaskUpdateOne, req *Req) (*ent.SyncTaskUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
 	}
-
-	return rows, nil
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.Start != nil {
+		u.SetStart(*req.Start)
+	}
+	if req.End != nil {
+		u.SetEnd(*req.End)
+	}
+	if req.Current != nil {
+		u.SetCurrent(*req.Current)
+	}
+	if req.Topic != nil {
+		u.SetTopic(*req.Topic)
+	}
+	if req.Description != nil {
+		u.SetDescription(*req.Description)
+	}
+	if req.SyncState != nil {
+		u.SetSyncState(req.SyncState.String())
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.SyncTaskReq) (*ent.SyncTask, error) {
-	var err error
-	var info *ent.SyncTask
-
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		return nil, err
-	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.SyncTask.UpdateOneID(uuid.MustParse(in.GetID()))
-		if in.ChainType != nil {
-			u.SetChainType(in.GetChainType().String())
-		}
-		if in.ChainID != nil {
-			u.SetChainID(in.GetChainID())
-		}
-		if in.Start != nil {
-			u.SetStart(in.GetStart())
-		}
-		if in.End != nil {
-			u.SetEnd(in.GetEnd())
-		}
-		if in.Current != nil {
-			u.SetCurrent(in.GetCurrent())
-		}
-		if in.Topic != nil {
-			u.SetTopic(in.GetTopic())
-		}
-		if in.Description != nil {
-			u.SetDescription(in.GetDescription())
-		}
-		if in.SyncState != nil {
-			u.SetSyncState(in.GetSyncState().String())
-		}
-		if in.Remark != nil {
-			u.SetRemark(in.GetRemark())
-		}
-		info, err = u.Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Conds struct {
+	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
+	ChainType   *cruder.Cond
+	ChainID     *cruder.Cond
+	Start       *cruder.Cond
+	End         *cruder.Cond
+	Current     *cruder.Cond
+	Topic       *cruder.Cond
+	Description *cruder.Cond
+	SyncState   *cruder.Cond
+	Remark      *cruder.Cond
 }
 
-// func UpdateSet(u *ent.SyncTaskUpdateOne, in *npool.SyncTaskReq) *ent.SyncTaskUpdateOne {
-// 	if in.VectorID != nil {
-// 		u.SetVectorID(in.GetVectorID())
-// 	}
-// 	if in.Remark != nil {
-// 		u.SetRemark(in.GetRemark())
-// 	}
-// 	return u
-// }
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.SyncTask, error) {
-	var info *ent.SyncTask
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.SyncTask.Query().Where(synctask.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SyncTaskQuery, error) {
-	stm := cli.SyncTask.Query()
-	if conds == nil {
-		return stm, nil
-	}
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+func SetQueryConds(q *ent.SyncTaskQuery, conds *Conds) (*ent.SyncTaskQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(synctask.ID(id))
+			q.Where(entsynctask.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(synctask.IDIn(ids...))
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntIDs.Op {
+		case cruder.IN:
+			q.Where(entsynctask.EntIDIn(entids...))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(synctask.ChainType(conds.GetChainType().GetValue()))
+			q.Where(entsynctask.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(synctask.ChainID(conds.GetChainID().GetValue()))
+			q.Where(entsynctask.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.Start != nil {
-		switch conds.GetStart().GetOp() {
+		start, ok := conds.Start.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid start")
+		}
+		switch conds.Start.Op {
 		case cruder.EQ:
-			stm.Where(synctask.Start(conds.GetStart().GetValue()))
+			q.Where(entsynctask.Start(start))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid start field")
 		}
 	}
 	if conds.End != nil {
-		switch conds.GetEnd().GetOp() {
+		end, ok := conds.End.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid end")
+		}
+		switch conds.End.Op {
 		case cruder.EQ:
-			stm.Where(synctask.End(conds.GetEnd().GetValue()))
+			q.Where(entsynctask.End(end))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid end field")
 		}
 	}
 	if conds.Current != nil {
-		switch conds.GetCurrent().GetOp() {
+		current, ok := conds.Current.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid current")
+		}
+		switch conds.Current.Op {
 		case cruder.EQ:
-			stm.Where(synctask.Current(conds.GetCurrent().GetValue()))
+			q.Where(entsynctask.Current(current))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid current field")
 		}
 	}
 	if conds.Topic != nil {
-		switch conds.GetTopic().GetOp() {
+		topic, ok := conds.Topic.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid topic")
+		}
+		switch conds.Topic.Op {
 		case cruder.EQ:
-			stm.Where(synctask.Topic(conds.GetTopic().GetValue()))
+			q.Where(entsynctask.Topic(topic))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid topic field")
 		}
 	}
 	if conds.Description != nil {
-		switch conds.GetDescription().GetOp() {
+		description, ok := conds.Description.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid description")
+		}
+		switch conds.Description.Op {
 		case cruder.EQ:
-			stm.Where(synctask.Description(conds.GetDescription().GetValue()))
+			q.Where(entsynctask.Description(description))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid description field")
 		}
 	}
 	if conds.SyncState != nil {
-		switch conds.GetSyncState().GetOp() {
+		syncstate, ok := conds.SyncState.Val.(basetype.SyncState)
+		if !ok {
+			return nil, fmt.Errorf("invalid syncstate")
+		}
+		switch conds.SyncState.Op {
 		case cruder.EQ:
-			stm.Where(synctask.SyncState(conds.GetSyncState().GetValue()))
+			q.Where(entsynctask.SyncState(syncstate.String()))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid syncstate field")
 		}
 	}
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(synctask.Remark(conds.GetRemark().GetValue()))
+			q.Where(entsynctask.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid synctask field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.SyncTask, int, error) {
-	var err error
-	rows := []*ent.SyncTask{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(synctask.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.SyncTask, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.SyncTask.Query().Where(synctask.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.SyncTask, error) {
-	var info *ent.SyncTask
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.SyncTask.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

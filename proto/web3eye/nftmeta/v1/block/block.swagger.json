@@ -21,30 +21,59 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "BlockNumber": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_number\""
         },
         "BlockHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"block_hash\""
         },
         "BlockTime": {
           "type": "string",
-          "format": "int64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_time\""
+        },
+        "ParseStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"parse_state\""
         },
         "ParseState": {
           "$ref": "#/definitions/chainBlockParseState"
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -52,6 +81,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "ChainType": {
@@ -69,7 +102,7 @@
         },
         "BlockTime": {
           "type": "string",
-          "format": "int64"
+          "format": "uint64"
         },
         "ParseState": {
           "$ref": "#/definitions/chainBlockParseState"
@@ -83,10 +116,13 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -98,25 +134,16 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "BlockTime": {
-          "$ref": "#/definitions/web3eyeInt64Val"
+          "$ref": "#/definitions/web3eyeUint64Val"
         },
         "ParseState": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "blockCountBlocksResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -256,18 +283,6 @@
         }
       }
     },
-    "web3eyeInt64Val": {
-      "type": "object",
-      "properties": {
-        "Op": {
-          "type": "string"
-        },
-        "Value": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
     "web3eyeStringSliceVal": {
       "type": "object",
       "properties": {
@@ -290,6 +305,18 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

@@ -30,10 +30,13 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -77,7 +80,7 @@
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         }
       }
@@ -86,55 +89,89 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Address": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"address\""
         },
         "Name": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"name\""
         },
         "Symbol": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"symbol\""
         },
         "Decimals": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"decimals\""
         },
         "Creator": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"creator\""
         },
         "BlockNum": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_num\""
         },
         "TxHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"tx_hash\""
         },
         "TxTime": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"tx_time\""
         },
         "ProfileURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"profile_url\""
         },
         "BaseURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"base_url\""
         },
         "BannerURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"banner_url\""
         },
         "Description": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"description\""
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -142,6 +179,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "ChainType": {
@@ -191,15 +232,6 @@
         },
         "Remark": {
           "type": "string"
-        }
-      }
-    },
-    "contractCountContractsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

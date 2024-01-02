@@ -13,9 +13,9 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/config"
+	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
-	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
 )
@@ -92,21 +92,27 @@ func HTTPDealVector(ctx context.Context, info *ent.Token) error {
 	if info.VectorState != npool.ConvertState_Waiting.String() {
 		return errors.New("vector state is not waiting")
 	}
-	infoID := info.ID.String()
 
 	// gain the vector of token
 	vector, err := ImgURLConvertVector(info.ImageURL)
 	if err != nil || vector == nil {
 		info.VectorState = npool.ConvertState_Failed.String()
 		vstate := npool.ConvertState(npool.ConvertState_value[info.VectorState])
-		_, upErr := crud.Update(ctx, &npool.TokenReq{
-			ID:          &infoID,
-			VectorState: &vstate,
-			VectorID:    &info.VectorID,
-		})
-		if upErr != nil {
-			logger.Sugar().Error(upErr)
-			return upErr
+
+		h, err := tokenhandler.NewHandler(ctx,
+			tokenhandler.WithID(&info.ID, true),
+			tokenhandler.WithVectorState(&vstate, true),
+			tokenhandler.WithVectorID(&info.VectorID, true),
+		)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return err
+		}
+
+		_, err = h.UpdateToken(ctx)
+		if err != nil {
+			logger.Sugar().Error(err)
+			return err
 		}
 		return err
 	}
@@ -138,13 +144,18 @@ func storeToDBAndMilvus(ctx context.Context, info *ent.Token, vector []float32) 
 	}
 
 	vstate := npool.ConvertState(npool.ConvertState_value[info.VectorState])
-	infoID := info.ID.String()
-	_, err = crud.Update(ctx, &npool.TokenReq{
-		ID:          &infoID,
-		VectorState: &vstate,
-		VectorID:    &info.VectorID,
-	})
-	return
+
+	h, err := tokenhandler.NewHandler(ctx,
+		tokenhandler.WithID(&info.ID, true),
+		tokenhandler.WithVectorState(&vstate, true),
+		tokenhandler.WithVectorID(&info.VectorID, true),
+	)
+	if err != nil {
+		return err
+	}
+	_, err = h.UpdateToken(ctx)
+
+	return err
 }
 
 // TODO:will be rewrite

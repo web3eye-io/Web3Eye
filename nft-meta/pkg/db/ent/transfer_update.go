@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/transfer"
 )
@@ -25,6 +26,20 @@ type TransferUpdate struct {
 // Where appends a list predicates to the TransferUpdate builder.
 func (tu *TransferUpdate) Where(ps ...predicate.Transfer) *TransferUpdate {
 	tu.mutation.Where(ps...)
+	return tu
+}
+
+// SetEntID sets the "ent_id" field.
+func (tu *TransferUpdate) SetEntID(u uuid.UUID) *TransferUpdate {
+	tu.mutation.SetEntID(u)
+	return tu
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tu *TransferUpdate) SetNillableEntID(u *uuid.UUID) *TransferUpdate {
+	if u != nil {
+		tu.SetEntID(*u)
+	}
 	return tu
 }
 
@@ -157,14 +172,14 @@ func (tu *TransferUpdate) SetBlockHash(s string) *TransferUpdate {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (tu *TransferUpdate) SetTxTime(u uint32) *TransferUpdate {
+func (tu *TransferUpdate) SetTxTime(u uint64) *TransferUpdate {
 	tu.mutation.ResetTxTime()
 	tu.mutation.SetTxTime(u)
 	return tu
 }
 
 // SetNillableTxTime sets the "tx_time" field if the given value is not nil.
-func (tu *TransferUpdate) SetNillableTxTime(u *uint32) *TransferUpdate {
+func (tu *TransferUpdate) SetNillableTxTime(u *uint64) *TransferUpdate {
 	if u != nil {
 		tu.SetTxTime(*u)
 	}
@@ -172,7 +187,7 @@ func (tu *TransferUpdate) SetNillableTxTime(u *uint32) *TransferUpdate {
 }
 
 // AddTxTime adds u to the "tx_time" field.
-func (tu *TransferUpdate) AddTxTime(u int32) *TransferUpdate {
+func (tu *TransferUpdate) AddTxTime(u int64) *TransferUpdate {
 	tu.mutation.AddTxTime(u)
 	return tu
 }
@@ -180,6 +195,27 @@ func (tu *TransferUpdate) AddTxTime(u int32) *TransferUpdate {
 // ClearTxTime clears the value of the "tx_time" field.
 func (tu *TransferUpdate) ClearTxTime() *TransferUpdate {
 	tu.mutation.ClearTxTime()
+	return tu
+}
+
+// SetLogIndex sets the "log_index" field.
+func (tu *TransferUpdate) SetLogIndex(u uint32) *TransferUpdate {
+	tu.mutation.ResetLogIndex()
+	tu.mutation.SetLogIndex(u)
+	return tu
+}
+
+// SetNillableLogIndex sets the "log_index" field if the given value is not nil.
+func (tu *TransferUpdate) SetNillableLogIndex(u *uint32) *TransferUpdate {
+	if u != nil {
+		tu.SetLogIndex(*u)
+	}
+	return tu
+}
+
+// AddLogIndex adds u to the "log_index" field.
+func (tu *TransferUpdate) AddLogIndex(u int32) *TransferUpdate {
+	tu.mutation.AddLogIndex(u)
 	return tu
 }
 
@@ -315,7 +351,7 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},
@@ -326,6 +362,13 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tu.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: transfer.FieldEntID,
+		})
 	}
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -455,22 +498,36 @@ func (tu *TransferUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.TxTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if value, ok := tu.mutation.AddedTxTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if tu.mutation.TxTimeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Column: transfer.FieldTxTime,
+		})
+	}
+	if value, ok := tu.mutation.LogIndex(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: transfer.FieldLogIndex,
+		})
+	}
+	if value, ok := tu.mutation.AddedLogIndex(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: transfer.FieldLogIndex,
 		})
 	}
 	if value, ok := tu.mutation.Remark(); ok {
@@ -505,6 +562,20 @@ type TransferUpdateOne struct {
 	hooks     []Hook
 	mutation  *TransferMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (tuo *TransferUpdateOne) SetEntID(u uuid.UUID) *TransferUpdateOne {
+	tuo.mutation.SetEntID(u)
+	return tuo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tuo *TransferUpdateOne) SetNillableEntID(u *uuid.UUID) *TransferUpdateOne {
+	if u != nil {
+		tuo.SetEntID(*u)
+	}
+	return tuo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -636,14 +707,14 @@ func (tuo *TransferUpdateOne) SetBlockHash(s string) *TransferUpdateOne {
 }
 
 // SetTxTime sets the "tx_time" field.
-func (tuo *TransferUpdateOne) SetTxTime(u uint32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) SetTxTime(u uint64) *TransferUpdateOne {
 	tuo.mutation.ResetTxTime()
 	tuo.mutation.SetTxTime(u)
 	return tuo
 }
 
 // SetNillableTxTime sets the "tx_time" field if the given value is not nil.
-func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint64) *TransferUpdateOne {
 	if u != nil {
 		tuo.SetTxTime(*u)
 	}
@@ -651,7 +722,7 @@ func (tuo *TransferUpdateOne) SetNillableTxTime(u *uint32) *TransferUpdateOne {
 }
 
 // AddTxTime adds u to the "tx_time" field.
-func (tuo *TransferUpdateOne) AddTxTime(u int32) *TransferUpdateOne {
+func (tuo *TransferUpdateOne) AddTxTime(u int64) *TransferUpdateOne {
 	tuo.mutation.AddTxTime(u)
 	return tuo
 }
@@ -659,6 +730,27 @@ func (tuo *TransferUpdateOne) AddTxTime(u int32) *TransferUpdateOne {
 // ClearTxTime clears the value of the "tx_time" field.
 func (tuo *TransferUpdateOne) ClearTxTime() *TransferUpdateOne {
 	tuo.mutation.ClearTxTime()
+	return tuo
+}
+
+// SetLogIndex sets the "log_index" field.
+func (tuo *TransferUpdateOne) SetLogIndex(u uint32) *TransferUpdateOne {
+	tuo.mutation.ResetLogIndex()
+	tuo.mutation.SetLogIndex(u)
+	return tuo
+}
+
+// SetNillableLogIndex sets the "log_index" field if the given value is not nil.
+func (tuo *TransferUpdateOne) SetNillableLogIndex(u *uint32) *TransferUpdateOne {
+	if u != nil {
+		tuo.SetLogIndex(*u)
+	}
+	return tuo
+}
+
+// AddLogIndex adds u to the "log_index" field.
+func (tuo *TransferUpdateOne) AddLogIndex(u int32) *TransferUpdateOne {
+	tuo.mutation.AddLogIndex(u)
 	return tuo
 }
 
@@ -807,7 +899,7 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},
@@ -835,6 +927,13 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tuo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: transfer.FieldEntID,
+		})
 	}
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -964,22 +1063,36 @@ func (tuo *TransferUpdateOne) sqlSave(ctx context.Context) (_node *Transfer, err
 	}
 	if value, ok := tuo.mutation.TxTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if value, ok := tuo.mutation.AddedTxTime(); ok {
 		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Value:  value,
 			Column: transfer.FieldTxTime,
 		})
 	}
 	if tuo.mutation.TxTimeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeUint32,
+			Type:   field.TypeUint64,
 			Column: transfer.FieldTxTime,
+		})
+	}
+	if value, ok := tuo.mutation.LogIndex(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: transfer.FieldLogIndex,
+		})
+	}
+	if value, ok := tuo.mutation.AddedLogIndex(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: transfer.FieldLogIndex,
 		})
 	}
 	if value, ok := tuo.mutation.Remark(); ok {

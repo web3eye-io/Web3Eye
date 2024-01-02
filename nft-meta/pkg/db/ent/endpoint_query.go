@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 )
@@ -87,8 +86,8 @@ func (eq *EndpointQuery) FirstX(ctx context.Context) *Endpoint {
 
 // FirstID returns the first Endpoint ID from the query.
 // Returns a *NotFoundError when no Endpoint ID was found.
-func (eq *EndpointQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (eq *EndpointQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = eq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (eq *EndpointQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (eq *EndpointQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (eq *EndpointQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := eq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (eq *EndpointQuery) OnlyX(ctx context.Context) *Endpoint {
 // OnlyID is like Only, but returns the only Endpoint ID in the query.
 // Returns a *NotSingularError when more than one Endpoint ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (eq *EndpointQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (eq *EndpointQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = eq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (eq *EndpointQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (eq *EndpointQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (eq *EndpointQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := eq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (eq *EndpointQuery) AllX(ctx context.Context) []*Endpoint {
 }
 
 // IDs executes the query and returns a list of Endpoint IDs.
-func (eq *EndpointQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (eq *EndpointQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := eq.Select(endpoint.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (eq *EndpointQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (eq *EndpointQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (eq *EndpointQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := eq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -257,12 +256,12 @@ func (eq *EndpointQuery) Clone() *EndpointQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Endpoint.Query().
-//		GroupBy(endpoint.FieldCreatedAt).
+//		GroupBy(endpoint.FieldEntID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (eq *EndpointQuery) GroupBy(field string, fields ...string) *EndpointGroupBy {
@@ -285,11 +284,11 @@ func (eq *EndpointQuery) GroupBy(field string, fields ...string) *EndpointGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //	}
 //
 //	client.Endpoint.Query().
-//		Select(endpoint.FieldCreatedAt).
+//		Select(endpoint.FieldEntID).
 //		Scan(ctx, &v)
 func (eq *EndpointQuery) Select(fields ...string) *EndpointSelect {
 	eq.fields = append(eq.fields, fields...)
@@ -375,7 +374,7 @@ func (eq *EndpointQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   endpoint.Table,
 			Columns: endpoint.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		},

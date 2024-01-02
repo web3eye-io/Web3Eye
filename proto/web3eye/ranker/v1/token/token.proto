@@ -10,13 +10,12 @@ service Manager {
   rpc GetToken(nftmeta.v1.token.GetTokenRequest) returns (nftmeta.v1.token.GetTokenResponse) {}
   rpc GetTokenOnly(nftmeta.v1.token.GetTokenOnlyRequest) returns (nftmeta.v1.token.GetTokenOnlyResponse) {}
   rpc GetTokens(nftmeta.v1.token.GetTokensRequest) returns (nftmeta.v1.token.GetTokensResponse) {}
-  rpc CountTokens(nftmeta.v1.token.CountTokensRequest) returns (nftmeta.v1.token.CountTokensResponse) {}
   rpc Search(SearchTokenRequest) returns (SearchResponse) {}
   rpc SearchPage(SearchPageRequest) returns (SearchResponse) {}
 }
 
 message SiblingToken{
-  string ID = 10;
+  string EntID = 10;
   string TokenID = 20;
   string ImageURL = 30;
   string IPFSImageURL = 40;
@@ -24,7 +23,8 @@ message SiblingToken{
 
 message SearchToken{
   // nftmeta.v1.token.Token Token = 10;
-  string ID = 10;
+  uint32 ID = 10;
+  string EntID = 11;
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
@@ -41,7 +41,7 @@ message SearchToken{
   int64 VectorID = 150;
   string Remark = 160;
   string IPFSImageURL = 170;
-  string ImageSnapshotID = 180;
+  uint32 ImageSnapshotID = 180;
   int32 TransfersNum = 190;
   repeated SiblingToken SiblingTokens = 400;
   uint32 SiblingsNum = 410;
@@ -62,8 +62,8 @@ message SearchResponse {
   repeated SearchToken Infos = 10;
   string StorageKey =20;
   uint32 Page = 30;
-  uint32 TotalPages = 40;
-  uint32 TotalTokens = 50;
+  uint32 Pages = 40;
+  uint32 Total = 50;
   uint32 Limit = 60;
 }
 

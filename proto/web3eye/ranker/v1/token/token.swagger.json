@@ -72,10 +72,13 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -84,7 +87,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "TokenID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -111,7 +114,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "VectorState": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "VectorID": {
           "$ref": "#/definitions/web3eyeInt64Val"
@@ -123,9 +126,9 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ImageSnapshotID": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         },
         "VectorIDs": {
@@ -145,15 +148,6 @@
       ],
       "default": "Default",
       "title": "for show the state that resource_addr is converted to vector"
-    },
-    "tokenCountTokensResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
     },
     "tokenGetTokenOnlyResponse": {
       "type": "object",
@@ -202,11 +196,11 @@
           "type": "integer",
           "format": "int64"
         },
-        "TotalPages": {
+        "Pages": {
           "type": "integer",
           "format": "int64"
         },
-        "TotalTokens": {
+        "Total": {
           "type": "integer",
           "format": "int64"
         },
@@ -220,8 +214,12 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "title": "nftmeta.v1.token.Token Token = 10;"
+        },
+        "EntID": {
+          "type": "string"
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
@@ -273,7 +271,8 @@
           "type": "string"
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "TransfersNum": {
           "type": "integer",
@@ -298,7 +297,7 @@
     "tokenSiblingToken": {
       "type": "object",
       "properties": {
-        "ID": {
+        "EntID": {
           "type": "string"
         },
         "TokenID": {
@@ -316,59 +315,102 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Contract": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"contract\""
+        },
+        "TokenTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_type\""
         },
         "TokenType": {
           "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_id\""
         },
         "Owner": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"owner\""
         },
         "URI": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"uri\""
         },
         "URIType": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"uri_type\""
         },
         "ImageURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"image_url\""
         },
         "VideoURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"video_url\""
         },
         "Description": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"description\""
         },
         "Name": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"name\""
+        },
+        "VectorStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"vector_state\""
         },
         "VectorState": {
           "$ref": "#/definitions/tokenConvertState"
         },
         "VectorID": {
           "type": "string",
-          "format": "int64"
+          "format": "int64",
+          "title": "@inject_tag: sql:\"vector_id\""
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
         },
         "IPFSImageURL": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"ipfs_image_url\""
         },
         "ImageSnapshotID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"image_snapshot_id\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -421,6 +463,18 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     }

@@ -1,388 +1,201 @@
 package block
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/block"
+	entblock "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/block"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
-	var info *ent.Block
-	var err error
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.Block.Create(), in)
-		info, err = c.Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Req struct {
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	BlockNumber *uint64
+	BlockHash   *string
+	BlockTime   *uint64
+	ParseState  *basetype.BlockParseState
+	Remark      *string
 }
 
-func Upsert(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
+func CreateSet(c *ent.BlockCreate, req *Req) *ent.BlockCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	var info *ent.Block
-	var err error
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		row, _ := tx.Block.Query().Where(
-			block.ChainType(in.GetChainType().String()),
-			block.ChainID(in.GetChainID()),
-			block.BlockNumber(in.GetBlockNumber()),
-		).Only(ctx)
-		if row == nil {
-			info, err = CreateSet(tx.Block.Create(), in).Save(ctx)
-			return err
-		}
-		info, err = UpdateSet(tx.Block.UpdateOneID(row.ID), in).Save(ctx)
-		return err
-	})
-	return info, err
-}
-
-func CreateSet(c *ent.BlockCreate, in *npool.BlockReq) *ent.BlockCreate {
-	if in.ID != nil {
-		c.SetID(uuid.New())
+	if req.ChainType != nil {
+		c.SetChainType(req.ChainType.String())
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.BlockNumber != nil {
+		c.SetBlockNumber(*req.BlockNumber)
 	}
-	if in.BlockNumber != nil {
-		c.SetBlockNumber(in.GetBlockNumber())
+	if req.BlockHash != nil {
+		c.SetBlockHash(*req.BlockHash)
 	}
-	if in.BlockHash != nil {
-		c.SetBlockHash(in.GetBlockHash())
+	if req.BlockTime != nil {
+		c.SetBlockTime(*req.BlockTime)
 	}
-	if in.BlockTime != nil {
-		c.SetBlockTime(in.GetBlockTime())
+	if req.ParseState != nil {
+		c.SetParseState(req.ParseState.String())
 	}
-	if in.ParseState != nil {
-		c.SetParseState(in.GetParseState().String())
-	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.BlockReq) ([]*ent.Block, error) {
-	var err error
-	rows := []*ent.Block{}
+func UpdateSet(u *ent.BlockUpdateOne, req *Req) (*ent.BlockUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
+	}
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.BlockNumber != nil {
+		u.SetBlockNumber(*req.BlockNumber)
+	}
+	if req.BlockHash != nil {
+		u.SetBlockHash(*req.BlockHash)
+	}
+	if req.BlockTime != nil {
+		u.SetBlockTime(*req.BlockTime)
+	}
+	if req.ParseState != nil {
+		u.SetParseState(req.ParseState.String())
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
+}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.BlockCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Block.Create(), info)
+type Conds struct {
+	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
+	ChainType   *cruder.Cond
+	ChainID     *cruder.Cond
+	BlockNumber *cruder.Cond
+	BlockHash   *cruder.Cond
+	BlockTime   *cruder.Cond
+	ParseState  *cruder.Cond
+	Remark      *cruder.Cond
+}
+
+func SetQueryConds(q *ent.BlockQuery, conds *Conds) (*ent.BlockQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		rows, err = tx.Block.CreateBulk(bulk...).Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func Update(ctx context.Context, in *npool.BlockReq) (*ent.Block, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	var err error
-	var info *ent.Block
-	id, err := uuid.Parse(in.GetID())
-	if err != nil {
-		return nil, err
-	}
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		blockUpdate := tx.Block.UpdateOneID(id)
-		info, err = UpdateSet(blockUpdate, in).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-	return info, nil
-}
-
-func UpdateSet(u *ent.BlockUpdateOne, in *npool.BlockReq) *ent.BlockUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.BlockNumber != nil {
-		u.SetBlockNumber(in.GetBlockNumber())
-	}
-	if in.BlockHash != nil {
-		u.SetBlockHash(in.GetBlockHash())
-	}
-	if in.BlockTime != nil {
-		u.SetBlockTime(in.GetBlockTime())
-	}
-	if in.ParseState != nil {
-		u.SetParseState(in.GetParseState().String())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.Block, error) {
-	var info *ent.Block
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Block.Query().Where(block.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.BlockQuery, error) {
-	stm := cli.Block.Query()
-	if conds == nil {
-		return stm, nil
-	}
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(block.ID(id))
+			q.Where(entblock.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(block.IDIn(ids...))
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntIDs.Op {
+		case cruder.IN:
+			q.Where(entblock.EntIDIn(entids...))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(block.ChainType(conds.GetChainType().GetValue()))
+			q.Where(entblock.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(block.ChainID(conds.GetChainID().GetValue()))
+			q.Where(entblock.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.BlockNumber != nil {
-		switch conds.GetBlockNumber().GetOp() {
+		blocknumber, ok := conds.BlockNumber.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid blocknumber")
+		}
+		switch conds.BlockNumber.Op {
 		case cruder.EQ:
-			stm.Where(block.BlockNumber(conds.GetBlockNumber().GetValue()))
+			q.Where(entblock.BlockNumber(blocknumber))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid blocknumber field")
 		}
 	}
 	if conds.BlockHash != nil {
-		switch conds.GetBlockHash().GetOp() {
+		blockhash, ok := conds.BlockHash.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid blockhash")
+		}
+		switch conds.BlockHash.Op {
 		case cruder.EQ:
-			stm.Where(block.BlockHash(conds.GetBlockHash().GetValue()))
+			q.Where(entblock.BlockHash(blockhash))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid blockhash field")
 		}
 	}
 	if conds.BlockTime != nil {
-		switch conds.GetBlockTime().GetOp() {
+		blocktime, ok := conds.BlockTime.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid blocktime")
+		}
+		switch conds.BlockTime.Op {
 		case cruder.EQ:
-			stm.Where(block.BlockTime(conds.GetBlockTime().GetValue()))
+			q.Where(entblock.BlockTime(blocktime))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid blocktime field")
 		}
 	}
 	if conds.ParseState != nil {
-		switch conds.GetParseState().GetOp() {
+		parsestate, ok := conds.ParseState.Val.(basetype.BlockParseState)
+		if !ok {
+			return nil, fmt.Errorf("invalid parsestate")
+		}
+		switch conds.ParseState.Op {
 		case cruder.EQ:
-			stm.Where(block.ParseState(conds.GetParseState().GetValue()))
+			q.Where(entblock.ParseState(parsestate.String()))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid parsestate field")
 		}
 	}
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(block.Remark(conds.GetRemark().GetValue()))
+			q.Where(entblock.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid block field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Block, int, error) {
-	var err error
-	rows := []*ent.Block{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(block.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.Block, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Block.Query().Where(block.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Block, error) {
-	var info *ent.Block
-	var err error
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Block.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

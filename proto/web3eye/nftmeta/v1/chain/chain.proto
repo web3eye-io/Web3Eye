@@ -18,12 +18,12 @@ service Manager {
   rpc ExistChain(ExistChainRequest) returns (ExistChainResponse) {}
   rpc ExistChainConds(ExistChainCondsRequest)
       returns (ExistChainCondsResponse) {}
-  rpc CountChains(CountChainsRequest) returns (CountChainsResponse) {}
   rpc DeleteChain(DeleteChainRequest) returns (DeleteChainResponse) {}
 }
 
 message ChainReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Simbol = 40;
@@ -31,7 +31,8 @@ message ChainReq {
 }
 
 message Chain {
-  string ID = 10;
+  uint32 ID = 10;
+  string EntID = 11;
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Simbol = 40;
@@ -39,12 +40,13 @@ message Chain {
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ID = 10;
+  web3eye.StringVal EntID = 11;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Simbol = 40;
   web3eye.StringVal Remark = 50;
-  web3eye.StringSliceVal IDs = 160;
+  web3eye.StringSliceVal EntIDs = 160;
 }
 
 message CreateChainRequest { ChainReq Info = 10; }
@@ -53,7 +55,7 @@ message CreateChainResponse { Chain Info = 10; }
 message CreateChainsRequest { repeated ChainReq Infos = 10; }
 message CreateChainsResponse { repeated Chain Infos = 10; }
 
-message GetChainRequest { string ID = 10; }
+message GetChainRequest { uint32 ID = 10; }
 message GetChainResponse { Chain Info = 10; }
 
 message GetChainsRequest {
@@ -73,14 +75,11 @@ message GetChainOnlyResponse { Chain Info = 10; }
 message UpdateChainRequest { ChainReq Info = 10; }
 message UpdateChainResponse { Chain Info = 10; }
 
-message ExistChainRequest { string ID = 10; }
+message ExistChainRequest { uint32 ID = 10; }
 message ExistChainResponse { bool Exist = 10; }
 
 message ExistChainCondsRequest { Conds Conds = 10; }
 message ExistChainCondsResponse { bool Exist = 10; }
 
-message CountChainsRequest { Conds Conds = 10; }
-message CountChainsResponse { uint32 Info = 10; }
-
-message DeleteChainRequest { string ID = 10; }
+message DeleteChainRequest { uint32 ID = 10; }
 message DeleteChainResponse { Chain Info = 10; }

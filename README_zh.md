@@ -88,6 +88,7 @@ MySql中会关联Milvus中的ID字段
 #### Transform
 
 目前主要提供Jpg、Jepg、Png等常规图片格式的转向量操作，其他图像资源比如GIF等目前并不支持。  
+
 服务启动后有两个线程，一个负责提供HTTP接口方式的转向量方式，提供同步的转向量方式，支持URL和文件两种方式；还有一个负责从Pulsar获取转向量任务，转换后放入Pulsar中NFT-Meta获取后存入Milvus和数据库。  
 
 #### Ranker

@@ -19,12 +19,12 @@ service Manager {
   rpc ExistContract(ExistContractRequest) returns (ExistContractResponse) {}
   rpc ExistContractConds(ExistContractCondsRequest)
       returns (ExistContractCondsResponse) {}
-  rpc CountContracts(CountContractsRequest) returns (CountContractsResponse) {}
   rpc DeleteContract(DeleteContractRequest) returns (DeleteContractResponse) {}
 }
 
 message ContractReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Address = 40;
@@ -43,42 +43,66 @@ message ContractReq {
 }
 
 message Contract {
-  string ID = 10;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"id"
+  uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
+  string EntID = 11;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"address"
   string Address = 40;
+  // @inject_tag: sql:"name"
   string Name = 50;
+  // @inject_tag: sql:"symbol"
   string Symbol = 60;
+  // @inject_tag: sql:"decimals"
   uint32 Decimals = 61;
+  // @inject_tag: sql:"creator"
   string Creator = 70;
+  // @inject_tag: sql:"block_num"
   uint64 BlockNum = 80;
+  // @inject_tag: sql:"tx_hash"
   string TxHash = 90;
+  // @inject_tag: sql:"tx_time"
   uint32 TxTime = 100;
+  // @inject_tag: sql:"profile_url"
   string ProfileURL = 110;
+  // @inject_tag: sql:"base_url"
   string BaseURL = 120;
+  // @inject_tag: sql:"banner_url"
   string BannerURL = 130;
+  // @inject_tag: sql:"description"
   string Description = 140;
+  // @inject_tag: sql:"remark"
   string Remark = 150;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 160;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 170;
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
-  web3eye.StringVal ChainType = 20;
-  web3eye.StringVal ChainID = 30;
-  web3eye.StringVal Address = 40;
-  web3eye.StringVal Name = 50;
-  web3eye.StringVal Symbol = 60;
-  web3eye.Uint32Val Decimals = 61;
-  web3eye.StringVal Creator = 70;
-  web3eye.Uint64Val BlockNum = 80;
-  web3eye.StringVal TxHash = 90;
-  web3eye.Uint32Val TxTime = 100;
-  web3eye.StringVal ProfileURL = 110;
-  web3eye.StringVal BaseURL = 120;
-  web3eye.StringVal BannerURL = 130;
-  web3eye.StringVal Description = 140;
-  web3eye.StringVal Remark = 150;
-  web3eye.StringSliceVal IDs = 160;
+  optional web3eye.Uint32Val ID = 10;
+  optional web3eye.StringVal EntID = 11;
+  optional web3eye.Uint32Val ChainType = 20;
+  optional web3eye.StringVal ChainID = 30;
+  optional web3eye.StringVal Address = 40;
+  optional web3eye.StringVal Name = 50;
+  optional web3eye.StringVal Symbol = 60;
+  optional web3eye.Uint32Val Decimals = 61;
+  optional web3eye.StringVal Creator = 70;
+  optional web3eye.Uint64Val BlockNum = 80;
+  optional web3eye.StringVal TxHash = 90;
+  optional web3eye.Uint32Val TxTime = 100;
+  optional web3eye.StringVal ProfileURL = 110;
+  optional web3eye.StringVal BaseURL = 120;
+  optional web3eye.StringVal BannerURL = 130;
+  optional web3eye.StringVal Description = 140;
+  optional web3eye.StringVal Remark = 150;
+  optional web3eye.StringSliceVal EntIDs = 160;
 }
 
 message CreateContractRequest { ContractReq Info = 10; }
@@ -90,7 +114,7 @@ message UpsertContractResponse { Contract Info = 10; }
 message CreateContractsRequest { repeated ContractReq Infos = 10; }
 message CreateContractsResponse { repeated Contract Infos = 10; }
 
-message GetContractRequest { string ID = 10; }
+message GetContractRequest { uint32 ID = 10; }
 message GetContractResponse { Contract Info = 10; }
 
 message GetContractsRequest {
@@ -110,14 +134,11 @@ message GetContractOnlyResponse { Contract Info = 10; }
 message UpdateContractRequest { ContractReq Info = 10; }
 message UpdateContractResponse { Contract Info = 10; }
 
-message ExistContractRequest { string ID = 10; }
+message ExistContractRequest { uint32 ID = 10; }
 message ExistContractResponse { bool Exist = 10; }
 
 message ExistContractCondsRequest { Conds Conds = 10; }
 message ExistContractCondsResponse { bool Exist = 10; }
 
-message CountContractsRequest { Conds Conds = 10; }
-message CountContractsResponse { uint32 Info = 10; }
-
-message DeleteContractRequest { string ID = 10; }
+message DeleteContractRequest { uint32 ID = 10; }
 message DeleteContractResponse { Contract Info = 10; }

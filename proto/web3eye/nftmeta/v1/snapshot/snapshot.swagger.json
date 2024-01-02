@@ -48,6 +48,9 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "Index": {
@@ -65,17 +68,8 @@
         "BackupState": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "snapshotCountSnapshotsResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -157,23 +151,44 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
         },
         "Index": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"index\""
         },
         "SnapshotCommP": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_comm_p\""
         },
         "SnapshotRoot": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_root\""
         },
         "SnapshotURI": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"snapshot_uri\""
         },
         "BackupState": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"backup_state\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -181,6 +196,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "Index": {
@@ -231,6 +250,18 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

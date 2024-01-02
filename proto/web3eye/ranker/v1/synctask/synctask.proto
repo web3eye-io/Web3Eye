@@ -5,7 +5,6 @@ package ranker.v1.synctask;
 option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/synctask";
 import "web3eye/nftmeta/v1/synctask/synctask.proto";
 import "web3eye/basetype/v1/chain.proto";
-import "web3eye/nftmeta/v1/cttype/cttype.proto";
 
 service Manager {
   rpc CreateSyncTask(CreateSyncTaskRequest) returns (CreateSyncTaskResponse) {}
@@ -22,13 +21,13 @@ message CreateSyncTaskRequest {
   uint64 End = 40;
   uint64 Current = 50;
   optional string Description = 60;
-  cttype.SyncState SyncState = 70;
+  chain.SyncState SyncState = 70;
 }
 message CreateSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 
 message UpdateSyncTaskRequest {
-  string ID = 10;
+  uint32 ID = 10;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 Start = 40;
@@ -36,17 +35,17 @@ message UpdateSyncTaskRequest {
   optional uint64 Current = 60;
   optional string Topic = 70;
   optional string Description = 80;
-  optional cttype.SyncState SyncState = 90;
+  optional chain.SyncState SyncState = 90;
 }
 message UpdateSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 message GetSyncTaskRequest {
-  string ID = 10;
+  uint32 ID = 10;
 }
 message GetSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }
 
 message GetSyncTasksRequest {
-  optional string ID = 10;
+  optional uint32 ID = 10;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 Start = 40;
@@ -54,7 +53,7 @@ message GetSyncTasksRequest {
   optional uint64 Current = 60;
   optional string Topic = 70;
   optional string Description = 80;
-  optional cttype.SyncState SyncState = 90;
+  optional chain.SyncState SyncState = 90;
   optional string Remark = 100;
   int32 Offset = 110;
   int32 Limit = 120;
@@ -64,5 +63,5 @@ message GetSyncTasksResponse {
   uint32 Total = 20;
 }
 
-message DeleteSyncTaskRequest { string ID = 10; }
+message DeleteSyncTaskRequest { uint32 ID = 10; }
 message DeleteSyncTaskResponse { nftmeta.v1.synctask.SyncTask Info = 10; }

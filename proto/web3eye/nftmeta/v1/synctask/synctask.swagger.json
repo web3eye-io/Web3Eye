@@ -16,38 +16,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/Count/synctasks": {
-      "post": {
-        "operationId": "Manager_CountSyncTasks",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/synctaskCountSyncTasksResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/synctaskCountSyncTasksRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Manager"
-        ]
-      }
-    },
     "/v1/create/synctask": {
       "post": {
         "operationId": "Manager_CreateSyncTask",
@@ -315,7 +283,7 @@
       ],
       "default": "ChainUnkonwn"
     },
-    "cttypeSyncState": {
+    "chainSyncState": {
       "type": "string",
       "enum": [
         "Default",
@@ -357,10 +325,13 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -381,30 +352,13 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "SyncState": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "synctaskCountSyncTasksRequest": {
-      "type": "object",
-      "properties": {
-        "Conds": {
-          "$ref": "#/definitions/synctaskConds"
-        }
-      }
-    },
-    "synctaskCountSyncTasksResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -428,7 +382,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -460,7 +415,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -492,7 +448,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -539,37 +496,68 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Start": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"start\""
         },
         "End": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"end\""
         },
         "Current": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"current\""
         },
         "Topic": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"topic\""
         },
         "Description": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"description\""
+        },
+        "SyncStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"sync_state\""
         },
         "SyncState": {
-          "$ref": "#/definitions/cttypeSyncState"
+          "$ref": "#/definitions/chainSyncState"
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -577,6 +565,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "ChainType": {
@@ -604,7 +596,7 @@
           "type": "string"
         },
         "SyncState": {
-          "$ref": "#/definitions/cttypeSyncState"
+          "$ref": "#/definitions/chainSyncState"
         },
         "Remark": {
           "type": "string"
@@ -657,6 +649,18 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32Val": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

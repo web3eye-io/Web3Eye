@@ -9,28 +9,28 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uuid.UUID) predicate.Transfer {
+func ID(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uuid.UUID) predicate.Transfer {
+func IDEQ(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uuid.UUID) predicate.Transfer {
+func IDNEQ(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uuid.UUID) predicate.Transfer {
+func IDIn(ids ...uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		v := make([]interface{}, len(ids))
 		for i := range v {
@@ -41,7 +41,7 @@ func IDIn(ids ...uuid.UUID) predicate.Transfer {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uuid.UUID) predicate.Transfer {
+func IDNotIn(ids ...uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		v := make([]interface{}, len(ids))
 		for i := range v {
@@ -52,30 +52,37 @@ func IDNotIn(ids ...uuid.UUID) predicate.Transfer {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uuid.UUID) predicate.Transfer {
+func IDGT(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uuid.UUID) predicate.Transfer {
+func IDGTE(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uuid.UUID) predicate.Transfer {
+func IDLT(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uuid.UUID) predicate.Transfer {
+func IDLTE(id uint32) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
+	})
+}
+
+// EntID applies equality check predicate on the "ent_id" field. It's identical to EntIDEQ.
+func EntID(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
 	})
 }
 
@@ -178,9 +185,16 @@ func BlockHash(v string) predicate.Transfer {
 }
 
 // TxTime applies equality check predicate on the "tx_time" field. It's identical to TxTimeEQ.
-func TxTime(v uint32) predicate.Transfer {
+func TxTime(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxTime), v))
+	})
+}
+
+// LogIndex applies equality check predicate on the "log_index" field. It's identical to LogIndexEQ.
+func LogIndex(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLogIndex), v))
 	})
 }
 
@@ -188,6 +202,70 @@ func TxTime(v uint32) predicate.Transfer {
 func Remark(v string) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldRemark), v))
+	})
+}
+
+// EntIDEQ applies the EQ predicate on the "ent_id" field.
+func EntIDEQ(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDNEQ applies the NEQ predicate on the "ent_id" field.
+func EntIDNEQ(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDIn applies the In predicate on the "ent_id" field.
+func EntIDIn(vs ...uuid.UUID) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDNotIn applies the NotIn predicate on the "ent_id" field.
+func EntIDNotIn(vs ...uuid.UUID) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEntID), v...))
+	})
+}
+
+// EntIDGT applies the GT predicate on the "ent_id" field.
+func EntIDGT(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDGTE applies the GTE predicate on the "ent_id" field.
+func EntIDGTE(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLT applies the LT predicate on the "ent_id" field.
+func EntIDLT(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEntID), v))
+	})
+}
+
+// EntIDLTE applies the LTE predicate on the "ent_id" field.
+func EntIDLTE(v uuid.UUID) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEntID), v))
 	})
 }
 
@@ -1438,21 +1516,21 @@ func BlockHashContainsFold(v string) predicate.Transfer {
 }
 
 // TxTimeEQ applies the EQ predicate on the "tx_time" field.
-func TxTimeEQ(v uint32) predicate.Transfer {
+func TxTimeEQ(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeNEQ applies the NEQ predicate on the "tx_time" field.
-func TxTimeNEQ(v uint32) predicate.Transfer {
+func TxTimeNEQ(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeIn applies the In predicate on the "tx_time" field.
-func TxTimeIn(vs ...uint32) predicate.Transfer {
+func TxTimeIn(vs ...uint64) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1463,7 +1541,7 @@ func TxTimeIn(vs ...uint32) predicate.Transfer {
 }
 
 // TxTimeNotIn applies the NotIn predicate on the "tx_time" field.
-func TxTimeNotIn(vs ...uint32) predicate.Transfer {
+func TxTimeNotIn(vs ...uint64) predicate.Transfer {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -1474,28 +1552,28 @@ func TxTimeNotIn(vs ...uint32) predicate.Transfer {
 }
 
 // TxTimeGT applies the GT predicate on the "tx_time" field.
-func TxTimeGT(v uint32) predicate.Transfer {
+func TxTimeGT(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeGTE applies the GTE predicate on the "tx_time" field.
-func TxTimeGTE(v uint32) predicate.Transfer {
+func TxTimeGTE(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeLT applies the LT predicate on the "tx_time" field.
-func TxTimeLT(v uint32) predicate.Transfer {
+func TxTimeLT(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldTxTime), v))
 	})
 }
 
 // TxTimeLTE applies the LTE predicate on the "tx_time" field.
-func TxTimeLTE(v uint32) predicate.Transfer {
+func TxTimeLTE(v uint64) predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldTxTime), v))
 	})
@@ -1512,6 +1590,70 @@ func TxTimeIsNil() predicate.Transfer {
 func TxTimeNotNil() predicate.Transfer {
 	return predicate.Transfer(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldTxTime)))
+	})
+}
+
+// LogIndexEQ applies the EQ predicate on the "log_index" field.
+func LogIndexEQ(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexNEQ applies the NEQ predicate on the "log_index" field.
+func LogIndexNEQ(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexIn applies the In predicate on the "log_index" field.
+func LogIndexIn(vs ...uint32) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLogIndex), v...))
+	})
+}
+
+// LogIndexNotIn applies the NotIn predicate on the "log_index" field.
+func LogIndexNotIn(vs ...uint32) predicate.Transfer {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLogIndex), v...))
+	})
+}
+
+// LogIndexGT applies the GT predicate on the "log_index" field.
+func LogIndexGT(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexGTE applies the GTE predicate on the "log_index" field.
+func LogIndexGTE(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexLT applies the LT predicate on the "log_index" field.
+func LogIndexLT(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLogIndex), v))
+	})
+}
+
+// LogIndexLTE applies the LTE predicate on the "log_index" field.
+func LogIndexLTE(v uint32) predicate.Transfer {
+	return predicate.Transfer(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLogIndex), v))
 	})
 }
 

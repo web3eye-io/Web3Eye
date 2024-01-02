@@ -1,9 +1,9 @@
 <template>
   <div class="outer-bg">
     <div class="outer-container">
-      <q-img :src="contractbg" />
+      <q-img :src="contractbg" :img-style='{borderRadius: "12px"}' />
       <div class="row items-center justify-center">
-        <q-avatar>
+        <q-avatar v-if='current.ProfileURL?.length > 0'>
           <img :src="current.ProfileURL">
         </q-avatar>
       </div>
@@ -133,7 +133,7 @@ import { useTransferStore } from 'src/teststore/transfer';
 import { ChainType } from 'src/teststore/basetypes/const';
 import { Transfer } from 'src/teststore/transfer/types';
 import { formatTime } from 'src/teststore/util'
-import { ShotToken } from 'src/teststore/contract/types';
+import { Contract, ShotToken } from 'src/teststore/contract/types';
 const ToolTip = defineAsyncComponent(() => import('src/components/Token/ToolTip.vue'))
 const TokenCard = defineAsyncComponent(() => import('src/components/Token/TokenCard.vue'))
 const MyImage = defineAsyncComponent(
@@ -144,7 +144,7 @@ const TransferFloatItem = defineAsyncComponent(
 )
 const tab = ref('Collections')
 const contract = useContractStore()
-const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const tokens = computed(() => contract.shotTokens(_contract.value))
 const current = computed(() => contract.Contract)
 
 interface Query {
@@ -176,19 +176,23 @@ const getContract = () => {
     Offset: 0,
     Limit: 100,
     Message: {}
-  }, () => {
-    // TODO
+  }, (error: boolean, row: Contract) => {
+    if (!error) {
+      if (!_chainID.value|| !_chainType.value) {
+        getTransfers(0, 100, row.ChainID, row.ChainType)
+      }
+    }
   })
 }
 
 const transfer = useTransferStore()
-const key = computed(() => transfer.setKey(_chainID.value, _contract.value))
+const key = computed(() => transfer.setKey(_chainID.value, _contract.value, undefined as unknown as string))
 const transfers = computed(() => transfer.getTransfersByKey(key.value))
 
-const getTransfers = (offset: number, limit: number) => {
+const getTransfers = (offset: number, limit: number, chainID: string, chainType: string) => {
   transfer.getTransfers({
-    ChainID: _chainID.value,
-    ChainType: _chainType.value,
+    ChainID: chainID,
+    ChainType: chainType as unknown as ChainType,
     Contract: _contract.value,
     Offset: offset,
     Limit: limit,
@@ -199,7 +203,7 @@ const getTransfers = (offset: number, limit: number) => {
       if (err || rows.length === 0) {
         return
       }
-      getTransfers(offset + limit, limit)
+      getTransfers(offset + limit, limit, chainID, chainType)
     })
 }
 
@@ -256,11 +260,12 @@ const onTokenClick = (token: ShotToken) => {
 }
 
 onMounted(() => {
-  if (transfers.value?.length === 0) {
-    getTransfers(0, 100)
-  }
   if (_contract?.value?.length > 0) {
     getContract()
+  }
+  if (transfers.value?.length === 0) {
+    if (!_chainID.value || !_chainType.value) return
+    getTransfers(0, 100, _chainID.value, _chainType.value)
   }
 })
 </script>

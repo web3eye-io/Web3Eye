@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 )
@@ -25,6 +26,20 @@ type SnapshotUpdate struct {
 // Where appends a list predicates to the SnapshotUpdate builder.
 func (su *SnapshotUpdate) Where(ps ...predicate.Snapshot) *SnapshotUpdate {
 	su.mutation.Where(ps...)
+	return su
+}
+
+// SetEntID sets the "ent_id" field.
+func (su *SnapshotUpdate) SetEntID(u uuid.UUID) *SnapshotUpdate {
+	su.mutation.SetEntID(u)
+	return su
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (su *SnapshotUpdate) SetNillableEntID(u *uuid.UUID) *SnapshotUpdate {
+	if u != nil {
+		su.SetEntID(*u)
+	}
 	return su
 }
 
@@ -206,7 +221,7 @@ func (su *SnapshotUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: snapshot.FieldID,
 			},
 		},
@@ -217,6 +232,13 @@ func (su *SnapshotUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := su.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: snapshot.FieldEntID,
+		})
 	}
 	if value, ok := su.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -321,6 +343,20 @@ type SnapshotUpdateOne struct {
 	hooks     []Hook
 	mutation  *SnapshotMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetEntID sets the "ent_id" field.
+func (suo *SnapshotUpdateOne) SetEntID(u uuid.UUID) *SnapshotUpdateOne {
+	suo.mutation.SetEntID(u)
+	return suo
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (suo *SnapshotUpdateOne) SetNillableEntID(u *uuid.UUID) *SnapshotUpdateOne {
+	if u != nil {
+		suo.SetEntID(*u)
+	}
+	return suo
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -514,7 +550,7 @@ func (suo *SnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Snapshot, err
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: snapshot.FieldID,
 			},
 		},
@@ -542,6 +578,13 @@ func (suo *SnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Snapshot, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := suo.mutation.EntID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: snapshot.FieldEntID,
+		})
 	}
 	if value, ok := suo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

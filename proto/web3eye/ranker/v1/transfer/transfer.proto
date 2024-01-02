@@ -26,7 +26,7 @@ message OrderItem{
 }
 
 message Transfer {
-  string ID = 10;
+  uint32 ID = 10;
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;
@@ -38,9 +38,10 @@ message Transfer {
   uint64 BlockNumber = 100;
   string TxHash = 110;
   string BlockHash = 120;
-  uint32 TxTime = 130;
+  uint64 TxTime = 130;
   string Remark = 140;
-  repeated OrderItem TargetItems = 150;
+  uint32 LogIndex = 150;
+  repeated OrderItem TargetItems = 250;
   repeated OrderItem OfferItems = 160;
 }
 

@@ -55,7 +55,7 @@ export const useSyncTaskStore = defineStore('synctask', {
         req.Message,
         (resp: UpdateSyncTaskResponse): void => {
           const index = this.SyncTasks.SyncTasks.findIndex((el) => el.ID === resp.Info.ID)
-          this.SyncTasks.SyncTasks.splice(index > 0 ? index : 0, index > 0 ? 1 : 0, resp.Info)
+          this.SyncTasks.SyncTasks.splice(index > -1 ? index : 0, index > -1 ? 1 : 0, resp.Info)
           this.SyncTasks.Total += 1
           done(false, resp.Info)
         }, () => {

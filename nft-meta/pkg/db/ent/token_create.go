@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type TokenCreate struct {
 	mutation *TokenMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (tc *TokenCreate) SetEntID(u uuid.UUID) *TokenCreate {
+	tc.mutation.SetEntID(u)
+	return tc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableEntID(u *uuid.UUID) *TokenCreate {
+	if u != nil {
+		tc.SetEntID(*u)
+	}
+	return tc
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -250,30 +263,22 @@ func (tc *TokenCreate) SetNillableIpfsImageURL(s *string) *TokenCreate {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (tc *TokenCreate) SetImageSnapshotID(s string) *TokenCreate {
-	tc.mutation.SetImageSnapshotID(s)
+func (tc *TokenCreate) SetImageSnapshotID(u uint32) *TokenCreate {
+	tc.mutation.SetImageSnapshotID(u)
 	return tc
 }
 
 // SetNillableImageSnapshotID sets the "image_snapshot_id" field if the given value is not nil.
-func (tc *TokenCreate) SetNillableImageSnapshotID(s *string) *TokenCreate {
-	if s != nil {
-		tc.SetImageSnapshotID(*s)
+func (tc *TokenCreate) SetNillableImageSnapshotID(u *uint32) *TokenCreate {
+	if u != nil {
+		tc.SetImageSnapshotID(*u)
 	}
 	return tc
 }
 
 // SetID sets the "id" field.
-func (tc *TokenCreate) SetID(u uuid.UUID) *TokenCreate {
+func (tc *TokenCreate) SetID(u uint32) *TokenCreate {
 	tc.mutation.SetID(u)
-	return tc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (tc *TokenCreate) SetNillableID(u *uuid.UUID) *TokenCreate {
-	if u != nil {
-		tc.SetID(*u)
-	}
 	return tc
 }
 
@@ -356,6 +361,13 @@ func (tc *TokenCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TokenCreate) defaults() error {
+	if _, ok := tc.mutation.EntID(); !ok {
+		if token.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized token.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := token.DefaultEntID()
+		tc.mutation.SetEntID(v)
+	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		if token.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized token.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -381,18 +393,14 @@ func (tc *TokenCreate) defaults() error {
 		v := token.DefaultVectorState
 		tc.mutation.SetVectorState(v)
 	}
-	if _, ok := tc.mutation.ID(); !ok {
-		if token.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized token.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := token.DefaultID()
-		tc.mutation.SetID(v)
-	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TokenCreate) check() error {
+	if _, ok := tc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Token.ent_id"`)}
+	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Token.created_at"`)}
 	}
@@ -428,12 +436,9 @@ func (tc *TokenCreate) sqlSave(ctx context.Context) (*Token, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -444,7 +449,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: token.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: token.FieldID,
 			},
 		}
@@ -452,7 +457,15 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = tc.conflict
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := tc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: token.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -608,7 +621,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.ImageSnapshotID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeUint32,
 			Value:  value,
 			Column: token.FieldImageSnapshotID,
 		})
@@ -621,7 +634,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Token.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -630,7 +643,7 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TokenUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (tc *TokenCreate) OnConflict(opts ...sql.ConflictOption) *TokenUpsertOne {
@@ -665,6 +678,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *TokenUpsert) SetEntID(v uuid.UUID) *TokenUpsert {
+	u.Set(token.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateEntID() *TokenUpsert {
+	u.SetExcluded(token.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *TokenUpsert) SetCreatedAt(v uint32) *TokenUpsert {
@@ -985,7 +1010,7 @@ func (u *TokenUpsert) ClearIpfsImageURL() *TokenUpsert {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsert) SetImageSnapshotID(v string) *TokenUpsert {
+func (u *TokenUpsert) SetImageSnapshotID(v uint32) *TokenUpsert {
 	u.Set(token.FieldImageSnapshotID, v)
 	return u
 }
@@ -993,6 +1018,12 @@ func (u *TokenUpsert) SetImageSnapshotID(v string) *TokenUpsert {
 // UpdateImageSnapshotID sets the "image_snapshot_id" field to the value that was provided on create.
 func (u *TokenUpsert) UpdateImageSnapshotID() *TokenUpsert {
 	u.SetExcluded(token.FieldImageSnapshotID)
+	return u
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsert) AddImageSnapshotID(v uint32) *TokenUpsert {
+	u.Add(token.FieldImageSnapshotID, v)
 	return u
 }
 
@@ -1048,6 +1079,20 @@ func (u *TokenUpsertOne) Update(set func(*TokenUpsert)) *TokenUpsertOne {
 		set(&TokenUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *TokenUpsertOne) SetEntID(v uuid.UUID) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateEntID() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1422,9 +1467,16 @@ func (u *TokenUpsertOne) ClearIpfsImageURL() *TokenUpsertOne {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsertOne) SetImageSnapshotID(v string) *TokenUpsertOne {
+func (u *TokenUpsertOne) SetImageSnapshotID(v uint32) *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetImageSnapshotID(v)
+	})
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsertOne) AddImageSnapshotID(v uint32) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.AddImageSnapshotID(v)
 	})
 }
 
@@ -1458,12 +1510,7 @@ func (u *TokenUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TokenUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: TokenUpsertOne.ID is not supported by MySQL driver. Use TokenUpsertOne.Exec instead")
-	}
+func (u *TokenUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1472,7 +1519,7 @@ func (u *TokenUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TokenUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *TokenUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1523,6 +1570,10 @@ func (tcb *TokenCreateBulk) Save(ctx context.Context) ([]*Token, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1574,7 +1625,7 @@ func (tcb *TokenCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.TokenUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (tcb *TokenCreateBulk) OnConflict(opts ...sql.ConflictOption) *TokenUpsertBulk {
@@ -1652,6 +1703,20 @@ func (u *TokenUpsertBulk) Update(set func(*TokenUpsert)) *TokenUpsertBulk {
 		set(&TokenUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *TokenUpsertBulk) SetEntID(v uuid.UUID) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateEntID() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2026,9 +2091,16 @@ func (u *TokenUpsertBulk) ClearIpfsImageURL() *TokenUpsertBulk {
 }
 
 // SetImageSnapshotID sets the "image_snapshot_id" field.
-func (u *TokenUpsertBulk) SetImageSnapshotID(v string) *TokenUpsertBulk {
+func (u *TokenUpsertBulk) SetImageSnapshotID(v uint32) *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.SetImageSnapshotID(v)
+	})
+}
+
+// AddImageSnapshotID adds v to the "image_snapshot_id" field.
+func (u *TokenUpsertBulk) AddImageSnapshotID(v uint32) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.AddImageSnapshotID(v)
 	})
 }
 

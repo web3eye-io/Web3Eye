@@ -14,7 +14,7 @@
             {{ target?.Name }}
           </div>
           <div class="content row">
-            <div>{{ target?.Name }} #{{ target?.TokenID }}</div>
+            <div>{{ target?.Name }} </div>
           </div>
           <div class="description row">
             {{ target?.Description }}
@@ -32,6 +32,12 @@
               </div>
             </div>
             <div class="column">
+              <div class="chain-title">TokenID</div>
+              <div class="row items-center justify-center">
+                <div class="chain-name">#{{ target?.TokenID }}</div>
+              </div>
+            </div>
+            <div class="column">
               <div class="chain-title">Blockchain</div>
               <div class="row items-center justify-center">
                 <q-icon name="img:icons/ethereum-eth-logo.png" />
@@ -46,18 +52,20 @@
             </div>
             <div class="col-2" />
           </div>
-          <div class="contract column">
-            <div class="title">Contract</div>
-            <div class="address">{{ target?.Contract }}</div>
+          <div class='column' :class='[target && target?.Contract?.length > 42 ? "contract-container1" : "contract-container"]'>
+            <div class="contract">
+              <div class="title">Contract</div>
+              <div class="address">{{ target?.Contract }}</div>
+            </div>
+            <q-btn
+              class="buy"
+              disable
+              unelevated
+              rounded
+              color="primary"
+              label="BUY NOW"
+            />
           </div>
-          <q-btn
-            class="buy"
-            disable
-            unelevated
-            rounded
-            color="primary"
-            label="BUY NOW"
-          />
         </div>
       </div>
       <div class="transfer">Transfer</div>
@@ -202,7 +210,7 @@ const id1 = ref(_id.value)
 
 const transfer = useTransferStore()
 const transferKey = computed(() =>
-  transfer.setKey(_chainID.value, tokenID1.value)
+  transfer.setKey(_chainID.value, _contract.value, tokenID1.value)
 )
 const transfers = computed(() =>
   transfer.Transfers.Transfers.get(transferKey.value)
@@ -268,7 +276,7 @@ const getTransfers = (offset: number, limit: number) => {
 }
 
 const token = useTokenStore()
-const target = computed(() => token.getTokenByID(tokenID1.value))
+const target = computed(() => token.getTokenByID(Number(id1.value)))
 
 const getToken = () => {
   token.getToken(
@@ -283,10 +291,9 @@ const getToken = () => {
 }
 
 const contract = useContractStore()
-const tokens = computed(() => contract.ShotTokens.ShotTokens)
+const tokens = computed(() => contract.shotTokens(_contract.value))
 const getContract = () => {
-  contract.getContractAndTokens(
-    {
+  contract.getContractAndTokens({
       Contract: _contract.value,
       Offset: 0,
       Limit: 100,
@@ -360,8 +367,11 @@ onMounted(() => {
         opacity: 0.8
       .author
         padding-top: 20px
-      .contract
+      .contract-container
         width: 500px
+      .contract-container1
+        width: 580px
+      .contract
         margin-top: 25px
         border: 1px solid #efefef
         background-color: #f7f7f7
@@ -393,8 +403,7 @@ onMounted(() => {
           font-weight: 700
           font-size: 24px
       .buy
-        margin: 10px 0
-        width: 500px
+        margin: 20px 0
         margin-bottom: 20px
 .transfer,.collections
   margin-top: 40px

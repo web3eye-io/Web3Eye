@@ -78,11 +78,3 @@ func GetSnapshots(ctx context.Context, in *nftmetaproto.GetSnapshotsRequest) (re
 	})
 	return resp, err
 }
-
-func CountSnapshots(ctx context.Context, in *nftmetaproto.CountSnapshotsRequest) (resp *nftmetaproto.CountSnapshotsResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountSnapshots(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}

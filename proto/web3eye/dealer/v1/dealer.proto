@@ -11,7 +11,7 @@ service Manager {
 }
 
 message ContentItem {
-    string ID = 10;
+    uint32 ID = 10;
     string URI = 20;
     string ChainType = 30;
     string ChainID = 40;
@@ -31,7 +31,7 @@ enum BackupState {
 }
 
 message Snapshot {
-    string ID            = 10;
+    uint32 ID            = 10;
     uint64 Index         = 20;
     string SnapshotCommP = 30;
     string SnapshotRoot  = 40;

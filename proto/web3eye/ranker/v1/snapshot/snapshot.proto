@@ -9,5 +9,4 @@ service Manager {
   rpc GetSnapshot(nftmeta.v1.snapshot.GetSnapshotRequest) returns (nftmeta.v1.snapshot.GetSnapshotResponse) {}
   rpc GetSnapshotOnly(nftmeta.v1.snapshot.GetSnapshotOnlyRequest) returns (nftmeta.v1.snapshot.GetSnapshotOnlyResponse) {}
   rpc GetSnapshots(nftmeta.v1.snapshot.GetSnapshotsRequest) returns (nftmeta.v1.snapshot.GetSnapshotsResponse) {}
-  rpc CountSnapshots(nftmeta.v1.snapshot.CountSnapshotsRequest) returns (nftmeta.v1.snapshot.CountSnapshotsResponse) {}
 }

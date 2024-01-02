@@ -20,12 +20,12 @@ if (window.location.hostname.startsWith('www.')) {
 if (window.location.hostname.includes('.npool.top')) {
   baseURL = window.location.protocol + '//api.npool.top' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
 }
-if (window.location.hostname.includes('localhost')) {
-  baseURL = window.location.protocol + '//api.web3eye.npool.top' + '/api'
-}
-
 // define
-const api = axios.create({ baseURL: baseURL })
+const api = axios.create({ 
+  baseURL: process.env.DEV ? '/api' : baseURL,
+  withCredentials: false,
+  responseType: 'json',
+ })
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

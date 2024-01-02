@@ -3,7 +3,8 @@ import { SyncState } from '../basetypes/synctask/const';
 import { BaseRequest } from '../local';
 
 export interface SyncTask {
-    ID: string;
+    ID: number;
+    EntID: string;
     ChainType: ChainType;
     ChainID: string;
     /** @format uint64 */
@@ -19,7 +20,7 @@ export interface SyncTask {
 }
 
 export interface CreateSyncTaskRequest extends BaseRequest{
-    ID: string;
+    ID?: number;
     ChainType: ChainType;
     ChainID: string;
     /** @format uint64 */
@@ -39,7 +40,8 @@ export interface CreateSyncTaskRequest extends BaseRequest{
   }
   
   export interface DeleteSyncTaskRequest extends BaseRequest{
-    ID: string;
+    ID: number;
+    EntID: string;
   }
   
   export interface DeleteSyncTaskResponse {
@@ -47,7 +49,8 @@ export interface CreateSyncTaskRequest extends BaseRequest{
   }
   
   export interface UpdateSyncTaskRequest extends BaseRequest{
-    ID: string;
+    ID: number;
+    EntID: string;
     ChainType: ChainType;
     ChainID: string;
     /** @format uint64 */

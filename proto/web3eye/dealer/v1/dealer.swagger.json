@@ -61,7 +61,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "URI": {
           "type": "string"
@@ -118,7 +119,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "Index": {
           "type": "string",

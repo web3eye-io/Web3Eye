@@ -100,14 +100,6 @@ func ExistSnapshotConds(ctx context.Context, in *npool.ExistSnapshotCondsRequest
 	return resp, err
 }
 
-func CountSnapshots(ctx context.Context, in *npool.CountSnapshotsRequest) (resp *npool.CountSnapshotsResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountSnapshots(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteSnapshot(ctx context.Context, in *npool.DeleteSnapshotRequest) (resp *npool.DeleteSnapshotResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteSnapshot(ctx, in)

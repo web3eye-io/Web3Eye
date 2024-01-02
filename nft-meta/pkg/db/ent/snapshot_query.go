@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/predicate"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/snapshot"
 )
@@ -87,8 +86,8 @@ func (sq *SnapshotQuery) FirstX(ctx context.Context) *Snapshot {
 
 // FirstID returns the first Snapshot ID from the query.
 // Returns a *NotFoundError when no Snapshot ID was found.
-func (sq *SnapshotQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (sq *SnapshotQuery) FirstID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = sq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
@@ -100,7 +99,7 @@ func (sq *SnapshotQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (sq *SnapshotQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (sq *SnapshotQuery) FirstIDX(ctx context.Context) uint32 {
 	id, err := sq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -138,8 +137,8 @@ func (sq *SnapshotQuery) OnlyX(ctx context.Context) *Snapshot {
 // OnlyID is like Only, but returns the only Snapshot ID in the query.
 // Returns a *NotSingularError when more than one Snapshot ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (sq *SnapshotQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (sq *SnapshotQuery) OnlyID(ctx context.Context) (id uint32, err error) {
+	var ids []uint32
 	if ids, err = sq.Limit(2).IDs(ctx); err != nil {
 		return
 	}
@@ -155,7 +154,7 @@ func (sq *SnapshotQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (sq *SnapshotQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (sq *SnapshotQuery) OnlyIDX(ctx context.Context) uint32 {
 	id, err := sq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,8 +180,8 @@ func (sq *SnapshotQuery) AllX(ctx context.Context) []*Snapshot {
 }
 
 // IDs executes the query and returns a list of Snapshot IDs.
-func (sq *SnapshotQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	var ids []uuid.UUID
+func (sq *SnapshotQuery) IDs(ctx context.Context) ([]uint32, error) {
+	var ids []uint32
 	if err := sq.Select(snapshot.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -190,7 +189,7 @@ func (sq *SnapshotQuery) IDs(ctx context.Context) ([]uuid.UUID, error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (sq *SnapshotQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (sq *SnapshotQuery) IDsX(ctx context.Context) []uint32 {
 	ids, err := sq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -257,12 +256,12 @@ func (sq *SnapshotQuery) Clone() *SnapshotQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Snapshot.Query().
-//		GroupBy(snapshot.FieldCreatedAt).
+//		GroupBy(snapshot.FieldEntID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (sq *SnapshotQuery) GroupBy(field string, fields ...string) *SnapshotGroupBy {
@@ -285,11 +284,11 @@ func (sq *SnapshotQuery) GroupBy(field string, fields ...string) *SnapshotGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt uint32 `json:"created_at,omitempty"`
+//		EntID uuid.UUID `json:"ent_id,omitempty"`
 //	}
 //
 //	client.Snapshot.Query().
-//		Select(snapshot.FieldCreatedAt).
+//		Select(snapshot.FieldEntID).
 //		Scan(ctx, &v)
 func (sq *SnapshotQuery) Select(fields ...string) *SnapshotSelect {
 	sq.fields = append(sq.fields, fields...)
@@ -375,7 +374,7 @@ func (sq *SnapshotQuery) querySpec() *sqlgraph.QuerySpec {
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: snapshot.FieldID,
 			},
 		},

@@ -27,7 +27,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   block.Table,
 			Columns: block.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: block.FieldID,
 			},
 		},
@@ -36,11 +36,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 			block.FieldCreatedAt:   {Type: field.TypeUint32, Column: block.FieldCreatedAt},
 			block.FieldUpdatedAt:   {Type: field.TypeUint32, Column: block.FieldUpdatedAt},
 			block.FieldDeletedAt:   {Type: field.TypeUint32, Column: block.FieldDeletedAt},
+			block.FieldEntID:       {Type: field.TypeUUID, Column: block.FieldEntID},
 			block.FieldChainType:   {Type: field.TypeString, Column: block.FieldChainType},
 			block.FieldChainID:     {Type: field.TypeString, Column: block.FieldChainID},
 			block.FieldBlockNumber: {Type: field.TypeUint64, Column: block.FieldBlockNumber},
 			block.FieldBlockHash:   {Type: field.TypeString, Column: block.FieldBlockHash},
-			block.FieldBlockTime:   {Type: field.TypeInt64, Column: block.FieldBlockTime},
+			block.FieldBlockTime:   {Type: field.TypeUint64, Column: block.FieldBlockTime},
 			block.FieldParseState:  {Type: field.TypeString, Column: block.FieldParseState},
 			block.FieldRemark:      {Type: field.TypeString, Column: block.FieldRemark},
 		},
@@ -50,7 +51,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   contract.Table,
 			Columns: contract.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: contract.FieldID,
 			},
 		},
@@ -59,6 +60,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			contract.FieldCreatedAt:   {Type: field.TypeUint32, Column: contract.FieldCreatedAt},
 			contract.FieldUpdatedAt:   {Type: field.TypeUint32, Column: contract.FieldUpdatedAt},
 			contract.FieldDeletedAt:   {Type: field.TypeUint32, Column: contract.FieldDeletedAt},
+			contract.FieldEntID:       {Type: field.TypeUUID, Column: contract.FieldEntID},
 			contract.FieldChainType:   {Type: field.TypeString, Column: contract.FieldChainType},
 			contract.FieldChainID:     {Type: field.TypeString, Column: contract.FieldChainID},
 			contract.FieldAddress:     {Type: field.TypeString, Column: contract.FieldAddress},
@@ -81,12 +83,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   endpoint.Table,
 			Columns: endpoint.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		},
 		Type: "Endpoint",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			endpoint.FieldEntID:     {Type: field.TypeUUID, Column: endpoint.FieldEntID},
 			endpoint.FieldCreatedAt: {Type: field.TypeUint32, Column: endpoint.FieldCreatedAt},
 			endpoint.FieldUpdatedAt: {Type: field.TypeUint32, Column: endpoint.FieldUpdatedAt},
 			endpoint.FieldDeletedAt: {Type: field.TypeUint32, Column: endpoint.FieldDeletedAt},
@@ -102,12 +105,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   order.Table,
 			Columns: order.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		},
 		Type: "Order",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			order.FieldEntID:       {Type: field.TypeUUID, Column: order.FieldEntID},
 			order.FieldCreatedAt:   {Type: field.TypeUint32, Column: order.FieldCreatedAt},
 			order.FieldUpdatedAt:   {Type: field.TypeUint32, Column: order.FieldUpdatedAt},
 			order.FieldDeletedAt:   {Type: field.TypeUint32, Column: order.FieldDeletedAt},
@@ -126,16 +130,17 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   orderitem.Table,
 			Columns: orderitem.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: orderitem.FieldID,
 			},
 		},
 		Type: "OrderItem",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			orderitem.FieldEntID:         {Type: field.TypeUUID, Column: orderitem.FieldEntID},
 			orderitem.FieldCreatedAt:     {Type: field.TypeUint32, Column: orderitem.FieldCreatedAt},
 			orderitem.FieldUpdatedAt:     {Type: field.TypeUint32, Column: orderitem.FieldUpdatedAt},
 			orderitem.FieldDeletedAt:     {Type: field.TypeUint32, Column: orderitem.FieldDeletedAt},
-			orderitem.FieldOrderID:       {Type: field.TypeString, Column: orderitem.FieldOrderID},
+			orderitem.FieldOrderID:       {Type: field.TypeUUID, Column: orderitem.FieldOrderID},
 			orderitem.FieldOrderItemType: {Type: field.TypeString, Column: orderitem.FieldOrderItemType},
 			orderitem.FieldContract:      {Type: field.TypeString, Column: orderitem.FieldContract},
 			orderitem.FieldTokenType:     {Type: field.TypeString, Column: orderitem.FieldTokenType},
@@ -149,12 +154,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   snapshot.Table,
 			Columns: snapshot.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: snapshot.FieldID,
 			},
 		},
 		Type: "Snapshot",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			snapshot.FieldEntID:         {Type: field.TypeUUID, Column: snapshot.FieldEntID},
 			snapshot.FieldCreatedAt:     {Type: field.TypeUint32, Column: snapshot.FieldCreatedAt},
 			snapshot.FieldUpdatedAt:     {Type: field.TypeUint32, Column: snapshot.FieldUpdatedAt},
 			snapshot.FieldDeletedAt:     {Type: field.TypeUint32, Column: snapshot.FieldDeletedAt},
@@ -170,7 +176,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   synctask.Table,
 			Columns: synctask.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: synctask.FieldID,
 			},
 		},
@@ -179,6 +185,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			synctask.FieldCreatedAt:   {Type: field.TypeUint32, Column: synctask.FieldCreatedAt},
 			synctask.FieldUpdatedAt:   {Type: field.TypeUint32, Column: synctask.FieldUpdatedAt},
 			synctask.FieldDeletedAt:   {Type: field.TypeUint32, Column: synctask.FieldDeletedAt},
+			synctask.FieldEntID:       {Type: field.TypeUUID, Column: synctask.FieldEntID},
 			synctask.FieldChainType:   {Type: field.TypeString, Column: synctask.FieldChainType},
 			synctask.FieldChainID:     {Type: field.TypeString, Column: synctask.FieldChainID},
 			synctask.FieldStart:       {Type: field.TypeUint64, Column: synctask.FieldStart},
@@ -195,12 +202,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   token.Table,
 			Columns: token.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: token.FieldID,
 			},
 		},
 		Type: "Token",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			token.FieldEntID:           {Type: field.TypeUUID, Column: token.FieldEntID},
 			token.FieldCreatedAt:       {Type: field.TypeUint32, Column: token.FieldCreatedAt},
 			token.FieldUpdatedAt:       {Type: field.TypeUint32, Column: token.FieldUpdatedAt},
 			token.FieldDeletedAt:       {Type: field.TypeUint32, Column: token.FieldDeletedAt},
@@ -220,7 +228,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldVectorState:     {Type: field.TypeString, Column: token.FieldVectorState},
 			token.FieldRemark:          {Type: field.TypeString, Column: token.FieldRemark},
 			token.FieldIpfsImageURL:    {Type: field.TypeString, Column: token.FieldIpfsImageURL},
-			token.FieldImageSnapshotID: {Type: field.TypeString, Column: token.FieldImageSnapshotID},
+			token.FieldImageSnapshotID: {Type: field.TypeUint32, Column: token.FieldImageSnapshotID},
 		},
 	}
 	graph.Nodes[8] = &sqlgraph.Node{
@@ -228,12 +236,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   transfer.Table,
 			Columns: transfer.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: transfer.FieldID,
 			},
 		},
 		Type: "Transfer",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			transfer.FieldEntID:       {Type: field.TypeUUID, Column: transfer.FieldEntID},
 			transfer.FieldCreatedAt:   {Type: field.TypeUint32, Column: transfer.FieldCreatedAt},
 			transfer.FieldUpdatedAt:   {Type: field.TypeUint32, Column: transfer.FieldUpdatedAt},
 			transfer.FieldDeletedAt:   {Type: field.TypeUint32, Column: transfer.FieldDeletedAt},
@@ -248,7 +257,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transfer.FieldBlockNumber: {Type: field.TypeUint64, Column: transfer.FieldBlockNumber},
 			transfer.FieldTxHash:      {Type: field.TypeString, Column: transfer.FieldTxHash},
 			transfer.FieldBlockHash:   {Type: field.TypeString, Column: transfer.FieldBlockHash},
-			transfer.FieldTxTime:      {Type: field.TypeUint32, Column: transfer.FieldTxTime},
+			transfer.FieldTxTime:      {Type: field.TypeUint64, Column: transfer.FieldTxTime},
+			transfer.FieldLogIndex:    {Type: field.TypeUint32, Column: transfer.FieldLogIndex},
 			transfer.FieldRemark:      {Type: field.TypeString, Column: transfer.FieldRemark},
 		},
 	}
@@ -296,8 +306,8 @@ func (f *BlockFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *BlockFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *BlockFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(block.FieldID))
 }
 
@@ -314,6 +324,11 @@ func (f *BlockFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *BlockFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(block.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *BlockFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(block.FieldEntID))
 }
 
 // WhereChainType applies the entql string predicate on the chain_type field.
@@ -336,8 +351,8 @@ func (f *BlockFilter) WhereBlockHash(p entql.StringP) {
 	f.Where(p.Field(block.FieldBlockHash))
 }
 
-// WhereBlockTime applies the entql int64 predicate on the block_time field.
-func (f *BlockFilter) WhereBlockTime(p entql.Int64P) {
+// WhereBlockTime applies the entql uint64 predicate on the block_time field.
+func (f *BlockFilter) WhereBlockTime(p entql.Uint64P) {
 	f.Where(p.Field(block.FieldBlockTime))
 }
 
@@ -386,8 +401,8 @@ func (f *ContractFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *ContractFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *ContractFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(contract.FieldID))
 }
 
@@ -404,6 +419,11 @@ func (f *ContractFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *ContractFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(contract.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *ContractFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(contract.FieldEntID))
 }
 
 // WhereChainType applies the entql string predicate on the chain_type field.
@@ -516,9 +536,14 @@ func (f *EndpointFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *EndpointFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *EndpointFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(endpoint.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *EndpointFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(endpoint.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -596,9 +621,14 @@ func (f *OrderFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *OrderFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *OrderFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(order.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *OrderFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(order.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -691,9 +721,14 @@ func (f *OrderItemFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *OrderItemFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *OrderItemFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(orderitem.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *OrderItemFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(orderitem.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -711,8 +746,8 @@ func (f *OrderItemFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(orderitem.FieldDeletedAt))
 }
 
-// WhereOrderID applies the entql string predicate on the order_id field.
-func (f *OrderItemFilter) WhereOrderID(p entql.StringP) {
+// WhereOrderID applies the entql [16]byte predicate on the order_id field.
+func (f *OrderItemFilter) WhereOrderID(p entql.ValueP) {
 	f.Where(p.Field(orderitem.FieldOrderID))
 }
 
@@ -781,9 +816,14 @@ func (f *SnapshotFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *SnapshotFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SnapshotFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(snapshot.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *SnapshotFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(snapshot.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -861,8 +901,8 @@ func (f *SyncTaskFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *SyncTaskFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *SyncTaskFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(synctask.FieldID))
 }
 
@@ -879,6 +919,11 @@ func (f *SyncTaskFilter) WhereUpdatedAt(p entql.Uint32P) {
 // WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
 func (f *SyncTaskFilter) WhereDeletedAt(p entql.Uint32P) {
 	f.Where(p.Field(synctask.FieldDeletedAt))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *SyncTaskFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(synctask.FieldEntID))
 }
 
 // WhereChainType applies the entql string predicate on the chain_type field.
@@ -961,9 +1006,14 @@ func (f *TokenFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *TokenFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *TokenFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(token.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *TokenFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(token.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -1061,8 +1111,8 @@ func (f *TokenFilter) WhereIpfsImageURL(p entql.StringP) {
 	f.Where(p.Field(token.FieldIpfsImageURL))
 }
 
-// WhereImageSnapshotID applies the entql string predicate on the image_snapshot_id field.
-func (f *TokenFilter) WhereImageSnapshotID(p entql.StringP) {
+// WhereImageSnapshotID applies the entql uint32 predicate on the image_snapshot_id field.
+func (f *TokenFilter) WhereImageSnapshotID(p entql.Uint32P) {
 	f.Where(p.Field(token.FieldImageSnapshotID))
 }
 
@@ -1101,9 +1151,14 @@ func (f *TransferFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *TransferFilter) WhereID(p entql.ValueP) {
+// WhereID applies the entql uint32 predicate on the id field.
+func (f *TransferFilter) WhereID(p entql.Uint32P) {
 	f.Where(p.Field(transfer.FieldID))
+}
+
+// WhereEntID applies the entql [16]byte predicate on the ent_id field.
+func (f *TransferFilter) WhereEntID(p entql.ValueP) {
+	f.Where(p.Field(transfer.FieldEntID))
 }
 
 // WhereCreatedAt applies the entql uint32 predicate on the created_at field.
@@ -1176,9 +1231,14 @@ func (f *TransferFilter) WhereBlockHash(p entql.StringP) {
 	f.Where(p.Field(transfer.FieldBlockHash))
 }
 
-// WhereTxTime applies the entql uint32 predicate on the tx_time field.
-func (f *TransferFilter) WhereTxTime(p entql.Uint32P) {
+// WhereTxTime applies the entql uint64 predicate on the tx_time field.
+func (f *TransferFilter) WhereTxTime(p entql.Uint64P) {
 	f.Where(p.Field(transfer.FieldTxTime))
+}
+
+// WhereLogIndex applies the entql uint32 predicate on the log_index field.
+func (f *TransferFilter) WhereLogIndex(p entql.Uint32P) {
+	f.Where(p.Field(transfer.FieldLogIndex))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.

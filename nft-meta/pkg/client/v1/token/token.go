@@ -121,14 +121,6 @@ func ExistTokenConds(ctx context.Context, in *npool.ExistTokenCondsRequest) (res
 	return resp, err
 }
 
-func CountTokens(ctx context.Context, in *npool.CountTokensRequest) (resp *npool.CountTokensResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountTokens(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) (resp *npool.DeleteTokenResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteToken(ctx, in)

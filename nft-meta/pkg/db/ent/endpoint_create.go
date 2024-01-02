@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type EndpointCreate struct {
 	mutation *EndpointMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (ec *EndpointCreate) SetEntID(u uuid.UUID) *EndpointCreate {
+	ec.mutation.SetEntID(u)
+	return ec
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (ec *EndpointCreate) SetNillableEntID(u *uuid.UUID) *EndpointCreate {
+	if u != nil {
+		ec.SetEntID(*u)
+	}
+	return ec
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -120,16 +133,8 @@ func (ec *EndpointCreate) SetNillableRemark(s *string) *EndpointCreate {
 }
 
 // SetID sets the "id" field.
-func (ec *EndpointCreate) SetID(u uuid.UUID) *EndpointCreate {
+func (ec *EndpointCreate) SetID(u uint32) *EndpointCreate {
 	ec.mutation.SetID(u)
-	return ec
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (ec *EndpointCreate) SetNillableID(u *uuid.UUID) *EndpointCreate {
-	if u != nil {
-		ec.SetID(*u)
-	}
 	return ec
 }
 
@@ -212,6 +217,13 @@ func (ec *EndpointCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ec *EndpointCreate) defaults() error {
+	if _, ok := ec.mutation.EntID(); !ok {
+		if endpoint.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized endpoint.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := endpoint.DefaultEntID()
+		ec.mutation.SetEntID(v)
+	}
 	if _, ok := ec.mutation.CreatedAt(); !ok {
 		if endpoint.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized endpoint.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -233,18 +245,14 @@ func (ec *EndpointCreate) defaults() error {
 		v := endpoint.DefaultDeletedAt()
 		ec.mutation.SetDeletedAt(v)
 	}
-	if _, ok := ec.mutation.ID(); !ok {
-		if endpoint.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized endpoint.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := endpoint.DefaultID()
-		ec.mutation.SetID(v)
-	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EndpointCreate) check() error {
+	if _, ok := ec.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Endpoint.ent_id"`)}
+	}
 	if _, ok := ec.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Endpoint.created_at"`)}
 	}
@@ -271,12 +279,9 @@ func (ec *EndpointCreate) sqlSave(ctx context.Context) (*Endpoint, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -287,7 +292,7 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: endpoint.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: endpoint.FieldID,
 			},
 		}
@@ -295,7 +300,15 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = ec.conflict
 	if id, ok := ec.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := ec.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: endpoint.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := ec.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -368,7 +381,7 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Endpoint.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -377,7 +390,7 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.EndpointUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (ec *EndpointCreate) OnConflict(opts ...sql.ConflictOption) *EndpointUpsertOne {
@@ -412,6 +425,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *EndpointUpsert) SetEntID(v uuid.UUID) *EndpointUpsert {
+	u.Set(endpoint.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EndpointUpsert) UpdateEntID() *EndpointUpsert {
+	u.SetExcluded(endpoint.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *EndpointUpsert) SetCreatedAt(v uint32) *EndpointUpsert {
@@ -593,6 +618,20 @@ func (u *EndpointUpsertOne) Update(set func(*EndpointUpsert)) *EndpointUpsertOne
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *EndpointUpsertOne) SetEntID(v uuid.UUID) *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EndpointUpsertOne) UpdateEntID() *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (u *EndpointUpsertOne) SetCreatedAt(v uint32) *EndpointUpsertOne {
 	return u.Update(func(s *EndpointUpsert) {
@@ -763,12 +802,7 @@ func (u *EndpointUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *EndpointUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: EndpointUpsertOne.ID is not supported by MySQL driver. Use EndpointUpsertOne.Exec instead")
-	}
+func (u *EndpointUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -777,7 +811,7 @@ func (u *EndpointUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *EndpointUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *EndpointUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -828,6 +862,10 @@ func (ecb *EndpointCreateBulk) Save(ctx context.Context) ([]*Endpoint, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -879,7 +917,7 @@ func (ecb *EndpointCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.EndpointUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (ecb *EndpointCreateBulk) OnConflict(opts ...sql.ConflictOption) *EndpointUpsertBulk {
@@ -957,6 +995,20 @@ func (u *EndpointUpsertBulk) Update(set func(*EndpointUpsert)) *EndpointUpsertBu
 		set(&EndpointUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *EndpointUpsertBulk) SetEntID(v uuid.UUID) *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *EndpointUpsertBulk) UpdateEntID() *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.

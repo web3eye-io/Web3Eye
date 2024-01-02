@@ -15,3 +15,4 @@ dashboard/node_modules
 !dashboard/*.json
 extern
 go-tmp-env
+README_draft.md

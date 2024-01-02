@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type OrderCreate struct {
 	mutation *OrderMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (oc *OrderCreate) SetEntID(u uuid.UUID) *OrderCreate {
+	oc.mutation.SetEntID(u)
+	return oc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (oc *OrderCreate) SetNillableEntID(u *uuid.UUID) *OrderCreate {
+	if u != nil {
+		oc.SetEntID(*u)
+	}
+	return oc
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -122,16 +135,8 @@ func (oc *OrderCreate) SetNillableRemark(s *string) *OrderCreate {
 }
 
 // SetID sets the "id" field.
-func (oc *OrderCreate) SetID(u uuid.UUID) *OrderCreate {
+func (oc *OrderCreate) SetID(u uint32) *OrderCreate {
 	oc.mutation.SetID(u)
-	return oc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableID(u *uuid.UUID) *OrderCreate {
-	if u != nil {
-		oc.SetID(*u)
-	}
 	return oc
 }
 
@@ -214,6 +219,13 @@ func (oc *OrderCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oc *OrderCreate) defaults() error {
+	if _, ok := oc.mutation.EntID(); !ok {
+		if order.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized order.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := order.DefaultEntID()
+		oc.mutation.SetEntID(v)
+	}
 	if _, ok := oc.mutation.CreatedAt(); !ok {
 		if order.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized order.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -235,18 +247,14 @@ func (oc *OrderCreate) defaults() error {
 		v := order.DefaultDeletedAt()
 		oc.mutation.SetDeletedAt(v)
 	}
-	if _, ok := oc.mutation.ID(); !ok {
-		if order.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized order.DefaultID (forgotten import ent/runtime?)")
-		}
-		v := order.DefaultID()
-		oc.mutation.SetID(v)
-	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrderCreate) check() error {
+	if _, ok := oc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Order.ent_id"`)}
+	}
 	if _, ok := oc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Order.created_at"`)}
 	}
@@ -298,12 +306,9 @@ func (oc *OrderCreate) sqlSave(ctx context.Context) (*Order, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -314,7 +319,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: order.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: order.FieldID,
 			},
 		}
@@ -322,7 +327,15 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = oc.conflict
 	if id, ok := oc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := oc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: order.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := oc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -419,7 +432,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Order.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -428,7 +441,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrderUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (oc *OrderCreate) OnConflict(opts ...sql.ConflictOption) *OrderUpsertOne {
@@ -463,6 +476,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderUpsert) SetEntID(v uuid.UUID) *OrderUpsert {
+	u.Set(order.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateEntID() *OrderUpsert {
+	u.SetExcluded(order.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderUpsert) SetCreatedAt(v uint32) *OrderUpsert {
@@ -686,6 +711,20 @@ func (u *OrderUpsertOne) Update(set func(*OrderUpsert)) *OrderUpsertOne {
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *OrderUpsertOne) SetEntID(v uuid.UUID) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateEntID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (u *OrderUpsertOne) SetCreatedAt(v uint32) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
@@ -905,12 +944,7 @@ func (u *OrderUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: OrderUpsertOne.ID is not supported by MySQL driver. Use OrderUpsertOne.Exec instead")
-	}
+func (u *OrderUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -919,7 +953,7 @@ func (u *OrderUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *OrderUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -970,6 +1004,10 @@ func (ocb *OrderCreateBulk) Save(ctx context.Context) ([]*Order, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -1021,7 +1059,7 @@ func (ocb *OrderCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrderUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (ocb *OrderCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrderUpsertBulk {
@@ -1099,6 +1137,20 @@ func (u *OrderUpsertBulk) Update(set func(*OrderUpsert)) *OrderUpsertBulk {
 		set(&OrderUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *OrderUpsertBulk) SetEntID(v uuid.UUID) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateEntID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.

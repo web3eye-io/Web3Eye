@@ -108,14 +108,6 @@ func ExistEndpointConds(ctx context.Context, in *npool.ExistEndpointCondsRequest
 	return resp, err
 }
 
-func CountEndpoints(ctx context.Context, in *npool.CountEndpointsRequest) (resp *npool.CountEndpointsResponse, err error) {
-	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountEndpoints(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}
-
 func DeleteEndpoint(ctx context.Context, in *npool.DeleteEndpointRequest) (resp *npool.DeleteEndpointResponse, err error) {
 	ret, err := withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.DeleteEndpoint(ctx, in)

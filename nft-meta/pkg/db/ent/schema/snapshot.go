@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/google/uuid"
+	crudermixin "github.com/NpoolPlatform/libent-cruder/pkg/mixin"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/mixin"
 )
 
@@ -15,14 +15,13 @@ type Snapshot struct {
 
 func (Snapshot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		crudermixin.AutoIDMixin{},
 		mixin.TimeMixin{},
 	}
 }
 
 func (Snapshot) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).
-			Unique(),
 		field.Uint64("index"),
 		field.String("snapshot_comm_p"),
 		field.String("snapshot_root"),

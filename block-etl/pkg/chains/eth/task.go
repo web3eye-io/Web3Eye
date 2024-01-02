@@ -2,7 +2,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -46,7 +45,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 		case num := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, num)
 			if err != nil {
-				logger.Sugar().Error(err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 				continue
 			}
 
@@ -55,12 +54,12 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
-				blockLogs, err := e.IndexBlockLogs(ctx, num)
+				blockLogs, err := e.IndexBlockLogs(ctx, block.BlockNumber)
 				if err != nil {
 					return err
 				}
 
-				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs)
+				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs, block.BlockTime)
 				if err != nil {
 					return err
 				}
@@ -88,7 +87,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}()
 
 			if err != nil {
-				logger.Sugar().Error(err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 			}
 
 			remark := ""
@@ -106,7 +105,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				},
 			})
 			if err != nil {
-				logger.Sugar().Error(err)
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 			}
 		case <-ctx.Done():
 			return
@@ -125,16 +124,4 @@ func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
 			v()
 		}
 	}
-}
-
-func transferIdentifier(contract, tokenID, txHash, from string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
-}
-
-func tokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", chain, chainID, contract, tokenID)
-}
-
-func contractIdentifier(chain basetype.ChainType, chainID, contract string) string {
-	return fmt.Sprintf("%v:%v:%v", chain, chainID, contract)
 }

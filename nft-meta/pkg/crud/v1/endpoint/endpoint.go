@@ -1,337 +1,161 @@
 package endpoint
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
+	entendpoint "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/endpoint"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
-	var info *ent.Endpoint
-	var err error
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := CreateSet(cli.Endpoint.Create(), in)
-		info, err = c.Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+type Req struct {
+	ID        *uint32
+	EntID     *uuid.UUID
+	ChainType *basetype.ChainType
+	ChainID   *string
+	Address   *string
+	State     *basetype.EndpointState
+	Remark    *string
 }
 
-func CreateSet(c *ent.EndpointCreate, in *npool.EndpointReq) *ent.EndpointCreate {
-	if in.ID != nil {
-		c.SetID(uuid.New())
+func CreateSet(c *ent.EndpointCreate, req *Req) *ent.EndpointCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainType != nil {
+		c.SetChainType(req.ChainType.String())
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.Address != nil {
-		c.SetAddress(in.GetAddress())
+	if req.Address != nil {
+		c.SetAddress(*req.Address)
 	}
-	if in.State != nil {
-		c.SetState(in.GetState().String())
+	if req.State != nil {
+		c.SetState(req.State.String())
 	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.EndpointReq) ([]*ent.Endpoint, error) {
-	var err error
-	rows := []*ent.Endpoint{}
+func UpdateSet(u *ent.EndpointUpdateOne, req *Req) (*ent.EndpointUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
+	}
+	if req.ChainID != nil {
+		u.SetChainID(*req.ChainID)
+	}
+	if req.Address != nil {
+		u.SetAddress(*req.Address)
+	}
+	if req.State != nil {
+		u.SetState(req.State.String())
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
+}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.EndpointCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Endpoint.Create(), info)
+type Conds struct {
+	EntID     *cruder.Cond
+	EntIDs    *cruder.Cond
+	ChainType *cruder.Cond
+	ChainID   *cruder.Cond
+	Address   *cruder.Cond
+	State     *cruder.Cond
+	Remark    *cruder.Cond
+}
+
+func SetQueryConds(q *ent.EndpointQuery, conds *Conds) (*ent.EndpointQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		rows, err = tx.Endpoint.CreateBulk(bulk...).Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func Update(ctx context.Context, in *npool.EndpointReq) (*ent.Endpoint, error) {
-	var err error
-	var info *ent.Endpoint
-
-	if _, err := uuid.Parse(in.GetID()); err != nil {
-		return nil, err
-	}
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		u := cli.Endpoint.UpdateOneID(uuid.MustParse(in.GetID()))
-		u = UpdateSet(u, in)
-		info, err = u.Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func UpdateSet(u *ent.EndpointUpdateOne, in *npool.EndpointReq) *ent.EndpointUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.Address != nil {
-		u.SetAddress(in.GetAddress())
-	}
-	if in.State != nil {
-		u.SetState(in.GetState().String())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.Endpoint, error) {
-	var info *ent.Endpoint
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Endpoint.Query().Where(endpoint.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.EndpointQuery, error) {
-	stm := cli.Endpoint.Query()
-	if conds == nil {
-		return stm, nil
-	}
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.ID(id))
+			q.Where(entendpoint.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(endpoint.IDIn(ids...))
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntIDs.Op {
+		case cruder.IN:
+			q.Where(entendpoint.EntIDIn(entids...))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.ChainType(conds.GetChainType().GetValue()))
+			q.Where(entendpoint.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.ChainID(conds.GetChainID().GetValue()))
+			q.Where(entendpoint.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
 	if conds.Address != nil {
-		switch conds.GetAddress().GetOp() {
+		address, ok := conds.Address.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid address")
+		}
+		switch conds.Address.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.Address(conds.GetAddress().GetValue()))
+			q.Where(entendpoint.Address(address))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid address field")
 		}
 	}
 	if conds.State != nil {
-		switch conds.GetState().GetOp() {
+		state, ok := conds.State.Val.(basetype.EndpointState)
+		if !ok {
+			return nil, fmt.Errorf("invalid state")
+		}
+		switch conds.State.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.State(conds.GetState().GetValue()))
+			q.Where(entendpoint.State(state.String()))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid state field")
 		}
 	}
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(endpoint.Remark(conds.GetRemark().GetValue()))
+			q.Where(entendpoint.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid endpoint field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Endpoint, int, error) {
-	var err error
-	rows := []*ent.Endpoint{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(endpoint.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.Endpoint, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Endpoint.Query().Where(endpoint.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Endpoint, error) {
-	var info *ent.Endpoint
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Endpoint.UpdateOneID(id).
-			SetDeletedAt(uint32(time.Now().Unix())).
-			Save(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

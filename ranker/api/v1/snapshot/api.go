@@ -26,10 +26,6 @@ func (s *Server) GetSnapshots(ctx context.Context, in *nftmetanpool.GetSnapshots
 	return s.Server.GetSnapshots(ctx, in)
 }
 
-func (s *Server) CountSnapshots(ctx context.Context, in *nftmetanpool.CountSnapshotsRequest) (*nftmetanpool.CountSnapshotsResponse, error) {
-	return s.Server.CountSnapshots(ctx, in)
-}
-
 func Register(server grpc.ServiceRegistrar) {
 	rankernpool.RegisterManagerServer(server, &Server{})
 }

@@ -6,7 +6,6 @@ option go_package = "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/sync
 import "google/api/annotations.proto";
 import "web3eye/web3eye.proto";
 import "web3eye/basetype/v1/chain.proto";
-import "web3eye/nftmeta/v1/cttype/cttype.proto";
 
 service Manager {
   rpc CreateSyncTask(CreateSyncTaskRequest) returns (CreateSyncTaskResponse) {
@@ -54,12 +53,6 @@ service Manager {
       body : "*"
     };
   }
-  rpc CountSyncTasks(CountSyncTasksRequest) returns (CountSyncTasksResponse) {
-    option (google.api.http) = {
-      post : "/v1/Count/synctasks"
-      body : "*"
-    };
-  }
   rpc DeleteSyncTask(DeleteSyncTaskRequest) returns (DeleteSyncTaskResponse) {
     option (google.api.http) = {
       post : "/v1/delete/synctask"
@@ -69,7 +62,8 @@ service Manager {
 }
 
 message SyncTaskReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 Start = 40;
@@ -77,35 +71,54 @@ message SyncTaskReq {
   optional uint64 Current = 60;
   optional string Topic = 70;
   optional string Description = 80;
-  optional cttype.SyncState SyncState = 90;
+  optional chain.SyncState SyncState = 90;
   optional string Remark = 100;
 }
 
 message SyncTask {
-  string ID = 10;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"id"
+  uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
+  string EntID = 11;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"start"
   uint64 Start = 40;
+  // @inject_tag: sql:"end"
   uint64 End = 50;
+  // @inject_tag: sql:"current"
   uint64 Current = 60;
+  // @inject_tag: sql:"topic"
   string Topic = 70;
+  // @inject_tag: sql:"description"
   string Description = 80;
-  cttype.SyncState SyncState = 90;
+  // @inject_tag: sql:"sync_state"
+  string SyncStateStr = 90;
+  chain.SyncState SyncState = 91;
+  // @inject_tag: sql:"remark"
   string Remark = 100;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 110;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 120;
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ID = 10;
+  web3eye.StringVal EntID = 11;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.Uint64Val Start = 40;
   web3eye.Uint64Val End = 50;
   web3eye.Uint64Val Current = 60;
   web3eye.StringVal Topic = 70;
   web3eye.StringVal Description = 80;
-  web3eye.StringVal SyncState = 90;
+  web3eye.Uint32Val SyncState = 90;
   web3eye.StringVal Remark = 100;
-  web3eye.StringSliceVal IDs = 110;
+  web3eye.StringSliceVal EntIDs = 110;
 }
 
 message CreateSyncTaskRequest { SyncTaskReq Info = 10; }
@@ -120,7 +133,7 @@ message TriggerSyncTaskResponse {
   SyncTask Info = 10;
 }
 
-message GetSyncTaskRequest { string ID = 10; }
+message GetSyncTaskRequest { uint32 ID = 10; }
 message GetSyncTaskResponse { SyncTask Info = 10; }
 
 message GetSyncTasksRequest {
@@ -140,14 +153,11 @@ message GetSyncTaskOnlyResponse { SyncTask Info = 10; }
 message UpdateSyncTaskRequest { SyncTaskReq Info = 10; }
 message UpdateSyncTaskResponse { SyncTask Info = 10; }
 
-message ExistSyncTaskRequest { string ID = 10; }
+message ExistSyncTaskRequest { uint32 ID = 10; }
 message ExistSyncTaskResponse { bool Exist = 10; }
 
 message ExistSyncTaskCondsRequest { Conds Conds = 10; }
 message ExistSyncTaskCondsResponse { bool Exist = 10; }
 
-message CountSyncTasksRequest { Conds Conds = 10; }
-message CountSyncTasksResponse { uint32 Info = 10; }
-
-message DeleteSyncTaskRequest { string ID = 10; }
+message DeleteSyncTaskRequest { uint32 ID = 10; }
 message DeleteSyncTaskResponse { SyncTask Info = 10; }

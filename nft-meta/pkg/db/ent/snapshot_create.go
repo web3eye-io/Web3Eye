@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -21,6 +20,20 @@ type SnapshotCreate struct {
 	mutation *SnapshotMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetEntID sets the "ent_id" field.
+func (sc *SnapshotCreate) SetEntID(u uuid.UUID) *SnapshotCreate {
+	sc.mutation.SetEntID(u)
+	return sc
+}
+
+// SetNillableEntID sets the "ent_id" field if the given value is not nil.
+func (sc *SnapshotCreate) SetNillableEntID(u *uuid.UUID) *SnapshotCreate {
+	if u != nil {
+		sc.SetEntID(*u)
+	}
+	return sc
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -96,7 +109,7 @@ func (sc *SnapshotCreate) SetBackupState(s string) *SnapshotCreate {
 }
 
 // SetID sets the "id" field.
-func (sc *SnapshotCreate) SetID(u uuid.UUID) *SnapshotCreate {
+func (sc *SnapshotCreate) SetID(u uint32) *SnapshotCreate {
 	sc.mutation.SetID(u)
 	return sc
 }
@@ -180,6 +193,13 @@ func (sc *SnapshotCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sc *SnapshotCreate) defaults() error {
+	if _, ok := sc.mutation.EntID(); !ok {
+		if snapshot.DefaultEntID == nil {
+			return fmt.Errorf("ent: uninitialized snapshot.DefaultEntID (forgotten import ent/runtime?)")
+		}
+		v := snapshot.DefaultEntID()
+		sc.mutation.SetEntID(v)
+	}
 	if _, ok := sc.mutation.CreatedAt(); !ok {
 		if snapshot.DefaultCreatedAt == nil {
 			return fmt.Errorf("ent: uninitialized snapshot.DefaultCreatedAt (forgotten import ent/runtime?)")
@@ -206,6 +226,9 @@ func (sc *SnapshotCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (sc *SnapshotCreate) check() error {
+	if _, ok := sc.mutation.EntID(); !ok {
+		return &ValidationError{Name: "ent_id", err: errors.New(`ent: missing required field "Snapshot.ent_id"`)}
+	}
 	if _, ok := sc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Snapshot.created_at"`)}
 	}
@@ -241,12 +264,9 @@ func (sc *SnapshotCreate) sqlSave(ctx context.Context) (*Snapshot, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = uint32(id)
 	}
 	return _node, nil
 }
@@ -257,7 +277,7 @@ func (sc *SnapshotCreate) createSpec() (*Snapshot, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: snapshot.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
+				Type:   field.TypeUint32,
 				Column: snapshot.FieldID,
 			},
 		}
@@ -265,7 +285,15 @@ func (sc *SnapshotCreate) createSpec() (*Snapshot, *sqlgraph.CreateSpec) {
 	_spec.OnConflict = sc.conflict
 	if id, ok := sc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
+	}
+	if value, ok := sc.mutation.EntID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: snapshot.FieldEntID,
+		})
+		_node.EntID = value
 	}
 	if value, ok := sc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -338,7 +366,7 @@ func (sc *SnapshotCreate) createSpec() (*Snapshot, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Snapshot.Create().
-//		SetCreatedAt(v).
+//		SetEntID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -347,7 +375,7 @@ func (sc *SnapshotCreate) createSpec() (*Snapshot, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SnapshotUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (sc *SnapshotCreate) OnConflict(opts ...sql.ConflictOption) *SnapshotUpsertOne {
@@ -382,6 +410,18 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetEntID sets the "ent_id" field.
+func (u *SnapshotUpsert) SetEntID(v uuid.UUID) *SnapshotUpsert {
+	u.Set(snapshot.FieldEntID, v)
+	return u
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SnapshotUpsert) UpdateEntID() *SnapshotUpsert {
+	u.SetExcluded(snapshot.FieldEntID)
+	return u
+}
 
 // SetCreatedAt sets the "created_at" field.
 func (u *SnapshotUpsert) SetCreatedAt(v uint32) *SnapshotUpsert {
@@ -551,6 +591,20 @@ func (u *SnapshotUpsertOne) Update(set func(*SnapshotUpsert)) *SnapshotUpsertOne
 	return u
 }
 
+// SetEntID sets the "ent_id" field.
+func (u *SnapshotUpsertOne) SetEntID(v uuid.UUID) *SnapshotUpsertOne {
+	return u.Update(func(s *SnapshotUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SnapshotUpsertOne) UpdateEntID() *SnapshotUpsertOne {
+	return u.Update(func(s *SnapshotUpsert) {
+		s.UpdateEntID()
+	})
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (u *SnapshotUpsertOne) SetCreatedAt(v uint32) *SnapshotUpsertOne {
 	return u.Update(func(s *SnapshotUpsert) {
@@ -707,12 +761,7 @@ func (u *SnapshotUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SnapshotUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
-	if u.create.driver.Dialect() == dialect.MySQL {
-		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
-		// fields from the database since MySQL does not support the RETURNING clause.
-		return id, errors.New("ent: SnapshotUpsertOne.ID is not supported by MySQL driver. Use SnapshotUpsertOne.Exec instead")
-	}
+func (u *SnapshotUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -721,7 +770,7 @@ func (u *SnapshotUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SnapshotUpsertOne) IDX(ctx context.Context) uuid.UUID {
+func (u *SnapshotUpsertOne) IDX(ctx context.Context) uint32 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -772,6 +821,10 @@ func (scb *SnapshotCreateBulk) Save(ctx context.Context) ([]*Snapshot, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = uint32(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -823,7 +876,7 @@ func (scb *SnapshotCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SnapshotUpsert) {
-//			SetCreatedAt(v+v).
+//			SetEntID(v+v).
 //		}).
 //		Exec(ctx)
 func (scb *SnapshotCreateBulk) OnConflict(opts ...sql.ConflictOption) *SnapshotUpsertBulk {
@@ -901,6 +954,20 @@ func (u *SnapshotUpsertBulk) Update(set func(*SnapshotUpsert)) *SnapshotUpsertBu
 		set(&SnapshotUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetEntID sets the "ent_id" field.
+func (u *SnapshotUpsertBulk) SetEntID(v uuid.UUID) *SnapshotUpsertBulk {
+	return u.Update(func(s *SnapshotUpsert) {
+		s.SetEntID(v)
+	})
+}
+
+// UpdateEntID sets the "ent_id" field to the value that was provided on create.
+func (u *SnapshotUpsertBulk) UpdateEntID() *SnapshotUpsertBulk {
+	return u.Update(func(s *SnapshotUpsert) {
+		s.UpdateEntID()
+	})
 }
 
 // SetCreatedAt sets the "created_at" field.

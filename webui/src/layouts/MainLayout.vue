@@ -10,11 +10,11 @@
           <SearchBox  v-if="displaySearchBox" />
         </div>
         <q-space />
-        <a href='#/whitepaper'>White Paper</a>
-        <a  href='#/deck'>Deck</a>
-        <a  href='#/blog'>Blog</a>
-        <a  href='#/daily'>Daily</a>
-        <a  href='#/schedule'>Schedule</a>
+        <a href='/whitepaper'>White Paper</a>
+        <a  href='/deck'>Deck</a>
+        <!-- <a  href='/blog'>Blog</a>
+        <a  href='/daily'>Daily</a>
+        <a  href='/schedule'>Schedule</a> -->
         <q-btn v-if="!logined" size="md" color="primary" outline rounded label="Connect Wallet" @click="onMetaMaskClick" />
         <q-avatar v-if="logined">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -43,7 +43,7 @@
 
     <q-footer>
       <q-toolbar class="justify-center">
-        <div class='footer'>© 2022 - Cyber Tracer</div>
+        <div class='footer'>© 2022 - web3eye.io</div>
       </q-toolbar>
     </q-footer>
   </q-layout>
@@ -158,7 +158,7 @@ onMounted(() => {
     height: 48px
     line-height: 48px
   .q-header
-    width: 90%
+    padding: 0 90px
     margin: 0 auto
     position: inherit
     a,button
@@ -193,14 +193,13 @@ onMounted(() => {
     min-height: 800px !important
 
 .search-box
-  width: 400px
-  height: 50px
-  ::v-deep .upload
+  width: 420px
+  height: 40px
+  line-height: 40px
+  ::v-deep .box
     margin-top: 0
-    height: 40px
-    margin-top: 45px
-  ::v-deep .search
-    top: -55px
+  ::v-deep .search-box
+    height: 40px !important
 
 .search
   height: 56px

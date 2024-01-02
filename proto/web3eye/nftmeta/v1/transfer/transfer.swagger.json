@@ -72,10 +72,13 @@
       "type": "object",
       "properties": {
         "ID": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntID": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "ChainType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "ChainID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -84,7 +87,7 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "TokenType": {
-          "$ref": "#/definitions/web3eyeStringVal"
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "TokenID": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -108,22 +111,16 @@
           "$ref": "#/definitions/web3eyeStringVal"
         },
         "TxTime": {
-          "$ref": "#/definitions/web3eyeUint32Val"
+          "$ref": "#/definitions/web3eyeUint64Val"
         },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
-        "IDs": {
+        "LogIndex": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
-        }
-      }
-    },
-    "transferCountTransfersResponse": {
-      "type": "object",
-      "properties": {
-        "Info": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },
@@ -205,49 +202,89 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Contract": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"contract\""
+        },
+        "TokenTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_type\""
         },
         "TokenType": {
           "$ref": "#/definitions/chainTokenType"
         },
         "TokenID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"token_id\""
         },
         "From": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"from\""
         },
         "To": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"to\""
         },
         "Amount": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"amount\""
         },
         "BlockNumber": {
           "type": "string",
-          "format": "uint64"
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"block_number\""
         },
         "TxHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"tx_hash\""
         },
         "BlockHash": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"block_hash\""
         },
         "TxTime": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string",
+          "format": "uint64",
+          "title": "@inject_tag: sql:\"tx_time\""
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"log_index\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -255,6 +292,10 @@
       "type": "object",
       "properties": {
         "ID": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "EntID": {
           "type": "string"
         },
         "ChainType": {
@@ -293,11 +334,15 @@
           "type": "string"
         },
         "TxTime": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string",
+          "format": "uint64"
         },
         "Remark": {
           "type": "string"
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -318,7 +363,15 @@
       }
     },
     "transferUpsertTransfersResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Infos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/transferTransfer"
+          }
+        }
+      }
     },
     "web3eyeStringSliceVal": {
       "type": "object",

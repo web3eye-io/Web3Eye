@@ -1,4 +1,4 @@
-REPO_ROOT	:= $(shell git rev-parse --show-toplevel)
+REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
 .DEFAULT_GOAL:=help
 SHELL:=/usr/bin/env bash
@@ -7,8 +7,8 @@ COLOR:=\\033[36m
 NOCOLOR:=\\033[0m
 GITREPO=$(shell git remote -v | grep fetch | awk '{print $$2}' | sed 's/\.git//g' | sed 's/https:\/\///g')
 
-PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car transform dealer webui dashboard entrance
-GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker gen-car transform dealer entrance
+PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform webui dashboard entrance # gen-car dealer 
+GO_PROJECTS=  nft-meta block-etl cloud-proxy gateway ranker transform entrance # gen-car dealer 
 
 ##@ init project
 init:
@@ -19,8 +19,7 @@ go.mod:
 	go mod tidy -compat=1.19
 
 deps: ./extern/filecoin-ffi/filcrypto.pc
-	go get -d ./...
-	go mod tidy -compat=1.19
+	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/deps.sh
 
 ##@ Verify
 
@@ -33,7 +32,7 @@ add-verify-hook: ## Adds verify scripts to git pre-commit hooks.
 
 # TODO(lint): Uncomment verify-shellcheck once we finish shellchecking the repo.
 verify: ./extern/filecoin-ffi/filcrypto.pc go.mod verify-golangci-lint verify-go-mod #verify-shellcheck ## Runs verification scripts to ensure correct execution
-	${REPO_ROOT}/hack/verify.sh
+	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/verify.sh
 
 verify-shellcheck: ## Runs shellcheck
 	${REPO_ROOT}/hack/verify-shellcheck.sh
@@ -41,7 +40,7 @@ verify-shellcheck: ## Runs shellcheck
 gen-ent:
 	go install entgo.io/ent/cmd/ent@v0.11.2
 	go get entgo.io/ent/cmd/ent@v0.11.2
-	go run entgo.io/ent/cmd/ent generate --feature entql,sql/lock,sql/execquery,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
+	go run -mod=mod entgo.io/ent/cmd/ent generate --feature entql,sql/lock,sql/execquery,sql/upsert,privacy,schema/snapshot,sql/modifier ./nft-meta/pkg/db/ent/schema
 
 ifdef AIMPROJECT
 PROJECTS= $(AIMPROJECT)
@@ -103,10 +102,10 @@ deploy-to-k8s-cluster:
 	done
 
 prepare-golang-env:
-	${REPO_ROOT}/hack/set-golang-env.sh
+	all_proxy=${all_proxy} bash -x ${REPO_ROOT}/hack/set-golang-env.sh
 
 prepare-node-env:
-	${REPO_ROOT}/hack/set-node-env.sh
+	all_proxy=${all_proxy} ${REPO_ROOT}/hack/set-node-env.sh
 
 ##@ Tests
 

@@ -32,10 +32,6 @@ func (s *Server) GetSnapshots(ctx context.Context, in *nftmetanpool.GetSnapshots
 	return client.GetSnapshots(ctx, in)
 }
 
-func (s *Server) CountSnapshots(ctx context.Context, in *nftmetanpool.CountSnapshotsRequest) (*nftmetanpool.CountSnapshotsResponse, error) {
-	client.UseCloudProxyCC()
-	return client.CountSnapshots(ctx, in)
-}
 func (s *Server) CreateBackup(ctx context.Context, in *dealernpool.CreateBackupRequest) (*dealernpool.CreateBackupResponse, error) {
 	dealerclient.UseCloudProxyCC()
 	return dealerclient.CreateBackup(ctx, in)

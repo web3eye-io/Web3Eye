@@ -1,14 +1,14 @@
  #!/bin/bash
 MY_PATH=`cd $(dirname $0);pwd`
 ROOT_PATH=$MY_PATH/../
-go_name=go$GOVERSION
 
-set +e
-rc=`go version | grep $go_name`
-if [ $? -eq 0 ]; then
-    exit 0
-fi
-set -e
+GOVERSION="1.19.13"
+go_name=go$GOVERSION
+GOTMPENV="/opt/.golang/$go_name"
+GOROOT="$GOTMPENV/goroot"
+GOPATH="$GOTMPENV/gopath"
+GOBIN="$GOROOT/bin"
+PATH="$PATH:$GOBIN"
 
 echo "Will change go version to $go_name"
 
@@ -20,17 +20,22 @@ go_data=$GOTMPENV
 mkdir -p $GOPATH
 mkdir -p $GOROOT
 
+export GOROOT=$GOROOT
+export GOPATH=$GOPATH
+export GOBIN=$GOBIN
+export PATH=$PATH
+
 [ -z $GOPROXY ] && export GOPROXY="https://proxy.golang.org,direct"
 
-shopt -s expand_aliases
-alias go="$GOROOT/bin/go"
-
 set +e
-rc=`go version | grep $go_name`
-if [ ! $? -eq 0 ]; then
-  set -e
+go version | grep "$go_name"
+rc=$?
+set -e
+
+if [ ! $rc -eq 0 -o ! -f $GOROOT/.decompressed ]; then
+  rm -rf $GOROOT/.decompressed
   echo "Fetching $go_tar from $go_tar_url, stored to $go_data"
   curl -L $go_tar_url -o $go_data/$go_tar
-  tar -zxvf $go_data/$go_tar --strip-components 1 -C $GOROOT
+  tar -xvf $go_data/$go_tar --strip-components 1 -C $GOROOT
+  touch $GOROOT/.decompressed
 fi
-set -e

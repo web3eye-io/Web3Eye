@@ -187,7 +187,7 @@
       ],
       "default": "ChainUnkonwn"
     },
-    "cttypeEndpointState": {
+    "chainEndpointState": {
       "type": "string",
       "enum": [
         "EndpointDefault",
@@ -201,22 +201,49 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"id\""
+        },
+        "EntID": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"ent_id\""
+        },
+        "ChainTypeStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_type\""
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
         },
         "ChainID": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"chain_id\""
         },
         "Address": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"address\""
+        },
+        "StateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"state\""
         },
         "State": {
-          "$ref": "#/definitions/cttypeEndpointState"
+          "$ref": "#/definitions/chainEndpointState"
         },
         "Remark": {
-          "type": "string"
+          "type": "string",
+          "title": "@inject_tag: sql:\"remark\""
+        },
+        "CreatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"created_at\""
+        },
+        "UpdatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"updated_at\""
         }
       }
     },
@@ -255,7 +282,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -271,7 +299,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -287,7 +316,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
@@ -299,7 +329,7 @@
           "type": "string"
         },
         "State": {
-          "$ref": "#/definitions/cttypeEndpointState"
+          "$ref": "#/definitions/chainEndpointState"
         },
         "Remark": {
           "type": "string"
@@ -333,13 +363,14 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "Address": {
           "type": "string"
         },
         "State": {
-          "$ref": "#/definitions/cttypeEndpointState"
+          "$ref": "#/definitions/chainEndpointState"
         },
         "Remark": {
           "type": "string"

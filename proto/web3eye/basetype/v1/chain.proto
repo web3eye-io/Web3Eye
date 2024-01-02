@@ -43,3 +43,18 @@ enum OrderItemType{
     // Target: That`s mean willing to offer goods for gaining something.
     OrderItemOffer = 20;
 }
+
+enum SyncState {
+    Default = 0;
+    Start = 10;
+    Pause = 20;
+    Finish = 40;
+    Failed = 50;
+}
+  
+enum EndpointState {
+    EndpointDefault = 0;
+    EndpointAvaliable = 10;
+    EndpointUnstable = 20;
+    EndpointError = 40;
+}

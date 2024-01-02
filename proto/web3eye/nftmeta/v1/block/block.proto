@@ -19,42 +19,59 @@ service Manager {
   rpc ExistBlock(ExistBlockRequest) returns (ExistBlockResponse) {}
   rpc ExistBlockConds(ExistBlockCondsRequest)
       returns (ExistBlockCondsResponse) {}
-  rpc CountBlocks(CountBlocksRequest) returns (CountBlocksResponse) {}
   rpc DeleteBlock(DeleteBlockRequest) returns (DeleteBlockResponse) {}
 }
 
 message BlockReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional uint64 BlockNumber = 40;
   optional string BlockHash = 50;
-  optional int64 BlockTime = 60;
+  optional uint64 BlockTime = 60;
   optional chain.BlockParseState ParseState = 70;
   optional string Remark = 80;
 }
 
 message Block {
-  string ID = 10;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"id"
+  uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
+  string EntID = 11;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"block_number"
   uint64 BlockNumber = 40;
+  // @inject_tag: sql:"block_hash"
   string BlockHash = 50;
-  int64 BlockTime = 60;
-  chain.BlockParseState ParseState = 70;
+  // @inject_tag: sql:"block_time"
+  uint64 BlockTime = 60;
+  // @inject_tag: sql:"parse_state"
+  string ParseStateStr = 70;
+  chain.BlockParseState ParseState = 71;
+  // @inject_tag: sql:"remark"
   string Remark = 80;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 90;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 100;
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
-  web3eye.StringVal ChainType = 20;
-  web3eye.StringVal ChainID = 30;
-  web3eye.Uint64Val BlockNumber = 40;
-  web3eye.StringVal BlockHash = 50;
-  web3eye.Int64Val BlockTime = 60;
-  web3eye.StringVal ParseState = 70;
-  web3eye.StringVal Remark = 80;
-  web3eye.StringSliceVal IDs = 160;
+  optional web3eye.Uint32Val ID = 10;
+  optional web3eye.StringVal EntID = 11;
+  optional web3eye.Uint32Val ChainType = 20;
+  optional web3eye.StringVal ChainID = 30;
+  optional web3eye.Uint64Val BlockNumber = 40;
+  optional web3eye.StringVal BlockHash = 50;
+  optional web3eye.Uint64Val BlockTime = 60;
+  optional web3eye.Uint32Val ParseState = 70;
+  optional web3eye.StringVal Remark = 80;
+  optional web3eye.StringSliceVal EntIDs = 160;
 }
 
 message CreateBlockRequest { BlockReq Info = 10; }
@@ -66,7 +83,7 @@ message UpsertBlockResponse { Block Info = 10; }
 message CreateBlocksRequest { repeated BlockReq Infos = 10; }
 message CreateBlocksResponse { repeated Block Infos = 10; }
 
-message GetBlockRequest { string ID = 10; }
+message GetBlockRequest { uint32 ID = 10; }
 message GetBlockResponse { Block Info = 10; }
 
 message GetBlocksRequest {
@@ -86,14 +103,11 @@ message GetBlockOnlyResponse { Block Info = 10; }
 message UpdateBlockRequest { BlockReq Info = 10; }
 message UpdateBlockResponse { Block Info = 10; }
 
-message ExistBlockRequest { string ID = 10; }
+message ExistBlockRequest { uint32 ID = 10; }
 message ExistBlockResponse { bool Exist = 10; }
 
 message ExistBlockCondsRequest { Conds Conds = 10; }
 message ExistBlockCondsResponse { bool Exist = 10; }
 
-message CountBlocksRequest { Conds Conds = 10; }
-message CountBlocksResponse { uint32 Info = 10; }
-
-message DeleteBlockRequest { string ID = 10; }
+message DeleteBlockRequest { uint32 ID = 10; }
 message DeleteBlockResponse { Block Info = 10; }

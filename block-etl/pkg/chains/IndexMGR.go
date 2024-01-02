@@ -12,7 +12,6 @@ import (
 	common_sol "github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
 	"golang.org/x/net/context"
 )
@@ -34,8 +33,9 @@ type indexMGR struct {
 }
 
 var (
-	pMGR           *indexMGR
-	UpdateInterval = time.Second * 10
+	pMGR              *indexMGR
+	UpdateInterval    = time.Minute
+	maxUsingEndpoints = 10
 )
 
 func init() {
@@ -57,22 +57,29 @@ func GetIndexMGR() *indexMGR {
 
 func (pmgr *indexMGR) Run(ctx context.Context) {
 	for {
-		pmgr.checkNewEndpoints(ctx)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointDefault)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointAvaliable)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointError)
+		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
 		pmgr.checkAvaliableEndpoints(ctx)
 		<-time.NewTicker(UpdateInterval).C
 	}
 }
 
 // check for the newly created endpoints
-func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
+func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.EndpointState) {
 	conds := &endpoint.Conds{
-		State: &web3eye.StringVal{
+		State: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: cttype.EndpointState_EndpointDefault.String(),
+			Value: uint32(state),
 		},
 	}
 
-	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{Conds: conds})
+	getEResp, err := endpointNMCli.GetEndpoints(ctx, &endpoint.GetEndpointsRequest{
+		Conds:  conds,
+		Limit:  int32(maxUsingEndpoints),
+		Offset: 0,
+	})
 	if err != nil {
 		logger.Sugar().Errorf("get endpoints from nft-meta failed, err: %v", err)
 		return
@@ -85,18 +92,18 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 			handler, ok := pmgr.EndpointChainIDHandlers[info.ChainType]
 			if !ok {
 				logger.Sugar().Warnf("have not handler for chain type: %v", info.ChainType)
-				info.State = cttype.EndpointState_EndpointError
+				info.State = basetype.EndpointState_EndpointError
 				return
 			}
 
 			chainID, err := handler(ctx, info.Address)
 			if err != nil {
-				info.State = cttype.EndpointState_EndpointError
+				info.State = basetype.EndpointState_EndpointError
 				return
 			}
 
 			info.ChainID = chainID
-			info.State = cttype.EndpointState_EndpointAvaliable
+			info.State = basetype.EndpointState_EndpointAvaliable
 		}()
 
 		updateInfos = append(updateInfos, &endpoint.EndpointReq{
@@ -106,6 +113,10 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 			Address:   &info.Address,
 			State:     &info.State,
 		})
+	}
+
+	if len(updateInfos) == 0 {
+		return
 	}
 
 	updateEResp, err := endpointNMCli.UpdateEndpoints(ctx, &endpoint.UpdateEndpointsRequest{
@@ -125,9 +136,9 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context) {
 // check erver chantype-chainid available endpoints and update it to indexer
 func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
-		State: &web3eye.StringVal{
+		State: &web3eye.Uint32Val{
 			Op:    "eq",
-			Value: cttype.EndpointState_EndpointAvaliable.String(),
+			Value: uint32(basetype.EndpointState_EndpointAvaliable),
 		},
 	}
 
@@ -179,7 +190,7 @@ func (pmgr *indexMGR) updateEndpoints(ctx context.Context, chanType basetype.Cha
 		case basetype.ChainType_Ethereum:
 			pmgr.Indexs[chanType][chainID] = eth.NewEthIndexer(chainID)
 		case basetype.ChainType_Solana:
-			pmgr.Indexs[chanType][chainID] = sol.NewIndexer(chainID)
+			pmgr.Indexs[chanType][chainID] = sol.NewSolIndexer(chainID)
 		default:
 			logger.Sugar().Warnf("have no chainType: %v chainID: %v indexer type,will skip", chanType, chainID)
 			return

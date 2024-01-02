@@ -1,27 +1,27 @@
 <template>
-  <div class="outer-bg">
-    <div class="outer-container">
-      <div class="token row wrap">
-        <div class="left">
-          <q-list bordered class="rounded-borders">
-            <q-expansion-item expand-separator default-opened label="Chains">
-              <q-card>
-                <q-card-section>
-                  <q-option-group v-model="groups" :options="options" color="blue" type="checkbox">
-                    <template v-slot:label="row">
-                      <div class="row justify-between">
-                        <div>{{ row.label }}</div>
-                        <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
-                      </div>
-                    </template>
-                  </q-option-group>
-                </q-card-section>
-              </q-card>
-            </q-expansion-item>
-          </q-list>
-        </div>
-        <div class="right">
-          <div class="title">Collections</div>
+  <div class="token-container">
+    <div class="token row wrap">
+      <div class="left">
+        <q-list bordered class="rounded-borders">
+          <q-expansion-item expand-separator default-opened label="Chains">
+            <q-card>
+              <q-card-section>
+                <q-option-group v-model="groups" :options="options" color="blue" type="checkbox">
+                  <template v-slot:label="row">
+                    <div class="row justify-between">
+                      <div>{{ row.label }}</div>
+                      <q-badge color="blue" outline rounded text-color="black" :label="row.amount" />
+                    </div>
+                  </template>
+                </q-option-group>
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
+        </q-list>
+      </div>
+      <div class="right">
+        <div class="title">Collections</div>
+        <div id="tokens">
           <div class="row boxes" v-for="token in displayTokens" :key="token.ID">
             <div class="content-left" @click="onTokenClick(token)">
               <MyImage :url="token.ImageURL" :height="'230px'" :width="'230px'" />
@@ -29,7 +29,6 @@
             <div class="content-right column">
               <div class="line-top row space-between items-center">
                 <div class="distance">Distance: {{ token.Distance }}</div>
-                <!-- <div class="block1">Block: {{ token.SiblingsNum }}</div> -->
                 <q-space />
                 <div>
                   <q-icon v-if="token.ChainType === ChainType.Ethereum" name="img:icons/ethereum-eth-logo.png" />
@@ -45,19 +44,25 @@
                   <span>Contract: {{ token.Contract }}</span>
                 </a>
                 <div class="copy">
-                  <q-img :src='copy' class='logo' width="14px" height="14px" @click="onCopyClick(token)" />
+                  <q-img :src='copy' class='contract-copy' width="14px" height="14px" @click="onCopyClick(token)" />
                 </div>
               </div>
               <div class="total-transfers">
-                  <span>Transfers: {{ token?.TransfersNum }}</span>
+                <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token,item)" class="split-token">
+                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                  class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
               </div>
             </div>
           </div>
+          <div class="loading">
+            <q-inner-loading :showing="loading" style="color:#b8b1b1" />
+          </div>
+          <div v-if="haveMore" class="no-more row">no more content</div>
+          <div id="bottom" style="padding-bottom: 50px;"></div>
         </div>
       </div>
     </div>
@@ -71,14 +76,15 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
-import { SearchToken, SiblingToken } from 'src/teststore/token/types';
-import { Transfer } from 'src/teststore/transfer/types';
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
-import { ChainType } from 'src/teststore/basetypes/const';
+import { SearchToken, SiblingToken } from 'src/teststore/token/types'
+import { Transfer } from 'src/teststore/transfer/types'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
+import { Notify } from 'quasar'
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -111,18 +117,31 @@ const displayTokens = computed(() => tokens.value.filter((el) => {
 }))
 
 const groups = ref([])
-const options = computed(() => [
-  {
-    label: 'Ethereum',
-    value: 'Ethereum',
-    amount: ethereums.value,
-  },
-  {
-    label: 'Solana',
-    value: 'Solana',
-    amount: solanas.value,
-  }
-])
+const options = computed(() => {
+  const rows = token.SearchTokens.SearchTokens
+  let ethereums = 0
+  let solanas = 0
+  rows.forEach((el) => {
+    if (el.ChainType === ChainType.Ethereum) {
+      ethereums += 1
+    }
+    if (el.ChainType === ChainType.Solana) {
+      solanas += 1
+    }
+  })
+  return [
+    {
+      label: 'Ethereum',
+      value: 'Ethereum',
+      amount: ethereums,
+    },
+    {
+      label: 'Solana',
+      value: 'Solana',
+      amount: solanas,
+    }
+  ]
+})
 
 const target = ref({} as SearchToken)
 const targetTransfers = ref([] as Array<Transfer>)
@@ -150,7 +169,7 @@ const onShotTokenClick = (token: SearchToken, shotToken: SiblingToken) => {
       chainType: token.ChainType,
       contract: token.Contract,
       tokenID: shotToken.TokenID,
-      id: shotToken.ID,
+      id: token.ID,
     }
   })
 }
@@ -168,35 +187,70 @@ const onContractClick = (token: SearchToken) => {
   })
 }
 
-const getTokens = (page: number) => {
-  token.getTokens({
-    StorageKey: token.SearchTokens.StorageKey,
-    Page: page,
-    Message: {}
-  }, (error: boolean) => {
-    if (error || page >= token.SearchTokens.TotalPages) return
-    page += 1
-    getTokens(page)
+const onCopyClick = (token: SearchToken) => {
+  void copyToClipboard(token.Contract)
+  Notify.create({
+    position: 'bottom-right',
+    message: 'Contract Copied',
+    color: 'green',
+    timeout: 2000
   })
 }
 
-const onCopyClick = (token: SearchToken) => {
-  void copyToClipboard(token.Contract)
+const haveMore = ref(false)
+const currentPage = ref(1)
+const loading = ref(false)
+
+const loadMore = () => {
+  if (currentPage.value > token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
+    haveMore.value = true
+    return
+  }
+  loading.value = true
+  if (currentPage.value === 1 && token.SearchTokens.SearchTokens?.length !== 0) {
+    currentPage.value += 1
+  }
+  token.getTokens({
+    Limit: 8,
+    Page: currentPage.value,
+    Message: {}
+  }, (error: boolean) => {
+    loading.value = false
+    isLoading.value = false
+    if (!error) {
+      currentPage.value += 1
+    }
+  })
+}
+
+const isLoading = ref(false)
+const handleObserve = (entries: IntersectionObserverEntry[]) => {
+  entries.forEach((entry) => {
+    if (isLoading.value) return
+    if (entry.isIntersecting) {
+      isLoading.value = true
+      loadMore()
+    }
+  })
 }
 
 onMounted(() => {
-  if (token.SearchTokens.SearchTokens.length < token.SearchTokens.TotalTokens) {
-    getTokens(2)
-  }
+  const observer = new IntersectionObserver(handleObserve)
+  const target = document.getElementById('bottom')
+  observer.observe(target as Element)
 })
+
 </script>
 <style lang="sass" scoped>
-.outer-container
+.token-container
+  background: $white
   padding-top: 40px
 .token
   background-color: $white
+  height: 100vh
   .left
     width: 290px
+    margin-left: 90px
     .rounded-borders
       border-radius: 10px
     ::v-deep .q-checkbox
@@ -205,6 +259,7 @@ onMounted(() => {
         flex-grow: 1
   .right
     margin-left: 40px
+    margin-right: 90px
     flex-grow: 1
     .title
       font-weight: 700
@@ -243,11 +298,21 @@ onMounted(() => {
             text-decoration: none
           .copy
             padding: 0 5px
+            cursor: pointer
         .transfers
           padding-top: 12px
           gap: 8px
           .split-token
             cursor: pointer
+    .loading
+      ::v-deep .absolute-full
+        position: relative
+        top: auto
+    .no-more
+      padding-top: 5px
+      display: block
+      text-align: center
+      color: #a3a3a3
 @media (min-width: 600px)
 .q-dialog__inner--minimized > div
   max-width: 100%

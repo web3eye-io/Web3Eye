@@ -29,7 +29,7 @@
                 <q-input v-if="updating" :disable="updating" v-model='target.ChainID' :label='$t("MSG_CHAIN_ID")' />
                 <q-input  v-model='target.Address' :label='$t("MSG_ADDRESS")' />
                 <q-select :disable="updating"  :options='Object.keys(ChainType)' v-model='target.ChainType' :label='$t("MSG_CHAIN_TYPE")' />
-                <q-select v-if="updating" :options='Object.keys(SyncState)' v-model='target.State' :label='$t("MSG_SYNC_STATE")' />
+                <q-select v-if="updating" :options='Object.keys(EndpointState)' v-model='target.State' :label='$t("MSG_SYNC_STATE")' />
             </q-card-section>
             <q-item class='row'>
                 <LoadingButton loading :label='$t("MSG_SUBMIT")' @click='onSubmit' />
@@ -46,7 +46,7 @@ import { NotifyType } from 'src/teststore/local/notify'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ChainType } from 'src/teststore/basetypes/const'
-import { SyncState } from 'src/teststore/basetypes/synctask/const'
+import { EndpointState } from 'src/teststore/basetypes/endpoint/const'
 const { t } = useI18n({ useScope: 'global' })
 
 const LoadingButton = defineAsyncComponent(() => import('src/components/button/LoadingButton.vue'))
@@ -165,6 +165,7 @@ const selectedEndpoints = ref([] as Array<Endpoint>)
 const onDelete = (row: Endpoint) => {
     endpoint.deleteEndpoint({
         ID: row.ID,
+        EntID: row.EntID,
         Message: {}
     }, () => {
         // TODO
@@ -177,6 +178,12 @@ const columns = computed(() => [
         label: t('MSG_ID'),
         sortable: true,
         field: (row: Endpoint) => row.ID
+    },
+    {
+        name: 'EntID',
+        label: t('MSG_ENT_ID'),
+        sortable: true,
+        field: (row: Endpoint) => row.EntID
     },
     {
         name: 'ChainID',

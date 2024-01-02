@@ -94,11 +94,3 @@ func SearchPage(ctx context.Context, in *rankerproto.SearchPageRequest) (resp *r
 	})
 	return resp, err
 }
-
-func CountTokens(ctx context.Context, in *nftmetaproto.CountTokensRequest) (resp *nftmetaproto.CountTokensResponse, err error) {
-	_, err = WithCRUD(ctx, func(ctx context.Context, cli rankerproto.ManagerClient) (cruder.Any, error) {
-		resp, err = cli.CountTokens(ctx, in)
-		return resp, err
-	})
-	return resp, err
-}

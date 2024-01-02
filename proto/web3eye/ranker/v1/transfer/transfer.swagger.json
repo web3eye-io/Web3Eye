@@ -69,7 +69,8 @@
       "type": "object",
       "properties": {
         "ID": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
@@ -107,11 +108,15 @@
           "type": "string"
         },
         "TxTime": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string",
+          "format": "uint64"
         },
         "Remark": {
           "type": "string"
+        },
+        "LogIndex": {
+          "type": "integer",
+          "format": "int64"
         },
         "TargetItems": {
           "type": "array",

@@ -12,7 +12,6 @@ import (
 	synctaskNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/synctask"
 	ctMessage "github.com/web3eye-io/Web3Eye/proto/web3eye"
 	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/cttype"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/synctask"
 )
 
@@ -22,6 +21,9 @@ const (
 	maxTopicNum            = 5
 	maxParseGoroutineNum   = 5
 	updateBlockNumInterval = time.Minute
+	// 3145728 = 3M
+	MaxTokenURILength    = 3145728
+	OverLimitStoreLength = 100
 )
 
 type IIndexer interface {
@@ -86,16 +88,16 @@ func (e *Indexer) StopIndex() {
 func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, err error) {
 	logger.Sugar().Info("start to index task for ethereum")
 	conds := &synctask.Conds{
-		ChainType: &ctMessage.StringVal{
-			Value: e.ChainType.String(),
+		ChainType: &ctMessage.Uint32Val{
+			Value: uint32(e.ChainType),
 			Op:    "eq",
 		},
 		ChainID: &ctMessage.StringVal{
 			Value: e.ChainID,
 			Op:    "eq",
 		},
-		SyncState: &ctMessage.StringVal{
-			Value: cttype.SyncState_Start.String(),
+		SyncState: &ctMessage.Uint32Val{
+			Value: uint32(basetype.SyncState_Start),
 			Op:    "eq",
 		},
 	}
@@ -167,18 +169,18 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 			resp, err := synctaskNMCli.TriggerSyncTask(ctx, &synctask.TriggerSyncTaskRequest{Topic: task.Topic, CurrentBlockNum: e.GetCurrentBlockNum()})
 			if err != nil {
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
+				retries++
 				continue
 			}
-			if resp.Info.SyncState != cttype.SyncState_Start {
+			if resp.Info.SyncState != basetype.SyncState_Start {
 				return
 			}
-			retries++
 		}
 	}
 }
 
-func TransferIdentifier(contract, tokenID, txHash, from string) string {
-	return fmt.Sprintf("%v:%v:%v:%v", contract, tokenID, txHash, from)
+func TransferIdentifier(contract, tokenID, txHash, from string, logIndex uint32) string {
+	return fmt.Sprintf("%v:%v:%v:%v:%v", contract, tokenID, txHash, from, logIndex)
 }
 
 func TokenIdentifier(chain basetype.ChainType, chainID, contract, tokenID string) string {

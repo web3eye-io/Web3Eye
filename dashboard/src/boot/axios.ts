@@ -15,9 +15,13 @@ declare module '@vue/runtime-core' {
 // for each client)
 let baseURL = window.location.origin.replace('dashboard', 'api') + '/api'
 if (window.location.hostname.includes('.npool.top')) {
-  baseURL = window.location.protocol + '//api.npool.top' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
+  baseURL = window.location.protocol + '//api.web3eye.npool.top' + (window.location.port.length ? ':' + window.location.port : '') + '/api'
 }
-const api = axios.create({ baseURL: baseURL })
+const api = axios.create({ 
+  baseURL: process.env.DEV ? '/api' : baseURL,
+  withCredentials: false,
+  responseType: 'json',
+ })
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

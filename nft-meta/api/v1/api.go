@@ -11,6 +11,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/synctask"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/token"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/transfer"
+
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"

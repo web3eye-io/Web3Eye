@@ -21,12 +21,12 @@ service Manager {
   rpc ExistTransfer(ExistTransferRequest) returns (ExistTransferResponse) {}
   rpc ExistTransferConds(ExistTransferCondsRequest)
       returns (ExistTransferCondsResponse) {}
-  rpc CountTransfers(CountTransfersRequest) returns (CountTransfersResponse) {}
   rpc DeleteTransfer(DeleteTransferRequest) returns (DeleteTransferResponse) {}
 }
 
 message TransferReq {
-  optional string ID = 10;
+  optional uint32 ID = 10;
+  optional string EntID = 11;
   optional chain.ChainType ChainType = 20;
   optional string ChainID = 30;
   optional string Contract = 40;
@@ -38,33 +38,59 @@ message TransferReq {
   optional uint64 BlockNumber = 100;
   optional string TxHash = 110;
   optional string BlockHash = 120;
-  optional uint32 TxTime = 130;
+  optional uint64 TxTime = 130;
   optional string Remark = 140;
+  optional uint32 LogIndex = 150;
 }
 
 message Transfer {
-  string ID = 10;
-  chain.ChainType ChainType = 20;
+  // @inject_tag: sql:"id"
+  uint32 ID = 10;
+  // @inject_tag: sql:"ent_id"
+  string EntID = 11;
+  // @inject_tag: sql:"chain_type"
+  string ChainTypeStr = 20;
+  chain.ChainType ChainType = 21;
+  // @inject_tag: sql:"chain_id"
   string ChainID = 30;
+  // @inject_tag: sql:"contract"
   string Contract = 40;
-  chain.TokenType TokenType = 50;
+  // @inject_tag: sql:"token_type"
+  string TokenTypeStr = 50;
+  chain.TokenType TokenType = 51;
+  // @inject_tag: sql:"token_id"
   string TokenID = 60;
+  // @inject_tag: sql:"from"
   string From = 70;
+  // @inject_tag: sql:"to"
   string To = 80;
+  // @inject_tag: sql:"amount"
   uint64 Amount = 90;
+  // @inject_tag: sql:"block_number"
   uint64 BlockNumber = 100;
+  // @inject_tag: sql:"tx_hash"
   string TxHash = 110;
+  // @inject_tag: sql:"block_hash"
   string BlockHash = 120;
-  uint32 TxTime = 130;
+  // @inject_tag: sql:"tx_time"
+  uint64 TxTime = 130;
+  // @inject_tag: sql:"remark"
   string Remark = 140;
+  // @inject_tag: sql:"log_index"
+  uint32 LogIndex = 150;
+  // @inject_tag: sql:"created_at"
+  uint32 CreatedAt = 250;
+  // @inject_tag: sql:"updated_at"
+  uint32 UpdatedAt = 260;
 }
 
 message Conds {
-  web3eye.StringVal ID = 10;
-  web3eye.StringVal ChainType = 20;
+  web3eye.Uint32Val ID = 10;
+  web3eye.StringVal EntID = 11;
+  web3eye.Uint32Val ChainType = 20;
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Contract = 40;
-  web3eye.StringVal TokenType = 50;
+  web3eye.Uint32Val TokenType = 50;
   web3eye.StringVal TokenID = 60;
   web3eye.StringVal From = 70;
   web3eye.StringVal To = 80;
@@ -72,9 +98,10 @@ message Conds {
   web3eye.Uint64Val BlockNumber = 100;
   web3eye.StringVal TxHash = 110;
   web3eye.StringVal BlockHash = 120;
-  web3eye.Uint32Val TxTime = 130;
+  web3eye.Uint64Val TxTime = 130;
   web3eye.StringVal Remark = 140;
-  web3eye.StringSliceVal IDs = 150;
+  web3eye.Uint32Val LogIndex = 150;
+  web3eye.StringSliceVal EntIDs = 160;
 }
 
 message CreateTransferRequest { TransferReq Info = 10; }
@@ -87,9 +114,9 @@ message CreateTransfersRequest { repeated TransferReq Infos = 10; }
 message CreateTransfersResponse { repeated Transfer Infos = 10; }
 
 message UpsertTransfersRequest { repeated TransferReq Infos = 10; }
-message UpsertTransfersResponse { }
+message UpsertTransfersResponse { repeated Transfer Infos = 10; }
 
-message GetTransferRequest { string ID = 10; }
+message GetTransferRequest { uint32 ID = 10; }
 message GetTransferResponse { Transfer Info = 10; }
 
 message GetTransfersRequest {
@@ -109,14 +136,11 @@ message GetTransferOnlyResponse { Transfer Info = 10; }
 message UpdateTransferRequest { TransferReq Info = 10; }
 message UpdateTransferResponse { Transfer Info = 10; }
 
-message ExistTransferRequest { string ID = 10; }
+message ExistTransferRequest { uint32 ID = 10; }
 message ExistTransferResponse { bool Exist = 10; }
 
 message ExistTransferCondsRequest { Conds Conds = 10; }
 message ExistTransferCondsResponse { bool Exist = 10; }
 
-message CountTransfersRequest { Conds Conds = 10; }
-message CountTransfersResponse { uint32 Info = 10; }
-
-message DeleteTransferRequest { string ID = 10; }
+message DeleteTransferRequest { uint32 ID = 10; }
 message DeleteTransferResponse { Transfer Info = 10; }

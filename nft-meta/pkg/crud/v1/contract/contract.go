@@ -1,513 +1,359 @@
 package contract
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"time"
-
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	"github.com/google/uuid"
-	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent"
-	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
+	entcontract "github.com/web3eye-io/Web3Eye/nft-meta/pkg/db/ent/contract"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
+
+	"github.com/google/uuid"
 )
 
-func Create(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
-	var info *ent.Contract
-	var err error
-
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		c := tx.Contract.Create()
-		info, err = CreateSet(c, in).Save(ctx)
-		return err
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Upsert(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-	var info *ent.Contract
-	var err error
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		row, _ := tx.Contract.Query().Where(
-			contract.ChainType(in.GetChainType().String()),
-			contract.ChainID(in.GetChainID()),
-			contract.Address(in.GetAddress()),
-		).Only(ctx)
-		if row == nil {
-			info, err = CreateSet(tx.Contract.Create(), in).Save(ctx)
-			return err
-		}
-		info, err = UpdateSet(tx.Contract.UpdateOneID(row.ID), in).Save(ctx)
-		return err
-	})
-	return info, err
+type Req struct {
+	ID          *uint32
+	EntID       *uuid.UUID
+	ChainType   *basetype.ChainType
+	ChainID     *string
+	Address     *string
+	Name        *string
+	Symbol      *string
+	Decimals    *uint32
+	Creator     *string
+	BlockNum    *uint64
+	TxHash      *string
+	TxTime      *uint32
+	ProfileURL  *string
+	BaseURL     *string
+	BannerURL   *string
+	Description *string
+	Remark      *string
 }
 
 //nolint:gocyclo
-func CreateSet(c *ent.ContractCreate, in *npool.ContractReq) *ent.ContractCreate {
-	if in.ID != nil {
-		c.SetID(uuid.New())
+func CreateSet(c *ent.ContractCreate, req *Req) *ent.ContractCreate {
+	if req.EntID != nil {
+		c.SetEntID(*req.EntID)
 	}
-	if in.ChainType != nil {
-		c.SetChainType(in.GetChainType().String())
+	if req.ChainType != nil {
+		c.SetChainType(req.ChainType.String())
 	}
-	if in.ChainID != nil {
-		c.SetChainID(in.GetChainID())
+	if req.ChainID != nil {
+		c.SetChainID(*req.ChainID)
 	}
-	if in.Address != nil {
-		c.SetAddress(in.GetAddress())
+	if req.Address != nil {
+		c.SetAddress(*req.Address)
 	}
-	if in.Name != nil {
-		c.SetName(in.GetName())
+	if req.Name != nil {
+		c.SetName(*req.Name)
 	}
-	if in.Symbol != nil {
-		c.SetSymbol(in.GetSymbol())
+	if req.Symbol != nil {
+		c.SetSymbol(*req.Symbol)
 	}
-	if in.Decimals != nil {
-		c.SetDecimals(in.GetDecimals())
+	if req.Decimals != nil {
+		c.SetDecimals(*req.Decimals)
 	}
-	if in.Creator != nil {
-		c.SetCreator(in.GetCreator())
+	if req.Creator != nil {
+		c.SetCreator(*req.Creator)
 	}
-	if in.BlockNum != nil {
-		c.SetBlockNum(in.GetBlockNum())
+	if req.BlockNum != nil {
+		c.SetBlockNum(*req.BlockNum)
 	}
-	if in.TxHash != nil {
-		c.SetTxHash(in.GetTxHash())
+	if req.TxHash != nil {
+		c.SetTxHash(*req.TxHash)
 	}
-	if in.TxTime != nil {
-		c.SetTxTime(in.GetTxTime())
+	if req.TxTime != nil {
+		c.SetTxTime(*req.TxTime)
 	}
-	if in.ProfileURL != nil {
-		c.SetProfileURL(in.GetProfileURL())
+	if req.ProfileURL != nil {
+		c.SetProfileURL(*req.ProfileURL)
 	}
-	if in.BaseURL != nil {
-		c.SetBaseURL(in.GetBaseURL())
+	if req.BaseURL != nil {
+		c.SetBaseURL(*req.BaseURL)
 	}
-	if in.BannerURL != nil {
-		c.SetBannerURL(in.GetBannerURL())
+	if req.BannerURL != nil {
+		c.SetBannerURL(*req.BannerURL)
 	}
-	if in.Description != nil {
-		c.SetDescription(in.GetDescription())
+	if req.Description != nil {
+		c.SetDescription(*req.Description)
 	}
-	if in.Remark != nil {
-		c.SetRemark(in.GetRemark())
+	if req.Remark != nil {
+		c.SetRemark(*req.Remark)
 	}
 	return c
 }
 
-func CreateBulk(ctx context.Context, in []*npool.ContractReq) ([]*ent.Contract, error) {
-	var err error
-	rows := []*ent.Contract{}
+func UpdateSet(u *ent.ContractUpdateOne, req *Req) (*ent.ContractUpdateOne, error) {
+	if req.ChainType != nil {
+		u.SetChainType(req.ChainType.String())
+	}
+	if req.Address != nil {
+		u.SetAddress(*req.Address)
+	}
+	if req.Name != nil {
+		u.SetName(*req.Name)
+	}
+	if req.Symbol != nil {
+		u.SetSymbol(*req.Symbol)
+	}
+	if req.Decimals != nil {
+		u.SetDecimals(*req.Decimals)
+	}
+	if req.Creator != nil {
+		u.SetCreator(*req.Creator)
+	}
+	if req.BlockNum != nil {
+		u.SetBlockNum(*req.BlockNum)
+	}
+	if req.TxHash != nil {
+		u.SetTxHash(*req.TxHash)
+	}
+	if req.TxTime != nil {
+		u.SetTxTime(*req.TxTime)
+	}
+	if req.ProfileURL != nil {
+		u.SetProfileURL(*req.ProfileURL)
+	}
+	if req.BaseURL != nil {
+		u.SetBaseURL(*req.BaseURL)
+	}
+	if req.BannerURL != nil {
+		u.SetBannerURL(*req.BannerURL)
+	}
+	if req.Description != nil {
+		u.SetDescription(*req.Description)
+	}
+	if req.Remark != nil {
+		u.SetRemark(*req.Remark)
+	}
+	return u, nil
+}
 
-	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.ContractCreate, len(in))
-		for i, info := range in {
-			bulk[i] = CreateSet(tx.Contract.Create(), info)
+type Conds struct {
+	EntID       *cruder.Cond
+	EntIDs      *cruder.Cond
+	ChainType   *cruder.Cond
+	ChainID     *cruder.Cond
+	Address     *cruder.Cond
+	Name        *cruder.Cond
+	Symbol      *cruder.Cond
+	Decimals    *cruder.Cond
+	Creator     *cruder.Cond
+	BlockNum    *cruder.Cond
+	TxHash      *cruder.Cond
+	TxTime      *cruder.Cond
+	ProfileURL  *cruder.Cond
+	BaseURL     *cruder.Cond
+	BannerURL   *cruder.Cond
+	Description *cruder.Cond
+	Remark      *cruder.Cond
+}
+
+func SetQueryConds(q *ent.ContractQuery, conds *Conds) (*ent.ContractQuery, error) { //nolint
+	if conds.EntID != nil {
+		entid, ok := conds.EntID.Val.(uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
 		}
-		return tx.Contract.CreateBulk(bulk...).OnConflict().UpdateNewValues().Exec(ctx)
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func Update(ctx context.Context, in *npool.ContractReq) (*ent.Contract, error) {
-	if in == nil {
-		return nil, errors.New("input is nil")
-	}
-
-	var info *ent.Contract
-	id, err := uuid.Parse(in.GetID())
-	if err != nil {
-		return nil, err
-	}
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		contractUpdate := tx.Contract.UpdateOneID(id)
-		info, err = UpdateSet(contractUpdate, in).Save(ctx)
-		return err
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:gocyclo
-func UpdateSet(u *ent.ContractUpdateOne, in *npool.ContractReq) *ent.ContractUpdateOne {
-	if in.ChainType != nil {
-		u.SetChainType(in.GetChainType().String())
-	}
-	if in.ChainID != nil {
-		u.SetChainID(in.GetChainID())
-	}
-	if in.Address != nil {
-		u.SetAddress(in.GetAddress())
-	}
-	if in.Name != nil {
-		u.SetName(in.GetName())
-	}
-	if in.Symbol != nil {
-		u.SetSymbol(in.GetSymbol())
-	}
-	if in.Decimals != nil {
-		u.SetDecimals(in.GetDecimals())
-	}
-	if in.Creator != nil {
-		u.SetCreator(in.GetCreator())
-	}
-	if in.BlockNum != nil {
-		u.SetBlockNum(in.GetBlockNum())
-	}
-	if in.TxHash != nil {
-		u.SetTxHash(in.GetTxHash())
-	}
-	if in.TxTime != nil {
-		u.SetTxTime(in.GetTxTime())
-	}
-	if in.ProfileURL != nil {
-		u.SetProfileURL(in.GetProfileURL())
-	}
-	if in.BaseURL != nil {
-		u.SetBaseURL(in.GetBaseURL())
-	}
-	if in.BannerURL != nil {
-		u.SetBannerURL(in.GetBannerURL())
-	}
-	if in.Description != nil {
-		u.SetDescription(in.GetDescription())
-	}
-	if in.Remark != nil {
-		u.SetRemark(in.GetRemark())
-	}
-	return u
-}
-
-func Row(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
-	var info *ent.Contract
-	var err error
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Contract.Query().Where(contract.ID(id)).Only(_ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-//nolint:funlen,gocyclo
-func setQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContractQuery, error) {
-	stm := cli.Contract.Query()
-	if conds == nil {
-		return stm, nil
-	}
-
-	if _, err := uuid.Parse(conds.GetID().GetValue()); err == nil {
-		id := uuid.MustParse(conds.GetID().GetValue())
-		switch conds.GetID().GetOp() {
+		switch conds.EntID.Op {
 		case cruder.EQ:
-			stm.Where(contract.ID(id))
+			q.Where(entcontract.EntID(entid))
 		default:
-			return nil, fmt.Errorf("invalid contract field")
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-
-	if conds.IDs != nil {
-		if conds.GetIDs().GetOp() == cruder.IN {
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(contract.IDIn(ids...))
+	if conds.EntIDs != nil {
+		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
+		if !ok {
+			return nil, fmt.Errorf("invalid entid")
+		}
+		switch conds.EntIDs.Op {
+		case cruder.IN:
+			q.Where(entcontract.EntIDIn(entids...))
+		default:
+			return nil, fmt.Errorf("invalid entid field")
 		}
 	}
-
 	if conds.ChainType != nil {
-		switch conds.GetChainType().GetOp() {
+		chaintype, ok := conds.ChainType.Val.(basetype.ChainType)
+		if !ok {
+			return nil, fmt.Errorf("invalid chaintype")
+		}
+		switch conds.ChainType.Op {
 		case cruder.EQ:
-			stm.Where(contract.ChainType(conds.GetChainType().GetValue()))
+			q.Where(entcontract.ChainType(chaintype.String()))
 		default:
-			return nil, fmt.Errorf("invalid contract field")
+			return nil, fmt.Errorf("invalid chaintype field")
 		}
 	}
-
 	if conds.ChainID != nil {
-		switch conds.GetChainID().GetOp() {
+		chainid, ok := conds.ChainID.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid chainid")
+		}
+		switch conds.ChainID.Op {
 		case cruder.EQ:
-			stm.Where(contract.ChainID(conds.GetChainID().GetValue()))
+			q.Where(entcontract.ChainID(chainid))
 		default:
-			return nil, fmt.Errorf("invalid contract field")
+			return nil, fmt.Errorf("invalid chainid field")
 		}
 	}
-
 	if conds.Address != nil {
-		switch conds.GetAddress().GetOp() {
+		address, ok := conds.Address.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid address")
+		}
+		switch conds.Address.Op {
 		case cruder.EQ:
-			stm.Where(contract.Address(conds.GetAddress().GetValue()))
+			q.Where(entcontract.Address(address))
 		default:
-			return nil, fmt.Errorf("invalid Address field")
+			return nil, fmt.Errorf("invalid address field")
 		}
 	}
 	if conds.Name != nil {
-		switch conds.GetName().GetOp() {
+		name, ok := conds.Name.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid name")
+		}
+		switch conds.Name.Op {
 		case cruder.EQ:
-			stm.Where(contract.Name(conds.GetName().GetValue()))
+			q.Where(entcontract.Name(name))
 		default:
-			return nil, fmt.Errorf("invalid Name field")
+			return nil, fmt.Errorf("invalid name field")
 		}
 	}
 	if conds.Symbol != nil {
-		switch conds.GetSymbol().GetOp() {
+		symbol, ok := conds.Symbol.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid symbol")
+		}
+		switch conds.Symbol.Op {
 		case cruder.EQ:
-			stm.Where(contract.Symbol(conds.GetSymbol().GetValue()))
+			q.Where(entcontract.Symbol(symbol))
 		default:
-			return nil, fmt.Errorf("invalid Symbol field")
+			return nil, fmt.Errorf("invalid symbol field")
 		}
 	}
-
 	if conds.Decimals != nil {
-		switch conds.GetDecimals().GetOp() {
+		decimals, ok := conds.Decimals.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid decimals")
+		}
+		switch conds.Decimals.Op {
 		case cruder.EQ:
-			stm.Where(contract.Decimals(conds.GetDecimals().GetValue()))
+			q.Where(entcontract.Decimals(decimals))
 		default:
-			return nil, fmt.Errorf("invalid Decimals field")
+			return nil, fmt.Errorf("invalid decimals field")
 		}
 	}
-
 	if conds.Creator != nil {
-		switch conds.GetCreator().GetOp() {
+		creator, ok := conds.Creator.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid creator")
+		}
+		switch conds.Creator.Op {
 		case cruder.EQ:
-			stm.Where(contract.Creator(conds.GetCreator().GetValue()))
+			q.Where(entcontract.Creator(creator))
 		default:
-			return nil, fmt.Errorf("invalid Creator field")
+			return nil, fmt.Errorf("invalid creator field")
 		}
 	}
 	if conds.BlockNum != nil {
-		switch conds.GetBlockNum().GetOp() {
+		blocknum, ok := conds.BlockNum.Val.(uint64)
+		if !ok {
+			return nil, fmt.Errorf("invalid blocknum")
+		}
+		switch conds.BlockNum.Op {
 		case cruder.EQ:
-			stm.Where(contract.BlockNum(conds.GetBlockNum().GetValue()))
+			q.Where(entcontract.BlockNum(blocknum))
 		default:
-			return nil, fmt.Errorf("invalid BlockNum field")
+			return nil, fmt.Errorf("invalid blocknum field")
 		}
 	}
 	if conds.TxHash != nil {
-		switch conds.GetTxHash().GetOp() {
+		txhash, ok := conds.TxHash.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid txhash")
+		}
+		switch conds.TxHash.Op {
 		case cruder.EQ:
-			stm.Where(contract.TxHash(conds.GetTxHash().GetValue()))
+			q.Where(entcontract.TxHash(txhash))
 		default:
-			return nil, fmt.Errorf("invalid TxHash field")
+			return nil, fmt.Errorf("invalid txhash field")
 		}
 	}
 	if conds.TxTime != nil {
-		switch conds.GetTxTime().GetOp() {
+		txtime, ok := conds.TxTime.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid txtime")
+		}
+		switch conds.TxTime.Op {
 		case cruder.EQ:
-			stm.Where(contract.TxTime(conds.GetTxTime().GetValue()))
+			q.Where(entcontract.TxTime(txtime))
 		default:
-			return nil, fmt.Errorf("invalid TxTime field")
+			return nil, fmt.Errorf("invalid txtime field")
 		}
 	}
 	if conds.ProfileURL != nil {
-		switch conds.GetProfileURL().GetOp() {
+		profileurl, ok := conds.ProfileURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid profileurl")
+		}
+		switch conds.ProfileURL.Op {
 		case cruder.EQ:
-			stm.Where(contract.ProfileURL(conds.GetProfileURL().GetValue()))
+			q.Where(entcontract.ProfileURL(profileurl))
 		default:
-			return nil, fmt.Errorf("invalid ProfileURL field")
+			return nil, fmt.Errorf("invalid profileurl field")
 		}
 	}
 	if conds.BaseURL != nil {
-		switch conds.GetBaseURL().GetOp() {
+		baseurl, ok := conds.BaseURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid baseurl")
+		}
+		switch conds.BaseURL.Op {
 		case cruder.EQ:
-			stm.Where(contract.BaseURL(conds.GetBaseURL().GetValue()))
+			q.Where(entcontract.BaseURL(baseurl))
 		default:
-			return nil, fmt.Errorf("invalid BaseURL field")
+			return nil, fmt.Errorf("invalid baseurl field")
 		}
 	}
 	if conds.BannerURL != nil {
-		switch conds.GetBannerURL().GetOp() {
+		bannerurl, ok := conds.BannerURL.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid bannerurl")
+		}
+		switch conds.BannerURL.Op {
 		case cruder.EQ:
-			stm.Where(contract.BannerURL(conds.GetBannerURL().GetValue()))
+			q.Where(entcontract.BannerURL(bannerurl))
 		default:
-			return nil, fmt.Errorf("invalid BannerURL field")
+			return nil, fmt.Errorf("invalid bannerurl field")
 		}
 	}
 	if conds.Description != nil {
-		switch conds.GetDescription().GetOp() {
+		description, ok := conds.Description.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid description")
+		}
+		switch conds.Description.Op {
 		case cruder.EQ:
-			stm.Where(contract.Description(conds.GetDescription().GetValue()))
+			q.Where(entcontract.Description(description))
 		default:
-			return nil, fmt.Errorf("invalid Description field")
+			return nil, fmt.Errorf("invalid description field")
 		}
 	}
-
 	if conds.Remark != nil {
-		switch conds.GetRemark().GetOp() {
+		remark, ok := conds.Remark.Val.(string)
+		if !ok {
+			return nil, fmt.Errorf("invalid remark")
+		}
+		switch conds.Remark.Op {
 		case cruder.EQ:
-			stm.Where(contract.Remark(conds.GetRemark().GetValue()))
+			q.Where(entcontract.Remark(remark))
 		default:
-			return nil, fmt.Errorf("invalid contract field")
+			return nil, fmt.Errorf("invalid remark field")
 		}
 	}
-
-	return stm, nil
-}
-
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Contract, int, error) {
-	var err error
-	rows := []*ent.Contract{}
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		rows, err = stm.
-			Offset(offset).
-			Order(ent.Desc(contract.FieldUpdatedAt)).
-			Limit(limit).
-			All(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return rows, total, nil
-}
-
-func RowOnly(ctx context.Context, conds *npool.Conds) (info *ent.Contract, err error) {
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		info, err = stm.Only(_ctx)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil
-			}
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func Count(ctx context.Context, conds *npool.Conds) (uint32, error) {
-	var err error
-	var total int
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		total, err = stm.Count(_ctx)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	return uint32(total), nil
-}
-
-func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Contract.Query().Where(contract.ID(id)).Exist(_ctx)
-		return err
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
-	var err error
-
-	exist := false
-
-	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		stm, err := setQueryConds(conds, cli)
-		if err != nil {
-			return err
-		}
-
-		exist, err = stm.Exist(_ctx)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return false, err
-	}
-
-	return exist, nil
-}
-
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Contract, error) {
-	var info *ent.Contract
-	var err error
-
-	err = db.WithTx(ctx, func(ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Contract.UpdateOneID(id).SetDeletedAt(uint32(time.Now().Unix())).Save(ctx)
-		return err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
+	return q, nil
 }

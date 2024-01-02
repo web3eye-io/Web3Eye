@@ -4,151 +4,261 @@ package transfer
 import (
 	"context"
 
-	converter "github.com/web3eye-io/Web3Eye/nft-meta/pkg/converter/v1/transfer"
-	crud "github.com/web3eye-io/Web3Eye/nft-meta/pkg/crud/v1/transfer"
+	handler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/transfer"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
-
-	"github.com/google/uuid"
 )
 
 func (s *Server) CreateTransfer(ctx context.Context, in *npool.CreateTransferRequest) (*npool.CreateTransferResponse, error) {
-	var err error
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"CreateTransfer",
+			"In", in,
+		)
+		return &npool.CreateTransferResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithChainType(in.Info.ChainType, true),
+		handler.WithChainID(in.Info.ChainID, true),
+		handler.WithContract(in.Info.Contract, true),
+		handler.WithTokenType(in.Info.TokenType, true),
+		handler.WithTokenID(in.Info.TokenID, true),
+		handler.WithFrom(in.Info.From, true),
+		handler.WithTo(in.Info.To, true),
+		handler.WithAmount(in.Info.Amount, false),
+		handler.WithBlockNumber(in.Info.BlockNumber, false),
+		handler.WithTxHash(in.Info.TxHash, true),
+		handler.WithBlockHash(in.Info.BlockHash, false),
+		handler.WithTxTime(in.Info.TxTime, false),
+		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateTransfer", "error", err)
+		return &npool.CreateTransferResponse{}, status.Error(codes.Internal, err.Error())
+	}
 
-	info, err := crud.Create(ctx, in.GetInfo())
+	info, err := h.GetTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateTransfer", "error", err)
 		return &npool.CreateTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateTransferResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) CreateTransfers(ctx context.Context, in *npool.CreateTransfersRequest) (*npool.CreateTransfersResponse, error) {
-	var err error
-
 	if len(in.GetInfos()) == 0 {
 		logger.Sugar().Warnw("CreateTransfers", "error", "Infos is empty")
 		return &npool.CreateTransfersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(in.Infos, true),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("CreateTransfers", "error", err)
+		return &npool.CreateTransfersResponse{}, status.Error(codes.Internal, err.Error())
+	}
 
-	rows, err := crud.CreateBulk(ctx, in.GetInfos())
+	infos, err := h.CreateTransfers(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("CreateTransfers", "error", err)
 		return &npool.CreateTransfersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.CreateTransfersResponse{
-		Infos: converter.Ent2GrpcMany(rows),
+		Infos: infos,
 	}, nil
 }
 
 func (s *Server) UpsertTransfer(ctx context.Context, in *npool.UpsertTransferRequest) (*npool.UpsertTransferResponse, error) {
-	row, err := crud.Upsert(ctx, in.GetInfo())
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpsertTransfer",
+			"In", in,
+		)
+		return &npool.UpsertTransferResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithChainType(in.Info.ChainType, true),
+		handler.WithChainID(in.Info.ChainID, true),
+		handler.WithContract(in.Info.Contract, true),
+		handler.WithTokenType(in.Info.TokenType, true),
+		handler.WithTokenID(in.Info.TokenID, true),
+		handler.WithFrom(in.Info.From, true),
+		handler.WithTo(in.Info.To, true),
+		handler.WithAmount(in.Info.Amount, false),
+		handler.WithBlockNumber(in.Info.BlockNumber, false),
+		handler.WithTxHash(in.Info.TxHash, true),
+		handler.WithBlockHash(in.Info.BlockHash, false),
+		handler.WithTxTime(in.Info.TxTime, false),
+		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertTransfer", "error", err)
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	info, err := h.UpsertTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertTransfer", "error", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpsertTransferResponse{
-		Info: converter.Ent2Grpc(row),
+		Info: info,
 	}, err
 }
 
 func (s *Server) UpsertTransfers(ctx context.Context, in *npool.UpsertTransfersRequest) (*npool.UpsertTransfersResponse, error) {
-	err := crud.UpsertBulk(ctx, in.GetInfos())
+	if len(in.GetInfos()) == 0 {
+		logger.Sugar().Warnw("UpsertTransfers", "error", "Infos is empty")
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithReqs(in.Infos, true),
+	)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertTransfers", "error", err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpsertTransfersResponse{}, err
+	err = h.UpsertTransfers(ctx)
+	if err != nil {
+		logger.Sugar().Errorw("UpsertTransfers", "error", err)
+		return &npool.UpsertTransfersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return &npool.UpsertTransfersResponse{}, nil
 }
 
 func (s *Server) UpdateTransfer(ctx context.Context, in *npool.UpdateTransferRequest) (*npool.UpdateTransferResponse, error) {
-	var err error
-
-	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
+	if req := in.GetInfo(); req == nil {
+		logger.Sugar().Errorw(
+			"UpdateTransfer",
+			"In", in,
+		)
+		return &npool.UpdateTransferResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+	}
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(in.Info.ID, true),
+		handler.WithChainType(in.Info.ChainType, false),
+		handler.WithChainID(in.Info.ChainID, false),
+		handler.WithContract(in.Info.Contract, false),
+		handler.WithTokenType(in.Info.TokenType, false),
+		handler.WithTokenID(in.Info.TokenID, false),
+		handler.WithFrom(in.Info.From, false),
+		handler.WithTo(in.Info.To, false),
+		handler.WithAmount(in.Info.Amount, false),
+		handler.WithBlockNumber(in.Info.BlockNumber, false),
+		handler.WithTxHash(in.Info.TxHash, false),
+		handler.WithBlockHash(in.Info.BlockHash, false),
+		handler.WithTxTime(in.Info.TxTime, false),
+		handler.WithRemark(in.Info.Remark, false),
+		handler.WithLogIndex(in.Info.LogIndex, false),
+	)
+	if err != nil {
 		logger.Sugar().Errorw("UpdateTransfer", "ID", in.GetInfo().GetID(), "error", err)
-		return &npool.UpdateTransferResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.UpdateTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	info, err := crud.Update(ctx, in.GetInfo())
+	info, err := h.UpdateTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateTransfer", "ID", in.GetInfo().GetID(), "error", err)
 		return &npool.UpdateTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.UpdateTransferResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetTransfer(ctx context.Context, in *npool.GetTransferRequest) (*npool.GetTransferResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("GetTransfer", "ID", in.GetID(), "error", err)
-		return &npool.GetTransferResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw("GetTransfer", "error", err)
+		return &npool.GetTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	info, err := crud.Row(ctx, id)
+	info, err := h.GetTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetTransfer", "ID", in.GetID(), "error", err)
 		return &npool.GetTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetTransferResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
 
 func (s *Server) GetTransferOnly(ctx context.Context, in *npool.GetTransferOnlyRequest) (*npool.GetTransferOnlyResponse, error) {
-	var err error
-
-	info, err := crud.RowOnly(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(0),
+		handler.WithLimit(1),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetTransferOnly", "error", err)
+		return &npool.GetTransferOnlyResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetTransfers(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetTransferOnly", "error", err)
 		return &npool.GetTransferOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	if total != 1 {
+		errMsg := "more than one result or have no result"
+		logger.Sugar().Errorw("GetTransferOnly", "error", errMsg)
+		return &npool.GetTransferOnlyResponse{}, status.Error(codes.Internal, errMsg)
+	}
+
 	return &npool.GetTransferOnlyResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: infos[0],
 	}, nil
 }
 
 func (s *Server) GetTransfers(ctx context.Context, in *npool.GetTransfersRequest) (*npool.GetTransfersResponse, error) {
-	var err error
-
-	rows, total, err := crud.Rows(ctx, in.GetConds(), int(in.GetOffset()), int(in.GetLimit()))
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+		handler.WithOffset(in.Offset),
+		handler.WithLimit(in.Limit),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("GetTransfers", "error", err)
+		return &npool.GetTransfersResponse{}, status.Error(codes.Internal, err.Error())
+	}
+	infos, total, err := h.GetTransfers(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("GetTransfers", "error", err)
 		return &npool.GetTransfersResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.GetTransfersResponse{
-		Infos: converter.Ent2GrpcMany(rows),
-		Total: uint32(total),
+		Infos: infos,
+		Total: total,
 	}, nil
 }
 
 func (s *Server) ExistTransfer(ctx context.Context, in *npool.ExistTransferRequest) (*npool.ExistTransferResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
 		logger.Sugar().Errorw("ExistTransfer", "ID", in.GetID(), "error", err)
 		return &npool.ExistTransferResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	exist, err := crud.Exist(ctx, id)
+	exist, err := h.ExistTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistTransfer", "ID", in.GetID(), "error", err)
 		return &npool.ExistTransferResponse{}, status.Error(codes.Internal, err.Error())
@@ -160,9 +270,14 @@ func (s *Server) ExistTransfer(ctx context.Context, in *npool.ExistTransferReque
 }
 
 func (s *Server) ExistTransferConds(ctx context.Context, in *npool.ExistTransferCondsRequest) (*npool.ExistTransferCondsResponse, error) {
-	var err error
-
-	exist, err := crud.ExistConds(ctx, in.GetConds())
+	h, err := handler.NewHandler(ctx,
+		handler.WithConds(in.Conds),
+	)
+	if err != nil {
+		logger.Sugar().Errorw("ExistTransferConds", "error", err)
+		return &npool.ExistTransferCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+	}
+	exist, err := h.ExistTransferConds(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("ExistTransferConds", "error", err)
 		return &npool.ExistTransferCondsResponse{}, status.Error(codes.Internal, err.Error())
@@ -173,36 +288,21 @@ func (s *Server) ExistTransferConds(ctx context.Context, in *npool.ExistTransfer
 	}, nil
 }
 
-func (s *Server) CountTransfers(ctx context.Context, in *npool.CountTransfersRequest) (*npool.CountTransfersResponse, error) {
-	var err error
-
-	total, err := crud.Count(ctx, in.GetConds())
-	if err != nil {
-		logger.Sugar().Errorw("Counts", "error", err)
-		return &npool.CountTransfersResponse{}, status.Error(codes.Internal, err.Error())
-	}
-
-	return &npool.CountTransfersResponse{
-		Info: total,
-	}, nil
-}
-
 func (s *Server) DeleteTransfer(ctx context.Context, in *npool.DeleteTransferRequest) (*npool.DeleteTransferResponse, error) {
-	var err error
-
-	id, err := uuid.Parse(in.GetID())
+	h, err := handler.NewHandler(ctx,
+		handler.WithID(&in.ID, true),
+	)
 	if err != nil {
-		logger.Sugar().Errorw("DeleteTransfer", "ID", in.GetID(), "error", err)
+		logger.Sugar().Errorw("DeleteTransfer", "error", err)
 		return &npool.DeleteTransferResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	info, err := crud.Delete(ctx, id)
+	info, err := h.DeleteTransfer(ctx)
 	if err != nil {
 		logger.Sugar().Errorw("DeleteTransfer", "ID", in.GetID(), "error", err)
 		return &npool.DeleteTransferResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	return &npool.DeleteTransferResponse{
-		Info: converter.Ent2Grpc(info),
+		Info: info,
 	}, nil
 }
