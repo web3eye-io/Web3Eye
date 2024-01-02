@@ -58,3 +58,11 @@ enum EndpointState {
     EndpointUnstable = 20;
     EndpointError = 40;
 }
+
+enum TokenURIState {
+    TokenURIDefault = 0;
+    TokenURIFinish = 10;
+    TokenURIIncomplete = 20;
+    TokenURIUnsupport = 30;
+    TokenURIError = 40;
+}

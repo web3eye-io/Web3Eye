@@ -169,8 +169,10 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		}
 		remark := ""
 
+		uriState := basetype.TokenURIState_TokenURIFinish
 		metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 		if err != nil {
+			uriState = basetype.TokenURIState_TokenURIError
 			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get metadata,err: %v, tokenID: %v", err, transfer.TokenID)
 			remark = fmt.Sprintf("%v,%v", remark, err)
@@ -178,12 +180,17 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURIInfo := &token.TokenURIInfo{}
 		if metadata != nil {
-			tokenURIInfo, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
+			var complete bool
+			tokenURIInfo, complete, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
 			if err != nil {
+				uriState = basetype.TokenURIState_TokenURIError
 				tokenURIInfo = &token.TokenURIInfo{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
+			} else if !complete {
+				uriState = basetype.TokenURIState_TokenURIIncomplete
 			}
 		} else {
+			uriState = basetype.TokenURIState_TokenURIError
 			// if cannot get metadata,then set the default value
 			metadata = &token_metadata.Metadata{}
 		}
@@ -201,6 +208,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 				TokenType:   &transfer.TokenType,
 				TokenID:     &transfer.TokenID,
 				URI:         &metadata.Data.Uri,
+				URIState:    &uriState,
 				URIType:     (*string)(&tokenURIInfo.URIType),
 				ImageURL:    &tokenURIInfo.ImageURL,
 				VideoURL:    &tokenURIInfo.VideoURL,

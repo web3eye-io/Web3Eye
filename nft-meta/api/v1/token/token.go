@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
@@ -75,10 +76,6 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 	entID := uuid.New().String()
 	inInfo.EntID = &entID
 
-	err := TransformImage(ctx, inInfo)
-	if err != nil {
-		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
-	}
 	h, err := handler.NewHandler(ctx,
 		handler.WithEntID(inInfo.EntID, true),
 		handler.WithChainType(inInfo.ChainType, true),
@@ -88,6 +85,7 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 		handler.WithTokenID(inInfo.TokenID, true),
 		handler.WithOwner(inInfo.Owner, false),
 		handler.WithURI(inInfo.URI, false),
+		handler.WithURIState(inInfo.URIState, false),
 		handler.WithURIType(inInfo.URIType, false),
 		handler.WithImageURL(inInfo.ImageURL, false),
 		handler.WithVideoURL(inInfo.VideoURL, false),
@@ -108,6 +106,11 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "error", err)
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	err = TransformImage(ctx, inInfo)
+	if err != nil {
+		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 	}
 
 	return &npool.CreateTokenResponse{
@@ -133,6 +136,7 @@ func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) 
 		handler.WithTokenID(in.Info.TokenID, true),
 		handler.WithOwner(in.Info.Owner, false),
 		handler.WithURI(in.Info.URI, false),
+		handler.WithURIState(in.Info.URIState, false),
 		handler.WithURIType(in.Info.URIType, false),
 		handler.WithImageURL(in.Info.ImageURL, false),
 		handler.WithVideoURL(in.Info.VideoURL, false),
@@ -177,10 +181,6 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	for i := 0; i < len(inInfos); i++ {
 		entID := uuid.New().String()
 		inInfos[i].EntID = &entID
-		err := TransformImage(ctx, inInfos[i])
-		if err != nil {
-			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
-		}
 	}
 
 	h, err := handler.NewHandler(ctx,
@@ -194,6 +194,13 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	if err != nil {
 		logger.Sugar().Errorw("CreateTokens", "error", err)
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	for i := 0; i < len(inInfos); i++ {
+		err := TransformImage(ctx, inInfos[i])
+		if err != nil {
+			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
+		}
 	}
 
 	return &npool.CreateTokensResponse{
@@ -218,6 +225,7 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 		handler.WithTokenID(in.Info.TokenID, false),
 		handler.WithOwner(in.Info.Owner, false),
 		handler.WithURI(in.Info.URI, false),
+		handler.WithURIState(in.Info.URIState, false),
 		handler.WithURIType(in.Info.URIType, false),
 		handler.WithImageURL(in.Info.ImageURL, false),
 		handler.WithVideoURL(in.Info.VideoURL, false),
@@ -248,6 +256,11 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 	if inInfo.EntID == nil {
 		return fmt.Errorf("not set entID")
+	}
+
+	if inInfo.URIState.String() != basetype.TokenURIState_TokenURIFinish.String() ||
+		inInfo.URIState.String() != basetype.TokenURIState_TokenURIIncomplete.String() {
+		return nil
 	}
 
 	if inInfo.VectorState.String() != npool.ConvertState_Waiting.String() {

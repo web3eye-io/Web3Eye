@@ -32,6 +32,7 @@ var ret = &tokenproto.Token{
 	TokenID:         "test_token",
 	Owner:           "test_token",
 	URI:             "test_token",
+	URIState:        basetype.TokenURIState_TokenURIFinish,
 	URIType:         "test_token",
 	ImageURL:        "test_token",
 	VideoURL:        "test_token",
@@ -52,6 +53,7 @@ var req = &tokenproto.TokenReq{
 	TokenID:         &ret.TokenID,
 	Owner:           &ret.Owner,
 	URI:             &ret.URI,
+	URIState:        &ret.URIState,
 	URIType:         &ret.URIType,
 	ImageURL:        &ret.ImageURL,
 	VideoURL:        &ret.VideoURL,
@@ -74,6 +76,7 @@ func create(t *testing.T) {
 		WithTokenID(req.TokenID, true),
 		WithOwner(req.Owner, true),
 		WithURI(req.URI, true),
+		WithURIState(req.URIState, true),
 		WithURIType(req.URIType, true),
 		WithImageURL(req.ImageURL, true),
 		WithVideoURL(req.VideoURL, true),
@@ -114,6 +117,7 @@ func update(t *testing.T) {
 		assert.Equal(t, info.IPFSImageURL, req.GetIPFSImageURL())
 		assert.Equal(t, info.ChainTypeStr, req.ChainType.String())
 		assert.Equal(t, info.TokenTypeStr, req.TokenType.String())
+		assert.Equal(t, info.URIStateStr, req.URIState.String())
 		assert.Equal(t, info.VectorStateStr, req.VectorState.String())
 	}
 }
@@ -149,6 +153,7 @@ func upsert(t *testing.T) {
 		WithTokenID(&tokenid, true),
 		WithOwner(req.Owner, true),
 		WithURI(req.URI, true),
+		WithURIState(req.URIState, true),
 		WithURIType(req.URIType, true),
 		WithImageURL(req.ImageURL, true),
 		WithVideoURL(req.VideoURL, true),

@@ -7928,6 +7928,7 @@ type TokenMutation struct {
 	token_id             *string
 	owner                *string
 	uri                  *string
+	uri_state            *string
 	uri_type             *string
 	image_url            *string
 	video_url            *string
@@ -8532,6 +8533,55 @@ func (m *TokenMutation) ResetURI() {
 	delete(m.clearedFields, token.FieldURI)
 }
 
+// SetURIState sets the "uri_state" field.
+func (m *TokenMutation) SetURIState(s string) {
+	m.uri_state = &s
+}
+
+// URIState returns the value of the "uri_state" field in the mutation.
+func (m *TokenMutation) URIState() (r string, exists bool) {
+	v := m.uri_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURIState returns the old "uri_state" field's value of the Token entity.
+// If the Token object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TokenMutation) OldURIState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURIState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURIState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURIState: %w", err)
+	}
+	return oldValue.URIState, nil
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (m *TokenMutation) ClearURIState() {
+	m.uri_state = nil
+	m.clearedFields[token.FieldURIState] = struct{}{}
+}
+
+// URIStateCleared returns if the "uri_state" field was cleared in this mutation.
+func (m *TokenMutation) URIStateCleared() bool {
+	_, ok := m.clearedFields[token.FieldURIState]
+	return ok
+}
+
+// ResetURIState resets all changes to the "uri_state" field.
+func (m *TokenMutation) ResetURIState() {
+	m.uri_state = nil
+	delete(m.clearedFields, token.FieldURIState)
+}
+
 // SetURIType sets the "uri_type" field.
 func (m *TokenMutation) SetURIType(s string) {
 	m.uri_type = &s
@@ -9083,7 +9133,7 @@ func (m *TokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TokenMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.ent_id != nil {
 		fields = append(fields, token.FieldEntID)
 	}
@@ -9116,6 +9166,9 @@ func (m *TokenMutation) Fields() []string {
 	}
 	if m.uri != nil {
 		fields = append(fields, token.FieldURI)
+	}
+	if m.uri_state != nil {
+		fields = append(fields, token.FieldURIState)
 	}
 	if m.uri_type != nil {
 		fields = append(fields, token.FieldURIType)
@@ -9177,6 +9230,8 @@ func (m *TokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Owner()
 	case token.FieldURI:
 		return m.URI()
+	case token.FieldURIState:
+		return m.URIState()
 	case token.FieldURIType:
 		return m.URIType()
 	case token.FieldImageURL:
@@ -9228,6 +9283,8 @@ func (m *TokenMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldOwner(ctx)
 	case token.FieldURI:
 		return m.OldURI(ctx)
+	case token.FieldURIState:
+		return m.OldURIState(ctx)
 	case token.FieldURIType:
 		return m.OldURIType(ctx)
 	case token.FieldImageURL:
@@ -9333,6 +9390,13 @@ func (m *TokenMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetURI(v)
+		return nil
+	case token.FieldURIState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURIState(v)
 		return nil
 	case token.FieldURIType:
 		v, ok := value.(string)
@@ -9503,6 +9567,9 @@ func (m *TokenMutation) ClearedFields() []string {
 	if m.FieldCleared(token.FieldURI) {
 		fields = append(fields, token.FieldURI)
 	}
+	if m.FieldCleared(token.FieldURIState) {
+		fields = append(fields, token.FieldURIState)
+	}
 	if m.FieldCleared(token.FieldURIType) {
 		fields = append(fields, token.FieldURIType)
 	}
@@ -9552,6 +9619,9 @@ func (m *TokenMutation) ClearField(name string) error {
 		return nil
 	case token.FieldURI:
 		m.ClearURI()
+		return nil
+	case token.FieldURIState:
+		m.ClearURIState()
 		return nil
 	case token.FieldURIType:
 		m.ClearURIType()
@@ -9623,6 +9693,9 @@ func (m *TokenMutation) ResetField(name string) error {
 		return nil
 	case token.FieldURI:
 		m.ResetURI()
+		return nil
+	case token.FieldURIState:
+		m.ResetURIState()
 		return nil
 	case token.FieldURIType:
 		m.ResetURIType()

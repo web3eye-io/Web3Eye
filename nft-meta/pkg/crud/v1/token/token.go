@@ -22,6 +22,7 @@ type Req struct {
 	TokenID         *string
 	Owner           *string
 	URI             *string
+	URIState        *basetype.TokenURIState
 	URIType         *string
 	ImageURL        *string
 	VideoURL        *string
@@ -59,6 +60,9 @@ func CreateSet(c *ent.TokenCreate, req *Req) *ent.TokenCreate {
 	}
 	if req.URI != nil {
 		c.SetURI(*req.URI)
+	}
+	if req.URIState != nil {
+		c.SetURIState(req.URIState.String())
 	}
 	if req.URIType != nil {
 		c.SetURIType(*req.URIType)
@@ -116,6 +120,9 @@ func UpdateSet(u *ent.TokenUpdateOne, req *Req) (*ent.TokenUpdateOne, error) {
 	if req.URI != nil {
 		u.SetURI(*req.URI)
 	}
+	if req.URIState != nil {
+		u.SetURIState(req.URIState.String())
+	}
 	if req.URIType != nil {
 		u.SetURIType(*req.URIType)
 	}
@@ -159,6 +166,7 @@ type Conds struct {
 	TokenID         *cruder.Cond
 	Owner           *cruder.Cond
 	URI             *cruder.Cond
+	URIState        *cruder.Cond
 	URIType         *cruder.Cond
 	ImageURL        *cruder.Cond
 	VideoURL        *cruder.Cond
@@ -291,6 +299,18 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 			q.Where(enttoken.URI(uri))
 		default:
 			return nil, fmt.Errorf("invalid uri field")
+		}
+	}
+	if conds.URIState != nil {
+		uristate, ok := conds.URIState.Val.(basetype.TokenURIState)
+		if !ok {
+			return nil, fmt.Errorf("invalid uristate")
+		}
+		switch conds.URI.Op {
+		case cruder.EQ:
+			q.Where(enttoken.URIState(uristate.String()))
+		default:
+			return nil, fmt.Errorf("invalid uristate field")
 		}
 	}
 	if conds.URIType != nil {

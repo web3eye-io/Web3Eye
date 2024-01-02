@@ -197,18 +197,23 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 		}
 
+		uriState := basetype.TokenURIState_TokenURIFinish
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
+			uriState = basetype.TokenURIState_TokenURIError
 			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
-		tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
+		tokenURIInfo, complete, err := token.GetTokenURIInfo(ctx, tokenURI)
 		if err != nil {
 			// if cannot get tokenURIInfo,then set the default value
+			uriState = basetype.TokenURIState_TokenURIError
 			tokenURIInfo = &token.TokenURIInfo{}
 			remark = fmt.Sprintf("%v,%v", remark, err)
+		} else if !complete {
+			uriState = basetype.TokenURIState_TokenURIIncomplete
 		}
 
 		if len(tokenURI) > indexer.MaxTokenURILength {
@@ -224,6 +229,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 				TokenType:   &transfer.TokenType,
 				TokenID:     &transfer.TokenID,
 				URI:         &tokenURI,
+				URIState:    &uriState,
 				URIType:     (*string)(&tokenURIInfo.URIType),
 				ImageURL:    &tokenURIInfo.ImageURL,
 				VideoURL:    &tokenURIInfo.VideoURL,

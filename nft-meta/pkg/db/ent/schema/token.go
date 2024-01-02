@@ -32,6 +32,8 @@ func (Token) Fields() []ent.Field {
 			Optional(),
 		field.Text("uri").
 			Optional(),
+		field.Text("uri_state").
+			Optional(),
 		field.String("uri_type").
 			Optional(),
 		field.Text("image_url").

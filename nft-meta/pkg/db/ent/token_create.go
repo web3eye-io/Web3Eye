@@ -136,6 +136,20 @@ func (tc *TokenCreate) SetNillableURI(s *string) *TokenCreate {
 	return tc
 }
 
+// SetURIState sets the "uri_state" field.
+func (tc *TokenCreate) SetURIState(s string) *TokenCreate {
+	tc.mutation.SetURIState(s)
+	return tc
+}
+
+// SetNillableURIState sets the "uri_state" field if the given value is not nil.
+func (tc *TokenCreate) SetNillableURIState(s *string) *TokenCreate {
+	if s != nil {
+		tc.SetURIState(*s)
+	}
+	return tc
+}
+
 // SetURIType sets the "uri_type" field.
 func (tc *TokenCreate) SetURIType(s string) *TokenCreate {
 	tc.mutation.SetURIType(s)
@@ -547,6 +561,14 @@ func (tc *TokenCreate) createSpec() (*Token, *sqlgraph.CreateSpec) {
 		})
 		_node.URI = value
 	}
+	if value, ok := tc.mutation.URIState(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldURIState,
+		})
+		_node.URIState = value
+	}
 	if value, ok := tc.mutation.URIType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -838,6 +860,24 @@ func (u *TokenUpsert) UpdateURI() *TokenUpsert {
 // ClearURI clears the value of the "uri" field.
 func (u *TokenUpsert) ClearURI() *TokenUpsert {
 	u.SetNull(token.FieldURI)
+	return u
+}
+
+// SetURIState sets the "uri_state" field.
+func (u *TokenUpsert) SetURIState(v string) *TokenUpsert {
+	u.Set(token.FieldURIState, v)
+	return u
+}
+
+// UpdateURIState sets the "uri_state" field to the value that was provided on create.
+func (u *TokenUpsert) UpdateURIState() *TokenUpsert {
+	u.SetExcluded(token.FieldURIState)
+	return u
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (u *TokenUpsert) ClearURIState() *TokenUpsert {
+	u.SetNull(token.FieldURIState)
 	return u
 }
 
@@ -1267,6 +1307,27 @@ func (u *TokenUpsertOne) UpdateURI() *TokenUpsertOne {
 func (u *TokenUpsertOne) ClearURI() *TokenUpsertOne {
 	return u.Update(func(s *TokenUpsert) {
 		s.ClearURI()
+	})
+}
+
+// SetURIState sets the "uri_state" field.
+func (u *TokenUpsertOne) SetURIState(v string) *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetURIState(v)
+	})
+}
+
+// UpdateURIState sets the "uri_state" field to the value that was provided on create.
+func (u *TokenUpsertOne) UpdateURIState() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateURIState()
+	})
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (u *TokenUpsertOne) ClearURIState() *TokenUpsertOne {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearURIState()
 	})
 }
 
@@ -1891,6 +1952,27 @@ func (u *TokenUpsertBulk) UpdateURI() *TokenUpsertBulk {
 func (u *TokenUpsertBulk) ClearURI() *TokenUpsertBulk {
 	return u.Update(func(s *TokenUpsert) {
 		s.ClearURI()
+	})
+}
+
+// SetURIState sets the "uri_state" field.
+func (u *TokenUpsertBulk) SetURIState(v string) *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.SetURIState(v)
+	})
+}
+
+// UpdateURIState sets the "uri_state" field to the value that was provided on create.
+func (u *TokenUpsertBulk) UpdateURIState() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.UpdateURIState()
+	})
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (u *TokenUpsertBulk) ClearURIState() *TokenUpsertBulk {
+	return u.Update(func(s *TokenUpsert) {
+		s.ClearURIState()
 	})
 }
 
