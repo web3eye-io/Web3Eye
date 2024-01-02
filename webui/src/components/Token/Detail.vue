@@ -309,7 +309,7 @@ const getContract = (offset: number, limit: number) => {
       if(error || rows?.length === 0) {
         return
       }
-      getContract(offset, offset + limit)
+      getContract(offset + limit, limit)
     }
   )
 }
