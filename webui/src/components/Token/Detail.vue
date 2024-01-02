@@ -80,7 +80,7 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="TokenID" :props="props">
-              {{ props.row.TokenID }}
+              #{{ props.row.TokenID }}
             </q-td>
             <q-td key="OfferItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
