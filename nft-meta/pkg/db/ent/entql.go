@@ -219,6 +219,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldTokenID:         {Type: field.TypeString, Column: token.FieldTokenID},
 			token.FieldOwner:           {Type: field.TypeString, Column: token.FieldOwner},
 			token.FieldURI:             {Type: field.TypeString, Column: token.FieldURI},
+			token.FieldURIState:        {Type: field.TypeString, Column: token.FieldURIState},
 			token.FieldURIType:         {Type: field.TypeString, Column: token.FieldURIType},
 			token.FieldImageURL:        {Type: field.TypeString, Column: token.FieldImageURL},
 			token.FieldVideoURL:        {Type: field.TypeString, Column: token.FieldVideoURL},
@@ -1064,6 +1065,11 @@ func (f *TokenFilter) WhereOwner(p entql.StringP) {
 // WhereURI applies the entql string predicate on the uri field.
 func (f *TokenFilter) WhereURI(p entql.StringP) {
 	f.Where(p.Field(token.FieldURI))
+}
+
+// WhereURIState applies the entql string predicate on the uri_state field.
+func (f *TokenFilter) WhereURIState(p entql.StringP) {
+	f.Where(p.Field(token.FieldURIState))
 }
 
 // WhereURIType applies the entql string predicate on the uri_type field.

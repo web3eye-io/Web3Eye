@@ -32,6 +32,7 @@ func (h *Handler) CreateToken(ctx context.Context) (*tokenproto.Token, error) {
 				TokenID:         h.TokenID,
 				Owner:           h.Owner,
 				URI:             h.URI,
+				URIState:        h.URIState,
 				URIType:         h.URIType,
 				ImageURL:        h.ImageURL,
 				VideoURL:        h.VideoURL,

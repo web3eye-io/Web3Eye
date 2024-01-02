@@ -168,6 +168,26 @@ func (tu *TokenUpdate) ClearURI() *TokenUpdate {
 	return tu
 }
 
+// SetURIState sets the "uri_state" field.
+func (tu *TokenUpdate) SetURIState(s string) *TokenUpdate {
+	tu.mutation.SetURIState(s)
+	return tu
+}
+
+// SetNillableURIState sets the "uri_state" field if the given value is not nil.
+func (tu *TokenUpdate) SetNillableURIState(s *string) *TokenUpdate {
+	if s != nil {
+		tu.SetURIState(*s)
+	}
+	return tu
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (tu *TokenUpdate) ClearURIState() *TokenUpdate {
+	tu.mutation.ClearURIState()
+	return tu
+}
+
 // SetURIType sets the "uri_type" field.
 func (tu *TokenUpdate) SetURIType(s string) *TokenUpdate {
 	tu.mutation.SetURIType(s)
@@ -590,6 +610,19 @@ func (tu *TokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: token.FieldURI,
 		})
 	}
+	if value, ok := tu.mutation.URIState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldURIState,
+		})
+	}
+	if tu.mutation.URIStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldURIState,
+		})
+	}
 	if value, ok := tu.mutation.URIType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -891,6 +924,26 @@ func (tuo *TokenUpdateOne) SetNillableURI(s *string) *TokenUpdateOne {
 // ClearURI clears the value of the "uri" field.
 func (tuo *TokenUpdateOne) ClearURI() *TokenUpdateOne {
 	tuo.mutation.ClearURI()
+	return tuo
+}
+
+// SetURIState sets the "uri_state" field.
+func (tuo *TokenUpdateOne) SetURIState(s string) *TokenUpdateOne {
+	tuo.mutation.SetURIState(s)
+	return tuo
+}
+
+// SetNillableURIState sets the "uri_state" field if the given value is not nil.
+func (tuo *TokenUpdateOne) SetNillableURIState(s *string) *TokenUpdateOne {
+	if s != nil {
+		tuo.SetURIState(*s)
+	}
+	return tuo
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (tuo *TokenUpdateOne) ClearURIState() *TokenUpdateOne {
+	tuo.mutation.ClearURIState()
 	return tuo
 }
 
@@ -1344,6 +1397,19 @@ func (tuo *TokenUpdateOne) sqlSave(ctx context.Context) (_node *Token, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: token.FieldURI,
+		})
+	}
+	if value, ok := tuo.mutation.URIState(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: token.FieldURIState,
+		})
+	}
+	if tuo.mutation.URIStateCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: token.FieldURIState,
 		})
 	}
 	if value, ok := tuo.mutation.URIType(); ok {

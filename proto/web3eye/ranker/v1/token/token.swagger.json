@@ -41,6 +41,17 @@
       ],
       "default": "TokenUnkonwn"
     },
+    "chainTokenURIState": {
+      "type": "string",
+      "enum": [
+        "TokenURIDefault",
+        "TokenURIFinish",
+        "TokenURIIncomplete",
+        "TokenURIUnsupport",
+        "TokenURIError"
+      ],
+      "default": "TokenURIDefault"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -97,6 +108,9 @@
         },
         "URI": {
           "$ref": "#/definitions/web3eyeStringVal"
+        },
+        "URIState": {
+          "$ref": "#/definitions/web3eyeUint32Val"
         },
         "URIType": {
           "$ref": "#/definitions/web3eyeStringVal"
@@ -242,6 +256,9 @@
         "URI": {
           "type": "string"
         },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
+        },
         "URIType": {
           "type": "string"
         },
@@ -356,6 +373,13 @@
         "URI": {
           "type": "string",
           "title": "@inject_tag: sql:\"uri\""
+        },
+        "URIStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"uri_state\""
+        },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
         },
         "URIType": {
           "type": "string",

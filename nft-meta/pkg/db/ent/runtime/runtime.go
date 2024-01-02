@@ -322,7 +322,7 @@ func init() {
 	// token.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	token.DefaultDeletedAt = tokenDescDeletedAt.Default.(func() uint32)
 	// tokenDescVectorState is the schema descriptor for vector_state field.
-	tokenDescVectorState := tokenFields[13].Descriptor()
+	tokenDescVectorState := tokenFields[14].Descriptor()
 	// token.DefaultVectorState holds the default value on creation for the vector_state field.
 	token.DefaultVectorState = tokenDescVectorState.Default.(string)
 	transferMixin := schema.Transfer{}.Mixin()

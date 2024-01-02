@@ -34,6 +34,8 @@ const (
 	FieldOwner = "owner"
 	// FieldURI holds the string denoting the uri field in the database.
 	FieldURI = "uri"
+	// FieldURIState holds the string denoting the uri_state field in the database.
+	FieldURIState = "uri_state"
 	// FieldURIType holds the string denoting the uri_type field in the database.
 	FieldURIType = "uri_type"
 	// FieldImageURL holds the string denoting the image_url field in the database.
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldTokenID,
 	FieldOwner,
 	FieldURI,
+	FieldURIState,
 	FieldURIType,
 	FieldImageURL,
 	FieldVideoURL,

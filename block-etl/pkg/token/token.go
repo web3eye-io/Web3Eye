@@ -14,17 +14,24 @@ type TokenURIInfo struct {
 }
 
 // TODO: support special nft project
-func GetTokenURIInfo(ctx context.Context, uri string) (*TokenURIInfo, error) {
+func GetTokenURIInfo(ctx context.Context, uri string) (*TokenURIInfo, bool, error) {
 	into := &TokenMetadata{}
 
 	err := DecodeMetadataFromURI(ctx, uri, into)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	tokenURIType := TokenURIType(uri)
 	name, description := FindNameAndDescription(ctx, *into)
 	iURL, vURL := FindImageAndAnimationURLs(ctx, *into, uri, AnimationKeywords, ImageKeywords, true)
+
+	complete := true
+	if name == "" ||
+		description == "" ||
+		iURL == "" {
+		complete = false
+	}
 	return &TokenURIInfo{
 		URI:         uri,
 		URIType:     tokenURIType,
@@ -32,5 +39,5 @@ func GetTokenURIInfo(ctx context.Context, uri string) (*TokenURIInfo, error) {
 		Description: description,
 		ImageURL:    iURL,
 		VideoURL:    vURL,
-	}, nil
+	}, complete, nil
 }

@@ -32,6 +32,7 @@ message SearchToken{
   string TokenID = 60;
   string Owner = 70;
   string URI = 80;
+  chain.TokenURIState URIState = 81;
   string URIType = 90;
   string ImageURL = 100;
   string VideoURL = 110;

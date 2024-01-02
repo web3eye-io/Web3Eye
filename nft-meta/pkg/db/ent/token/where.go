@@ -156,6 +156,13 @@ func URI(v string) predicate.Token {
 	})
 }
 
+// URIState applies equality check predicate on the "uri_state" field. It's identical to URIStateEQ.
+func URIState(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldURIState), v))
+	})
+}
+
 // URIType applies equality check predicate on the "uri_type" field. It's identical to URITypeEQ.
 func URIType(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
@@ -1200,6 +1207,119 @@ func URIEqualFold(v string) predicate.Token {
 func URIContainsFold(v string) predicate.Token {
 	return predicate.Token(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldURI), v))
+	})
+}
+
+// URIStateEQ applies the EQ predicate on the "uri_state" field.
+func URIStateEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateNEQ applies the NEQ predicate on the "uri_state" field.
+func URIStateNEQ(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateIn applies the In predicate on the "uri_state" field.
+func URIStateIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldURIState), v...))
+	})
+}
+
+// URIStateNotIn applies the NotIn predicate on the "uri_state" field.
+func URIStateNotIn(vs ...string) predicate.Token {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldURIState), v...))
+	})
+}
+
+// URIStateGT applies the GT predicate on the "uri_state" field.
+func URIStateGT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateGTE applies the GTE predicate on the "uri_state" field.
+func URIStateGTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateLT applies the LT predicate on the "uri_state" field.
+func URIStateLT(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateLTE applies the LTE predicate on the "uri_state" field.
+func URIStateLTE(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateContains applies the Contains predicate on the "uri_state" field.
+func URIStateContains(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateHasPrefix applies the HasPrefix predicate on the "uri_state" field.
+func URIStateHasPrefix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateHasSuffix applies the HasSuffix predicate on the "uri_state" field.
+func URIStateHasSuffix(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateIsNil applies the IsNil predicate on the "uri_state" field.
+func URIStateIsNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldURIState)))
+	})
+}
+
+// URIStateNotNil applies the NotNil predicate on the "uri_state" field.
+func URIStateNotNil() predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldURIState)))
+	})
+}
+
+// URIStateEqualFold applies the EqualFold predicate on the "uri_state" field.
+func URIStateEqualFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldURIState), v))
+	})
+}
+
+// URIStateContainsFold applies the ContainsFold predicate on the "uri_state" field.
+func URIStateContainsFold(v string) predicate.Token {
+	return predicate.Token(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldURIState), v))
 	})
 }
 

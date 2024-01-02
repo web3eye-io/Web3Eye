@@ -38,6 +38,8 @@ type Token struct {
 	Owner string `json:"owner,omitempty"`
 	// URI holds the value of the "uri" field.
 	URI string `json:"uri,omitempty"`
+	// URIState holds the value of the "uri_state" field.
+	URIState string `json:"uri_state,omitempty"`
 	// URIType holds the value of the "uri_type" field.
 	URIType string `json:"uri_type,omitempty"`
 	// ImageURL holds the value of the "image_url" field.
@@ -67,7 +69,7 @@ func (*Token) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case token.FieldID, token.FieldCreatedAt, token.FieldUpdatedAt, token.FieldDeletedAt, token.FieldVectorID, token.FieldImageSnapshotID:
 			values[i] = new(sql.NullInt64)
-		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL:
+		case token.FieldChainType, token.FieldChainID, token.FieldContract, token.FieldTokenType, token.FieldTokenID, token.FieldOwner, token.FieldURI, token.FieldURIState, token.FieldURIType, token.FieldImageURL, token.FieldVideoURL, token.FieldDescription, token.FieldName, token.FieldVectorState, token.FieldRemark, token.FieldIpfsImageURL:
 			values[i] = new(sql.NullString)
 		case token.FieldEntID:
 			values[i] = new(uuid.UUID)
@@ -157,6 +159,12 @@ func (t *Token) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field uri", values[i])
 			} else if value.Valid {
 				t.URI = value.String
+			}
+		case token.FieldURIState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field uri_state", values[i])
+			} else if value.Valid {
+				t.URIState = value.String
 			}
 		case token.FieldURIType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -278,6 +286,9 @@ func (t *Token) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uri=")
 	builder.WriteString(t.URI)
+	builder.WriteString(", ")
+	builder.WriteString("uri_state=")
+	builder.WriteString(t.URIState)
 	builder.WriteString(", ")
 	builder.WriteString("uri_type=")
 	builder.WriteString(t.URIType)
