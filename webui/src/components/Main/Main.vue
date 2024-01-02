@@ -103,7 +103,9 @@ enum State {
   Dragging,
   Drop,
 }
+
 const state = ref(State.Normal)
+const contract = ref('')
 
 onMounted(() => {
   const dropArea = document.getElementById('drop-target')
@@ -151,9 +153,14 @@ onMounted(() => {
       opening.value = false
     }
   })
+  dropZone?.addEventListener('drop', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    opening.value = false
+  })
 })
 
-const contract = ref('')
+
 </script>
 
 <style lang='sass' scoped>
