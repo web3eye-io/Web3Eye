@@ -85,6 +85,7 @@ const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vu
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 import { Notify } from 'quasar'
+import { useStorageKeyStore } from 'src/localstore/storagekey';
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -201,7 +202,14 @@ const haveMore = ref(false)
 const currentPage = ref(1)
 const loading = ref(false)
 
+const localkey = useStorageKeyStore()
+
 const loadMore = () => {
+  if (localkey.getStorageKey() == null) {
+    haveMore.value = false
+    isLoading.value = false
+    return
+  }
   if (currentPage.value >= token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
     haveMore.value = true
     return

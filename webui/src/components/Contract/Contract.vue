@@ -250,7 +250,7 @@ const onTokenClick = (token: ShotToken) => {
   void router.push({
     path: '/token/detail',
     query: {
-      chainID: _chainID.value,
+      chainID: current.value.ChainID,
       chainType: token.ChainType,
       contract: _contract.value,
       tokenID: token.TokenID,
