@@ -105,7 +105,7 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 	}, nil
 }
 
-func (s *Server) RankerTokens(ctx context.Context, vector []float32, storageKey string, limit uint32) (totalPages uint32, totalTokens uint32, err error) {
+func (s *Server) RankerTokens(ctx context.Context, vector []float32, storageKey string, limit uint32) (totalPages, totalTokens uint32, err error) {
 	logger.Sugar().Info("start search")
 	start := time.Now()
 
@@ -400,9 +400,7 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 		for j := 1; j < len(rows); j++ {
 			// find the SearchToken row
 			if rows[j].EntID == v.EntID {
-				row := rows[0]
-				rows[0] = rows[j]
-				rows[j] = row
+				rows[0], rows[j] = rows[j], rows[0]
 			}
 			tokens[i].SiblingTokens[j-1] = &rankernpool.SiblingToken{
 				EntID:        rows[j].EntID,
