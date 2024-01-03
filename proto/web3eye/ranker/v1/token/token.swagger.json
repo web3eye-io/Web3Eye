@@ -203,6 +203,13 @@
             "$ref": "#/definitions/tokenSearchToken"
           }
         },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
         "StorageKey": {
           "type": "string"
         },

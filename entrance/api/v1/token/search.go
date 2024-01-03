@@ -17,6 +17,7 @@ import (
 	"github.com/gogo/protobuf/jsonpb"
 
 	"github.com/web3eye-io/Web3Eye/common/servermux"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	"github.com/web3eye-io/Web3Eye/config"
 	"github.com/web3eye-io/Web3Eye/entrance/resource"
 	rankerproto "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/token"
@@ -100,7 +101,13 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// convert to vector
 	vector, err := ImgReqConvertVector(r.Context(), r)
 	if err != nil {
-		errMsg = fmt.Sprintf("image convert fail, %v", err)
+		errMsg = fmt.Sprintf("image convert to vector fail, %v", err)
+		return
+	}
+
+	storageKey, err := utils.Sha256Hash(vector)
+	if err != nil {
+		errMsg = fmt.Sprintf("image convert to sha256 hash fail, %v", err)
 		return
 	}
 
@@ -109,8 +116,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	token.UseCloudProxyCC()
 	resp, err := token.Search(context.Background(), &rankerproto.SearchTokenRequest{
-		Vector: vector,
-		Limit:  uint32(limit),
+		Vector:     vector,
+		StorageKey: storageKey,
+		Limit:      uint32(limit),
 	})
 	if err != nil {
 		errMsg = fmt.Sprintf("search fail, %v", err)
