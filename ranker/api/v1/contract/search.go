@@ -12,7 +12,6 @@ import (
 
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	contractproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	nftmetapool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	rankernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract"
@@ -48,7 +47,7 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	}
 	contract := contracts[0]
 
-	tokensconds := &token.Conds{
+	tokensconds := &nftmetapool.Conds{
 		Contract: &web3eye.StringVal{
 			Op:    "eq",
 			Value: in.Contract,
