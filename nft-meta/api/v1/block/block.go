@@ -175,7 +175,6 @@ func (s *Server) GetBlockOnly(ctx context.Context, in *npool.GetBlockOnlyRequest
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetBlockOnly", "error", errMsg)
 		return &npool.GetBlockOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

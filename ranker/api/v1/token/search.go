@@ -2,6 +2,7 @@ package token
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
@@ -154,6 +155,15 @@ func (s *Server) RankerTokens(ctx context.Context, vector []float32, storageKey 
 
 	logger.Sugar().Infof("take %v ms to finish search", time.Since(start).Milliseconds())
 	return totalPages, totalTokens, nil
+}
+
+func (pt *PageBone) MarshalBinary() (data []byte, err error) {
+	data, err = json.Marshal(pt)
+	return data, err
+}
+
+func (pt *PageBone) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, pt)
 }
 
 func SerachFromMilvus(ctx context.Context, vector []float32, topN int) (map[int64]float32, error) {
