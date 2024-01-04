@@ -433,7 +433,6 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 				IPFSImageURL: rows[j].IPFSImageURL,
 			}
 		}
-
 	}
 
 	return tokens, nil
