@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/imageconvert"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/milvusdb"
@@ -29,7 +30,7 @@ const (
 
 type SearchTokenBone struct {
 	EntID         string
-	SiblingEntIDs []string
+	SiblingIDs    []uint32
 	SiblingsNum   uint32
 	Distance      float32
 	TranserferNum int32
@@ -216,6 +217,10 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 				Op:    "in",
 				Value: vIDs,
 			},
+			VectorState: &val.Uint32Val{
+				Op:    cruder.EQ,
+				Value: uint32(nftmetanpool.ConvertState_Success),
+			},
 		}
 
 		h, err := tokenhandler.NewHandler(ctx,
@@ -252,7 +257,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 				}
 				result[contractIndex[v.Contract]].SiblingTokens = append(
 					result[contractIndex[v.Contract]].SiblingTokens, &rankernpool.SiblingToken{
-						EntID:        v.EntID,
+						ID:           v.ID,
 						TokenID:      v.TokenID,
 						ImageURL:     v.ImageURL,
 						IPFSImageURL: v.IPFSImageURL,
@@ -267,9 +272,10 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 	// full the siblinsTokens
 	for _, v := range result {
 		conds := &nftmetanpool.Conds{
-			ChainType: &val.Uint32Val{Op: "eq", Value: uint32(v.ChainType)},
-			ChainID:   &val.StringVal{Op: "eq", Value: v.ChainID},
-			Contract:  &val.StringVal{Op: "eq", Value: v.Contract},
+			ChainType:   &val.Uint32Val{Op: "eq", Value: uint32(v.ChainType)},
+			ChainID:     &val.StringVal{Op: "eq", Value: v.ChainID},
+			Contract:    &val.StringVal{Op: "eq", Value: v.Contract},
+			VectorState: &val.Uint32Val{Op: cruder.EQ, Value: uint32(nftmetanpool.ConvertState_Success)},
 		}
 
 		h, err := tokenhandler.NewHandler(
@@ -297,7 +303,7 @@ func QueryAndCollectTokens(ctx context.Context, scores map[int64]float32, topN i
 				continue
 			}
 			v.SiblingTokens = append(v.SiblingTokens, &rankernpool.SiblingToken{
-				EntID:        token.EntID,
+				ID:           token.ID,
 				TokenID:      token.TokenID,
 				ImageURL:     token.ImageURL,
 				IPFSImageURL: token.IPFSImageURL,
@@ -360,11 +366,11 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 			Distance:      v.Distance,
 			TranserferNum: v.TransfersNum,
 		}
-		siblingIDs := make([]string, len(v.SiblingTokens))
+		siblingIDs := make([]uint32, len(v.SiblingTokens))
 		for i, token := range v.SiblingTokens {
-			siblingIDs[i] = token.EntID
+			siblingIDs[i] = token.ID
 		}
-		bones[i].SiblingEntIDs = siblingIDs
+		bones[i].SiblingIDs = siblingIDs
 	}
 	return bones
 }
@@ -373,11 +379,14 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 	tokens := make([]*rankernpool.SearchToken, len(bones))
 	for i, v := range bones {
 		EntIDs := []string{v.EntID}
-		EntIDs = append(EntIDs, v.SiblingEntIDs...)
 		conds := &nftmetanpool.Conds{
 			EntIDs: &val.StringSliceVal{
-				Op:    "in",
+				Op:    cruder.IN,
 				Value: EntIDs,
+			},
+			IDs: &val.Uint32SliceVal{
+				Op:    cruder.IN,
+				Value: v.SiblingIDs,
 			},
 		}
 
@@ -403,7 +412,7 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 				rows[0], rows[j] = rows[j], rows[0]
 			}
 			tokens[i].SiblingTokens[j-1] = &rankernpool.SiblingToken{
-				EntID:        rows[j].EntID,
+				ID:           rows[j].ID,
 				TokenID:      rows[j].TokenID,
 				ImageURL:     rows[j].ImageURL,
 				IPFSImageURL: rows[j].IPFSImageURL,

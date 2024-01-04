@@ -207,6 +207,9 @@
         "ImageSnapshotID": {
           "$ref": "#/definitions/web3eyeUint32Val"
         },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeUint32SliceVal"
+        },
         "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
         },
@@ -587,6 +590,21 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32SliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
         }
       }
     },
