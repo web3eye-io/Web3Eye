@@ -137,7 +137,8 @@ message Conds {
   web3eye.StringVal Remark = 160;
   web3eye.StringVal IPFSImageURL = 170;
   web3eye.Uint32Val ImageSnapshotID = 180;
-  web3eye.StringSliceVal EntIDs = 190;
+  web3eye.Uint32SliceVal IDs = 190;
+  web3eye.StringSliceVal EntIDs = 191;
   web3eye.Int64SliceVal VectorIDs = 200;
 }
 

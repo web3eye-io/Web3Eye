@@ -178,6 +178,7 @@ type Conds struct {
 	ImageSnapshotID *cruder.Cond
 	Remark          *cruder.Cond
 	VectorIDs       *cruder.Cond
+	IDs             *cruder.Cond
 }
 
 func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { //nolint
@@ -196,13 +197,25 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 	if conds.EntIDs != nil {
 		entids, ok := conds.EntIDs.Val.([]uuid.UUID)
 		if !ok {
-			return nil, fmt.Errorf("invalid entid")
+			return nil, fmt.Errorf("invalid entids")
 		}
 		switch conds.EntIDs.Op {
 		case cruder.IN:
 			q.Where(enttoken.EntIDIn(entids...))
 		default:
-			return nil, fmt.Errorf("invalid entid field")
+			return nil, fmt.Errorf("invalid entids field")
+		}
+	}
+	if conds.IDs != nil {
+		ids, ok := conds.IDs.Val.([]uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid ids")
+		}
+		switch conds.IDs.Op {
+		case cruder.IN:
+			q.Where(enttoken.IDIn(ids...))
+		default:
+			return nil, fmt.Errorf("invalid ids field")
 		}
 	}
 	if conds.VectorIDs != nil {

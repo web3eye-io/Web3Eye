@@ -430,6 +430,12 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 				Val: ids,
 			}
 		}
+		if conds.IDs != nil {
+			h.Conds.EntIDs = &cruder.Cond{
+				Op:  conds.GetIDs().GetOp(),
+				Val: conds.GetIDs().GetValue(),
+			}
+		}
 		if conds.VectorIDs != nil {
 			h.Conds.VectorIDs = &cruder.Cond{
 				Op:  conds.GetVectorIDs().GetOp(),

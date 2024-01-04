@@ -15,7 +15,7 @@ service Manager {
 }
 
 message SiblingToken{
-  string EntID = 10;
+  uint32 ID = 10;
   string TokenID = 20;
   string ImageURL = 30;
   string IPFSImageURL = 40;
@@ -51,17 +51,21 @@ message SearchToken{
 
 message SearchTokenRequest {
   repeated float Vector = 10;
+  string StorageKey = 11;
   uint32 Limit = 20;
 }
 
 message SearchPageRequest {
-  string StorageKey =10;
+  repeated float Vector = 10;
+  string StorageKey =11;
   uint32 Page = 20;
+  uint32 Limit = 30;
 }
 
 message SearchResponse {
   repeated SearchToken Infos = 10;
-  string StorageKey =20;
+  repeated float Vector = 20;
+  string StorageKey =21;
   uint32 Page = 30;
   uint32 Pages = 40;
   uint32 Total = 50;

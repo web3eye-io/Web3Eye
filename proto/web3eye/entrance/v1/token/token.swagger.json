@@ -177,10 +177,21 @@
     "tokenSearchPageRequest": {
       "type": "object",
       "properties": {
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
         "StorageKey": {
           "type": "string"
         },
         "Page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
           "type": "integer",
           "format": "int64"
         }
@@ -193,6 +204,13 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/tokenSearchToken"
+          }
+        },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
           }
         },
         "StorageKey": {
@@ -306,8 +324,9 @@
     "tokenSiblingToken": {
       "type": "object",
       "properties": {
-        "EntID": {
-          "type": "string"
+        "ID": {
+          "type": "integer",
+          "format": "int64"
         },
         "TokenID": {
           "type": "string"
