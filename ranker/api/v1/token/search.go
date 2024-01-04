@@ -67,6 +67,7 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 		tokens, err := ToSearchTokens(ctx, pBone.TokenBones)
 		if err == nil {
 			return &rankernpool.SearchResponse{
+				Vector:     in.Vector,
 				Infos:      tokens,
 				StorageKey: in.StorageKey,
 				Page:       pBone.Page,
@@ -98,6 +99,7 @@ func (s *Server) SearchPage(ctx context.Context, in *rankernpool.SearchPageReque
 
 	logger.Sugar().Infof("sueccess to get tokens for storageKey: %v page: %v", in.StorageKey, in.Page)
 	return &rankernpool.SearchResponse{
+		Vector:     in.Vector,
 		Infos:      tokens,
 		StorageKey: in.StorageKey,
 		Page:       pBone.Page,
