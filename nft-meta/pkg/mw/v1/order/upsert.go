@@ -49,9 +49,9 @@ func (h *Handler) UpsertOrder(ctx context.Context) (*orderproto.Order, error) {
 
 func (h *Handler) upsertOne(_ctx context.Context, tx *ent.Tx, req *ordercrud.Req) (*uint32, *uuid.UUID, error) {
 	row, _ := tx.Order.Query().Where(
-		orderent.TxHash(*h.TxHash),
-		orderent.Recipient(*h.Recipient),
-		orderent.LogIndex(*h.LogIndex),
+		orderent.TxHash(*req.TxHash),
+		orderent.Recipient(*req.Recipient),
+		orderent.LogIndex(*req.LogIndex),
 	).Only(_ctx)
 	var id *uint32
 	var entID *uuid.UUID
