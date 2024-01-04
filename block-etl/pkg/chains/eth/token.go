@@ -204,7 +204,6 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			uriState = basetype.TokenURIState_TokenURIError
 			vectorState = tokenProto.ConvertState_Failed
 			e.checkErr(ctx, err)
-			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 

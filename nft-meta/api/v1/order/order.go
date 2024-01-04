@@ -206,7 +206,6 @@ func (s *Server) GetOrderOnly(ctx context.Context, in *npool.GetOrderOnlyRequest
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetOrderOnly", "error", errMsg)
 		return &npool.GetOrderOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

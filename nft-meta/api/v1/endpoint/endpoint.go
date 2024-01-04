@@ -185,7 +185,6 @@ func (s *Server) GetEndpointOnly(ctx context.Context, in *endpointproto.GetEndpo
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetEndpointOnly", "error", errMsg)
 		return &endpointproto.GetEndpointOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

@@ -368,7 +368,6 @@ func (s *Server) GetSyncTaskOnly(ctx context.Context, in *npool.GetSyncTaskOnlyR
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetSyncTaskOnly", "error", errMsg)
 		return &npool.GetSyncTaskOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

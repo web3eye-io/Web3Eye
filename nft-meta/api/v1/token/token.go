@@ -388,7 +388,6 @@ func (s *Server) GetTokenOnly(ctx context.Context, in *npool.GetTokenOnlyRequest
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetTokenOnly", "error", errMsg)
 		return &npool.GetTokenOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 
