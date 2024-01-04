@@ -198,7 +198,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		}
 
 		uriState := basetype.TokenURIState_TokenURIFinish
-		vectorState := tokenProto.ConvertState_Default
+		vectorState := tokenProto.ConvertState_Waiting
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
 			uriState = basetype.TokenURIState_TokenURIError
