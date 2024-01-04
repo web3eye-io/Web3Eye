@@ -171,7 +171,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		remark := ""
 
 		uriState := basetype.TokenURIState_TokenURIFinish
-		vectorState := tokenProto.ConvertState_Default
+		vectorState := tokenProto.ConvertState_Waiting
 		metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 		if err != nil {
 			uriState = basetype.TokenURIState_TokenURIError
