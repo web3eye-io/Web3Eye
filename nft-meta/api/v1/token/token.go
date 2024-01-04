@@ -18,7 +18,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
-	basetype "github.com/web3eye-io/Web3Eye/proto/web3eye/basetype/v1"
 	npool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 
 	"github.com/google/uuid"
@@ -256,11 +255,6 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 	if inInfo.EntID == nil {
 		return fmt.Errorf("not set entID")
-	}
-
-	if inInfo.URIState.String() != basetype.TokenURIState_TokenURIFinish.String() &&
-		inInfo.URIState.String() != basetype.TokenURIState_TokenURIIncomplete.String() {
-		return nil
 	}
 
 	if inInfo.VectorState.String() != npool.ConvertState_Waiting.String() {

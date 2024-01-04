@@ -170,9 +170,11 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		remark := ""
 
 		uriState := basetype.TokenURIState_TokenURIFinish
+		vectorState := tokenProto.ConvertState_Default
 		metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 		if err != nil {
 			uriState = basetype.TokenURIState_TokenURIError
+			vectorState = tokenProto.ConvertState_Failed
 			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get metadata,err: %v, tokenID: %v", err, transfer.TokenID)
 			remark = fmt.Sprintf("%v,%v", remark, err)
@@ -184,6 +186,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			tokenURIInfo, complete, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
 			if err != nil {
 				uriState = basetype.TokenURIState_TokenURIError
+				vectorState = tokenProto.ConvertState_Failed
 				tokenURIInfo = &token.TokenURIInfo{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
 			} else if !complete {
@@ -191,6 +194,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			}
 		} else {
 			uriState = basetype.TokenURIState_TokenURIError
+			vectorState = tokenProto.ConvertState_Failed
 			// if cannot get metadata,then set the default value
 			metadata = &token_metadata.Metadata{}
 		}
@@ -214,7 +218,7 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 				VideoURL:    &tokenURIInfo.VideoURL,
 				Name:        &metadata.Data.Name,
 				Description: &metadata.Data.Symbol,
-				VectorState: tokenProto.ConvertState_Waiting.Enum(),
+				VectorState: &vectorState,
 				Remark:      &remark,
 			},
 		})

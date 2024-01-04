@@ -198,9 +198,11 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		}
 
 		uriState := basetype.TokenURIState_TokenURIFinish
+		vectorState := tokenProto.ConvertState_Default
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
 			uriState = basetype.TokenURIState_TokenURIError
+			vectorState = tokenProto.ConvertState_Failed
 			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
@@ -210,7 +212,9 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		if err != nil {
 			// if cannot get tokenURIInfo,then set the default value
 			uriState = basetype.TokenURIState_TokenURIError
+			vectorState = tokenProto.ConvertState_Failed
 			tokenURIInfo = &token.TokenURIInfo{}
+
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		} else if !complete {
 			uriState = basetype.TokenURIState_TokenURIIncomplete
@@ -235,7 +239,7 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 				VideoURL:    &tokenURIInfo.VideoURL,
 				Name:        &tokenURIInfo.Name,
 				Description: &tokenURIInfo.Description,
-				VectorState: tokenProto.ConvertState_Waiting.Enum(),
+				VectorState: &vectorState,
 				Remark:      &remark,
 			},
 		})
