@@ -258,7 +258,7 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		return fmt.Errorf("not set entID")
 	}
 
-	if inInfo.URIState.String() != basetype.TokenURIState_TokenURIFinish.String() ||
+	if inInfo.URIState.String() != basetype.TokenURIState_TokenURIFinish.String() &&
 		inInfo.URIState.String() != basetype.TokenURIState_TokenURIIncomplete.String() {
 		return nil
 	}
