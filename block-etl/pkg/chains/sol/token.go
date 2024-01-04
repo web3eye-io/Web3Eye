@@ -125,6 +125,7 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	return transfers, nil
 }
 
+//nolint:funlen
 func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.TokenTransfer) ([]*chains.TokenTransfer, error) {
 	outTransfers := []*chains.TokenTransfer{}
 	for _, transfer := range inTransfers {
