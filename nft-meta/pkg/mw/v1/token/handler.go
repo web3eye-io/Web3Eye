@@ -417,21 +417,21 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 			}
 		}
 		if conds.EntIDs != nil {
-			ids := []uuid.UUID{}
+			entIDs := []uuid.UUID{}
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
 					return err
 				}
-				ids = append(ids, _id)
+				entIDs = append(entIDs, _id)
 			}
 			h.Conds.EntIDs = &cruder.Cond{
 				Op:  conds.GetEntIDs().GetOp(),
-				Val: ids,
+				Val: entIDs,
 			}
 		}
 		if conds.IDs != nil {
-			h.Conds.EntIDs = &cruder.Cond{
+			h.Conds.IDs = &cruder.Cond{
 				Op:  conds.GetIDs().GetOp(),
 				Val: conds.GetIDs().GetValue(),
 			}

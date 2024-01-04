@@ -124,7 +124,6 @@ func (s *Server) RankerTokens(ctx context.Context, vector []float32, storageKey 
 		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return 0, 0, err
 	}
-	logger.Sugar().Infof("infos: %v", len(infos))
 
 	totalPages = uint32(len(infos) / int(limit))
 	if len(infos)%int(limit) > 0 {
@@ -388,23 +387,32 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpool.SearchToken, error) {
 	tokens := make([]*rankernpool.SearchToken, len(bones))
 	for i, v := range bones {
-		EntIDs := []string{v.EntID}
+		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithEntID(&v.EntID, true))
+		if err != nil {
+			return nil, err
+		}
+
+		mainToken, err := h.GetToken(ctx)
+		if err != nil {
+			return nil, err
+		}
+		tokens[i] = converter.Ent2Grpc(mainToken)
+		tokens[i].Distance = v.Distance
+		tokens[i].SiblingsNum = v.SiblingsNum
+		tokens[i].TransfersNum = v.TranserferNum
+
 		conds := &nftmetanpool.Conds{
-			EntIDs: &val.StringSliceVal{
-				Op:    cruder.IN,
-				Value: EntIDs,
-			},
 			IDs: &val.Uint32SliceVal{
 				Op:    cruder.IN,
 				Value: v.SiblingIDs,
 			},
 		}
 
-		h, err := tokenhandler.NewHandler(
+		h, err = tokenhandler.NewHandler(
 			ctx,
 			tokenhandler.WithConds(conds),
 			tokenhandler.WithOffset(0),
-			tokenhandler.WithLimit(int32(len(EntIDs))),
+			tokenhandler.WithLimit(int32(len(v.SiblingIDs))),
 		)
 		if err != nil {
 			return nil, err
@@ -416,12 +424,9 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 			return nil, err
 		}
 
-		for j := 1; j < len(rows); j++ {
-			// find the SearchToken row
-			if rows[j].EntID == v.EntID {
-				rows[0], rows[j] = rows[j], rows[0]
-			}
-			tokens[i].SiblingTokens[j-1] = &rankernpool.SiblingToken{
+		tokens[i].SiblingTokens = make([]*rankernpool.SiblingToken, len(rows))
+		for j := 0; j < len(rows); j++ {
+			tokens[i].SiblingTokens[j] = &rankernpool.SiblingToken{
 				ID:           rows[j].ID,
 				TokenID:      rows[j].TokenID,
 				ImageURL:     rows[j].ImageURL,
@@ -429,11 +434,6 @@ func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpo
 			}
 		}
 
-		tokens[i] = converter.Ent2Grpc(rows[0])
-		tokens[i].Distance = v.Distance
-		tokens[i].SiblingsNum = v.SiblingsNum
-		tokens[i].TransfersNum = v.TranserferNum
-		tokens[i].SiblingTokens = make([]*rankernpool.SiblingToken, len(rows)-1)
 	}
 
 	return tokens, nil
