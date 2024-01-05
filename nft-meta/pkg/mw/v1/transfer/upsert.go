@@ -107,7 +107,6 @@ func upsertOne(ctx context.Context, tx *ent.Tx, req *transfercrud.Req) (*uint32,
 		return nil, nil, err
 	}
 	return &info.ID, &info.EntID, nil
-
 }
 
 func (h *Handler) UpsertTransfers(ctx context.Context) error {
