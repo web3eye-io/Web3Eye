@@ -288,7 +288,6 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 
 	vID := int64(0)
 	vState := npool.ConvertState_Failed
-	remark := in.GetRemark()
 	h, err := handler.NewHandler(
 		ctx,
 		handler.WithEntID(&in.EntID, true),
@@ -308,13 +307,17 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		return nil, nil
 	}
 
+	if info.Remark != "" {
+		info.Remark = fmt.Sprintf("%v,%v", info.Remark, in.Remark)
+	}
+
 	if len(in.Vector) > 0 {
 		milvusmgr := milvusdb.NewNFTConllectionMGR()
 
 		if info.VectorID > 0 {
 			err := milvusmgr.Delete(ctx, []int64{info.VectorID})
 			if err != nil {
-				remark = fmt.Sprintf("%v,%v", remark, err)
+				info.Remark = fmt.Sprintf("%v,%v", info.Remark, err)
 			}
 		}
 
@@ -323,7 +326,7 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 			vState = npool.ConvertState_Success
 			vID = ids[0]
 		} else {
-			remark = fmt.Sprintf("%v,%v", remark, err)
+			info.Remark = fmt.Sprintf("%v,%v", info.Remark, err)
 		}
 	}
 
@@ -332,7 +335,7 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		handler.WithID(&info.ID, true),
 		handler.WithVectorID(&vID, true),
 		handler.WithVectorState(&vState, true),
-		handler.WithRemark(&remark, true),
+		handler.WithRemark(&info.Remark, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)

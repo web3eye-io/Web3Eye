@@ -14,6 +14,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
+	"github.com/web3eye-io/Web3Eye/common/utils"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	tokenNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
@@ -197,53 +198,40 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 		}
 
-		uriState := basetype.TokenURIState_TokenURIFinish
-		vectorState := tokenProto.ConvertState_Waiting
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
-			uriState = basetype.TokenURIState_TokenURIError
-			vectorState = tokenProto.ConvertState_Failed
 			e.checkErr(ctx, err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
-		tokenURIInfo, complete, err := token.GetTokenURIInfo(ctx, tokenURI)
+		tokenURIInfo, err := token.GetTokenURIInfo(ctx, tokenURI)
 		if err != nil {
 			// if cannot get tokenURIInfo,then set the default value
-			uriState = basetype.TokenURIState_TokenURIError
-			vectorState = tokenProto.ConvertState_Failed
 			tokenURIInfo = &token.TokenURIInfo{}
-
 			remark = fmt.Sprintf("%v,%v", remark, err)
-		} else if !complete {
-			uriState = basetype.TokenURIState_TokenURIIncomplete
 		}
 
-		if len(tokenURI) > indexer.MaxTokenURILength {
-			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(tokenURI))
-			tokenURI = tokenURI[:indexer.OverLimitStoreLength]
-		}
+		tokenReq := token.CheckTokenReq(&tokenProto.TokenReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			Contract:    &transfer.Contract,
+			TokenType:   &transfer.TokenType,
+			TokenID:     &transfer.TokenID,
+			URI:         &tokenURI,
+			URIType:     (*string)(&tokenURIInfo.URIType),
+			ImageURL:    &tokenURIInfo.ImageURL,
+			VideoURL:    &tokenURIInfo.VideoURL,
+			Name:        &tokenURIInfo.Name,
+			Description: &tokenURIInfo.Description,
+			Remark:      &remark,
+		})
 
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
-			Info: &tokenProto.TokenReq{
-				ChainType:   &e.ChainType,
-				ChainID:     &e.ChainID,
-				Contract:    &transfer.Contract,
-				TokenType:   &transfer.TokenType,
-				TokenID:     &transfer.TokenID,
-				URI:         &tokenURI,
-				URIState:    &uriState,
-				URIType:     (*string)(&tokenURIInfo.URIType),
-				ImageURL:    &tokenURIInfo.ImageURL,
-				VideoURL:    &tokenURIInfo.VideoURL,
-				Name:        &tokenURIInfo.Name,
-				Description: &tokenURIInfo.Description,
-				VectorState: &vectorState,
-				Remark:      &remark,
-			},
+			Info: tokenReq,
 		})
 
 		if err != nil {
+			fmt.Println(utils.PrettyStruct(tokenReq))
 			return nil, fmt.Errorf("create token record failed, %v", err)
 		}
 		outContractMetas = append(outContractMetas, &ContractMeta{

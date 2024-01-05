@@ -183,45 +183,34 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURIInfo := &token.TokenURIInfo{}
 		if metadata != nil {
-			var complete bool
-			tokenURIInfo, complete, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
+			tokenURIInfo, err = token.GetTokenURIInfo(ctx, metadata.Data.Uri)
 			if err != nil {
-				uriState = basetype.TokenURIState_TokenURIError
-				vectorState = tokenProto.ConvertState_Failed
 				tokenURIInfo = &token.TokenURIInfo{}
 				remark = fmt.Sprintf("%v,%v", remark, err)
-			} else if !complete {
-				uriState = basetype.TokenURIState_TokenURIIncomplete
 			}
 		} else {
-			uriState = basetype.TokenURIState_TokenURIError
-			vectorState = tokenProto.ConvertState_Failed
 			// if cannot get metadata,then set the default value
 			metadata = &token_metadata.Metadata{}
 		}
-
-		if len(metadata.Data.Uri) > indexer.MaxTokenURILength {
-			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(metadata.Data.Uri))
-			metadata.Data.Uri = metadata.Data.Uri[:indexer.OverLimitStoreLength]
-		}
+		tokenReq := token.CheckTokenReq(&tokenProto.TokenReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			Contract:    &transfer.Contract,
+			TokenType:   &transfer.TokenType,
+			TokenID:     &transfer.TokenID,
+			URI:         &metadata.Data.Uri,
+			URIState:    &uriState,
+			URIType:     (*string)(&tokenURIInfo.URIType),
+			ImageURL:    &tokenURIInfo.ImageURL,
+			VideoURL:    &tokenURIInfo.VideoURL,
+			Name:        &metadata.Data.Name,
+			Description: &metadata.Data.Symbol,
+			VectorState: &vectorState,
+			Remark:      &remark,
+		})
 
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
-			Info: &tokenProto.TokenReq{
-				ChainType:   &e.ChainType,
-				ChainID:     &e.ChainID,
-				Contract:    &transfer.Contract,
-				TokenType:   &transfer.TokenType,
-				TokenID:     &transfer.TokenID,
-				URI:         &metadata.Data.Uri,
-				URIState:    &uriState,
-				URIType:     (*string)(&tokenURIInfo.URIType),
-				ImageURL:    &tokenURIInfo.ImageURL,
-				VideoURL:    &tokenURIInfo.VideoURL,
-				Name:        &metadata.Data.Name,
-				Description: &metadata.Data.Symbol,
-				VectorState: &vectorState,
-				Remark:      &remark,
-			},
+			Info: tokenReq,
 		})
 
 		if err != nil {
