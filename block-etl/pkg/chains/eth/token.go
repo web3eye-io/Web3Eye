@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
@@ -171,19 +172,27 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		conds := &tokenProto.Conds{
 			ChainType: &ctMessage.Uint32Val{
 				Value: uint32(e.ChainType),
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			ChainID: &ctMessage.StringVal{
 				Value: e.ChainID,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			Contract: &ctMessage.StringVal{
 				Value: transfer.Contract,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			TokenID: &ctMessage.StringVal{
 				Value: transfer.TokenID,
-				Op:    "eq",
+				Op:    cruder.EQ,
+			},
+			URIState: &ctMessage.Uint32Val{
+				Value: uint32(basetype.BlockParseState_BlockTypeFinish),
+				Op:    cruder.EQ,
+			},
+			VectorState: &ctMessage.Uint32Val{
+				Value: uint32(tokenProto.ConvertState_Success),
+				Op:    cruder.EQ,
 			},
 		}
 
