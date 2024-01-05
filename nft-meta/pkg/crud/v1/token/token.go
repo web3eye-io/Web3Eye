@@ -319,7 +319,7 @@ func SetQueryConds(q *ent.TokenQuery, conds *Conds) (*ent.TokenQuery, error) { /
 		if !ok {
 			return nil, fmt.Errorf("invalid uristate")
 		}
-		switch conds.URI.Op {
+		switch conds.URIState.Op {
 		case cruder.EQ:
 			q.Where(enttoken.URIState(uristate.String()))
 		default:
