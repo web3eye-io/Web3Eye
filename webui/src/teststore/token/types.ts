@@ -13,6 +13,7 @@ export type SearchTokenMessage = BaseRequest
 
 export interface SearchTokensResponse {
     Infos: Array<SearchToken>
+    Vector: Array<number>
     StorageKey: string
     Page: number
     Pages: number
@@ -86,6 +87,7 @@ export interface GetTokenResponse {
   
 export interface GetTokensRequest extends BaseRequest {
     StorageKey?: string
+    Vector?: Array<number>
     Page: number
     Limit: number
 }
@@ -93,6 +95,7 @@ export interface GetTokensRequest extends BaseRequest {
 export interface GetTokensResponse {
     Infos: SearchToken[]
     StorageKey: string
+    Vector: Array<number>
     Page: number
     Pages: number
     Total: number

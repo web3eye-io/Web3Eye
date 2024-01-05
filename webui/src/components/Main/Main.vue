@@ -79,7 +79,7 @@ const handleUploadFile = (file: any, fromDropArea: boolean) => {
   contract.value = file?.name
   const reqMessage = {} as SearchTokenMessage
   token.$reset()
-  localkey.resetStorageKey()
+  localkey.reset()
   token.searchTokens(formData, reqMessage, (error: boolean) => {
     if (!error) {
       const normalBox = document.getElementById('normal-box')

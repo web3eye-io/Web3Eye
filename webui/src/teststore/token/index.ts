@@ -53,6 +53,9 @@ export const useTokenStore = defineStore('token', {
           if (resp.StorageKey?.length > 0) {
             localkey.setStorageKey(resp.StorageKey)
           }
+          if (resp.Vector?.length > 0) {
+            localkey.setVector(resp.Vector)
+          }
           done(false, resp.Infos)
         }, () => {
           done(true, [])
@@ -67,6 +70,11 @@ export const useTokenStore = defineStore('token', {
       if (key && key?.length > 0) {
         req.StorageKey = key
       }
+      const vector = localkey.getVector()
+      if (vector == null || vector === undefined) {
+        return
+      }
+      req.Vector = vector as unknown as Array<number>
       doActionWithError<GetTokensRequest, GetTokensResponse>(
         API.SEARCH_PAGE,
         req,
