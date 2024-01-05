@@ -97,20 +97,19 @@ func (h *Handler) upsertOne(_ctx context.Context, tx *ent.Tx, req *ordercrud.Req
 
 func (h *Handler) UpsertOrders(ctx context.Context) ([]*orderproto.Order, error) {
 	entIDs := []uuid.UUID{}
-
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for _, req := range h.Reqs {
+	for _, req := range h.Reqs {
+		err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
 			_, entID, err := h.upsertOne(_ctx, tx, req)
 			if err != nil {
 				return err
 			}
 
 			entIDs = append(entIDs, *entID)
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
 
 	h.Conds = &ordercrud.Conds{
