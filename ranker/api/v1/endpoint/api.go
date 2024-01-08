@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/nft-meta/api/v1/endpoint"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	nftmetanpool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/endpoint"
@@ -27,6 +28,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *rankernpool.CreateEndpo
 			ChainType: &in.ChainType,
 			ChainID:   &in.ChainID,
 			Address:   &in.Address,
+			RPS:       &in.RPS,
 		},
 	})
 	if err != nil {
@@ -44,6 +46,7 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *rankernpool.UpdateEndpo
 			ID:      &in.ID,
 			Address: in.Address,
 			State:   in.State,
+			RPS:     in.RPS,
 			Remark:  in.Remark,
 		},
 	})
@@ -83,27 +86,31 @@ func (s *Server) GetEndpoints(ctx context.Context, in *rankernpool.GetEndpointsR
 func buildConds(in *rankernpool.GetEndpointsRequest) *nftmetanpool.Conds {
 	conds := &nftmetanpool.Conds{}
 	if in.ID != nil {
-		conds.ID = &web3eye.Uint32Val{Op: "eq", Value: *in.ID}
+		conds.ID = &web3eye.Uint32Val{Op: cruder.EQ, Value: *in.ID}
 	}
 
 	if in.ChainType != nil {
-		conds.ChainType = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.ChainType.Enum())}
+		conds.ChainType = &web3eye.Uint32Val{Op: cruder.EQ, Value: uint32(*in.ChainType.Enum())}
 	}
 
 	if in.ChainID != nil {
-		conds.ChainID = &web3eye.StringVal{Op: "eq", Value: *in.ChainID}
+		conds.ChainID = &web3eye.StringVal{Op: cruder.EQ, Value: *in.ChainID}
 	}
 
 	if in.Address != nil {
-		conds.Address = &web3eye.StringVal{Op: "eq", Value: *in.Address}
+		conds.Address = &web3eye.StringVal{Op: cruder.EQ, Value: *in.Address}
 	}
 
 	if in.State != nil {
-		conds.State = &web3eye.Uint32Val{Op: "eq", Value: uint32(*in.State.Enum())}
+		conds.State = &web3eye.Uint32Val{Op: cruder.EQ, Value: uint32(*in.State.Enum())}
+	}
+
+	if in.RPS != nil {
+		conds.RPS = &web3eye.Uint32Val{Op: cruder.EQ, Value: *in.RPS}
 	}
 
 	if in.Remark != nil {
-		conds.Remark = &web3eye.StringVal{Op: "eq", Value: *in.Remark}
+		conds.Remark = &web3eye.StringVal{Op: cruder.EQ, Value: *in.Remark}
 	}
 	return conds
 }

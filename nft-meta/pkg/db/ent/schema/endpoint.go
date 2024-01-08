@@ -25,6 +25,7 @@ func (Endpoint) Fields() []ent.Field {
 		field.String("chain_id").Optional(),
 		field.String("address"),
 		field.String("state").Optional(),
+		field.Uint32("rps").Default(1),
 		field.String("remark").Optional(),
 	}
 }

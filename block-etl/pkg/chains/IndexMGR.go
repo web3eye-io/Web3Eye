@@ -160,10 +160,13 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 			endpointGroups[info.ChainType][info.ChainID] = []string{}
 		}
 		endpointGroups[info.ChainType][info.ChainID] = append(endpointGroups[info.ChainType][info.ChainID], info.Address)
+		if info.RPS == 0 {
+			info.RPS = 1
+		}
 
 		err = chains.GetEndpintIntervalMGR().PutEndpoint(&chains.EndpointInterval{
 			Address:     info.Address,
-			MinInterval: time.Second,
+			MinInterval: time.Second / time.Duration(info.RPS),
 			MaxInterval: time.Minute,
 		}, true)
 		if err != nil {

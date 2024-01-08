@@ -131,6 +131,10 @@ func init() {
 	endpointDescDeletedAt := endpointMixinFields1[2].Descriptor()
 	// endpoint.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	endpoint.DefaultDeletedAt = endpointDescDeletedAt.Default.(func() uint32)
+	// endpointDescRps is the schema descriptor for rps field.
+	endpointDescRps := endpointFields[4].Descriptor()
+	// endpoint.DefaultRps holds the default value on creation for the rps field.
+	endpoint.DefaultRps = endpointDescRps.Default.(uint32)
 	orderMixin := schema.Order{}.Mixin()
 	order.Policy = privacy.NewPolicies(orderMixin[1], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {

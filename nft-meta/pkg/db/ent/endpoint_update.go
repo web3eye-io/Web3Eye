@@ -150,6 +150,27 @@ func (eu *EndpointUpdate) ClearState() *EndpointUpdate {
 	return eu
 }
 
+// SetRps sets the "rps" field.
+func (eu *EndpointUpdate) SetRps(u uint32) *EndpointUpdate {
+	eu.mutation.ResetRps()
+	eu.mutation.SetRps(u)
+	return eu
+}
+
+// SetNillableRps sets the "rps" field if the given value is not nil.
+func (eu *EndpointUpdate) SetNillableRps(u *uint32) *EndpointUpdate {
+	if u != nil {
+		eu.SetRps(*u)
+	}
+	return eu
+}
+
+// AddRps adds u to the "rps" field.
+func (eu *EndpointUpdate) AddRps(u int32) *EndpointUpdate {
+	eu.mutation.AddRps(u)
+	return eu
+}
+
 // SetRemark sets the "remark" field.
 func (eu *EndpointUpdate) SetRemark(s string) *EndpointUpdate {
 	eu.mutation.SetRemark(s)
@@ -357,6 +378,20 @@ func (eu *EndpointUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: endpoint.FieldState,
 		})
 	}
+	if value, ok := eu.mutation.Rps(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: endpoint.FieldRps,
+		})
+	}
+	if value, ok := eu.mutation.AddedRps(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: endpoint.FieldRps,
+		})
+	}
 	if value, ok := eu.mutation.Remark(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -509,6 +544,27 @@ func (euo *EndpointUpdateOne) SetNillableState(s *string) *EndpointUpdateOne {
 // ClearState clears the value of the "state" field.
 func (euo *EndpointUpdateOne) ClearState() *EndpointUpdateOne {
 	euo.mutation.ClearState()
+	return euo
+}
+
+// SetRps sets the "rps" field.
+func (euo *EndpointUpdateOne) SetRps(u uint32) *EndpointUpdateOne {
+	euo.mutation.ResetRps()
+	euo.mutation.SetRps(u)
+	return euo
+}
+
+// SetNillableRps sets the "rps" field if the given value is not nil.
+func (euo *EndpointUpdateOne) SetNillableRps(u *uint32) *EndpointUpdateOne {
+	if u != nil {
+		euo.SetRps(*u)
+	}
+	return euo
+}
+
+// AddRps adds u to the "rps" field.
+func (euo *EndpointUpdateOne) AddRps(u int32) *EndpointUpdateOne {
+	euo.mutation.AddRps(u)
 	return euo
 }
 
@@ -747,6 +803,20 @@ func (euo *EndpointUpdateOne) sqlSave(ctx context.Context) (_node *Endpoint, err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: endpoint.FieldState,
+		})
+	}
+	if value, ok := euo.mutation.Rps(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: endpoint.FieldRps,
+		})
+	}
+	if value, ok := euo.mutation.AddedRps(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: endpoint.FieldRps,
 		})
 	}
 	if value, ok := euo.mutation.Remark(); ok {

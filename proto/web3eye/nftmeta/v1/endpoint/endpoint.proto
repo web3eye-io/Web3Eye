@@ -29,7 +29,8 @@ message EndpointReq {
   optional string ChainID = 30;
   optional string Address = 40;
   optional chain.EndpointState State = 50;
-  optional string Remark = 60;
+  optional uint32 RPS = 60;
+  optional string Remark = 70;
 }
 
 message Endpoint {
@@ -47,12 +48,14 @@ message Endpoint {
   // @inject_tag: sql:"state"
   string StateStr = 50;
   chain.EndpointState State = 51;
+  // @inject_tag: sql:"rps"
+  uint32 RPS = 60;
   // @inject_tag: sql:"remark"
-  string Remark = 60;
+  string Remark = 70;
   // @inject_tag: sql:"created_at"
-  uint32 CreatedAt = 70;
+  uint32 CreatedAt = 80;
   // @inject_tag: sql:"updated_at"
-  uint32 UpdatedAt = 80;
+  uint32 UpdatedAt = 90;
 }
 
 message Conds {
@@ -62,7 +65,8 @@ message Conds {
   web3eye.StringVal ChainID = 30;
   web3eye.StringVal Address = 40;
   web3eye.Uint32Val State = 50;
-  web3eye.StringVal Remark = 60;
+  web3eye.Uint32Val RPS = 60;
+  web3eye.StringVal Remark = 70;
   web3eye.StringSliceVal EntIDs = 160;
 }
 

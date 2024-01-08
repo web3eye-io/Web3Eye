@@ -19,6 +19,7 @@ message CreateEndpointRequest {
   chain.ChainType ChainType = 10;
   string ChainID = 20;
   string Address = 30;
+  uint32 RPS = 40;
 }
 message CreateEndpointResponse { nftmeta.v1.endpoint.Endpoint Info = 10; }
 
@@ -27,7 +28,8 @@ message UpdateEndpointRequest {
   uint32 ID = 10;
   optional string Address = 20;
   optional chain.EndpointState State = 30;
-  optional string Remark = 40;
+  optional uint32 RPS = 40;
+  optional string Remark = 50;
 }
 message UpdateEndpointResponse { nftmeta.v1.endpoint.Endpoint Info = 10; }
 
@@ -42,9 +44,10 @@ message GetEndpointsRequest {
   optional string ChainID = 30;
   optional string Address = 40;
   optional chain.EndpointState State = 50;
-  optional string Remark = 60;
-  int32 Offset = 70;
-  int32 Limit = 80;
+  optional uint32 RPS = 60;
+  optional string Remark = 70;
+  int32 Offset = 80;
+  int32 Limit = 90;
 }
 message GetEndpointsResponse {
   repeated nftmeta.v1.endpoint.Endpoint Infos = 10;

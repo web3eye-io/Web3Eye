@@ -18,6 +18,7 @@ type Req struct {
 	ChainID   *string
 	Address   *string
 	State     *basetype.EndpointState
+	RPS       *uint32
 	Remark    *string
 }
 
@@ -36,6 +37,9 @@ func CreateSet(c *ent.EndpointCreate, req *Req) *ent.EndpointCreate {
 	}
 	if req.State != nil {
 		c.SetState(req.State.String())
+	}
+	if req.RPS != nil {
+		c.SetRps(*req.RPS)
 	}
 	if req.Remark != nil {
 		c.SetRemark(*req.Remark)
@@ -59,6 +63,9 @@ func UpdateSet(u *ent.EndpointUpdateOne, req *Req) (*ent.EndpointUpdateOne, erro
 	if req.Remark != nil {
 		u.SetRemark(*req.Remark)
 	}
+	if req.RPS != nil {
+		u.SetRps(*req.RPS)
+	}
 	return u, nil
 }
 
@@ -69,6 +76,7 @@ type Conds struct {
 	ChainID   *cruder.Cond
 	Address   *cruder.Cond
 	State     *cruder.Cond
+	Rps       *cruder.Cond
 	Remark    *cruder.Cond
 }
 
@@ -143,6 +151,18 @@ func SetQueryConds(q *ent.EndpointQuery, conds *Conds) (*ent.EndpointQuery, erro
 			q.Where(entendpoint.State(state.String()))
 		default:
 			return nil, fmt.Errorf("invalid state field")
+		}
+	}
+	if conds.Rps != nil {
+		rps, ok := conds.Rps.Val.(uint32)
+		if !ok {
+			return nil, fmt.Errorf("invalid rps")
+		}
+		switch conds.Rps.Op {
+		case cruder.EQ:
+			q.Where(entendpoint.Rps(rps))
+		default:
+			return nil, fmt.Errorf("invalid rps field")
 		}
 	}
 	if conds.Remark != nil {

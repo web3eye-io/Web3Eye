@@ -231,6 +231,11 @@
         "State": {
           "$ref": "#/definitions/chainEndpointState"
         },
+        "RPS": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"rps\""
+        },
         "Remark": {
           "type": "string",
           "title": "@inject_tag: sql:\"remark\""
@@ -267,6 +272,10 @@
         },
         "Address": {
           "type": "string"
+        },
+        "RPS": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -331,6 +340,10 @@
         "State": {
           "$ref": "#/definitions/chainEndpointState"
         },
+        "RPS": {
+          "type": "integer",
+          "format": "int64"
+        },
         "Remark": {
           "type": "string"
         },
@@ -350,6 +363,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/endpointEndpoint"
           }
         },
@@ -371,6 +385,10 @@
         },
         "State": {
           "$ref": "#/definitions/chainEndpointState"
+        },
+        "RPS": {
+          "type": "integer",
+          "format": "int64"
         },
         "Remark": {
           "type": "string"
@@ -398,6 +416,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

@@ -30,6 +30,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *endpointproto.CreateEnd
 		handler.WithChainID(in.Info.ChainID, false),
 		handler.WithAddress(in.Info.Address, true),
 		handler.WithState(in.Info.State, false),
+		handler.WithRPS(in.Info.RPS, false),
 		handler.WithRemark(in.Info.Remark, false),
 	)
 	if err != nil {
@@ -86,6 +87,7 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *endpointproto.UpdateEnd
 		handler.WithChainID(in.Info.ChainID, false),
 		handler.WithAddress(in.Info.Address, false),
 		handler.WithState(in.Info.State, false),
+		handler.WithRPS(in.Info.RPS, false),
 		handler.WithRemark(in.Info.Remark, false),
 	)
 	if err != nil {
@@ -122,6 +124,7 @@ func (s *Server) UpdateEndpoints(ctx context.Context, in *endpointproto.UpdateEn
 			handler.WithChainID(info.ChainID, false),
 			handler.WithAddress(info.Address, false),
 			handler.WithState(info.State, false),
+			handler.WithRPS(info.RPS, false),
 			handler.WithRemark(info.Remark, false),
 		)
 		if err != nil {

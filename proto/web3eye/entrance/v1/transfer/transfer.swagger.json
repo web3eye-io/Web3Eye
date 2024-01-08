@@ -114,6 +114,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/rankerv1transferTransfer"
           }
         },
@@ -179,12 +180,14 @@
         "TargetItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1transferOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1transferOrderItem"
           }
         }
@@ -203,6 +206,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

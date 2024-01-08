@@ -97,6 +97,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			endpoint.FieldChainID:   {Type: field.TypeString, Column: endpoint.FieldChainID},
 			endpoint.FieldAddress:   {Type: field.TypeString, Column: endpoint.FieldAddress},
 			endpoint.FieldState:     {Type: field.TypeString, Column: endpoint.FieldState},
+			endpoint.FieldRps:       {Type: field.TypeUint32, Column: endpoint.FieldRps},
 			endpoint.FieldRemark:    {Type: field.TypeString, Column: endpoint.FieldRemark},
 		},
 	}
@@ -580,6 +581,11 @@ func (f *EndpointFilter) WhereAddress(p entql.StringP) {
 // WhereState applies the entql string predicate on the state field.
 func (f *EndpointFilter) WhereState(p entql.StringP) {
 	f.Where(p.Field(endpoint.FieldState))
+}
+
+// WhereRps applies the entql uint32 predicate on the rps field.
+func (f *EndpointFilter) WhereRps(p entql.Uint32P) {
+	f.Where(p.Field(endpoint.FieldRps))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.
