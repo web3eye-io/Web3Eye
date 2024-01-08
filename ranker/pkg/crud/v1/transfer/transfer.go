@@ -53,7 +53,7 @@ func queryOrderItemAndOrder(row *ent.Transfer, cli *ent.Client) *ent.OrderItemSe
 		s.
 			LeftJoin(t).
 			On(
-				t.C(order.FieldID),
+				t.C(order.FieldEntID),
 				s.C(orderitem.FieldOrderID),
 			).
 			Where(sql.EQ(order.FieldTxHash, row.TxHash)).
@@ -63,14 +63,14 @@ func queryOrderItemAndOrder(row *ent.Transfer, cli *ent.Client) *ent.OrderItemSe
 	})
 }
 
-func queryOrderItemsAndContract(ctx context.Context, orderID string, cli *ent.Client) ([]*OrderItem, error) {
+func queryOrderItemsAndContract(ctx context.Context, orderEntID string, cli *ent.Client) ([]*OrderItem, error) {
 	var qOrderItems []*OrderItem
 	err := cli.OrderItem.Query().Modify(func(s *sql.Selector) {
 		t := sql.Table(contract.Table)
 		s.LeftJoin(t).
 			On(s.C(orderitem.FieldContract), t.C(contract.FieldAddress)).
 			AppendSelect(contract.FieldSymbol, contract.FieldName, contract.FieldDecimals).
-			Where(sql.EQ(orderitem.FieldOrderID, orderID))
+			Where(sql.EQ(orderitem.FieldOrderID, orderEntID))
 	}).Scan(ctx, &qOrderItems)
 	if err != nil {
 		return nil, err
@@ -112,6 +112,7 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 		if err != nil {
 			return err
 		}
+		// map: transfer.id => order.ent_id
 		rowIDOrderID := make(map[uint32]string, len(rows))
 		for _, row := range rows {
 			orderItem, err := queryOrderItemAndOrder(row, cli).Only(ctx)
@@ -125,8 +126,8 @@ func Rows(ctx context.Context, in *rankernpool.GetTransfersRequest) ([]*rankernp
 
 		for _, row := range rows {
 			var qOrderItems []*OrderItem
-			if id, ok := rowIDOrderID[row.ID]; ok {
-				qOrderItems, err = queryOrderItemsAndContract(ctx, id, cli)
+			if entID, ok := rowIDOrderID[row.ID]; ok {
+				qOrderItems, err = queryOrderItemsAndContract(ctx, entID, cli)
 				if err != nil {
 					return err
 				}
