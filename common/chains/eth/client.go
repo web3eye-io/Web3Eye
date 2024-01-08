@@ -22,8 +22,8 @@ type ethClients struct {
 	endpoints []string
 }
 
-func (ethCli *ethClients) GetNode(ctx context.Context) (*ethclient.Client, string, error) {
-	endpoint, err := chains.LockEndpoint(ctx, ethCli.endpoints)
+func (ethCli *ethClients) GetNode(ctx context.Context, useTimes uint16) (*ethclient.Client, string, error) {
+	endpoint, err := chains.LockEndpoint(ctx, ethCli.endpoints, useTimes)
 	if err != nil {
 		return nil, "", err
 	}
@@ -39,7 +39,7 @@ func (ethCli *ethClients) GetNode(ctx context.Context) (*ethclient.Client, strin
 	return cli, endpoint, nil
 }
 
-func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
+func (ethCli *ethClients) WithClient(ctx context.Context, useTimes uint16, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
 	var (
 		apiErr, err error
 		retry       bool
@@ -54,7 +54,7 @@ func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Co
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, endpoint, err := ethCli.GetNode(ctx)
+		client, endpoint, err := ethCli.GetNode(ctx, useTimes)
 		if err != nil {
 			continue
 		}
@@ -82,7 +82,8 @@ func checkEndpoint(ctx context.Context, endpoint string, err error) {
 		return
 	}
 
-	_, err = chains.LockEndpoint(ctx, []string{endpoint})
+	useTimes := uint16(1)
+	_, err = chains.LockEndpoint(ctx, []string{endpoint}, useTimes)
 	if err == nil {
 		return
 	}

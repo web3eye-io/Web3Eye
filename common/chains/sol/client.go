@@ -21,8 +21,8 @@ type solClients struct {
 	endpoints []string
 }
 
-func (solCli solClients) GetNode(ctx context.Context) (*rpc.Client, string, error) {
-	endpoint, err := chains.LockEndpoint(ctx, solCli.endpoints)
+func (solCli solClients) GetNode(ctx context.Context, useTimes uint16) (*rpc.Client, string, error) {
+	endpoint, err := chains.LockEndpoint(ctx, solCli.endpoints, useTimes)
 	if err != nil {
 		return nil, "", err
 	}
@@ -31,7 +31,7 @@ func (solCli solClients) GetNode(ctx context.Context) (*rpc.Client, string, erro
 	return cli, endpoint, nil
 }
 
-func (solCli *solClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *rpc.Client) (bool, error)) error {
+func (solCli *solClients) WithClient(ctx context.Context, useTimes uint16, fn func(ctx context.Context, c *rpc.Client) (bool, error)) error {
 	var (
 		apiErr, err error
 		retry       bool
@@ -46,7 +46,7 @@ func (solCli *solClients) WithClient(ctx context.Context, fn func(ctx context.Co
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, endpoint, err := solCli.GetNode(ctx)
+		client, endpoint, err := solCli.GetNode(ctx, useTimes)
 
 		if err != nil {
 			continue
@@ -73,8 +73,8 @@ func checkEndpoint(ctx context.Context, endpoint string, err error) {
 	if err == nil {
 		return
 	}
-
-	_, err = chains.LockEndpoint(ctx, []string{endpoint})
+	useTimes := uint16(1)
+	_, err = chains.LockEndpoint(ctx, []string{endpoint}, useTimes)
 	if err == nil {
 		return
 	}

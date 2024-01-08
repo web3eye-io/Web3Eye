@@ -88,7 +88,7 @@ func (e *EndpointInterval) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, e)
 }
 
-func LockEndpoint(ctx context.Context, keys []string) (string, error) {
+func LockEndpoint(ctx context.Context, keys []string, lockTimes uint16) (string, error) {
 	for {
 		select {
 		case <-time.NewTicker(lockEndpointWaitTime).C:
@@ -104,7 +104,7 @@ func LockEndpoint(ctx context.Context, keys []string) (string, error) {
 					fmt.Println(err)
 					continue
 				}
-				locked, _ := ctredis.TryPubLock(lockKey, interval)
+				locked, _ := ctredis.TryPubLock(lockKey, interval*time.Duration(lockTimes))
 				if locked {
 					return lockKey, nil
 				}

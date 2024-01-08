@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
@@ -138,7 +139,7 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.Endp
 func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.Uint32Val{
-			Op:    "eq",
+			Op:    cruder.EQ,
 			Value: uint32(basetype.EndpointState_EndpointAvaliable),
 		},
 	}
