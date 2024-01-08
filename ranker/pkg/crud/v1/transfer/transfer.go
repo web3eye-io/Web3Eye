@@ -19,7 +19,8 @@ import (
 )
 
 type OrderItem struct {
-	ID            uuid.UUID `json:"id,omitempty"`
+	ID            uint32    `json:"id,omitempty"`
+	EntID         uuid.UUID `json:"ent_id,omitempty"`
 	CreatedAt     uint32    `json:"created_at,omitempty"`
 	UpdatedAt     uint32    `json:"updated_at,omitempty"`
 	DeletedAt     uint32    `json:"deleted_at,omitempty"`
@@ -148,6 +149,7 @@ func ent2rpcTransfer(row *ent.Transfer, orderItems []*OrderItem) *rankernpool.Tr
 	amount, _ := utils.DecStr2uint64(row.Amount)
 	rpctransfer := &rankernpool.Transfer{
 		ID:          row.ID,
+		EntID:       row.EntID.String(),
 		ChainType:   basetype.ChainType(basetype.ChainType_value[row.ChainType]),
 		ChainID:     row.ChainID,
 		Contract:    row.Contract,
