@@ -2,12 +2,12 @@ package sol
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"math/big"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
@@ -21,22 +21,20 @@ type solClients struct {
 	endpoints []string
 }
 
-func (solCli solClients) GetNode(ctx context.Context) (*rpc.Client, error) {
-	randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(solCli.endpoints))))
+func (solCli solClients) GetNode(ctx context.Context) (*rpc.Client, string, error) {
+	endpoint, err := chains.LockEndpoint(ctx, solCli.endpoints)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	endpoint := solCli.endpoints[randIndex.Int64()]
 
 	cli := rpc.New(endpoint)
-	return cli, nil
+	return cli, endpoint, nil
 }
 
 func (solCli *solClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *rpc.Client) (bool, error)) error {
 	var (
 		apiErr, err error
 		retry       bool
-		client      *rpc.Client
 	)
 
 	if err != nil {
@@ -48,7 +46,7 @@ func (solCli *solClients) WithClient(ctx context.Context, fn func(ctx context.Co
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, err = solCli.GetNode(ctx)
+		client, endpoint, err := solCli.GetNode(ctx)
 
 		if err != nil {
 			continue
@@ -60,12 +58,36 @@ func (solCli *solClients) WithClient(ctx context.Context, fn func(ctx context.Co
 		if !retry {
 			return apiErr
 		}
+		if apiErr != nil {
+			go checkEndpoint(context.Background(), endpoint, apiErr)
+		}
 	}
 
 	if apiErr != nil {
 		return apiErr
 	}
 	return err
+}
+
+func checkEndpoint(ctx context.Context, endpoint string, err error) {
+	if err == nil {
+		return
+	}
+
+	_, err = chains.LockEndpoint(ctx, []string{endpoint})
+	if err == nil {
+		return
+	}
+
+	_, err = GetEndpointChainID(context.Background(), endpoint)
+	if err == nil {
+		return
+	}
+
+	err = chains.GetEndpintIntervalMGR().BackoffEndpoint(endpoint)
+	if err != nil {
+		logger.Sugar().Warnw("checkEndpoint", "Msg", "failed to backoffEndpoint", "Endpoint", endpoint, "Error", err)
+	}
 }
 
 func Client(endpoints []string) (*solClients, error) {

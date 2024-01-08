@@ -8,6 +8,7 @@ import (
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
 
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	common_eth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	common_sol "github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
@@ -159,6 +160,15 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 			endpointGroups[info.ChainType][info.ChainID] = []string{}
 		}
 		endpointGroups[info.ChainType][info.ChainID] = append(endpointGroups[info.ChainType][info.ChainID], info.Address)
+
+		err = chains.GetEndpintIntervalMGR().PutEndpoint(&chains.EndpointInterval{
+			Address:     info.Address,
+			MinInterval: time.Millisecond,
+			MaxInterval: time.Minute,
+		}, true)
+		if err != nil {
+			logger.Sugar().Warnw("checkAvaliableEndpoints", "Msg", "failed to put endpoints to redis", "Error", err)
+		}
 	}
 
 	// check if have no endpoints,will be stop

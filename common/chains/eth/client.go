@@ -2,12 +2,12 @@ package eth
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"math/big"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
@@ -22,29 +22,27 @@ type ethClients struct {
 	endpoints []string
 }
 
-func (ethCli ethClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
-	randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(ethCli.endpoints))))
+func (ethCli *ethClients) GetNode(ctx context.Context) (*ethclient.Client, string, error) {
+	endpoint, err := chains.LockEndpoint(ctx, ethCli.endpoints)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	endpoint := ethCli.endpoints[randIndex.Int64()]
 
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
 
 	cli, err := ethclient.DialContext(ctx, endpoint)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return cli, nil
+	return cli, endpoint, nil
 }
 
 func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
 	var (
 		apiErr, err error
 		retry       bool
-		client      *ethclient.Client
 	)
 
 	if err != nil {
@@ -56,14 +54,17 @@ func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Co
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, err = ethCli.GetNode(ctx)
-
+		client, endpoint, err := ethCli.GetNode(ctx)
 		if err != nil {
 			continue
 		}
 
 		retry, apiErr = fn(ctx, client)
 		client.Close()
+
+		if apiErr != nil {
+			go checkEndpoint(context.Background(), endpoint, apiErr)
+		}
 
 		if !retry {
 			return apiErr
@@ -74,6 +75,27 @@ func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Co
 		return apiErr
 	}
 	return err
+}
+
+func checkEndpoint(ctx context.Context, endpoint string, err error) {
+	if err == nil {
+		return
+	}
+
+	_, err = chains.LockEndpoint(ctx, []string{endpoint})
+	if err == nil {
+		return
+	}
+
+	_, err = GetEndpointChainID(context.Background(), endpoint)
+	if err == nil {
+		return
+	}
+
+	err = chains.GetEndpintIntervalMGR().BackoffEndpoint(endpoint)
+	if err != nil {
+		logger.Sugar().Warnw("checkEndpoint", "Msg", "failed to backoffEndpoint", "Endpoint", endpoint, "Error", err)
+	}
 }
 
 func Client(endpoints []string) (*ethClients, error) {

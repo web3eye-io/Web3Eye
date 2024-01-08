@@ -49,7 +49,6 @@ func (e *SolIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 
@@ -82,7 +81,6 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	}
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 	txTime := uint64(block.BlockTime.Time().Unix())
@@ -96,7 +94,6 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	for i := range transfers {
 		metadata, err := cli.GetMetadata(ctx, transfers[i].TokenID)
 		if err != nil {
-			e.checkErr(ctx, err)
 			return nil, fmt.Errorf("cannot get sol token metadata,err: %v", err)
 		}
 		transfers[i].Contract = GenCollectionAddr(metadata)
@@ -175,7 +172,6 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		if err != nil {
 			uriState = basetype.TokenURIState_TokenURIError
 			vectorState = tokenProto.ConvertState_Failed
-			e.checkErr(ctx, err)
 			logger.Sugar().Warnf("cannot get metadata,err: %v, tokenID: %v", err, transfer.TokenID)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -313,7 +309,6 @@ func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.Token
 	}
 
 	if err != nil {
-		e.checkErr(ctx, err)
 		remark = err.Error()
 	}
 
@@ -339,7 +334,6 @@ func (e *SolIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 
 			blockNum, err := cli.GetSlotHeight(ctx)
 			if err != nil {
-				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("sol failed to get current block number: %v", err)
 				return
 			}
