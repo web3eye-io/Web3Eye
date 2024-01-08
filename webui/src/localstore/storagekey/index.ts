@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { Cookies } from 'quasar'
+import { Cookies, LocalStorage } from 'quasar'
+
 
 export const useStorageKeyStore = defineStore('local-storage-key', {
   state: () => ({}),
@@ -14,9 +15,27 @@ export const useStorageKeyStore = defineStore('local-storage-key', {
     getStorageKey () {
         return () => Cookies.get('Storage-Key')
     },
-    resetStorageKey () {
-        return () => Cookies.remove('Storage-Key')
+    setVector () {
+      return (vectors: Array<number>) => {
+        if (vectors?.length > 0) {
+            LocalStorage.set('Vector', vectors)
+        }
+      }
     },
+    getVector () {
+        return () => {
+          const vector = LocalStorage.getItem('Vector')
+          if(vector) {
+            return vector
+          }
+        }
+    },
+    reset () {
+      return () => {
+        Cookies.remove('Storage-Key')
+        Cookies.remove('Vector')
+      }
+  },
   },
   actions: {}
 })

@@ -64,7 +64,7 @@ const handleUploadFile = (file: any) => {
     contract.value = file?.name 
     const reqMessage = {} as SearchTokenMessage
     token.$reset()
-    localkey.resetStorageKey()
+    localkey.reset()
     token.searchTokens(formData, reqMessage, (error: boolean) => {
         if (!error) {
             void router.push('/token')
