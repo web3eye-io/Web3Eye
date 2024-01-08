@@ -288,7 +288,7 @@ func getBlocksNum(
 	for i, item := range blocks {
 		taskNums[i] = item.BlockNumber
 	}
-	logger.Sugar().Info("find %v bloks in %v", total, parseState)
+	logger.Sugar().Infof("find %v bloks in %v", total, parseState)
 	return taskNums, err
 }
 

@@ -207,10 +207,6 @@ func init() {
 	orderitemDescDeletedAt := orderitemMixinFields1[2].Descriptor()
 	// orderitem.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	orderitem.DefaultDeletedAt = orderitemDescDeletedAt.Default.(func() uint32)
-	// orderitemDescOrderID is the schema descriptor for order_id field.
-	orderitemDescOrderID := orderitemFields[0].Descriptor()
-	// orderitem.DefaultOrderID holds the default value on creation for the order_id field.
-	orderitem.DefaultOrderID = orderitemDescOrderID.Default.(func() uuid.UUID)
 	snapshotMixin := schema.Snapshot{}.Mixin()
 	snapshot.Policy = privacy.NewPolicies(snapshotMixin[1], schema.Snapshot{})
 	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {

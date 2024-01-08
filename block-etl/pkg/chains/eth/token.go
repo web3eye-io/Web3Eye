@@ -15,7 +15,6 @@ import (
 	"github.com/web3eye-io/Web3Eye/common/chains"
 	"github.com/web3eye-io/Web3Eye/common/chains/eth"
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 	blockNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/block"
 	contractNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/contract"
 	tokenNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
@@ -240,7 +239,6 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		})
 
 		if err != nil {
-			fmt.Println(utils.PrettyStruct(tokenReq))
 			return nil, fmt.Errorf("create token record failed, %v", err)
 		}
 		outContractMetas = append(outContractMetas, &ContractMeta{

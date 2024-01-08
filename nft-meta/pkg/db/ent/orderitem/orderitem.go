@@ -82,6 +82,4 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
-	// DefaultOrderID holds the default value on creation for the "order_id" field.
-	DefaultOrderID func() uuid.UUID
 )

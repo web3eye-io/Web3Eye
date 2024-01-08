@@ -151,6 +151,7 @@ func TidyOrderAccount(orderObj *contracts.OpenseaOrderFulfilled) *OrderAccountDe
 	return accDetails
 }
 
+// 计算价格
 func CalOrderPrice(orderAD *OrderAccountDetails) *OrderPriceDetails {
 	collectedOAD := make(map[string][]*OrderItem)
 	// collect sample items

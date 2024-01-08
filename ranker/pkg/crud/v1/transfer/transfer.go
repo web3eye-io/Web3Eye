@@ -2,7 +2,6 @@ package transfer
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
@@ -78,7 +77,6 @@ func queryOrderItemsAndContract(ctx context.Context, orderID string, cli *ent.Cl
 	}
 
 	for _, v := range qOrderItems {
-		fmt.Println(v.TokenType)
 		if v.TokenType == basetype.TokenType_ERC1155.String() ||
 			v.TokenType == basetype.TokenType_ERC1155_WITH_CRITERIA.String() ||
 			v.TokenType == basetype.TokenType_ERC721.String() ||

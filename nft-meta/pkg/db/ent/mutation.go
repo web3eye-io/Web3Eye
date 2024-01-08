@@ -5144,22 +5144,9 @@ func (m *OrderItemMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err er
 	return oldValue.OrderID, nil
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (m *OrderItemMutation) ClearOrderID() {
-	m.order_id = nil
-	m.clearedFields[orderitem.FieldOrderID] = struct{}{}
-}
-
-// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
-func (m *OrderItemMutation) OrderIDCleared() bool {
-	_, ok := m.clearedFields[orderitem.FieldOrderID]
-	return ok
-}
-
 // ResetOrderID resets all changes to the "order_id" field.
 func (m *OrderItemMutation) ResetOrderID() {
 	m.order_id = nil
-	delete(m.clearedFields, orderitem.FieldOrderID)
 }
 
 // SetOrderItemType sets the "order_item_type" field.
@@ -5660,9 +5647,6 @@ func (m *OrderItemMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *OrderItemMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(orderitem.FieldOrderID) {
-		fields = append(fields, orderitem.FieldOrderID)
-	}
 	if m.FieldCleared(orderitem.FieldRemark) {
 		fields = append(fields, orderitem.FieldRemark)
 	}
@@ -5680,9 +5664,6 @@ func (m *OrderItemMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *OrderItemMutation) ClearField(name string) error {
 	switch name {
-	case orderitem.FieldOrderID:
-		m.ClearOrderID()
-		return nil
 	case orderitem.FieldRemark:
 		m.ClearRemark()
 		return nil

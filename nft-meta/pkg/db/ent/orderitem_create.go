@@ -84,14 +84,6 @@ func (oic *OrderItemCreate) SetOrderID(u uuid.UUID) *OrderItemCreate {
 	return oic
 }
 
-// SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (oic *OrderItemCreate) SetNillableOrderID(u *uuid.UUID) *OrderItemCreate {
-	if u != nil {
-		oic.SetOrderID(*u)
-	}
-	return oic
-}
-
 // SetOrderItemType sets the "order_item_type" field.
 func (oic *OrderItemCreate) SetOrderItemType(s string) *OrderItemCreate {
 	oic.mutation.SetOrderItemType(s)
@@ -249,13 +241,6 @@ func (oic *OrderItemCreate) defaults() error {
 		v := orderitem.DefaultDeletedAt()
 		oic.mutation.SetDeletedAt(v)
 	}
-	if _, ok := oic.mutation.OrderID(); !ok {
-		if orderitem.DefaultOrderID == nil {
-			return fmt.Errorf("ent: uninitialized orderitem.DefaultOrderID (forgotten import ent/runtime?)")
-		}
-		v := orderitem.DefaultOrderID()
-		oic.mutation.SetOrderID(v)
-	}
 	return nil
 }
 
@@ -272,6 +257,9 @@ func (oic *OrderItemCreate) check() error {
 	}
 	if _, ok := oic.mutation.DeletedAt(); !ok {
 		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "OrderItem.deleted_at"`)}
+	}
+	if _, ok := oic.mutation.OrderID(); !ok {
+		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderItem.order_id"`)}
 	}
 	if _, ok := oic.mutation.OrderItemType(); !ok {
 		return &ValidationError{Name: "order_item_type", err: errors.New(`ent: missing required field "OrderItem.order_item_type"`)}
@@ -540,12 +528,6 @@ func (u *OrderItemUpsert) UpdateOrderID() *OrderItemUpsert {
 	return u
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (u *OrderItemUpsert) ClearOrderID() *OrderItemUpsert {
-	u.SetNull(orderitem.FieldOrderID)
-	return u
-}
-
 // SetOrderItemType sets the "order_item_type" field.
 func (u *OrderItemUpsert) SetOrderItemType(v string) *OrderItemUpsert {
 	u.Set(orderitem.FieldOrderItemType, v)
@@ -760,13 +742,6 @@ func (u *OrderItemUpsertOne) SetOrderID(v uuid.UUID) *OrderItemUpsertOne {
 func (u *OrderItemUpsertOne) UpdateOrderID() *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateOrderID()
-	})
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (u *OrderItemUpsertOne) ClearOrderID() *OrderItemUpsertOne {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.ClearOrderID()
 	})
 }
 
@@ -1160,13 +1135,6 @@ func (u *OrderItemUpsertBulk) SetOrderID(v uuid.UUID) *OrderItemUpsertBulk {
 func (u *OrderItemUpsertBulk) UpdateOrderID() *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.UpdateOrderID()
-	})
-}
-
-// ClearOrderID clears the value of the "order_id" field.
-func (u *OrderItemUpsertBulk) ClearOrderID() *OrderItemUpsertBulk {
-	return u.Update(func(s *OrderItemUpsert) {
-		s.ClearOrderID()
 	})
 }
 

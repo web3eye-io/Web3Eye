@@ -149,7 +149,7 @@ var (
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "order_item_type", Type: field.TypeString},
 		{Name: "contract", Type: field.TypeString},
 		{Name: "token_type", Type: field.TypeString},
