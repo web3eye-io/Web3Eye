@@ -14,7 +14,7 @@ func (solCli solClients) GetSlotHeight(ctx context.Context) (uint64, error) {
 	height := uint64(0)
 
 	var err error
-	useTimes := uint16(1)
+	var useTimes uint16 = 1
 	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		height, err = c.GetSlot(ctx, rpc.CommitmentFinalized)
 		if err != nil {
@@ -31,7 +31,7 @@ func (solCli solClients) GetBlock(ctx context.Context, slot uint64) (*rpc.GetBlo
 	maxSupportedTransactionVersion := uint64(0)
 	rewards := false
 	var err error
-	useTimes := uint16(1)
+	var useTimes uint16 = 1
 	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		block, err = c.GetBlockWithOpts(context.Background(), slot, &rpc.GetBlockOpts{
 			MaxSupportedTransactionVersion: &maxSupportedTransactionVersion,
@@ -51,7 +51,7 @@ func (solCli solClients) GetTX(ctx context.Context, txSig solana.Signature) (*rp
 	tx := &rpc.GetTransactionResult{}
 	maxSupportedTransactionVersion := uint64(0)
 	var err error
-	useTimes := uint16(1)
+	var useTimes uint16 = 1
 	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		tx, err = c.GetTransaction(ctx, txSig, &rpc.GetTransactionOpts{MaxSupportedTransactionVersion: &maxSupportedTransactionVersion})
 		if err != nil {
@@ -76,7 +76,7 @@ func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*token_m
 	}
 
 	accountInfo := &rpc.GetAccountInfoResult{}
-	useTimes := uint16(1)
+	var useTimes uint16 = 1
 	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		accountInfo, err = c.GetAccountInfo(ctx, metadataAcc)
 		if err != nil {
