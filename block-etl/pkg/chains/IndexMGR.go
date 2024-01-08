@@ -163,7 +163,7 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 
 		err = chains.GetEndpintIntervalMGR().PutEndpoint(&chains.EndpointInterval{
 			Address:     info.Address,
-			MinInterval: time.Millisecond,
+			MinInterval: time.Second,
 			MaxInterval: time.Minute,
 		}, true)
 		if err != nil {
