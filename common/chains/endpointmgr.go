@@ -2,10 +2,11 @@ package chains
 
 import (
 	"context"
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"math"
-	"math/rand"
+	"math/big"
 	"time"
 
 	"github.com/web3eye-io/Web3Eye/common/ctredis"
@@ -91,9 +92,13 @@ func LockEndpoint(ctx context.Context, keys []string) (string, error) {
 	for {
 		select {
 		case <-time.NewTicker(lockEndpointWaitTime).C:
-			randN := rand.Intn(len(keys))
+			_randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(keys))))
+			if err != nil {
+				return "", err
+			}
+			randIndex := int(_randIndex.Int64())
 			for j := 0; j < len(keys); j++ {
-				lockKey := keys[(randN+j)%len(keys)]
+				lockKey := keys[(randIndex+j)%len(keys)]
 				interval, err := GetEndpintIntervalMGR().GetEndpointInterval(lockKey)
 				if err != nil {
 					fmt.Println(err)
