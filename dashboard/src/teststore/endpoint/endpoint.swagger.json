@@ -383,7 +383,7 @@
         "type": "string",
         "enum": [
           "EndpointDefault",
-          "EndpointAvaliable",
+          "EndpointAvailable",
           "EndpointUnstable",
           "EndpointError"
         ],

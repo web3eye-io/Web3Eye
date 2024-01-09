@@ -347,7 +347,7 @@ type EndpointState int32
 
 const (
 	EndpointState_EndpointDefault   EndpointState = 0
-	EndpointState_EndpointAvaliable EndpointState = 10
+	EndpointState_EndpointAvailable EndpointState = 10
 	EndpointState_EndpointUnstable  EndpointState = 20
 	EndpointState_EndpointError     EndpointState = 40
 )
@@ -356,13 +356,13 @@ const (
 var (
 	EndpointState_name = map[int32]string{
 		0:  "EndpointDefault",
-		10: "EndpointAvaliable",
+		10: "EndpointAvailable",
 		20: "EndpointUnstable",
 		40: "EndpointError",
 	}
 	EndpointState_value = map[string]int32{
 		"EndpointDefault":   0,
-		"EndpointAvaliable": 10,
+		"EndpointAvailable": 10,
 		"EndpointUnstable":  20,
 		"EndpointError":     40,
 	}

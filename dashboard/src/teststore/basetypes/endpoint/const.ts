@@ -1,6 +1,6 @@
 export enum EndpointState {
     EndpointDefault = 'EndpointDefault',
-    EndpointAvaliable = 'EndpointAvaliable',
+    EndpointAvailable = 'EndpointAvailable',
     EndpointUnstable = 'EndpointUnstable',
     EndpointError = 'EndpointError',
 }
