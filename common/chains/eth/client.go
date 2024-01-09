@@ -84,7 +84,7 @@ func checkEndpoint(ctx context.Context, endpoint string, err error) {
 
 	useTimes := uint16(1)
 	_, err = chains.LockEndpoint(ctx, []string{endpoint}, useTimes)
-	if err == nil {
+	if err != nil {
 		return
 	}
 
