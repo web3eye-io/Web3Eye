@@ -24,7 +24,7 @@ func (ethCli ethClients) FilterLogs(ctx context.Context, query ethereum.FilterQu
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		_logs, err = c.FilterLogs(ctx, query)
-		return false, err
+		return true, err
 	})
 	logs := make([]*types.Log, len(_logs))
 	for i := range _logs {
@@ -40,7 +40,7 @@ func (ethCli ethClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		num, err = c.BlockNumber(ctx)
-		return false, err
+		return true, err
 	})
 
 	return num, err
@@ -52,7 +52,7 @@ func (ethCli ethClients) TokenURI(ctx context.Context, tokenType basetype.TokenT
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		uri, err = tokenURI(c, tokenType, contractAddr, tokenID, blockNum)
-		return false, err
+		return true, err
 	})
 	uri = ethCli.ReplaceID(uri, tokenID)
 	return uri, err
@@ -99,7 +99,7 @@ func (ethCli ethClients) BlockByNumber(ctx context.Context, blockNum *big.Int) (
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		block, err = c.BlockByNumber(ctx, blockNum)
-		return false, err
+		return true, err
 	})
 	return block, err
 }
@@ -112,7 +112,7 @@ func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr st
 	var useTimes uint16 = 8
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		creator, err = ethCli.getContractCreator(ctx, c, contractAddr)
-		return false, err
+		return true, err
 	})
 	return creator, err
 }
@@ -191,7 +191,7 @@ func (ethCli ethClients) GetERC20Metadata(ctx context.Context, contractAddr stri
 	var useTimes uint16 = 3
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		info, err = ethCli.getERC20Metadata(ctx, c, contractAddr)
-		return false, err
+		return true, err
 	})
 	return info, err
 }
@@ -231,7 +231,7 @@ func (ethCli ethClients) GetERC721Metadata(ctx context.Context, contractAddr str
 	var useTimes uint16 = 2
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		info, err = ethCli.getERC721Metadata(ctx, c, contractAddr)
-		return false, err
+		return true, err
 	})
 	return info, err
 }
