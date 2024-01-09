@@ -49,7 +49,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				continue
 			}
 
-			if block.ParseState == basetype.BlockParseState_BlockTypeFinish {
+			if block.ParseState != basetype.BlockParseState_BlockTypeStart {
 				continue
 			}
 

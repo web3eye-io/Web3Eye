@@ -57,10 +57,18 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
-	number := block.Number().Uint64()
-	blockHash := block.Hash().String()
-	blockTime := block.Time()
+	number := inBlockNum
+	var blockHash string = ""
+	var blockTime uint64 = 0
+	var parseState = basetype.BlockParseState_BlockTypeFailed.Enum()
 	remark := ""
+	if block != nil {
+		blockHash = block.Hash().String()
+		blockTime = block.Time()
+		parseState = basetype.BlockParseState_BlockTypeStart.Enum()
+		remark = "cannot get the block"
+	}
+
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{
 			ChainType:   &e.ChainType,
@@ -68,7 +76,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 			BlockNumber: &number,
 			BlockHash:   &blockHash,
 			BlockTime:   &blockTime,
-			ParseState:  basetype.BlockParseState_BlockTypeStart.Enum(),
+			ParseState:  parseState,
 			Remark:      &remark,
 		},
 	})
