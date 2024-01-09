@@ -23,7 +23,7 @@ type solClients struct {
 
 func (solCli solClients) GetNode(ctx context.Context, useTimes uint16) (*rpc.Client, string, error) {
 	if len(solCli.endpoints) == 0 {
-		return nil, "", fmt.Errorf("have no avaliable endpoints")
+		return nil, "", fmt.Errorf("have no available endpoints")
 	}
 
 	endpoint, err := chains.LockEndpoint(ctx, solCli.endpoints, useTimes)
