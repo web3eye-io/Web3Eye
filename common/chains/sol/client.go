@@ -33,13 +33,9 @@ func (solCli solClients) GetNode(ctx context.Context, useTimes uint16) (*rpc.Cli
 
 func (solCli *solClients) WithClient(ctx context.Context, useTimes uint16, fn func(ctx context.Context, c *rpc.Client) (bool, error)) error {
 	var (
-		apiErr, err error
-		retry       bool
+		apiErr, nodeErr error
+		retry           bool
 	)
-
-	if err != nil {
-		return err
-	}
 
 	for i := 0; i < utils.MinInt(MaxRetries, len(solCli.endpoints)); i++ {
 		if i > 0 {
@@ -49,6 +45,7 @@ func (solCli *solClients) WithClient(ctx context.Context, useTimes uint16, fn fu
 		client, endpoint, err := solCli.GetNode(ctx, useTimes)
 
 		if err != nil {
+			nodeErr = err
 			continue
 		}
 
@@ -66,7 +63,7 @@ func (solCli *solClients) WithClient(ctx context.Context, useTimes uint16, fn fu
 	if apiErr != nil {
 		return apiErr
 	}
-	return err
+	return nodeErr
 }
 
 func checkEndpoint(ctx context.Context, endpoint string, err error) {
