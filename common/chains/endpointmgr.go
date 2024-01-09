@@ -44,8 +44,7 @@ func (eIMGR *endpointIntervalMGR) PutEndpoint(item *EndpointInterval, autoCalBac
 		item.MaxBackoffIndex = int(_maxBackoffIndex)
 	}
 
-	err := ctredis.Set(eIMGR.getKey(item.Address), item, eIMGR.RedisExpireTime)
-	return err
+	return ctredis.Set(eIMGR.getKey(item.Address), item, eIMGR.RedisExpireTime)
 }
 
 func (eIMGR *endpointIntervalMGR) BackoffEndpoint(address string) error {
