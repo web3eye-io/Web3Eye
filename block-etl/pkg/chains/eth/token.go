@@ -58,7 +58,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 	}
 
 	number := inBlockNum
-	var blockHash string = ""
+	var blockHash = ""
 	var blockTime uint64 = 0
 	var parseState = basetype.BlockParseState_BlockTypeFailed.Enum()
 	remark := ""
