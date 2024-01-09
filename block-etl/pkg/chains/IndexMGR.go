@@ -165,11 +165,11 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 			info.RPS = 1
 		}
 
-		err = chains.GetEndpintIntervalMGR().PutEndpoint(&chains.EndpointInterval{
+		err = chains.GetEndpintIntervalMGR().GoAheadEndpoint(&chains.EndpointInterval{
 			Address:     info.Address,
 			MinInterval: time.Second / time.Duration(info.RPS),
 			MaxInterval: time.Minute,
-		}, true)
+		})
 		if err != nil {
 			logger.Sugar().Warnw("checkAvaliableEndpoints", "Msg", "failed to put endpoints to redis", "Error", err)
 		}

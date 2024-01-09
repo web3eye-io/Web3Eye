@@ -3,12 +3,12 @@ package sol
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/web3eye-io/Web3Eye/common/chains"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
 const (
@@ -22,6 +22,10 @@ type solClients struct {
 }
 
 func (solCli solClients) GetNode(ctx context.Context, useTimes uint16) (*rpc.Client, string, error) {
+	if len(solCli.endpoints) == 0 {
+		return nil, "", fmt.Errorf("have no avaliable endpoints")
+	}
+
 	endpoint, err := chains.LockEndpoint(ctx, solCli.endpoints, useTimes)
 	if err != nil {
 		return nil, "", err
@@ -37,7 +41,7 @@ func (solCli *solClients) WithClient(ctx context.Context, useTimes uint16, fn fu
 		retry           bool
 	)
 
-	for i := 0; i < utils.MinInt(MaxRetries, len(solCli.endpoints)); i++ {
+	for i := 0; i < MaxRetries; i++ {
 		if i > 0 {
 			time.Sleep(retriesSleepTime)
 		}

@@ -26,9 +26,12 @@ type EndpointInterval struct {
 
 var _eIMGR *endpointIntervalMGR
 
-const keyExpireTime = time.Minute * 5
-const lockEndpointWaitTime = time.Millisecond * 100
-const eIMGRPrefix = "eIMGR"
+const (
+	keyExpireTime        = time.Minute * 5
+	lockEndpointWaitTime = time.Millisecond * 100
+	eIMGRPrefix          = "eIMGR"
+	goaheadLockTime      = time.Minute
+)
 
 func GetEndpintIntervalMGR() *endpointIntervalMGR {
 	if _eIMGR == nil {
@@ -37,14 +40,33 @@ func GetEndpintIntervalMGR() *endpointIntervalMGR {
 	return _eIMGR
 }
 
-func (eIMGR *endpointIntervalMGR) PutEndpoint(item *EndpointInterval, autoCalBackoff bool) error {
-	if autoCalBackoff {
+func (eIMGR *endpointIntervalMGR) putEndpoint(item *EndpointInterval, autoResetBackoffIndex bool) error {
+	if autoResetBackoffIndex {
 		item.BackoffIndex = 0
 		_maxBackoffIndex := math.Log2(float64(item.MaxInterval) / float64(item.MinInterval))
 		item.MaxBackoffIndex = int(_maxBackoffIndex)
 	}
 
 	return ctredis.Set(eIMGR.getKey(item.Address), item, eIMGR.RedisExpireTime)
+}
+
+func (eIMGR *endpointIntervalMGR) GoAheadEndpoint(item *EndpointInterval) error {
+	locked, err := ctredis.TryPubLock(eIMGR.getLockKey(item.Address), goaheadLockTime)
+	if !locked || err != nil {
+		return nil
+	}
+
+	_item := &EndpointInterval{}
+	err = ctredis.Get(eIMGR.getKey(item.Address), _item)
+	if err != nil {
+		return eIMGR.putEndpoint(item, true)
+	}
+
+	if _item.BackoffIndex > 0 {
+		_item.BackoffIndex--
+	}
+
+	return eIMGR.putEndpoint(_item, false)
 }
 
 func (eIMGR *endpointIntervalMGR) BackoffEndpoint(address string) error {
@@ -58,7 +80,7 @@ func (eIMGR *endpointIntervalMGR) BackoffEndpoint(address string) error {
 		item.BackoffIndex++
 	}
 
-	return eIMGR.PutEndpoint(item, false)
+	return eIMGR.putEndpoint(item, false)
 }
 
 func (eIMGR *endpointIntervalMGR) GetEndpointInterval(address string) (time.Duration, error) {
@@ -76,6 +98,10 @@ func (eIMGR *endpointIntervalMGR) GetEndpointInterval(address string) (time.Dura
 
 func (eIMGR *endpointIntervalMGR) getKey(address string) string {
 	return fmt.Sprintf("%v-%v", eIMGRPrefix, address)
+}
+
+func (eIMGR *endpointIntervalMGR) getLockKey(address string) string {
+	return fmt.Sprintf("%v-lock-%v", eIMGRPrefix, address)
 }
 
 func (e *EndpointInterval) MarshalBinary() (data []byte, err error) {

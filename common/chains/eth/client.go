@@ -3,12 +3,12 @@ package eth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/web3eye-io/Web3Eye/common/chains"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
 const (
@@ -23,7 +23,12 @@ type ethClients struct {
 }
 
 func (ethCli *ethClients) GetNode(ctx context.Context, useTimes uint16) (*ethclient.Client, string, error) {
-	endpoint, err := chains.LockEndpoint(ctx, ethCli.endpoints, useTimes)
+	endpoints := ethCli.endpoints
+	if len(endpoints) == 0 {
+		return nil, "", fmt.Errorf("have no avaliable endpoints")
+	}
+
+	endpoint, err := chains.LockEndpoint(ctx, endpoints, useTimes)
 	if err != nil {
 		return nil, "", err
 	}
@@ -32,6 +37,7 @@ func (ethCli *ethClients) GetNode(ctx context.Context, useTimes uint16) (*ethcli
 	defer cancel()
 
 	cli, err := ethclient.DialContext(ctx, endpoint)
+
 	if err != nil {
 		go checkEndpoint(context.Background(), endpoint, err)
 		return nil, "", err
@@ -46,7 +52,7 @@ func (ethCli *ethClients) WithClient(ctx context.Context, useTimes uint16, fn fu
 		retry           bool
 	)
 
-	for i := 0; i < utils.MinInt(MaxRetries, len(ethCli.endpoints)); i++ {
+	for i := 0; i < MaxRetries; i++ {
 		if i > 0 {
 			time.Sleep(retriesSleepTime)
 		}

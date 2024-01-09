@@ -24,10 +24,7 @@ func (ethCli ethClients) FilterLogs(ctx context.Context, query ethereum.FilterQu
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		_logs, err = c.FilterLogs(ctx, query)
-		if err != nil {
-			return false, err
-		}
-		return false, nil
+		return false, err
 	})
 	logs := make([]*types.Log, len(_logs))
 	for i := range _logs {
@@ -43,10 +40,7 @@ func (ethCli ethClients) CurrentBlockNum(ctx context.Context) (uint64, error) {
 	var useTimes uint16 = 1
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		num, err = c.BlockNumber(ctx)
-		if err != nil {
-			return false, err
-		}
-		return false, nil
+		return false, err
 	})
 
 	return num, err
