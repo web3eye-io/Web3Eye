@@ -10,6 +10,7 @@ export interface Endpoint {
     Address: string;
     State: EndpointState;
     Remark: string;
+    RPS: number
 }
 
 export interface CreateEndpointRequest extends BaseRequest{
@@ -18,6 +19,7 @@ export interface CreateEndpointRequest extends BaseRequest{
     Address: string;
     State: EndpointState;
     Remark: string;
+    RPS: number
 }
   
 export interface CreateEndpointResponse {
@@ -51,6 +53,7 @@ export interface UpdateEndpointRequest extends BaseRequest{
     Address: string;
     State: EndpointState;
     Remark: string;
+    RPS?: number
 }
   
 export interface UpdateEndpointResponse {
