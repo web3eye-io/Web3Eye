@@ -14,7 +14,7 @@ import (
 const (
 	MinNodeNum       = 1
 	MaxRetries       = 3
-	retriesSleepTime = 200 * time.Millisecond
+	retriesSleepTime = 500 * time.Millisecond
 	dialTimeout      = 3 * time.Second
 )
 
@@ -25,7 +25,7 @@ type ethClients struct {
 func (ethCli *ethClients) GetNode(ctx context.Context, useTimes uint16) (*ethclient.Client, string, error) {
 	endpoints := ethCli.endpoints
 	if len(endpoints) == 0 {
-		return nil, "", fmt.Errorf("have no avaliable endpoints")
+		return nil, "", fmt.Errorf("have no available endpoints")
 	}
 
 	endpoint, err := chains.LockEndpoint(ctx, endpoints, useTimes)

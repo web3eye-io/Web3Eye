@@ -14,7 +14,7 @@ import (
 const (
 	MinNodeNum       = 1
 	MaxRetries       = 3
-	retriesSleepTime = 200 * time.Millisecond
+	retriesSleepTime = 500 * time.Millisecond
 )
 
 type solClients struct {
