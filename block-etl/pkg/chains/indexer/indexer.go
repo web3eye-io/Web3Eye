@@ -171,6 +171,9 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				retries++
 				continue
 			}
+			if resp == nil || resp.Info == nil {
+				return
+			}
 			if resp.Info.SyncState != basetype.SyncState_Start {
 				return
 			}
