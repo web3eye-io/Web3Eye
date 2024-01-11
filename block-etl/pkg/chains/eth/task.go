@@ -41,6 +41,7 @@ func NewEthIndexer(chainID string) *indexer.Indexer {
 func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	ctx.Done()
 	for {
+		e.checkOkEndpoints()
 		select {
 		case num := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, num)
@@ -117,11 +118,17 @@ func (e *EthIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
-	e.OkEndpoints = endpoints
+func (e *EthIndexer) checkOkEndpoints() bool {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
+		return false
 	}
+	return true
+}
+
+func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
+	e.OkEndpoints = endpoints
+	_ = e.checkOkEndpoints()
 }
