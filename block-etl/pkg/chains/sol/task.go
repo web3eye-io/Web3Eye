@@ -127,5 +127,5 @@ func (e *SolIndexer) checkOkEndpoints() error {
 
 func (e *SolIndexer) UpdateEndpoints(endpoints []string) {
 	e.OkEndpoints = endpoints
-	e.checkOkEndpoints()
+	_ = e.checkOkEndpoints()
 }
