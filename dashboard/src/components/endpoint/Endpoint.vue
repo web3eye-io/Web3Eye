@@ -210,6 +210,12 @@ const columns = computed(() => [
         sortable: true,
         field: (row: Endpoint) => row.State
     },
+    {
+        name: 'RPS',
+        label: t('MSG_RPS'),
+        sortable: true,
+        field: (row: Endpoint) => row.RPS
+    },
 ])
 </script>
   
