@@ -156,18 +156,22 @@ const getImageUrl = computed(() => (url: string) => {
   return url
 })
 
-const getContract = () => {
+const getContract = (offset: number, limit: number) => {
   contract.getContractAndTokens({
     Contract: _contract.value,
-    Offset: 0,
-    Limit: 100,
+    Offset: offset,
+    Limit: limit,
     Message: {}
-  }, (error: boolean, row: Contract) => {
+  }, (error: boolean, row: Contract, rows: ShotToken[]) => {
     if (!error) {
       if (!_chainID.value || !_chainType.value) {
         getTransfers(0, 100, row.ChainID, row.ChainType)
       }
     }
+    if(error || rows?.length === 0) {
+        return
+    }
+    getContract(offset + limit, limit)
   })
 }
 
@@ -252,7 +256,7 @@ const onTokenClick = (token: ShotToken) => {
 
 onMounted(() => {
   if (_contract?.value?.length > 0) {
-    getContract()
+    getContract(0, 100)
   }
   if (transfers.value?.length === 0) {
     if (!_chainID.value || !_chainType.value) return
