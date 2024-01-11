@@ -118,17 +118,15 @@ func (e *EthIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *EthIndexer) checkOkEndpoints() bool {
+func (e *EthIndexer) checkOkEndpoints() {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
-		return false
 	}
-	return true
 }
 
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
 	e.OkEndpoints = endpoints
-	_ = e.checkOkEndpoints()
+	e.checkOkEndpoints()
 }

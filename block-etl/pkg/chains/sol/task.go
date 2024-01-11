@@ -43,6 +43,7 @@ func NewSolIndexer(chainID string) *indexer.Indexer {
 func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	ctx.Done()
 	for {
+		e.checkOkEndpoints()
 		select {
 		case slotNum := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, slotNum)
@@ -109,11 +110,15 @@ func (e *SolIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *SolIndexer) UpdateEndpoints(endpoints []string) {
-	e.OkEndpoints = endpoints
+func (e *SolIndexer) checkOkEndpoints() {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
 	}
+}
+
+func (e *SolIndexer) UpdateEndpoints(endpoints []string) {
+	e.OkEndpoints = endpoints
+	e.checkOkEndpoints()
 }
