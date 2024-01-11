@@ -79,7 +79,7 @@ module.exports = configure(function (ctx) {
     devServer: {
       proxy: {
         '/api': {
-          target: 'https://api.npool.top:20402',
+          target: 'https://api.testnet.web3eye.io',
           pathRewrite: {
             '^/api': '/api'
           },
@@ -107,7 +107,8 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'LocalStorage'
       ],
     },
 
