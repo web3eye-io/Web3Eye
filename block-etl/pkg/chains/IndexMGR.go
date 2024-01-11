@@ -100,7 +100,7 @@ func (pmgr *indexMGR) checkEndpoints(ctx context.Context, state basetype.Endpoin
 
 			chainID, err := handler(ctx, info.Address)
 			if err != nil {
-				logger.Sugar().Errorf("endpoint not available, err: %v", err)
+				logger.Sugar().Errorf("endpoint %v not available, err: %v", info.ID, err)
 				info.State = basetype.EndpointState_EndpointError
 				return
 			}
