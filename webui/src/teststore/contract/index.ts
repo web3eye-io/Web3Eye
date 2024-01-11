@@ -27,7 +27,8 @@ export const useContractStore = defineStore('contract', {
     },
     shotTokens(): (contract: string) => Array<ShotToken> {
       return (contract:string) => {
-        return this.ShotTokens.ShotTokens.get(contract) as Array<ShotToken>
+        const tokens = this.ShotTokens.ShotTokens.get(contract) as Array<ShotToken>
+        return tokens?.sort((a, b) => b.TokenID.localeCompare(a.TokenID, 'zh-CN'))
       }
     }
   },
