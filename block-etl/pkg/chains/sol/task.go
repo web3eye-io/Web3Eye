@@ -84,13 +84,10 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				err = nil
 			}
 
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-
 			remark := ""
 			parseState := basetype.BlockParseState_BlockTypeFinish
 			if err != nil {
+				logger.Sugar().Error(err)
 				remark = err.Error()
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}

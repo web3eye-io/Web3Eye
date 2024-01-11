@@ -92,13 +92,10 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				return nil
 			}()
 
-			if err != nil {
-				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
-			}
-
 			remark := ""
 			parseState := basetype.BlockParseState_BlockTypeFinish
 			if err != nil {
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 				remark = err.Error()
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
