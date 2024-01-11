@@ -208,9 +208,10 @@ const loadMore = () => {
   if (localkey.getStorageKey() == null) {
     haveMore.value = false
     isLoading.value = false
+    currentPage.value = 1
     return
   }
-  if (currentPage.value >= token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
+  if (currentPage.value > token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
     haveMore.value = true
     return
   }
