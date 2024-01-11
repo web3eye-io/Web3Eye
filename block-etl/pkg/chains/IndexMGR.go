@@ -49,8 +49,8 @@ func init() {
 	}
 
 	// TODO:should be registered
-	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
-	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.GetEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.CheckEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.CheckEndpointChainID
 }
 
 func GetIndexMGR() *indexMGR {
@@ -59,17 +59,17 @@ func GetIndexMGR() *indexMGR {
 
 func (pmgr *indexMGR) Run(ctx context.Context) {
 	for {
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointDefault)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointAvailable)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointError)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointDefault)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointAvailable)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointError)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
 		pmgr.checkAvailableEndpoints(ctx)
 		<-time.NewTicker(UpdateInterval).C
 	}
 }
 
 // check for the newly created endpoints
-func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.EndpointState) {
+func (pmgr *indexMGR) checkEndpoints(ctx context.Context, state basetype.EndpointState) {
 	conds := &endpoint.Conds{
 		State: &web3eye.Uint32Val{
 			Op:    "eq",
