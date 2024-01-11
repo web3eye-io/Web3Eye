@@ -2,6 +2,7 @@ package sol
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -43,7 +44,6 @@ func NewSolIndexer(chainID string) *indexer.Indexer {
 func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	ctx.Done()
 	for {
-		e.checkOkEndpoints()
 		select {
 		case slotNum := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, slotNum)
@@ -57,6 +57,11 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
+				err := e.checkOkEndpoints()
+				if err != nil {
+					return err
+				}
+
 				outTransfers1, err := e.IndexTransfer(ctx, slotNum)
 				if err != nil {
 					return err
@@ -110,12 +115,14 @@ func (e *SolIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *SolIndexer) checkOkEndpoints() {
+func (e *SolIndexer) checkOkEndpoints() error {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
+		return fmt.Errorf("have no available endpoints")
 	}
+	return nil
 }
 
 func (e *SolIndexer) UpdateEndpoints(endpoints []string) {

@@ -2,6 +2,7 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -41,7 +42,6 @@ func NewEthIndexer(chainID string) *indexer.Indexer {
 func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	ctx.Done()
 	for {
-		e.checkOkEndpoints()
 		select {
 		case num := <-taskBlockNum:
 			block, err := e.CheckBlock(ctx, num)
@@ -55,6 +55,11 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
+				err := e.checkOkEndpoints()
+				if err != nil {
+					return err
+				}
+
 				blockLogs, err := e.IndexBlockLogs(ctx, block.BlockNumber)
 				if err != nil {
 					return err
@@ -118,15 +123,17 @@ func (e *EthIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *EthIndexer) checkOkEndpoints() {
+func (e *EthIndexer) checkOkEndpoints() error {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
+		return fmt.Errorf("have no available endpoints")
 	}
+	return nil
 }
 
 func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
 	e.OkEndpoints = endpoints
-	e.checkOkEndpoints()
+	_ = e.checkOkEndpoints()
 }
