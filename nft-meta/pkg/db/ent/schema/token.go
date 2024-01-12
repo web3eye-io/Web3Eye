@@ -61,5 +61,6 @@ func (Token) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("contract", "token_id").
 			Unique(),
+		index.Fields("vector_id"),
 	}
 }

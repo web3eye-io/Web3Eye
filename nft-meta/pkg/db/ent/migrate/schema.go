@@ -284,6 +284,11 @@ var (
 				Unique:  true,
 				Columns: []*schema.Column{TokensColumns[7], TokensColumns[9]},
 			},
+			{
+				Name:    "token_vector_id",
+				Unique:  false,
+				Columns: []*schema.Column{TokensColumns[18]},
+			},
 		},
 	}
 	// TransfersColumns holds the columns for the "transfers" table.

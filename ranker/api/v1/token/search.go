@@ -30,7 +30,7 @@ const (
 )
 
 type SearchTokenBone struct {
-	EntID         string
+	ID            uint32
 	SiblingIDs    []uint32
 	SiblingsNum   uint32
 	Distance      float32
@@ -372,7 +372,7 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 	bones := make([]*SearchTokenBone, len(infos))
 	for i, v := range infos {
 		bones[i] = &SearchTokenBone{
-			EntID:         v.EntID,
+			ID:            v.ID,
 			SiblingsNum:   v.SiblingsNum,
 			Distance:      v.Distance,
 			TranserferNum: v.TransfersNum,
@@ -389,7 +389,7 @@ func ToTokenBones(infos []*rankernpool.SearchToken) []*SearchTokenBone {
 func ToSearchTokens(ctx context.Context, bones []*SearchTokenBone) ([]*rankernpool.SearchToken, error) {
 	tokens := make([]*rankernpool.SearchToken, len(bones))
 	for i, v := range bones {
-		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithEntID(&v.EntID, true))
+		h, err := tokenhandler.NewHandler(ctx, tokenhandler.WithID(&v.ID, true))
 		if err != nil {
 			return nil, err
 		}
