@@ -119,13 +119,15 @@ func (s *Server) RankerTokens(ctx context.Context, vector []float32, storageKey 
 		logger.Sugar().Errorf("search from milvus failed, %v", err)
 		return 0, 0, err
 	}
-	logger.Sugar().Infof("scores: %v", len(scores))
+	logger.Sugar().Infof("get top scores: %v", len(scores))
 
 	infos, err := QueryAndCollectTokens(ctx, scores, TopN)
 	if err != nil {
 		logger.Sugar().Errorf("query and collect tokens failed, %v", err)
 		return 0, 0, err
 	}
+
+	logger.Sugar().Infof("collection infos: %v", len(infos))
 
 	totalPages = uint32(len(infos) / int(limit))
 	if len(infos)%int(limit) > 0 {
