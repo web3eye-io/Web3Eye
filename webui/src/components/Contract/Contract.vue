@@ -1,7 +1,7 @@
 <template>
   <div class="outer-bg">
     <div class="outer-container">
-      <q-img :src="contractbg" :img-style='{borderRadius: "12px"}' />
+      <q-img :src="contractbg" :img-style='{ borderRadius: "12px" }' />
       <div class="row items-center justify-center">
         <q-avatar v-if='current.ProfileURL?.length > 0'>
           <img :src="current.ProfileURL">
@@ -37,85 +37,71 @@
           </template>
         </div>
         <div v-else>
-          <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name" :rows-per-page-options='[20]'>
+          <q-table flat bordered :rows="transfers" :columns="(columns as any)" row-key="name"
+            :rows-per-page-options='[20]'>
             <template v-slot:body="props">
               <q-tr :props="props">
-            <q-td key="OfferItems" :props="props">
-              <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-start">
-                <div class="left">
-                  <MyImage
-                    :url="(props.row.OfferItems?.[0].ImageURL as string)"
-                    :height="'40px'"
-                    :width="'40px'"
-                  />
-                </div>
-                <div class="column items-start right">
-                  <div class="token"># {{props.row.OfferItems?.[0]?.TokenID}}</div>
-                  <div class="show-more">
-                    Show More(Hover)
-                    <q-tooltip
-                      anchor="bottom right"
-                      style="width: 400px"
-                      self="center middle"
-                      class="bg-white text-black shadow-2"
-                      :offset="[60, 60]"
-                    >
-                      <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
-                    </q-tooltip>
+                <q-td key="TokenID" :props="props">
+                    #{{ props.row.TokenID }}
+                </q-td>
+                <q-td key="OfferItems" :props="props">
+                  <span v-if='props.row.OfferItems?.length === 0' />
+                  <div v-else class="row justify-start offer-item">
+                    <div class="left">
+                      <MyImage :url="(props.row.OfferItems?.[0].ImageURL as string)" :height="'40px'" :width="'40px'" />
+                    </div>
+                    <div class="column items-start right">
+                      <div class="token"># {{ props.row.OfferItems?.[0]?.TokenID }}</div>
+                      <div class="show-more">
+                        Show More(Hover)
+                        <q-tooltip anchor="bottom right" style="width: 400px" self="center middle"
+                          class="bg-white text-black shadow-2" :offset="[60, 60]">
+                          <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
+                        </q-tooltip>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </q-td>
-            <q-td key="Transfer" :props="props">
-              <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-start">
-                <div class="column items-start right">
-                  <div class="show-more">
-                    <q-icon name="img:icons/transfer.png" size="20px"/>
+                </q-td>
+                <q-td key="Transfer" :props="props">
+                  <span v-if='props.row.OfferItems?.length === 0' />
+                  <div v-else class="row justify-start">
+                    <div class="column items-start right">
+                      <div class="show-more">
+                        <q-icon name="img:icons/transfer.png" size="20px" />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </q-td>
-            <q-td key="Transfer1" :props="props">
-            </q-td>
-            <q-td key="TargetItems" :props="props">
-              <span v-if='props.row.TargetItems?.length === 0' />
-              <div v-else class="row justify-start">
-                <div class="left">
-                  <MyImage
-                    :url="(props.row.TargetItems?.[0]?.ImageURL as string)"
-                    :height="'40px'"
-                    :width="'40px'"
-                  />
-                </div>
-                <div class="column items-start right">
-                  <div class="token"># {{props.row.TargetItems?.[0]?.TokenID}}</div>
-                  <div class="show-more">
-                    Show More(Hover)
-                    <q-tooltip
-                      anchor="bottom right"
-                      style="width: 400px"
-                      self="center middle"
-                      class="bg-white text-black shadow-2"
-                      :offset="[60, 60]"
-                    >
-                      <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
-                    </q-tooltip>
+                </q-td>
+                <q-td key="Transfer1" :props="props">
+                </q-td>
+                <q-td key="TargetItems" :props="props">
+                  <span v-if='props.row.TargetItems?.length === 0' />
+                  <div v-else class="row justify-start">
+                    <div class="left">
+                      <MyImage :url="(props.row.TargetItems?.[0]?.ImageURL as string)" :height="'40px'" :width="'40px'" />
+                    </div>
+                    <div class="column items-start right">
+                      <div class="token"># {{ props.row.TargetItems?.[0]?.TokenID }}</div>
+                      <div class="show-more">
+                        Show More(Hover)
+                        <q-tooltip anchor="bottom right" style="width: 400px" self="center middle"
+                          class="bg-white text-black shadow-2" :offset="[60, 60]">
+                          <TransferFloatItem :offer-items="props.row.OfferItems" :target-items="props.row.TargetItems" />
+                        </q-tooltip>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </q-td>
-            <q-td key="From" :props="props">
-              <ToolTip :address="props.row.From" />
-            </q-td>
-            <q-td key="To" :props="props">
-              <ToolTip :address="props.row.To" />
-            </q-td>
-            <q-td key="TxTime" :props="props">
-              {{ formatTime(props.row.TxTime) }}
-            </q-td>
-          </q-tr>
+                </q-td>
+                <q-td key="From" :props="props">
+                  <ToolTip :address="props.row.From" />
+                </q-td>
+                <q-td key="To" :props="props">
+                  <ToolTip :address="props.row.To" />
+                </q-td>
+                <q-td key="TxTime" :props="props">
+                  {{ formatTime(props.row.TxTime) }}
+                </q-td>
+              </q-tr>
             </template>
           </q-table>
         </div>
@@ -170,18 +156,22 @@ const getImageUrl = computed(() => (url: string) => {
   return url
 })
 
-const getContract = () => {
+const getContract = (offset: number, limit: number) => {
   contract.getContractAndTokens({
     Contract: _contract.value,
-    Offset: 0,
-    Limit: 100,
+    Offset: offset,
+    Limit: limit,
     Message: {}
-  }, (error: boolean, row: Contract) => {
+  }, (error: boolean, row: Contract, rows: ShotToken[]) => {
     if (!error) {
-      if (!_chainID.value|| !_chainType.value) {
+      if (!_chainID.value || !_chainType.value) {
         getTransfers(0, 100, row.ChainID, row.ChainType)
       }
     }
+    if(error || rows?.length === 0) {
+        return
+    }
+    getContract(offset + limit, limit)
   })
 }
 
@@ -208,6 +198,11 @@ const getTransfers = (offset: number, limit: number, chainID: string, chainType:
 }
 
 const columns = computed(() => [
+  {
+    name: 'TokenID',
+    label: 'TokenID',
+    align: 'left',
+  },
   {
     name: 'OfferItems',
     label: 'Offer Items',
@@ -261,7 +256,7 @@ const onTokenClick = (token: ShotToken) => {
 
 onMounted(() => {
   if (_contract?.value?.length > 0) {
-    getContract()
+    getContract(0, 100)
   }
   if (transfers.value?.length === 0) {
     if (!_chainID.value || !_chainType.value) return
@@ -318,4 +313,6 @@ onMounted(() => {
   font-size: 12px
 .token,.show-more
   padding-left: 5px
+.offer-item
+  margin-left: -40px
 </style>

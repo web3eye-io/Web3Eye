@@ -84,7 +84,7 @@
             </q-td>
             <q-td key="OfferItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-start">
+              <div v-else class="row justify-start offer-item">
                 <div class="left">
                   <MyImage
                     :url="(props.row.OfferItems?.[0]?.ImageURL as string)"
@@ -430,4 +430,6 @@ onMounted(() => {
   padding-left: 5px
 .grid-container
   padding-bottom: 48px
+.offer-item
+  margin-left: -40px
 </style>

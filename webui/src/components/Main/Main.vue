@@ -32,6 +32,7 @@
       </div>
       <!-- drop zone start -->
       <div class="row big-box" id="drop-target" :class="[opening ? '' : 'hidden']">
+        <q-icon name="close" class="close" @click="onCloseClick" />
         <q-icon name="img:icons/picture.png" size="42px" />
         <div class="drag-image-here">Drag an image here</div>
       </div>
@@ -110,6 +111,10 @@ enum State {
 const state = ref(State.Normal)
 const contract = ref('')
 
+const onCloseClick = () => {
+  opening.value = false
+}
+
 onMounted(() => {
   const dropArea = document.getElementById('drop-target')
   dropArea?.addEventListener('drop', (e) => {
@@ -150,11 +155,18 @@ onMounted(() => {
   })
   dropZone?.addEventListener('dragleave', (e) => {
     e.stopPropagation()
-    // e.preventDefault()
+    e.preventDefault()
+    console.log('dragleave: ')
     let relatedTarget = e.relatedTarget
     if (!relatedTarget?.dispatchEvent) { // leave window
       opening.value = false
     }
+  })
+  dropZone?.addEventListener('dragend', function (e) {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('dragend: ')
+    opening.value = false
   })
   dropZone?.addEventListener('drop', (e) => {
     e.stopPropagation()
@@ -243,6 +255,12 @@ onMounted(() => {
     .drag-image-here
         padding-left: 8px
         color: rgb(95,99,104)
+    .close
+      position: absolute
+      right: 8px
+      top: 0
+      margin-top: 45px
+      cursor: pointer
 .hidden
     display: none
 #drop-target.highlight
