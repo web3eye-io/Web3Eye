@@ -136,7 +136,6 @@ func (ethCli ethClients) GetChainID(ctx context.Context) (string, error) {
 	}
 
 	return _chainID.String(), nil
-
 }
 
 func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*chains.ContractCreator, error) {
