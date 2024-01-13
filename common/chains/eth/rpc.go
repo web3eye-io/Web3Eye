@@ -108,13 +108,35 @@ func (ethCli ethClients) GetContractCreator(ctx context.Context, contractAddr st
 	var creator *chains.ContractCreator
 	var err error
 
-	// guess value
+	// estimate value
 	var useTimes uint16 = 8
 	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
 		creator, err = ethCli.getContractCreator(ctx, c, contractAddr)
 		return true, err
 	})
 	return creator, err
+}
+
+func (ethCli ethClients) GetChainID(ctx context.Context) (string, error) {
+	var _chainID *big.Int
+	var err error
+
+	// guess value
+	var useTimes uint16 = 1
+	err = ethCli.WithClient(ctx, useTimes, func(ctx context.Context, c *ethclient.Client) (bool, error) {
+		_chainID, err = c.ChainID(ctx)
+		return false, err
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if _chainID == nil {
+		return "", fmt.Errorf("failed get chainID")
+	}
+
+	return _chainID.String(), nil
+
 }
 
 func (ethCli ethClients) getContractCreator(ctx context.Context, ethClient *ethclient.Client, contractAddr string) (*chains.ContractCreator, error) {

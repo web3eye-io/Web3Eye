@@ -83,7 +83,7 @@ func (eIMGR *endpointIntervalMGR) BackoffEndpoint(address string) error {
 	return eIMGR.putEndpoint(item, false)
 }
 
-func (eIMGR *endpointIntervalMGR) GetEndpointInterval(address string) (time.Duration, error) {
+func (eIMGR *endpointIntervalMGR) getEndpointInterval(address string) (time.Duration, error) {
 	item := &EndpointInterval{}
 	err := ctredis.Get(eIMGR.getKey(address), item)
 	if err != nil {
@@ -113,29 +113,40 @@ func (e *EndpointInterval) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, e)
 }
 
-func LockEndpoint(ctx context.Context, keys []string, lockTimes uint16) (string, error) {
+func LockEndpoint(ctx context.Context, endpoints []string, lockTimes uint16) (endpoint string, err error) {
 	for {
 		select {
 		case <-time.NewTicker(lockEndpointWaitTime).C:
-			_randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(keys))))
+			if len(endpoints) == 0 {
+				return "", fmt.Errorf("have no available endpoints")
+			}
+
+			_randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(endpoints))))
 			if err != nil {
 				return "", err
 			}
+
 			randIndex := int(_randIndex.Int64())
-			for j := 0; j < len(keys); j++ {
-				lockKey := keys[(randIndex+j)%len(keys)]
-				interval, err := GetEndpintIntervalMGR().GetEndpointInterval(lockKey)
+			var interval time.Duration
+			okEndpoints := []string{}
+
+			for j := 0; j < len(endpoints); j++ {
+				endpoint := endpoints[(randIndex+j)%len(endpoints)]
+				interval, err = GetEndpintIntervalMGR().getEndpointInterval(endpoint)
 				if err != nil {
-					fmt.Println(err)
 					continue
 				}
-				locked, _ := ctredis.TryPubLock(lockKey, interval*time.Duration(lockTimes))
+
+				okEndpoints = append(okEndpoints, endpoint)
+
+				locked, _ := ctredis.TryPubLock(endpoint, interval*time.Duration(lockTimes))
 				if locked {
-					return lockKey, nil
+					return endpoint, err
 				}
 			}
+			endpoints = okEndpoints
 		case <-ctx.Done():
-			return "", nil
+			return endpoint, err
 		}
 	}
 }

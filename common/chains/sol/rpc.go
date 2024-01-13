@@ -54,6 +54,22 @@ func (solCli solClients) GetTX(ctx context.Context, txSig solana.Signature) (*rp
 	return tx, err
 }
 
+func (solCli solClients) GetChainID(ctx context.Context) (string, error) {
+	var gHash solana.Hash
+	var err error
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
+		gHash, err = c.GetGenesisHash(ctx)
+		return true, err
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return gHash.String(), err
+}
+
 func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*token_metadata.Metadata, error) {
 	mintAcc := common.PublicKeyFromString(mint)
 	metadataAccount, err := token_metadata.GetTokenMetaPubkey(mintAcc)

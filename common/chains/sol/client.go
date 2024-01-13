@@ -74,8 +74,12 @@ func checkEndpoint(ctx context.Context, endpoint string, err error) {
 	if err == nil {
 		return
 	}
+	cli, err := Client([]string{endpoint})
+	if err != nil {
+		return
+	}
 
-	_, err = CheckEndpointChainID(ctx, endpoint)
+	_, err = cli.GetChainID(ctx)
 	if err == nil {
 		return
 	}
