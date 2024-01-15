@@ -36,16 +36,22 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().Ranker.LogFile)
 	},
 	Action: func(c *cli.Context) error {
+		logger.Sugar().Info("start launch")
 		err := db.Init()
 		if err != nil {
 			panic(fmt.Errorf("mysql init err: %v", err))
 		}
+		logger.Sugar().Info("success to init db")
 
 		err = milvusdb.Init(c.Context)
 		if err != nil {
 			panic(fmt.Errorf("milvus init err: %v", err))
 		}
+		logger.Sugar().Info("success to init milvus")
+
 		go runGRPCServer(config.GetConfig().Ranker.GrpcPort)
+		logger.Sugar().Info("success to start server")
+
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
