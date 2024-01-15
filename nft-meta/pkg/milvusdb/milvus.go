@@ -10,7 +10,7 @@ import (
 
 const (
 	connectTimeout = time.Second * 5
-	contextCancel  = "context canceled"
+	// contextCancel  = "context canceled"
 )
 
 var cli client.Client
