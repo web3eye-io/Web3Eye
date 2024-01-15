@@ -28,17 +28,8 @@ func Client(ctx context.Context) (c client.Client, err error) {
 		return cli, nil
 	}
 	timeoutCtx, cancel := context.WithTimeout(ctx, connectTimeout)
-	go func() {
-		defer cancel()
-		cli, err = client.NewGrpcClient(ctx, config.GetConfig().Milvus.Address)
-	}()
-
-	<-timeoutCtx.Done()
-	ctxErr := timeoutCtx.Err()
-
-	if ctxErr.Error() != contextCancel {
-		return nil, ctxErr
-	}
+	defer cancel()
+	cli, err = client.NewGrpcClient(timeoutCtx, config.GetConfig().Milvus.Address)
 
 	if err != nil {
 		return nil, err
