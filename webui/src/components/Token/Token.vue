@@ -78,7 +78,7 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken, SiblingToken } from 'src/teststore/token/types'
 import { Transfer } from 'src/teststore/transfer/types'
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
@@ -204,10 +204,20 @@ const loading = ref(false)
 
 const localkey = useStorageKeyStore()
 
-const loadMore = () => {
-  if (localkey.getStorageKey() == null) {
+watch(() => [tokens.value], () => {
+  if (tokens.value?.length === 0) {
     haveMore.value = false
     isLoading.value = false
+    loading.value = false
+    currentPage.value = 1
+  }
+})
+
+const loadMore = () => {
+  if (localkey.getStorageKey() === null || localkey.getStorageKey() === '') {
+    haveMore.value = false
+    isLoading.value = false
+    loading.value = true
     currentPage.value = 1
     return
   }
