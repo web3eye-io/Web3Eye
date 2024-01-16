@@ -120,7 +120,7 @@ func (h *Handler) GetSyncTasks(ctx context.Context) ([]*synctaskproto.SyncTask, 
 		handler.stm.
 			Offset(int(h.Offset)).
 			Limit(int(h.Limit)).
-			Order(ent.Desc(synctaskent.FieldUpdatedAt))
+			Order(ent.Desc(synctaskent.FieldID))
 		return handler.scan(_ctx)
 	})
 	if err != nil {

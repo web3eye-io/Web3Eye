@@ -118,9 +118,11 @@ func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 					logger.Sugar().Error(err)
 				}
 
-				for _, info := range resp.GetInfos() {
-					e.indexTopicTasks(ctx, pulsarCli, info, outBlockNum)
+				for len(resp.GetInfos()) == 0 {
+					continue
 				}
+				e.indexTopicTasks(ctx, pulsarCli, resp.GetInfos()[0], outBlockNum)
+
 			case <-ctx.Done():
 				return
 			}
