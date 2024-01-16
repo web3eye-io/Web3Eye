@@ -66,7 +66,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 		blockHash = block.Hash().String()
 		blockTime = block.Time()
 		parseState = basetype.BlockParseState_BlockTypeStart.Enum()
-		remark = "cannot get the block"
+		remark = "start to parse the block"
 	}
 
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
