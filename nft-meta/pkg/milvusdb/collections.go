@@ -47,7 +47,7 @@ func initCollections(ctx context.Context, c client.Client) error {
 			return err
 		}
 		if !has {
-			err = c.CreateCollection(ctx, collection, 2)
+			err = c.CreateCollection(ctx, collection, 8)
 			if err != nil {
 				return err
 			}
@@ -57,7 +57,7 @@ func initCollections(ctx context.Context, c client.Client) error {
 				return err
 			}
 
-			idx, err := entity.NewIndexFlat(entity.L2)
+			idx, err := entity.NewIndexDISKANN(entity.L2)
 			if err != nil {
 				return err
 			}

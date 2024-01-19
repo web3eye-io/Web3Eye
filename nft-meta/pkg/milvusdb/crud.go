@@ -108,7 +108,8 @@ func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]
 		return ret, err
 	}
 
-	sParam, err := entity.NewIndexFlatSearchParam()
+	DISKANN_list := 100
+	sParam, err := entity.NewIndexDISKANNSearchParam(DISKANN_list)
 	if err != nil {
 		return ret, err
 	}
