@@ -47,7 +47,8 @@ func initCollections(ctx context.Context, c client.Client) error {
 			return err
 		}
 		if !has {
-			err = c.CreateCollection(ctx, collection, 8)
+			shardsNum := int32(8)
+			err = c.CreateCollection(ctx, collection, shardsNum)
 			if err != nil {
 				return err
 			}
