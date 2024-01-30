@@ -41,10 +41,6 @@ func (c *nftConllectionMGR) Create(ctx context.Context, nftVectors [][VectorDim]
 		return emptyRet, err
 	}
 
-	if err := cli.Flush(ctx, c.CollectionName, false); err != nil {
-		return emptyRet, err
-	}
-
 	idRows := iDs.(*entity.ColumnInt64)
 	ret := idRows.Data()
 
