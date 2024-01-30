@@ -103,7 +103,7 @@ func initCollections(ctx context.Context, c client.Client) error {
 
 func autoFlush() {
 	lockKey := "milvus_flush_lock"
-	refreshTimeout := time.Minute * 10
+	refreshTimeout := time.Hour
 	for {
 		<-time.NewTicker(refreshTimeout).C
 		locked, err := ctredis.TryPubLock(lockKey, refreshTimeout)
