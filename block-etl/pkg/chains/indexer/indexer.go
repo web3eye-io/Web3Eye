@@ -116,6 +116,7 @@ func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 				resp, err := synctaskNMCli.GetSyncTasks(ctx, &synctask.GetSyncTasksRequest{Conds: conds, Offset: 0, Limit: maxTopicNum})
 				if err != nil {
 					logger.Sugar().Error(err)
+					continue
 				}
 
 				for len(resp.GetInfos()) == 0 {
