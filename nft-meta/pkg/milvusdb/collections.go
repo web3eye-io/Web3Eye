@@ -67,6 +67,7 @@ func initCollections(ctx context.Context, c client.Client) error {
 			_ = c.ReleaseCollection(ctx, collection.CollectionName)
 			if index.IndexType() == entity.DISKANN {
 				haveIndex = true
+				continue
 			}
 			err := c.DropIndex(ctx, collection.CollectionName, FieldsVector)
 			if err != nil {
@@ -74,14 +75,6 @@ func initCollections(ctx context.Context, c client.Client) error {
 			}
 		}
 
-		idx, err := entity.NewIndexFlat(entity.L2)
-		if err != nil {
-			return err
-		}
-		err = c.CreateIndex(ctx, collection.CollectionName, FieldsVector, idx, false)
-		if err != nil {
-			return err
-		}
 		if !haveIndex {
 			idx, err := entity.NewIndexDISKANN(entity.L2)
 			if err != nil {
