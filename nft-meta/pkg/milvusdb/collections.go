@@ -64,11 +64,11 @@ func initCollections(ctx context.Context, c client.Client) error {
 		indexes, _ := c.DescribeIndex(ctx, collection.CollectionName, FieldsVector)
 		haveIndex := false
 		for _, index := range indexes {
-			_ = c.ReleaseCollection(ctx, collection.CollectionName)
 			if index.IndexType() == entity.DISKANN {
 				haveIndex = true
 				continue
 			}
+			_ = c.ReleaseCollection(ctx, collection.CollectionName)
 			err := c.DropIndex(ctx, collection.CollectionName, FieldsVector)
 			if err != nil {
 				return err
@@ -85,11 +85,12 @@ func initCollections(ctx context.Context, c client.Client) error {
 				return err
 			}
 		}
-		go autoFlush()
+
 		err = c.LoadCollection(ctx, collection.CollectionName, false)
 		if err != nil {
 			return err
 		}
+		go autoFlush()
 	}
 	return nil
 }
