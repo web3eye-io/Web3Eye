@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	CheckTopicInterval     = time.Second * 10
+	CheckTopicInterval     = time.Second * 5
+	TriggerTaskInterval    = time.Second * 2
 	FindContractCreator    = false
 	maxTopicNum            = 5
 	maxParseGoroutineNum   = 10
@@ -164,7 +165,7 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				continue
 			}
 			retries = 0
-		case <-time.NewTicker(CheckTopicInterval).C:
+		case <-time.NewTicker(TriggerTaskInterval).C:
 			if retries > maxRetries {
 				return
 			}

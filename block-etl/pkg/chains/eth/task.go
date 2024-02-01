@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	CheckTopicInterval     = time.Second * 10
+	CheckTopicInterval     = time.Second * 5
 	FindContractCreator    = false
-	redisExpireDefaultTime = time.Second * 10
+	redisExpireDefaultTime = time.Second * 5
 )
 
 type EthIndexer struct {
