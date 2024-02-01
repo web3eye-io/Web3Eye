@@ -342,7 +342,7 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	if err != nil {
 		return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-	contractMeta := &eth.EthCurrencyMetadata{}
+	var contractMeta *eth.EthCurrencyMetadata
 	switch contract.TokenType {
 	case basetype.TokenType_Native:
 		contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
