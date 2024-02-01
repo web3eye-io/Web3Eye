@@ -268,8 +268,13 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		if exist {
 			continue
 		}
-		contractMeta, creator, remark := e.getContractInfo(ctx, contract, findContractCreator)
-
+		remark := ""
+		contractMeta, creator, err := e.getContractInfo(ctx, contract, findContractCreator)
+		if err != nil {
+			contractMeta = &eth.EthCurrencyMetadata{}
+			creator = &chains.ContractCreator{}
+			remark = err.Error()
+		}
 		// store the result
 		from := creator.From
 		txHash := creator.TxHash
@@ -332,15 +337,12 @@ func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist 
 	return false, nil
 }
 
-func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *chains.ContractCreator, string) {
-	contractMeta := &eth.EthCurrencyMetadata{}
-	creator := &chains.ContractCreator{}
+func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *chains.ContractCreator, error) {
 	cli, err := eth.Client(e.OkEndpoints)
-	remark := ""
 	if err != nil {
-		return contractMeta, creator, fmt.Sprintf("cannot get eth client,err: %v", err)
+		return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-
+	contractMeta := &eth.EthCurrencyMetadata{}
 	switch contract.TokenType {
 	case basetype.TokenType_Native:
 		contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
@@ -351,17 +353,17 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	}
 
 	if err != nil {
-		remark = err.Error()
+		return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-
+	creator := &chains.ContractCreator{}
 	// stop get info for creator
 	if findContractCreator && contract.TokenType != basetype.TokenType_Native {
 		creator, err = cli.GetContractCreator(ctx, contract.Contract)
 		if err != nil {
-			remark = fmt.Sprintf("%v,%v", remark, err.Error())
+			return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 		}
 	}
-	return contractMeta, creator, remark
+	return contractMeta, creator, nil
 }
 
 func (e *EthIndexer) GetCurrentBlockNum() uint64 {
