@@ -26,9 +26,8 @@ import (
 )
 
 const (
-	MaxPutTaskNumOnce         = 100
+	MaxPutTaskNumOnce         = 200
 	MaxPutBadBlockTaskNumOnce = 50
-	ReportInterval            = 100
 	RedisLockTimeout          = time.Second * 10
 )
 
