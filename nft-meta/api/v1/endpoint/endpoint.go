@@ -219,7 +219,7 @@ func (s *Server) GetEndpoints(ctx context.Context, in *endpointproto.GetEndpoint
 		return &endpointproto.GetEndpointsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	logger.Sugar().Infof("success to GetEndpoints ,all have %v infos", infos)
+	logger.Sugar().Infof("success to GetEndpoints ,all have %v infos", len(infos))
 	return &endpointproto.GetEndpointsResponse{
 		Infos: infos,
 		Total: total,
