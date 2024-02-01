@@ -19,7 +19,7 @@ const (
 	CheckTopicInterval     = time.Second * 10
 	FindContractCreator    = false
 	maxTopicNum            = 5
-	maxParseGoroutineNum   = 5
+	maxParseGoroutineNum   = 10
 	updateBlockNumInterval = time.Minute
 	MaxContentLength       = 1098304
 	OverLimitStoreLength   = 100
