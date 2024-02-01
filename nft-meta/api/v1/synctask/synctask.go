@@ -28,7 +28,7 @@ import (
 const (
 	MaxPutTaskNumOnce         = 1000
 	MaxPutBadBlockTaskNumOnce = 50
-	RedisLockTimeout          = time.Second * 5
+	RedisLockTimeout          = time.Second * 3
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
