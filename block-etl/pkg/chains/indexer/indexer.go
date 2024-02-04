@@ -120,7 +120,7 @@ func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 					continue
 				}
 
-				for len(resp.GetInfos()) == 0 {
+				if len(resp.GetInfos()) == 0 {
 					continue
 				}
 				e.indexTopicTasks(ctx, pulsarCli, resp.GetInfos()[0], outBlockNum)
