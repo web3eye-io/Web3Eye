@@ -32,6 +32,8 @@ func (Token) Fields() []ent.Field {
 			Optional(),
 		field.Text("uri").
 			Optional(),
+		field.Text("uri_state").
+			Optional(),
 		field.String("uri_type").
 			Optional(),
 		field.Text("image_url").
@@ -59,5 +61,6 @@ func (Token) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("contract", "token_id").
 			Unique(),
+		index.Fields("vector_id"),
 	}
 }

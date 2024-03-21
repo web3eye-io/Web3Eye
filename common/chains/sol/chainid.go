@@ -6,8 +6,13 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 )
 
-func GetEndpointChainID(ctx context.Context, endpoint string) (string, error) {
+func CheckEndpointChainID(ctx context.Context, endpoint string) (string, error) {
 	cli := rpc.New(endpoint)
+
+	_, err := cli.GetHealth(ctx)
+	if err != nil {
+		return "", err
+	}
 
 	out, err := cli.GetGenesisHash(ctx)
 	if err != nil {

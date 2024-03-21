@@ -118,6 +118,20 @@ func (ec *EndpointCreate) SetNillableState(s *string) *EndpointCreate {
 	return ec
 }
 
+// SetRps sets the "rps" field.
+func (ec *EndpointCreate) SetRps(u uint32) *EndpointCreate {
+	ec.mutation.SetRps(u)
+	return ec
+}
+
+// SetNillableRps sets the "rps" field if the given value is not nil.
+func (ec *EndpointCreate) SetNillableRps(u *uint32) *EndpointCreate {
+	if u != nil {
+		ec.SetRps(*u)
+	}
+	return ec
+}
+
 // SetRemark sets the "remark" field.
 func (ec *EndpointCreate) SetRemark(s string) *EndpointCreate {
 	ec.mutation.SetRemark(s)
@@ -245,6 +259,10 @@ func (ec *EndpointCreate) defaults() error {
 		v := endpoint.DefaultDeletedAt()
 		ec.mutation.SetDeletedAt(v)
 	}
+	if _, ok := ec.mutation.Rps(); !ok {
+		v := endpoint.DefaultRps
+		ec.mutation.SetRps(v)
+	}
 	return nil
 }
 
@@ -267,6 +285,9 @@ func (ec *EndpointCreate) check() error {
 	}
 	if _, ok := ec.mutation.Address(); !ok {
 		return &ValidationError{Name: "address", err: errors.New(`ent: missing required field "Endpoint.address"`)}
+	}
+	if _, ok := ec.mutation.Rps(); !ok {
+		return &ValidationError{Name: "rps", err: errors.New(`ent: missing required field "Endpoint.rps"`)}
 	}
 	return nil
 }
@@ -365,6 +386,14 @@ func (ec *EndpointCreate) createSpec() (*Endpoint, *sqlgraph.CreateSpec) {
 			Column: endpoint.FieldState,
 		})
 		_node.State = value
+	}
+	if value, ok := ec.mutation.Rps(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: endpoint.FieldRps,
+		})
+		_node.Rps = value
 	}
 	if value, ok := ec.mutation.Remark(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -549,6 +578,24 @@ func (u *EndpointUpsert) UpdateState() *EndpointUpsert {
 // ClearState clears the value of the "state" field.
 func (u *EndpointUpsert) ClearState() *EndpointUpsert {
 	u.SetNull(endpoint.FieldState)
+	return u
+}
+
+// SetRps sets the "rps" field.
+func (u *EndpointUpsert) SetRps(v uint32) *EndpointUpsert {
+	u.Set(endpoint.FieldRps, v)
+	return u
+}
+
+// UpdateRps sets the "rps" field to the value that was provided on create.
+func (u *EndpointUpsert) UpdateRps() *EndpointUpsert {
+	u.SetExcluded(endpoint.FieldRps)
+	return u
+}
+
+// AddRps adds v to the "rps" field.
+func (u *EndpointUpsert) AddRps(v uint32) *EndpointUpsert {
+	u.Add(endpoint.FieldRps, v)
 	return u
 }
 
@@ -762,6 +809,27 @@ func (u *EndpointUpsertOne) UpdateState() *EndpointUpsertOne {
 func (u *EndpointUpsertOne) ClearState() *EndpointUpsertOne {
 	return u.Update(func(s *EndpointUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetRps sets the "rps" field.
+func (u *EndpointUpsertOne) SetRps(v uint32) *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetRps(v)
+	})
+}
+
+// AddRps adds v to the "rps" field.
+func (u *EndpointUpsertOne) AddRps(v uint32) *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.AddRps(v)
+	})
+}
+
+// UpdateRps sets the "rps" field to the value that was provided on create.
+func (u *EndpointUpsertOne) UpdateRps() *EndpointUpsertOne {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateRps()
 	})
 }
 
@@ -1141,6 +1209,27 @@ func (u *EndpointUpsertBulk) UpdateState() *EndpointUpsertBulk {
 func (u *EndpointUpsertBulk) ClearState() *EndpointUpsertBulk {
 	return u.Update(func(s *EndpointUpsert) {
 		s.ClearState()
+	})
+}
+
+// SetRps sets the "rps" field.
+func (u *EndpointUpsertBulk) SetRps(v uint32) *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.SetRps(v)
+	})
+}
+
+// AddRps adds v to the "rps" field.
+func (u *EndpointUpsertBulk) AddRps(v uint32) *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.AddRps(v)
+	})
+}
+
+// UpdateRps sets the "rps" field to the value that was provided on create.
+func (u *EndpointUpsertBulk) UpdateRps() *EndpointUpsertBulk {
+	return u.Update(func(s *EndpointUpsert) {
+		s.UpdateRps()
 	})
 }
 

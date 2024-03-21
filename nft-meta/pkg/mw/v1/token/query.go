@@ -31,6 +31,7 @@ func (h *queryHandler) selectToken(stm *ent.TokenQuery) {
 		tokenent.FieldTokenID,
 		tokenent.FieldOwner,
 		tokenent.FieldURI,
+		tokenent.FieldURIState,
 		tokenent.FieldURIType,
 		tokenent.FieldImageURL,
 		tokenent.FieldVideoURL,
@@ -50,6 +51,7 @@ func (h *queryHandler) formalize() {
 	for _, info := range h.infos {
 		info.ChainType = basetype.ChainType(basetype.ChainType_value[info.ChainTypeStr])
 		info.TokenType = basetype.TokenType(basetype.TokenType_value[info.TokenTypeStr])
+		info.URIState = basetype.TokenURIState(basetype.TokenURIState_value[info.URIStateStr])
 		info.VectorState = tokenproto.ConvertState(tokenproto.ConvertState_value[info.VectorStateStr])
 	}
 }

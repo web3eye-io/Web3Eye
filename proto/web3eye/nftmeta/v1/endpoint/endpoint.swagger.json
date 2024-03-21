@@ -30,7 +30,7 @@
       "type": "string",
       "enum": [
         "EndpointDefault",
-        "EndpointAvaliable",
+        "EndpointAvailable",
         "EndpointUnstable",
         "EndpointError"
       ],
@@ -57,6 +57,9 @@
         "State": {
           "$ref": "#/definitions/web3eyeUint32Val"
         },
+        "RPS": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
         "Remark": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
@@ -79,6 +82,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/endpointEndpoint"
           }
         }
@@ -126,6 +130,11 @@
         "State": {
           "$ref": "#/definitions/chainEndpointState"
         },
+        "RPS": {
+          "type": "integer",
+          "format": "int64",
+          "title": "@inject_tag: sql:\"rps\""
+        },
         "Remark": {
           "type": "string",
           "title": "@inject_tag: sql:\"remark\""
@@ -163,6 +172,10 @@
         },
         "State": {
           "$ref": "#/definitions/chainEndpointState"
+        },
+        "RPS": {
+          "type": "integer",
+          "format": "int64"
         },
         "Remark": {
           "type": "string"
@@ -219,6 +232,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/endpointEndpoint"
           }
         },
@@ -242,6 +256,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/endpointFailedInfo"
           }
         }
@@ -269,6 +284,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

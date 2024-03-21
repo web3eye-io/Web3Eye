@@ -146,6 +146,11 @@ func TokenURIType(uri string) URIType {
 
 func FindNameAndDescription(ctx context.Context, metadata TokenMetadata) (name, desc string) {
 	name, ok := GetValueFromMapUnsafe(metadata, "name", DefaultSearchDepth).(string)
+
+	if !ok {
+		name, ok = GetValueFromMapUnsafe(metadata, "title", DefaultSearchDepth).(string)
+	}
+
 	if !ok {
 		name = ""
 	}

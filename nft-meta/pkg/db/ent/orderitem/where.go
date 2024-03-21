@@ -476,20 +476,6 @@ func OrderIDLTE(v uuid.UUID) predicate.OrderItem {
 	})
 }
 
-// OrderIDIsNil applies the IsNil predicate on the "order_id" field.
-func OrderIDIsNil() predicate.OrderItem {
-	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldOrderID)))
-	})
-}
-
-// OrderIDNotNil applies the NotNil predicate on the "order_id" field.
-func OrderIDNotNil() predicate.OrderItem {
-	return predicate.OrderItem(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldOrderID)))
-	})
-}
-
 // OrderItemTypeEQ applies the EQ predicate on the "order_item_type" field.
 func OrderItemTypeEQ(v string) predicate.OrderItem {
 	return predicate.OrderItem(func(s *sql.Selector) {

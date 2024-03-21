@@ -51,7 +51,7 @@
                 <span>Transfers: {{ token?.TransfersNum }}</span>
               </div>
               <div class="transfers row">
-                <div v-for="item in token.SiblingTokens" :key="item.ID" @click="onShotTokenClick(token, item)"
+                <div v-for="item in token.SiblingTokens" :key="item.EntID" @click="onShotTokenClick(token, item)"
                   class="split-token">
                   <MyImage :url="item.ImageURL" :height="'70px'" :width="'70px'" :title="item.TokenID" />
                 </div>
@@ -78,13 +78,14 @@ import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token';
 import { SearchToken, SiblingToken } from 'src/teststore/token/types'
 import { Transfer } from 'src/teststore/transfer/types'
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import { ChainType } from 'src/teststore/basetypes/const'
 import copy from '../../assets/material/copy.png'
 const MyImage = defineAsyncComponent(() => import('src/components/Token/Image.vue'))
 const TransferCard = defineAsyncComponent(() => import('src/components/Transfer/Transfer.vue'))
 import { copyToClipboard } from 'quasar'
 import { Notify } from 'quasar'
+import { useStorageKeyStore } from 'src/localstore/storagekey';
 
 const token = useTokenStore()
 const tokens = computed(() => {
@@ -169,7 +170,7 @@ const onShotTokenClick = (token: SearchToken, shotToken: SiblingToken) => {
       chainType: token.ChainType,
       contract: token.Contract,
       tokenID: shotToken.TokenID,
-      id: token.ID,
+      id: shotToken.ID,
     }
   })
 }
@@ -201,7 +202,25 @@ const haveMore = ref(false)
 const currentPage = ref(1)
 const loading = ref(false)
 
+const localkey = useStorageKeyStore()
+
+watch(() => [tokens.value], () => {
+  if (tokens.value?.length === 0) {
+    haveMore.value = false
+    isLoading.value = false
+    loading.value = false
+    currentPage.value = 1
+  }
+})
+
 const loadMore = () => {
+  if (localkey.getStorageKey() === null || localkey.getStorageKey() === '') {
+    haveMore.value = false
+    isLoading.value = false
+    loading.value = true
+    currentPage.value = 1
+    return
+  }
   if (currentPage.value > token.SearchTokens.Pages && token.SearchTokens.Pages !== 0) {
     haveMore.value = true
     return

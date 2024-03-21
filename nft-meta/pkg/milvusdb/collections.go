@@ -3,9 +3,11 @@ package milvusdb
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 	"github.com/milvus-io/milvus-sdk-go/v2/entity"
+	"github.com/web3eye-io/Web3Eye/common/ctredis"
 	"github.com/web3eye-io/Web3Eye/config"
 )
 
@@ -47,7 +49,8 @@ func initCollections(ctx context.Context, c client.Client) error {
 			return err
 		}
 		if !has {
-			err = c.CreateCollection(ctx, collection, 2)
+			var shardsNum int32 = 8
+			err := c.CreateCollection(ctx, collection, shardsNum)
 			if err != nil {
 				return err
 			}
@@ -56,8 +59,24 @@ func initCollections(ctx context.Context, c client.Client) error {
 			if err != nil {
 				return err
 			}
+		}
 
-			idx, err := entity.NewIndexFlat(entity.L2)
+		indexes, _ := c.DescribeIndex(ctx, collection.CollectionName, FieldsVector)
+		haveIndex := false
+		for _, index := range indexes {
+			if index.IndexType() == entity.DISKANN {
+				haveIndex = true
+				continue
+			}
+			_ = c.ReleaseCollection(ctx, collection.CollectionName)
+			err := c.DropIndex(ctx, collection.CollectionName, FieldsVector)
+			if err != nil {
+				return err
+			}
+		}
+
+		if !haveIndex {
+			idx, err := entity.NewIndexDISKANN(entity.L2)
 			if err != nil {
 				return err
 			}
@@ -71,6 +90,19 @@ func initCollections(ctx context.Context, c client.Client) error {
 		if err != nil {
 			return err
 		}
+		go autoFlush()
 	}
 	return nil
+}
+
+func autoFlush() {
+	lockKey := "milvus_flush_lock"
+	refreshTimeout := time.Hour
+	for {
+		<-time.NewTicker(refreshTimeout).C
+		locked, err := ctredis.TryPubLock(lockKey, refreshTimeout)
+		if locked && err != nil {
+			_ = cli.Flush(context.Background(), c.CollectionName, false)
+		}
+	}
 }

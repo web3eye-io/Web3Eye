@@ -28,6 +28,7 @@ func (h *Handler) CreateEndpoint(ctx context.Context) (*endpointproto.Endpoint, 
 				ChainID:   h.ChainID,
 				Address:   h.Address,
 				State:     h.State,
+				RPS:       h.RPS,
 				Remark:    h.Remark,
 			},
 		).Save(ctx)

@@ -54,7 +54,15 @@ enum SyncState {
   
 enum EndpointState {
     EndpointDefault = 0;
-    EndpointAvaliable = 10;
+    EndpointAvailable = 10;
     EndpointUnstable = 20;
     EndpointError = 40;
+}
+
+enum TokenURIState {
+    TokenURIDefault = 0;
+    TokenURIFinish = 10;
+    TokenURIIncomplete = 20;
+    TokenURIUnsupport = 30;
+    TokenURIError = 40;
 }

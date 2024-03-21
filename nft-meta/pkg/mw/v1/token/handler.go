@@ -24,6 +24,7 @@ type Handler struct {
 	TokenID         *string
 	Owner           *string
 	URI             *string
+	URIState        *basetype.TokenURIState
 	URIType         *string
 	ImageURL        *string
 	VideoURL        *string
@@ -170,6 +171,23 @@ func WithURI(u *string, must bool) func(context.Context, *Handler) error {
 		return nil
 	}
 }
+
+func WithURIState(u *basetype.TokenURIState, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid uristate")
+			}
+			return nil
+		}
+		if _, ok := basetype.TokenURIState_name[int32(*u)]; !ok {
+			return fmt.Errorf("invalid uristate field")
+		}
+		h.URIState = u
+		return nil
+	}
+}
+
 func WithURIType(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
@@ -335,6 +353,12 @@ func WithReqs(reqs []*tokenproto.TokenReq, must bool) func(context.Context, *Han
 			if req.URI != nil {
 				_req.URI = req.URI
 			}
+			if req.URIState != nil {
+				if _, ok := basetype.TokenURIState_name[int32(*req.URIState)]; !ok {
+					return fmt.Errorf("invalid uristate field")
+				}
+				_req.URIState = req.URIState
+			}
 			if req.URIType != nil {
 				_req.URIType = req.URIType
 			}
@@ -393,17 +417,23 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 			}
 		}
 		if conds.EntIDs != nil {
-			ids := []uuid.UUID{}
+			entIDs := []uuid.UUID{}
 			for _, id := range conds.GetEntIDs().GetValue() {
 				_id, err := uuid.Parse(id)
 				if err != nil {
 					return err
 				}
-				ids = append(ids, _id)
+				entIDs = append(entIDs, _id)
 			}
 			h.Conds.EntIDs = &cruder.Cond{
 				Op:  conds.GetEntIDs().GetOp(),
-				Val: ids,
+				Val: entIDs,
+			}
+		}
+		if conds.IDs != nil {
+			h.Conds.IDs = &cruder.Cond{
+				Op:  conds.GetIDs().GetOp(),
+				Val: conds.GetIDs().GetValue(),
 			}
 		}
 		if conds.VectorIDs != nil {
@@ -452,6 +482,12 @@ func WithConds(conds *tokenproto.Conds) func(context.Context, *Handler) error {
 			h.Conds.URI = &cruder.Cond{
 				Op:  conds.GetURI().GetOp(),
 				Val: conds.GetURI().GetValue(),
+			}
+		}
+		if conds.URIState != nil {
+			h.Conds.URIState = &cruder.Cond{
+				Op:  conds.GetURIState().GetOp(),
+				Val: basetype.TokenURIState(conds.GetURIState().GetValue()),
 			}
 		}
 		if conds.URIType != nil {

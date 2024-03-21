@@ -93,6 +93,7 @@ var (
 		{Name: "chain_id", Type: field.TypeString, Nullable: true},
 		{Name: "address", Type: field.TypeString},
 		{Name: "state", Type: field.TypeString, Nullable: true},
+		{Name: "rps", Type: field.TypeUint32, Default: 1},
 		{Name: "remark", Type: field.TypeString, Nullable: true},
 	}
 	// EndpointsTable holds the schema information for the "endpoints" table.
@@ -149,7 +150,7 @@ var (
 		{Name: "created_at", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
-		{Name: "order_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "order_id", Type: field.TypeUUID},
 		{Name: "order_item_type", Type: field.TypeString},
 		{Name: "contract", Type: field.TypeString},
 		{Name: "token_type", Type: field.TypeString},
@@ -255,6 +256,7 @@ var (
 		{Name: "token_id", Type: field.TypeString},
 		{Name: "owner", Type: field.TypeString, Nullable: true},
 		{Name: "uri", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "uri_state", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "uri_type", Type: field.TypeString, Nullable: true},
 		{Name: "image_url", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "video_url", Type: field.TypeString, Nullable: true, Size: 2147483647},
@@ -281,6 +283,11 @@ var (
 				Name:    "token_contract_token_id",
 				Unique:  true,
 				Columns: []*schema.Column{TokensColumns[7], TokensColumns[9]},
+			},
+			{
+				Name:    "token_vector_id",
+				Unique:  false,
+				Columns: []*schema.Column{TokensColumns[18]},
 			},
 		},
 	}

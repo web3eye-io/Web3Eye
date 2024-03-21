@@ -2,19 +2,19 @@ package eth
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
-	"math/big"
+	"fmt"
 	"time"
 
+	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/web3eye-io/Web3Eye/common/utils"
+	"github.com/web3eye-io/Web3Eye/common/chains"
 )
 
 const (
 	MinNodeNum       = 1
 	MaxRetries       = 3
-	retriesSleepTime = 200 * time.Millisecond
+	retriesSleepTime = 500 * time.Millisecond
 	dialTimeout      = 3 * time.Second
 )
 
@@ -22,48 +22,53 @@ type ethClients struct {
 	endpoints []string
 }
 
-func (ethCli ethClients) GetNode(ctx context.Context) (*ethclient.Client, error) {
-	randIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(ethCli.endpoints))))
-	if err != nil {
-		return nil, err
+func (ethCli *ethClients) GetNode(ctx context.Context, useTimes uint16) (*ethclient.Client, string, error) {
+	endpoints := ethCli.endpoints
+	if len(endpoints) == 0 {
+		return nil, "", fmt.Errorf("have no available endpoints")
 	}
-	endpoint := ethCli.endpoints[randIndex.Int64()]
+
+	endpoint, err := chains.LockEndpoint(ctx, endpoints, useTimes)
+	if err != nil {
+		return nil, "", err
+	}
 
 	ctx, cancel := context.WithTimeout(ctx, dialTimeout)
 	defer cancel()
 
 	cli, err := ethclient.DialContext(ctx, endpoint)
+
 	if err != nil {
-		return nil, err
+		go checkEndpoint(context.Background(), endpoint, err)
+		return nil, "", err
 	}
 
-	return cli, nil
+	return cli, endpoint, nil
 }
 
-func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
+func (ethCli *ethClients) WithClient(ctx context.Context, useTimes uint16, fn func(ctx context.Context, c *ethclient.Client) (bool, error)) error {
 	var (
-		apiErr, err error
-		retry       bool
-		client      *ethclient.Client
+		apiErr, nodeErr error
+		retry           bool
 	)
 
-	if err != nil {
-		return err
-	}
-
-	for i := 0; i < utils.MinInt(MaxRetries, len(ethCli.endpoints)); i++ {
+	for i := 0; i < MaxRetries; i++ {
 		if i > 0 {
 			time.Sleep(retriesSleepTime)
 		}
 
-		client, err = ethCli.GetNode(ctx)
-
+		client, endpoint, err := ethCli.GetNode(ctx, useTimes)
 		if err != nil {
+			nodeErr = err
 			continue
 		}
 
 		retry, apiErr = fn(ctx, client)
 		client.Close()
+
+		if apiErr != nil {
+			go checkEndpoint(context.Background(), endpoint, apiErr)
+		}
 
 		if !retry {
 			return apiErr
@@ -73,7 +78,27 @@ func (ethCli *ethClients) WithClient(ctx context.Context, fn func(ctx context.Co
 	if apiErr != nil {
 		return apiErr
 	}
-	return err
+	return nodeErr
+}
+
+func checkEndpoint(ctx context.Context, endpoint string, err error) {
+	if err == nil {
+		return
+	}
+
+	cli, err := Client([]string{endpoint})
+	if err != nil {
+		return
+	}
+	_, err = cli.GetChainID(ctx)
+	if err == nil {
+		return
+	}
+
+	err = chains.GetEndpintIntervalMGR().BackoffEndpoint(endpoint)
+	if err != nil {
+		logger.Sugar().Warnw("checkEndpoint", "Msg", "failed to backoffEndpoint", "Endpoint", endpoint, "Error", err)
+	}
 }
 
 func Client(endpoints []string) (*ethClients, error) {

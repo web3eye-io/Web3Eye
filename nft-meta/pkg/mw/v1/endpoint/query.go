@@ -29,6 +29,7 @@ func (h *queryHandler) selectEndpoint(stm *ent.EndpointQuery) {
 		endpointent.FieldAddress,
 		endpointent.FieldState,
 		endpointent.FieldRemark,
+		endpointent.FieldRps,
 		endpointent.FieldCreatedAt,
 		endpointent.FieldUpdatedAt,
 	)

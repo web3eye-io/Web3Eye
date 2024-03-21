@@ -135,6 +135,13 @@ func State(v string) predicate.Endpoint {
 	})
 }
 
+// Rps applies equality check predicate on the "rps" field. It's identical to RpsEQ.
+func Rps(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRps), v))
+	})
+}
+
 // Remark applies equality check predicate on the "remark" field. It's identical to RemarkEQ.
 func Remark(v string) predicate.Endpoint {
 	return predicate.Endpoint(func(s *sql.Selector) {
@@ -819,6 +826,70 @@ func StateEqualFold(v string) predicate.Endpoint {
 func StateContainsFold(v string) predicate.Endpoint {
 	return predicate.Endpoint(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldState), v))
+	})
+}
+
+// RpsEQ applies the EQ predicate on the "rps" field.
+func RpsEQ(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRps), v))
+	})
+}
+
+// RpsNEQ applies the NEQ predicate on the "rps" field.
+func RpsNEQ(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRps), v))
+	})
+}
+
+// RpsIn applies the In predicate on the "rps" field.
+func RpsIn(vs ...uint32) predicate.Endpoint {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldRps), v...))
+	})
+}
+
+// RpsNotIn applies the NotIn predicate on the "rps" field.
+func RpsNotIn(vs ...uint32) predicate.Endpoint {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldRps), v...))
+	})
+}
+
+// RpsGT applies the GT predicate on the "rps" field.
+func RpsGT(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRps), v))
+	})
+}
+
+// RpsGTE applies the GTE predicate on the "rps" field.
+func RpsGTE(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRps), v))
+	})
+}
+
+// RpsLT applies the LT predicate on the "rps" field.
+func RpsLT(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRps), v))
+	})
+}
+
+// RpsLTE applies the LTE predicate on the "rps" field.
+func RpsLTE(v uint32) predicate.Endpoint {
+	return predicate.Endpoint(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRps), v))
 	})
 }
 

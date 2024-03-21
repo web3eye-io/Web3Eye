@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/eth"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/sol"
 	endpointNMCli "github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/endpoint"
 
+	"github.com/web3eye-io/Web3Eye/common/chains"
 	common_eth "github.com/web3eye-io/Web3Eye/common/chains/eth"
 	common_sol "github.com/web3eye-io/Web3Eye/common/chains/sol"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
@@ -47,8 +49,8 @@ func init() {
 	}
 
 	// TODO:should be registered
-	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.GetEndpointChainID
-	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.GetEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Ethereum] = common_eth.CheckEndpointChainID
+	pMGR.EndpointChainIDHandlers[basetype.ChainType_Solana] = common_sol.CheckEndpointChainID
 }
 
 func GetIndexMGR() *indexMGR {
@@ -57,17 +59,17 @@ func GetIndexMGR() *indexMGR {
 
 func (pmgr *indexMGR) Run(ctx context.Context) {
 	for {
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointDefault)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointAvaliable)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointError)
-		pmgr.checkNewEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
-		pmgr.checkAvaliableEndpoints(ctx)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointDefault)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointAvailable)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointError)
+		pmgr.checkEndpoints(ctx, basetype.EndpointState_EndpointUnstable)
+		pmgr.checkAvailableEndpoints(ctx)
 		<-time.NewTicker(UpdateInterval).C
 	}
 }
 
 // check for the newly created endpoints
-func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.EndpointState) {
+func (pmgr *indexMGR) checkEndpoints(ctx context.Context, state basetype.EndpointState) {
 	conds := &endpoint.Conds{
 		State: &web3eye.Uint32Val{
 			Op:    "eq",
@@ -98,12 +100,13 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.Endp
 
 			chainID, err := handler(ctx, info.Address)
 			if err != nil {
+				logger.Sugar().Errorf("endpoint %v not available, err: %v", info.ID, err)
 				info.State = basetype.EndpointState_EndpointError
 				return
 			}
 
 			info.ChainID = chainID
-			info.State = basetype.EndpointState_EndpointAvaliable
+			info.State = basetype.EndpointState_EndpointAvailable
 		}()
 
 		updateInfos = append(updateInfos, &endpoint.EndpointReq{
@@ -134,11 +137,11 @@ func (pmgr *indexMGR) checkNewEndpoints(ctx context.Context, state basetype.Endp
 }
 
 // check erver chantype-chainid available endpoints and update it to indexer
-func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
+func (pmgr *indexMGR) checkAvailableEndpoints(ctx context.Context) {
 	conds := &endpoint.Conds{
 		State: &web3eye.Uint32Val{
-			Op:    "eq",
-			Value: uint32(basetype.EndpointState_EndpointAvaliable),
+			Op:    cruder.EQ,
+			Value: uint32(basetype.EndpointState_EndpointAvailable),
 		},
 	}
 
@@ -159,6 +162,18 @@ func (pmgr *indexMGR) checkAvaliableEndpoints(ctx context.Context) {
 			endpointGroups[info.ChainType][info.ChainID] = []string{}
 		}
 		endpointGroups[info.ChainType][info.ChainID] = append(endpointGroups[info.ChainType][info.ChainID], info.Address)
+		if info.RPS == 0 {
+			info.RPS = 1
+		}
+
+		err = chains.GetEndpintIntervalMGR().GoAheadEndpoint(&chains.EndpointInterval{
+			Address:     info.Address,
+			MinInterval: time.Second / time.Duration(info.RPS),
+			MaxInterval: time.Minute,
+		})
+		if err != nil {
+			logger.Sugar().Warnw("checkAvailableEndpoints", "Msg", "failed to put endpoints to redis", "Error", err)
+		}
 	}
 
 	// check if have no endpoints,will be stop

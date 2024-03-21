@@ -17,6 +17,7 @@ import { useRouter } from 'vue-router'
 import { useContractStore } from 'src/teststore/contract'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
+import { useStorageKeyStore } from 'src/localstore/storagekey'
 
 const contract = ref('')
 const _contract = useContractStore()
@@ -52,6 +53,8 @@ const uploadFile = (evt: Event) => {
 const router = useRouter()
 const token = useTokenStore()
 
+const localkey = useStorageKeyStore()
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleUploadFile = (file: any) => {
     let formData = new FormData()
@@ -61,6 +64,7 @@ const handleUploadFile = (file: any) => {
     contract.value = file?.name 
     const reqMessage = {} as SearchTokenMessage
     token.$reset()
+    localkey.reset()
     token.searchTokens(formData, reqMessage, (error: boolean) => {
         if (!error) {
             void router.push('/token')

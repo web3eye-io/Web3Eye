@@ -114,6 +114,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/rankerv1transferTransfer"
           }
         },
@@ -129,6 +130,9 @@
         "ID": {
           "type": "integer",
           "format": "int64"
+        },
+        "EntID": {
+          "type": "string"
         },
         "ChainType": {
           "$ref": "#/definitions/chainChainType"
@@ -179,12 +183,14 @@
         "TargetItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1transferOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/v1transferOrderItem"
           }
         }
@@ -203,6 +209,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

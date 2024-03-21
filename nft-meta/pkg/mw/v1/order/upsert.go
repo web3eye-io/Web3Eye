@@ -22,7 +22,7 @@ func (h *Handler) UpsertOrder(ctx context.Context) (*orderproto.Order, error) {
 	}
 
 	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		id, entID, err := h.upsertOne(_ctx, tx, &ordercrud.Req{
+		id, entID, err := upsertOne(_ctx, tx, &ordercrud.Req{
 			EntID:       h.EntID,
 			ChainType:   h.ChainType,
 			ChainID:     h.ChainID,
@@ -31,6 +31,8 @@ func (h *Handler) UpsertOrder(ctx context.Context) (*orderproto.Order, error) {
 			TxIndex:     h.TxIndex,
 			LogIndex:    h.LogIndex,
 			Recipient:   h.Recipient,
+			TargetItems: h.TargetItems,
+			OfferItems:  h.OfferItems,
 			Remark:      h.Remark,
 		})
 		if err != nil {
@@ -47,11 +49,11 @@ func (h *Handler) UpsertOrder(ctx context.Context) (*orderproto.Order, error) {
 	return h.GetOrder(ctx)
 }
 
-func (h *Handler) upsertOne(_ctx context.Context, tx *ent.Tx, req *ordercrud.Req) (*uint32, *uuid.UUID, error) {
+func upsertOne(_ctx context.Context, tx *ent.Tx, req *ordercrud.Req) (*uint32, *uuid.UUID, error) {
 	row, _ := tx.Order.Query().Where(
-		orderent.TxHash(*h.TxHash),
-		orderent.Recipient(*h.Recipient),
-		orderent.LogIndex(*h.LogIndex),
+		orderent.TxHash(*req.TxHash),
+		orderent.Recipient(*req.Recipient),
+		orderent.LogIndex(*req.LogIndex),
 	).Only(_ctx)
 	var id *uint32
 	var entID *uuid.UUID
@@ -84,33 +86,32 @@ func (h *Handler) upsertOne(_ctx context.Context, tx *ent.Tx, req *ordercrud.Req
 		entID = &row.EntID
 	}
 
-	targetBulk := createOrderItemsSet(h.EntID, tx, h.TargetItems, basetype.OrderItemType_OrderItemTarget)
+	targetBulk := createOrderItemsSet(entID, tx, req.TargetItems, basetype.OrderItemType_OrderItemTarget)
 	err := tx.OrderItem.CreateBulk(targetBulk...).OnConflict().UpdateNewValues().Exec(_ctx)
 	if err != nil {
 		return id, entID, err
 	}
 
-	offerBulk := createOrderItemsSet(h.EntID, tx, h.OfferItems, basetype.OrderItemType_OrderItemOffer)
+	offerBulk := createOrderItemsSet(entID, tx, req.OfferItems, basetype.OrderItemType_OrderItemOffer)
 	err = tx.OrderItem.CreateBulk(offerBulk...).OnConflict().UpdateNewValues().Exec(_ctx)
 	return id, entID, err
 }
 
 func (h *Handler) UpsertOrders(ctx context.Context) ([]*orderproto.Order, error) {
 	entIDs := []uuid.UUID{}
-
-	err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		for _, req := range h.Reqs {
-			_, entID, err := h.upsertOne(_ctx, tx, req)
+	for _, req := range h.Reqs {
+		err := db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
+			_, entID, err := upsertOne(_ctx, tx, req)
 			if err != nil {
 				return err
 			}
 
 			entIDs = append(entIDs, *entID)
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
 	}
 
 	h.Conds = &ordercrud.Conds{

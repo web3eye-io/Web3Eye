@@ -563,6 +563,61 @@ func (x *StringSliceVal) GetValue() []string {
 	return nil
 }
 
+type Uint32SliceVal struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Op    string   `protobuf:"bytes,10,opt,name=Op,proto3" json:"Op,omitempty"`
+	Value []uint32 `protobuf:"varint,20,rep,packed,name=Value,proto3" json:"Value,omitempty"`
+}
+
+func (x *Uint32SliceVal) Reset() {
+	*x = Uint32SliceVal{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_web3eye_web3eye_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Uint32SliceVal) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Uint32SliceVal) ProtoMessage() {}
+
+func (x *Uint32SliceVal) ProtoReflect() protoreflect.Message {
+	mi := &file_web3eye_web3eye_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Uint32SliceVal.ProtoReflect.Descriptor instead.
+func (*Uint32SliceVal) Descriptor() ([]byte, []int) {
+	return file_web3eye_web3eye_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Uint32SliceVal) GetOp() string {
+	if x != nil {
+		return x.Op
+	}
+	return ""
+}
+
+func (x *Uint32SliceVal) GetValue() []uint32 {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
 type Int64SliceVal struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -575,7 +630,7 @@ type Int64SliceVal struct {
 func (x *Int64SliceVal) Reset() {
 	*x = Int64SliceVal{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_web3eye_web3eye_proto_msgTypes[10]
+		mi := &file_web3eye_web3eye_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -588,7 +643,7 @@ func (x *Int64SliceVal) String() string {
 func (*Int64SliceVal) ProtoMessage() {}
 
 func (x *Int64SliceVal) ProtoReflect() protoreflect.Message {
-	mi := &file_web3eye_web3eye_proto_msgTypes[10]
+	mi := &file_web3eye_web3eye_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -601,7 +656,7 @@ func (x *Int64SliceVal) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Int64SliceVal.ProtoReflect.Descriptor instead.
 func (*Int64SliceVal) Descriptor() ([]byte, []int) {
-	return file_web3eye_web3eye_proto_rawDescGZIP(), []int{10}
+	return file_web3eye_web3eye_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Int64SliceVal) GetOp() string {
@@ -657,14 +712,17 @@ var file_web3eye_web3eye_proto_rawDesc = []byte{
 	0x0a, 0x0e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x56, 0x61, 0x6c,
 	0x12, 0x0e, 0x0a, 0x02, 0x4f, 0x70, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x4f, 0x70,
 	0x12, 0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x14, 0x20, 0x03, 0x28, 0x09, 0x52,
-	0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x35, 0x0a, 0x0d, 0x49, 0x6e, 0x74, 0x36, 0x34, 0x53,
-	0x6c, 0x69, 0x63, 0x65, 0x56, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x02, 0x4f, 0x70, 0x18, 0x0a, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x4f, 0x70, 0x12, 0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65,
-	0x18, 0x14, 0x20, 0x03, 0x28, 0x03, 0x52, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x2d, 0x5a,
-	0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65, 0x62, 0x33,
-	0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57, 0x65, 0x62, 0x33, 0x45, 0x79, 0x65, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x36, 0x0a, 0x0e, 0x55, 0x69, 0x6e, 0x74, 0x33, 0x32,
+	0x53, 0x6c, 0x69, 0x63, 0x65, 0x56, 0x61, 0x6c, 0x12, 0x0e, 0x0a, 0x02, 0x4f, 0x70, 0x18, 0x0a,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x4f, 0x70, 0x12, 0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75,
+	0x65, 0x18, 0x14, 0x20, 0x03, 0x28, 0x0d, 0x52, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x35,
+	0x0a, 0x0d, 0x49, 0x6e, 0x74, 0x36, 0x34, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x56, 0x61, 0x6c, 0x12,
+	0x0e, 0x0a, 0x02, 0x4f, 0x70, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x4f, 0x70, 0x12,
+	0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x14, 0x20, 0x03, 0x28, 0x03, 0x52, 0x05,
+	0x56, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x2d, 0x5a, 0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2f, 0x77, 0x65, 0x62, 0x33, 0x65, 0x79, 0x65, 0x2d, 0x69, 0x6f, 0x2f, 0x57,
+	0x65, 0x62, 0x33, 0x45, 0x79, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x77, 0x65, 0x62,
+	0x33, 0x65, 0x79, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -679,7 +737,7 @@ func file_web3eye_web3eye_proto_rawDescGZIP() []byte {
 	return file_web3eye_web3eye_proto_rawDescData
 }
 
-var file_web3eye_web3eye_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_web3eye_web3eye_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_web3eye_web3eye_proto_goTypes = []interface{}{
 	(*VersionResponse)(nil), // 0: web3eye.VersionResponse
 	(*FilterCond)(nil),      // 1: web3eye.FilterCond
@@ -691,11 +749,12 @@ var file_web3eye_web3eye_proto_goTypes = []interface{}{
 	(*StringVal)(nil),       // 7: web3eye.StringVal
 	(*BoolVal)(nil),         // 8: web3eye.BoolVal
 	(*StringSliceVal)(nil),  // 9: web3eye.StringSliceVal
-	(*Int64SliceVal)(nil),   // 10: web3eye.Int64SliceVal
-	(*structpb.Value)(nil),  // 11: google.protobuf.Value
+	(*Uint32SliceVal)(nil),  // 10: web3eye.Uint32SliceVal
+	(*Int64SliceVal)(nil),   // 11: web3eye.Int64SliceVal
+	(*structpb.Value)(nil),  // 12: google.protobuf.Value
 }
 var file_web3eye_web3eye_proto_depIdxs = []int32{
-	11, // 0: web3eye.FilterCond.Val:type_name -> google.protobuf.Value
+	12, // 0: web3eye.FilterCond.Val:type_name -> google.protobuf.Value
 	1,  // [1:1] is the sub-list for method output_type
 	1,  // [1:1] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
@@ -830,6 +889,18 @@ func file_web3eye_web3eye_proto_init() {
 			}
 		}
 		file_web3eye_web3eye_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Uint32SliceVal); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_web3eye_web3eye_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Int64SliceVal); i {
 			case 0:
 				return &v.state
@@ -848,7 +919,7 @@ func file_web3eye_web3eye_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_web3eye_web3eye_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

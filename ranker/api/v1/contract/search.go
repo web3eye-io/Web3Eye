@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	contracthandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/contract"
 	tokenhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/token"
 	transferhandler "github.com/web3eye-io/Web3Eye/nft-meta/pkg/mw/v1/transfer"
 
 	"github.com/web3eye-io/Web3Eye/proto/web3eye"
 	contractproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/contract"
-	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
+	nftmetapool "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/transfer"
 	rankernpool "github.com/web3eye-io/Web3Eye/proto/web3eye/ranker/v1/contract"
 	rankerconverter "github.com/web3eye-io/Web3Eye/ranker/pkg/converter/v1/contract"
@@ -46,10 +47,16 @@ func (s *Server) GetContractAndTokens(ctx context.Context, in *rankernpool.GetCo
 	}
 	contract := contracts[0]
 
-	tokensconds := &token.Conds{Contract: &web3eye.StringVal{
-		Op:    "eq",
-		Value: in.Contract,
-	}}
+	tokensconds := &nftmetapool.Conds{
+		Contract: &web3eye.StringVal{
+			Op:    "eq",
+			Value: in.Contract,
+		},
+		VectorState: &web3eye.Uint32Val{
+			Op:    cruder.EQ,
+			Value: uint32(nftmetapool.ConvertState_Success),
+		},
+	}
 
 	tokenHandler, err := tokenhandler.NewHandler(ctx,
 		tokenhandler.WithConds(tokensconds),

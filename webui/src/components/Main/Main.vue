@@ -32,6 +32,7 @@
       </div>
       <!-- drop zone start -->
       <div class="row big-box" id="drop-target" :class="[opening ? '' : 'hidden']">
+        <q-icon name="close" class="close" @click="onCloseClick" />
         <q-icon name="img:icons/picture.png" size="42px" />
         <div class="drag-image-here">Drag an image here</div>
       </div>
@@ -49,6 +50,7 @@ import largelogo from '../../assets/logo/large-logo.png'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from 'src/teststore/token'
 import { SearchTokenMessage } from 'src/teststore/token/types'
+import { useStorageKeyStore } from 'src/localstore/storagekey'
 const Loading = defineAsyncComponent(() => import('src/components/Loading/Loading.vue'))
 
 const loadFileButton = ref<HTMLInputElement>()
@@ -67,6 +69,7 @@ const uploadFile = (evt: Event) => {
 
 const router = useRouter()
 const token = useTokenStore()
+const localkey = useStorageKeyStore()
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleUploadFile = (file: any, fromDropArea: boolean) => {
@@ -77,6 +80,7 @@ const handleUploadFile = (file: any, fromDropArea: boolean) => {
   contract.value = file?.name
   const reqMessage = {} as SearchTokenMessage
   token.$reset()
+  localkey.reset()
   token.searchTokens(formData, reqMessage, (error: boolean) => {
     if (!error) {
       const normalBox = document.getElementById('normal-box')
@@ -103,7 +107,13 @@ enum State {
   Dragging,
   Drop,
 }
+
 const state = ref(State.Normal)
+const contract = ref('')
+
+const onCloseClick = () => {
+  opening.value = false
+}
 
 onMounted(() => {
   const dropArea = document.getElementById('drop-target')
@@ -146,14 +156,26 @@ onMounted(() => {
   dropZone?.addEventListener('dragleave', (e) => {
     e.stopPropagation()
     e.preventDefault()
+    console.log('dragleave: ')
     let relatedTarget = e.relatedTarget
-    if (!relatedTarget) { // leave window
+    if (!relatedTarget?.dispatchEvent) { // leave window
       opening.value = false
     }
   })
+  dropZone?.addEventListener('dragend', function (e) {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('dragend: ')
+    opening.value = false
+  })
+  dropZone?.addEventListener('drop', (e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    opening.value = false
+  })
 })
 
-const contract = ref('')
+
 </script>
 
 <style lang='sass' scoped>
@@ -233,6 +255,12 @@ const contract = ref('')
     .drag-image-here
         padding-left: 8px
         color: rgb(95,99,104)
+    .close
+      position: absolute
+      right: 8px
+      top: 0
+      margin-top: 45px
+      cursor: pointer
 .hidden
     display: none
 #drop-target.highlight

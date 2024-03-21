@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
@@ -53,14 +54,21 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	block, err := cli.BlockByNumber(ctx, big.NewInt(0).SetUint64(inBlockNum))
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
 
-	number := block.Number().Uint64()
-	blockHash := block.Hash().String()
-	blockTime := block.Time()
+	number := inBlockNum
+	var blockHash = ""
+	var blockTime uint64 = 0
+	var parseState = basetype.BlockParseState_BlockTypeFailed.Enum()
 	remark := ""
+	if block != nil {
+		blockHash = block.Hash().String()
+		blockTime = block.Time()
+		parseState = basetype.BlockParseState_BlockTypeStart.Enum()
+		remark = "start to parse the block"
+	}
+
 	resp, err := blockNMCli.UpsertBlock(ctx, &blockProto.UpsertBlockRequest{
 		Info: &blockProto.BlockReq{
 			ChainType:   &e.ChainType,
@@ -68,7 +76,7 @@ func (e *EthIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 			BlockNumber: &number,
 			BlockHash:   &blockHash,
 			BlockTime:   &blockTime,
-			ParseState:  basetype.BlockParseState_BlockTypeStart.Enum(),
+			ParseState:  parseState,
 			Remark:      &remark,
 		},
 	})
@@ -90,7 +98,6 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 		eth.OrderFulfilledTopics,
 	})
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot parse logs: %v", err)
 	}
 	transferLogs := topicsLogs[0]
@@ -105,7 +112,6 @@ func (e *EthIndexer) IndexBlockLogs(ctx context.Context, inBlockNum uint64) (*Bl
 func (e *EthIndexer) IndexTransfer(ctx context.Context, logs []*types.Log, blockTime uint64) ([]*chains.TokenTransfer, error) {
 	transfers, err := eth.LogsToTransfer(logs)
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("failed to get transfer logs, err: %v", err)
 	}
 	if len(transfers) == 0 {
@@ -170,19 +176,27 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		conds := &tokenProto.Conds{
 			ChainType: &ctMessage.Uint32Val{
 				Value: uint32(e.ChainType),
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			ChainID: &ctMessage.StringVal{
 				Value: e.ChainID,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			Contract: &ctMessage.StringVal{
 				Value: transfer.Contract,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			TokenID: &ctMessage.StringVal{
 				Value: transfer.TokenID,
-				Op:    "eq",
+				Op:    cruder.EQ,
+			},
+			URIState: &ctMessage.Uint32Val{
+				Value: uint32(basetype.BlockParseState_BlockTypeFinish),
+				Op:    cruder.EQ,
+			},
+			VectorState: &ctMessage.Uint32Val{
+				Value: uint32(tokenProto.ConvertState_Success),
+				Op:    cruder.EQ,
 			},
 		}
 
@@ -199,8 +213,6 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 
 		tokenURI, err := cli.TokenURI(ctx, transfer.TokenType, transfer.Contract, transfer.TokenID, transfer.BlockNumber)
 		if err != nil {
-			e.checkErr(ctx, err)
-			logger.Sugar().Warnf("cannot get tokenURI,err: %v", err)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
@@ -211,27 +223,23 @@ func (e *EthIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
 
-		if len(tokenURI) > indexer.MaxTokenURILength {
-			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(tokenURI))
-			tokenURI = tokenURI[:indexer.OverLimitStoreLength]
-		}
+		tokenReq := token.CheckTokenReq(&tokenProto.TokenReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			Contract:    &transfer.Contract,
+			TokenType:   &transfer.TokenType,
+			TokenID:     &transfer.TokenID,
+			URI:         &tokenURI,
+			URIType:     (*string)(&tokenURIInfo.URIType),
+			ImageURL:    &tokenURIInfo.ImageURL,
+			VideoURL:    &tokenURIInfo.VideoURL,
+			Name:        &tokenURIInfo.Name,
+			Description: &tokenURIInfo.Description,
+			Remark:      &remark,
+		})
 
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
-			Info: &tokenProto.TokenReq{
-				ChainType:   &e.ChainType,
-				ChainID:     &e.ChainID,
-				Contract:    &transfer.Contract,
-				TokenType:   &transfer.TokenType,
-				TokenID:     &transfer.TokenID,
-				URI:         &tokenURI,
-				URIType:     (*string)(&tokenURIInfo.URIType),
-				ImageURL:    &tokenURIInfo.ImageURL,
-				VideoURL:    &tokenURIInfo.VideoURL,
-				Name:        &tokenURIInfo.Name,
-				Description: &tokenURIInfo.Description,
-				VectorState: tokenProto.ConvertState_Waiting.Enum(),
-				Remark:      &remark,
-			},
+			Info: tokenReq,
 		})
 
 		if err != nil {
@@ -260,8 +268,13 @@ func (e *EthIndexer) IndexContract(ctx context.Context, inContracts []*ContractM
 		if exist {
 			continue
 		}
-		contractMeta, creator, remark := e.getContractInfo(ctx, contract, findContractCreator)
-
+		remark := ""
+		contractMeta, creator, err := e.getContractInfo(ctx, contract, findContractCreator)
+		if err != nil {
+			contractMeta = &eth.EthCurrencyMetadata{}
+			creator = &chains.ContractCreator{}
+			remark = err.Error()
+		}
 		// store the result
 		from := creator.From
 		txHash := creator.TxHash
@@ -324,15 +337,12 @@ func (e *EthIndexer) checkContract(ctx context.Context, contract string) (exist 
 	return false, nil
 }
 
-func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *chains.ContractCreator, string) {
-	contractMeta := &eth.EthCurrencyMetadata{}
-	creator := &chains.ContractCreator{}
+func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta, findContractCreator bool) (*eth.EthCurrencyMetadata, *chains.ContractCreator, error) {
 	cli, err := eth.Client(e.OkEndpoints)
-	remark := ""
 	if err != nil {
-		return contractMeta, creator, fmt.Sprintf("cannot get eth client,err: %v", err)
+		return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-
+	var contractMeta *eth.EthCurrencyMetadata
 	switch contract.TokenType {
 	case basetype.TokenType_Native:
 		contractMeta, err = cli.GetCurrencyMetadata(ctx, contract.Contract)
@@ -343,19 +353,17 @@ func (e *EthIndexer) getContractInfo(ctx context.Context, contract *ContractMeta
 	}
 
 	if err != nil {
-		e.checkErr(ctx, err)
-		remark = err.Error()
+		return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 	}
-
+	creator := &chains.ContractCreator{}
 	// stop get info for creator
 	if findContractCreator && contract.TokenType != basetype.TokenType_Native {
 		creator, err = cli.GetContractCreator(ctx, contract.Contract)
 		if err != nil {
-			e.checkErr(ctx, err)
-			remark = fmt.Sprintf("%v,%v", remark, err.Error())
+			return &eth.EthCurrencyMetadata{}, &chains.ContractCreator{}, fmt.Errorf("cannot get eth client,err: %v", err)
 		}
 	}
-	return contractMeta, creator, remark
+	return contractMeta, creator, nil
 }
 
 func (e *EthIndexer) GetCurrentBlockNum() uint64 {
@@ -373,7 +381,6 @@ func (e *EthIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 
 			blockNum, err := cli.CurrentBlockNum(ctx)
 			if err != nil {
-				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("eth failed to get current block number: %v", err)
 				return
 			}

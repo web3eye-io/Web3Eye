@@ -26,10 +26,9 @@ import (
 )
 
 const (
-	MaxPutTaskNumOnce         = 100
+	MaxPutTaskNumOnce         = 1000
 	MaxPutBadBlockTaskNumOnce = 50
-	ReportInterval            = 100
-	RedisLockTimeout          = time.Second * 10
+	RedisLockTimeout          = time.Second * 3
 )
 
 func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskRequest) (*npool.CreateSyncTaskResponse, error) {
@@ -85,8 +84,7 @@ func (s *Server) CreateSyncTask(ctx context.Context, in *npool.CreateSyncTaskReq
 		return &npool.CreateSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	logger.Sugar().Infof("CreateSyncTask success ,chaintype:%v chainid:%v start:%v end:%v", info.ChainType, info.ChainID, info.Start, info.End)
-
+	logger.Sugar().Infof("success to CreateSyncTask ,chaintype:%v chainid:%v start:%v end:%v, state: %v", info.ChainType, info.ChainID, info.Start, info.End, info.SyncState)
 	return &npool.CreateSyncTaskResponse{
 		Info: info,
 	}, nil
@@ -100,7 +98,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerSyncTask", "warning", err)
-		return &npool.TriggerSyncTaskResponse{}, err
+		return &npool.TriggerSyncTaskResponse{}, nil
 	}
 
 	defer func() {
@@ -184,6 +182,7 @@ func (s *Server) TriggerSyncTask(ctx context.Context, in *npool.TriggerSyncTaskR
 		return &npool.TriggerSyncTaskResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	logger.Sugar().Infof("success to TriggerSyncTask ,chaintype:%v chainid:%v start:%v end:%v", info.ChainType, info.ChainID, info.Start, info.End)
 	return &npool.TriggerSyncTaskResponse{
 		Info: info,
 	}, nil
@@ -288,7 +287,7 @@ func getBlocksNum(
 	for i, item := range blocks {
 		taskNums[i] = item.BlockNumber
 	}
-	logger.Sugar().Info("find %v bloks in %v", total, parseState)
+	logger.Sugar().Infof("find %v bloks in %v", total, parseState)
 	return taskNums, err
 }
 
@@ -325,6 +324,7 @@ func (s *Server) UpdateSyncTask(ctx context.Context, in *npool.UpdateSyncTaskReq
 
 	logger.Sugar().Infow("UpdateSyncTask", "ID", in.GetInfo().GetID())
 
+	logger.Sugar().Infof("success to UpdateSyncTask ,chaintype:%v chainid:%v start:%v end:%v, state: %v", info.ChainType, info.ChainID, info.Start, info.End, info.SyncState)
 	return &npool.UpdateSyncTaskResponse{
 		Info: info,
 	}, nil
@@ -344,7 +344,7 @@ func (s *Server) GetSyncTask(ctx context.Context, in *npool.GetSyncTaskRequest) 
 		logger.Sugar().Errorw("GetSyncTask", "ID", in.GetID(), "error", err)
 		return &npool.GetSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
-
+	logger.Sugar().Infof("success to GetSyncTask ,chaintype:%v chainid:%v start:%v end:%v, state: %v", info.ChainType, info.ChainID, info.Start, info.End, info.SyncState)
 	return &npool.GetSyncTaskResponse{
 		Info: info,
 	}, nil
@@ -368,12 +368,13 @@ func (s *Server) GetSyncTaskOnly(ctx context.Context, in *npool.GetSyncTaskOnlyR
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetSyncTaskOnly", "error", errMsg)
 		return &npool.GetSyncTaskOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
+	info := infos[0]
 
+	logger.Sugar().Infof("success to GetSyncTaskOnly ,chaintype:%v chainid:%v start:%v end:%v, state: %v", info.ChainType, info.ChainID, info.Start, info.End, info.SyncState)
 	return &npool.GetSyncTaskOnlyResponse{
-		Info: infos[0],
+		Info: info,
 	}, nil
 }
 
@@ -392,6 +393,7 @@ func (s *Server) GetSyncTasks(ctx context.Context, in *npool.GetSyncTasksRequest
 		logger.Sugar().Errorw("GetSyncTasks", "error", err)
 		return &npool.GetSyncTasksResponse{}, status.Error(codes.Internal, err.Error())
 	}
+	logger.Sugar().Infof("success to GetSyncTasks, have %v infos", len(infos))
 
 	return &npool.GetSyncTasksResponse{
 		Infos: infos,
@@ -452,6 +454,7 @@ func (s *Server) DeleteSyncTask(ctx context.Context, in *npool.DeleteSyncTaskReq
 		return &npool.DeleteSyncTaskResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to DeleteSyncTask ,chaintype:%v chainid:%v start:%v end:%v, state: %v", info.ChainType, info.ChainID, info.Start, info.End, info.SyncState)
 	return &npool.DeleteSyncTaskResponse{
 		Info: info,
 	}, nil

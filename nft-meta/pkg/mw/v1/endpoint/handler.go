@@ -21,6 +21,7 @@ type Handler struct {
 	ChainID   *string
 	Address   *string
 	State     *basetype.EndpointState
+	RPS       *uint32
 	Remark    *string
 
 	Reqs   []*endpointcrud.Req
@@ -125,6 +126,19 @@ func WithState(u *basetype.EndpointState, must bool) func(context.Context, *Hand
 	}
 }
 
+func WithRPS(u *uint32, must bool) func(context.Context, *Handler) error {
+	return func(ctx context.Context, h *Handler) error {
+		if u == nil {
+			if must {
+				return fmt.Errorf("invalid rps")
+			}
+			return nil
+		}
+		h.RPS = u
+		return nil
+	}
+}
+
 func WithRemark(u *string, must bool) func(context.Context, *Handler) error {
 	return func(ctx context.Context, h *Handler) error {
 		if u == nil {
@@ -170,6 +184,9 @@ func WithReqs(reqs []*endpointproto.EndpointReq, must bool) func(context.Context
 			}
 			if req.Remark != nil {
 				_req.Remark = req.Remark
+			}
+			if req.RPS != nil {
+				_req.RPS = req.RPS
 			}
 			_reqs = append(_reqs, _req)
 		}
@@ -230,6 +247,12 @@ func WithConds(conds *endpointproto.Conds) func(context.Context, *Handler) error
 			h.Conds.State = &cruder.Cond{
 				Op:  conds.GetState().GetOp(),
 				Val: basetype.EndpointState(conds.GetState().GetValue()),
+			}
+		}
+		if conds.RPS != nil {
+			h.Conds.Rps = &cruder.Cond{
+				Op:  conds.GetRPS().GetOp(),
+				Val: conds.GetRPS().GetValue(),
 			}
 		}
 		if conds.Remark != nil {

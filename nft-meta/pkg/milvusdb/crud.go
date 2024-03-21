@@ -41,10 +41,6 @@ func (c *nftConllectionMGR) Create(ctx context.Context, nftVectors [][VectorDim]
 		return emptyRet, err
 	}
 
-	if err := cli.Flush(ctx, c.CollectionName, false); err != nil {
-		return emptyRet, err
-	}
-
 	idRows := iDs.(*entity.ColumnInt64)
 	ret := idRows.Data()
 
@@ -100,7 +96,7 @@ func (c *nftConllectionMGR) Query(ctx context.Context, iDs []int64) (map[int64][
 }
 
 // return []map[id]score
-func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]float32, limit int) ([]map[int64]float32, error) {
+func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]float32, topK int) ([]map[int64]float32, error) {
 	ret := make([]map[int64]float32, 0)
 
 	cli, err := Client(ctx)
@@ -108,7 +104,7 @@ func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]
 		return ret, err
 	}
 
-	sParam, err := entity.NewIndexFlatSearchParam()
+	sParam, err := entity.NewIndexDISKANNSearchParam(topK)
 	if err != nil {
 		return ret, err
 	}
@@ -119,7 +115,7 @@ func (c *nftConllectionMGR) Search(ctx context.Context, nftVectors [][VectorDim]
 	}
 
 	sRet, err := cli.Search(ctx, c.CollectionName, []string{DefaultPartition}, "", []string{FieldsID}, vec,
-		FieldsVector, entity.L2, limit, sParam)
+		FieldsVector, entity.L2, topK, sParam)
 	if err != nil {
 		return ret, err
 	}

@@ -19,7 +19,7 @@ export enum ChainChainType {
 /** @default "EndpointDefault" */
 export enum CttypeEndpointState {
   EndpointDefault = 'EndpointDefault',
-  EndpointAvaliable = 'EndpointAvaliable',
+  EndpointAvailable = 'EndpointAvailable',
   EndpointUnstable = 'EndpointUnstable',
   EndpointError = 'EndpointError',
 }

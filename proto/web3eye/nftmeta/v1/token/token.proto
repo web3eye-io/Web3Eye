@@ -52,6 +52,7 @@ message TokenReq {
   optional string TokenID = 60;
   optional string Owner = 70;
   optional string URI = 80;
+  optional chain.TokenURIState URIState = 81;
   optional string URIType = 90;
   optional string ImageURL = 100;
   optional string VideoURL = 110;
@@ -85,6 +86,9 @@ message Token {
   string Owner = 70;
   // @inject_tag: sql:"uri"
   string URI = 80;
+  // @inject_tag: sql:"uri_state"
+  string URIStateStr = 81;
+  chain.TokenURIState URIState = 82;
   // @inject_tag: sql:"uri_type"
   string URIType = 90;
   // @inject_tag: sql:"image_url"
@@ -122,6 +126,7 @@ message Conds {
   web3eye.StringVal TokenID = 60;
   web3eye.StringVal Owner = 70;
   web3eye.StringVal URI = 80;
+  web3eye.Uint32Val URIState = 81;
   web3eye.StringVal URIType = 90;
   web3eye.StringVal ImageURL = 100;
   web3eye.StringVal VideoURL = 110;
@@ -132,7 +137,8 @@ message Conds {
   web3eye.StringVal Remark = 160;
   web3eye.StringVal IPFSImageURL = 170;
   web3eye.Uint32Val ImageSnapshotID = 180;
-  web3eye.StringSliceVal EntIDs = 190;
+  web3eye.Uint32SliceVal IDs = 190;
+  web3eye.StringSliceVal EntIDs = 191;
   web3eye.Int64SliceVal VectorIDs = 200;
 }
 

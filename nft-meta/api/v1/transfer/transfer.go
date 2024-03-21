@@ -218,7 +218,6 @@ func (s *Server) GetTransferOnly(ctx context.Context, in *npool.GetTransferOnlyR
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetTransferOnly", "error", errMsg)
 		return &npool.GetTransferOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

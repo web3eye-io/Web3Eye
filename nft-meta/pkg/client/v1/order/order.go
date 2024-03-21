@@ -52,6 +52,22 @@ func CreateOrders(ctx context.Context, in *npool.CreateOrdersRequest) (resp *npo
 	return resp, err
 }
 
+func UpsertOrder(ctx context.Context, in *npool.UpsertOrderRequest) (resp *npool.UpsertOrderResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertOrder(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
+func UpsertOrders(ctx context.Context, in *npool.UpsertOrdersRequest) (resp *npool.UpsertOrdersResponse, err error) {
+	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
+		resp, err = cli.UpsertOrders(ctx, in)
+		return resp, err
+	})
+	return resp, err
+}
+
 func UpdateOrder(ctx context.Context, in *npool.UpdateOrderRequest) (resp *npool.UpdateOrderResponse, err error) {
 	_, err = withCRUD(ctx, func(_ctx context.Context, cli npool.ManagerClient) (cruder.Any, error) {
 		resp, err = cli.UpdateOrder(ctx, in)

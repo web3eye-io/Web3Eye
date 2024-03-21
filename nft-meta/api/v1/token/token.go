@@ -75,10 +75,6 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 	entID := uuid.New().String()
 	inInfo.EntID = &entID
 
-	err := TransformImage(ctx, inInfo)
-	if err != nil {
-		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
-	}
 	h, err := handler.NewHandler(ctx,
 		handler.WithEntID(inInfo.EntID, true),
 		handler.WithChainType(inInfo.ChainType, true),
@@ -88,6 +84,7 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 		handler.WithTokenID(inInfo.TokenID, true),
 		handler.WithOwner(inInfo.Owner, false),
 		handler.WithURI(inInfo.URI, false),
+		handler.WithURIState(inInfo.URIState, false),
 		handler.WithURIType(inInfo.URIType, false),
 		handler.WithImageURL(inInfo.ImageURL, false),
 		handler.WithVideoURL(inInfo.VideoURL, false),
@@ -108,6 +105,11 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "error", err)
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	err = TransformImage(ctx, inInfo)
+	if err != nil {
+		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 	}
 
 	return &npool.CreateTokenResponse{
@@ -133,6 +135,7 @@ func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) 
 		handler.WithTokenID(in.Info.TokenID, true),
 		handler.WithOwner(in.Info.Owner, false),
 		handler.WithURI(in.Info.URI, false),
+		handler.WithURIState(in.Info.URIState, false),
 		handler.WithURIType(in.Info.URIType, false),
 		handler.WithImageURL(in.Info.ImageURL, false),
 		handler.WithVideoURL(in.Info.VideoURL, false),
@@ -177,10 +180,6 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	for i := 0; i < len(inInfos); i++ {
 		entID := uuid.New().String()
 		inInfos[i].EntID = &entID
-		err := TransformImage(ctx, inInfos[i])
-		if err != nil {
-			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
-		}
 	}
 
 	h, err := handler.NewHandler(ctx,
@@ -194,6 +193,13 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 	if err != nil {
 		logger.Sugar().Errorw("CreateTokens", "error", err)
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
+	}
+
+	for i := 0; i < len(inInfos); i++ {
+		err := TransformImage(ctx, inInfos[i])
+		if err != nil {
+			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
+		}
 	}
 
 	return &npool.CreateTokensResponse{
@@ -218,6 +224,7 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 		handler.WithTokenID(in.Info.TokenID, false),
 		handler.WithOwner(in.Info.Owner, false),
 		handler.WithURI(in.Info.URI, false),
+		handler.WithURIState(in.Info.URIState, false),
 		handler.WithURIType(in.Info.URIType, false),
 		handler.WithImageURL(in.Info.ImageURL, false),
 		handler.WithVideoURL(in.Info.VideoURL, false),
@@ -281,7 +288,6 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 
 	vID := int64(0)
 	vState := npool.ConvertState_Failed
-	remark := in.GetRemark()
 	h, err := handler.NewHandler(
 		ctx,
 		handler.WithEntID(&in.EntID, true),
@@ -301,13 +307,17 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		return nil, nil
 	}
 
+	if info.Remark != "" {
+		info.Remark = fmt.Sprintf("%v,%v", info.Remark, in.Remark)
+	}
+
 	if len(in.Vector) > 0 {
 		milvusmgr := milvusdb.NewNFTConllectionMGR()
 
 		if info.VectorID > 0 {
 			err := milvusmgr.Delete(ctx, []int64{info.VectorID})
 			if err != nil {
-				remark = fmt.Sprintf("%v,%v", remark, err)
+				info.Remark = fmt.Sprintf("%v,%v", info.Remark, err)
 			}
 		}
 
@@ -316,7 +326,7 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 			vState = npool.ConvertState_Success
 			vID = ids[0]
 		} else {
-			remark = fmt.Sprintf("%v,%v", remark, err)
+			info.Remark = fmt.Sprintf("%v,%v", info.Remark, err)
 		}
 	}
 
@@ -325,7 +335,7 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		handler.WithID(&info.ID, true),
 		handler.WithVectorID(&vID, true),
 		handler.WithVectorState(&vState, true),
-		handler.WithRemark(&remark, true),
+		handler.WithRemark(&info.Remark, true),
 	)
 	if err != nil {
 		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
@@ -381,7 +391,6 @@ func (s *Server) GetTokenOnly(ctx context.Context, in *npool.GetTokenOnlyRequest
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetTokenOnly", "error", errMsg)
 		return &npool.GetTokenOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 
@@ -472,15 +481,12 @@ func (s *Server) DeleteToken(ctx context.Context, in *npool.DeleteTokenRequest) 
 
 //nolint:funlen,gocyclo
 func (s *Server) TriggerTokenTransform(ctx context.Context, conds *npool.Conds) error {
-	// TODO: will be rewrite,too long
-	// TODO: each state corresponds to a processing function
-	// query synctask
 	// lock
 	lockKey := "TriggerTokenTransform_Lock"
 	lockID, err := ctredis.TryLock(lockKey, RedisLockTimeout)
 	if err != nil {
 		logger.Sugar().Warn("TriggerTokenTransform", "warning", err)
-		return err
+		return nil
 	}
 
 	defer func() {

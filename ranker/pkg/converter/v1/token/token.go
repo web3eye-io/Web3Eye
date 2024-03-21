@@ -20,6 +20,7 @@ func Ent2Grpc(row *nftmetaproto.Token) *rankerproto.SearchToken {
 		TokenType:       row.TokenType,
 		Owner:           row.Owner,
 		URI:             row.URI,
+		URIState:        row.URIState,
 		URIType:         row.URIType,
 		ImageURL:        row.ImageURL,
 		VideoURL:        row.VideoURL,

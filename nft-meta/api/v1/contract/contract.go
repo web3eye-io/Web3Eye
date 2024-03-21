@@ -202,7 +202,6 @@ func (s *Server) GetContractOnly(ctx context.Context, in *npool.GetContractOnlyR
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetContractOnly", "error", errMsg)
 		return &npool.GetContractOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 

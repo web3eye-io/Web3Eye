@@ -23,12 +23,7 @@ func (OrderItem) Mixin() []ent.Mixin {
 
 func (OrderItem) Fields() []ent.Field {
 	return []ent.Field{
-		field.
-			UUID("order_id", uuid.UUID{}).
-			Optional().
-			Default(func() uuid.UUID {
-				return uuid.UUID{}
-			}),
+		field.UUID("order_id", uuid.UUID{}),
 		field.String("order_item_type"),
 		field.String("contract"),
 		field.String("token_type"),

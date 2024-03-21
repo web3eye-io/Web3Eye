@@ -27,6 +27,7 @@ message OrderItem{
 
 message Transfer {
   uint32 ID = 10;
+  string EntID = 11;
   chain.ChainType ChainType = 20;
   string ChainID = 30;
   string Contract = 40;

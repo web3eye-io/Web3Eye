@@ -16,14 +16,14 @@ import (
 )
 
 const (
-	CheckTopicInterval     = time.Second * 10
+	CheckTopicInterval     = time.Second * 5
+	TriggerTaskInterval    = time.Second * 2
 	FindContractCreator    = false
 	maxTopicNum            = 5
-	maxParseGoroutineNum   = 5
+	maxParseGoroutineNum   = 10
 	updateBlockNumInterval = time.Minute
-	// 3145728 = 3M
-	MaxTokenURILength    = 3145728
-	OverLimitStoreLength = 100
+	MaxContentLength       = 1098304
+	OverLimitStoreLength   = 100
 )
 
 type IIndexer interface {
@@ -117,11 +117,14 @@ func (e *Indexer) pullTaskTopics(ctx context.Context) (outBlockNum chan uint64, 
 				resp, err := synctaskNMCli.GetSyncTasks(ctx, &synctask.GetSyncTasksRequest{Conds: conds, Offset: 0, Limit: maxTopicNum})
 				if err != nil {
 					logger.Sugar().Error(err)
+					continue
 				}
 
-				for _, info := range resp.GetInfos() {
-					e.indexTopicTasks(ctx, pulsarCli, info, outBlockNum)
+				if len(resp.GetInfos()) == 0 {
+					continue
 				}
+				e.indexTopicTasks(ctx, pulsarCli, resp.GetInfos()[0], outBlockNum)
+
 			case <-ctx.Done():
 				return
 			}
@@ -162,7 +165,7 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				continue
 			}
 			retries = 0
-		case <-time.NewTicker(CheckTopicInterval).C:
+		case <-time.NewTicker(TriggerTaskInterval).C:
 			if retries > maxRetries {
 				return
 			}
@@ -171,6 +174,9 @@ func (e *Indexer) indexTopicTasks(ctx context.Context, pulsarCli pulsar.Client, 
 				logger.Sugar().Errorf("triggerSyncTask failed ,err: %v", err)
 				retries++
 				continue
+			}
+			if resp == nil || resp.Info == nil {
+				return
 			}
 			if resp.Info.SyncState != basetype.SyncState_Start {
 				return

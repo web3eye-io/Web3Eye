@@ -41,6 +41,17 @@
       ],
       "default": "TokenUnkonwn"
     },
+    "chainTokenURIState": {
+      "type": "string",
+      "enum": [
+        "TokenURIDefault",
+        "TokenURIFinish",
+        "TokenURIIncomplete",
+        "TokenURIUnsupport",
+        "TokenURIError"
+      ],
+      "default": "TokenURIDefault"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -63,6 +74,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -98,6 +110,9 @@
         "URI": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
+        "URIState": {
+          "$ref": "#/definitions/web3eyeUint32Val"
+        },
         "URIType": {
           "$ref": "#/definitions/web3eyeStringVal"
         },
@@ -127,6 +142,9 @@
         },
         "ImageSnapshotID": {
           "$ref": "#/definitions/web3eyeUint32Val"
+        },
+        "IDs": {
+          "$ref": "#/definitions/web3eyeUint32SliceVal"
         },
         "EntIDs": {
           "$ref": "#/definitions/web3eyeStringSliceVal"
@@ -171,6 +189,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/tokenToken"
           }
         },
@@ -186,7 +205,15 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/tokenSearchToken"
+          }
+        },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
           }
         },
         "StorageKey": {
@@ -242,6 +269,9 @@
         "URI": {
           "type": "string"
         },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
+        },
         "URIType": {
           "type": "string"
         },
@@ -281,6 +311,7 @@
         "SiblingTokens": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/tokenSiblingToken"
           }
         },
@@ -297,8 +328,9 @@
     "tokenSiblingToken": {
       "type": "object",
       "properties": {
-        "EntID": {
-          "type": "string"
+        "ID": {
+          "type": "integer",
+          "format": "int64"
         },
         "TokenID": {
           "type": "string"
@@ -356,6 +388,13 @@
         "URI": {
           "type": "string",
           "title": "@inject_tag: sql:\"uri\""
+        },
+        "URIStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"uri_state\""
+        },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
         },
         "URIType": {
           "type": "string",
@@ -463,6 +502,21 @@
         },
         "Value": {
           "type": "string"
+        }
+      }
+    },
+    "web3eyeUint32SliceVal": {
+      "type": "object",
+      "properties": {
+        "Op": {
+          "type": "string"
+        },
+        "Value": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
         }
       }
     },

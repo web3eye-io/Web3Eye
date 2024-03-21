@@ -28,6 +28,7 @@
                 <q-select v-if="updating" :disable="updating"  :options='Object.keys(ChainType)' v-model='target.ChainType' :label='$t("MSG_CHAIN_TYPE")' />
                 <q-input v-if="updating" :disable="updating" v-model='target.ChainID' :label='$t("MSG_CHAIN_ID")' />
                 <q-input  v-model='target.Address' :label='$t("MSG_ADDRESS")' />
+                <q-input  v-model='target.RPS' :label='$t("MSG_RPS")' />
                 <q-select :disable="updating"  :options='Object.keys(ChainType)' v-model='target.ChainType' :label='$t("MSG_CHAIN_TYPE")' />
                 <q-select v-if="updating" :options='Object.keys(EndpointState)' v-model='target.State' :label='$t("MSG_SYNC_STATE")' />
             </q-card-section>
@@ -208,6 +209,12 @@ const columns = computed(() => [
         label: t('MSG_STATE'),
         sortable: true,
         field: (row: Endpoint) => row.State
+    },
+    {
+        name: 'RPS',
+        label: t('MSG_RPS'),
+        sortable: true,
+        field: (row: Endpoint) => row.RPS
     },
 ])
 </script>

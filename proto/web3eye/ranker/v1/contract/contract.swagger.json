@@ -199,6 +199,7 @@
         "Tokens": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/contractShotToken"
           }
         },
@@ -230,6 +231,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/contractContract"
           }
         },
@@ -302,6 +304,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

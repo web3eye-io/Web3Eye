@@ -2,6 +2,7 @@ package sol
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -56,6 +57,11 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 			}
 
 			err = func() error {
+				err := e.checkOkEndpoints()
+				if err != nil {
+					return err
+				}
+
 				outTransfers1, err := e.IndexTransfer(ctx, slotNum)
 				if err != nil {
 					return err
@@ -78,13 +84,10 @@ func (e *SolIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				err = nil
 			}
 
-			if err != nil {
-				logger.Sugar().Error(err)
-			}
-
 			remark := ""
 			parseState := basetype.BlockParseState_BlockTypeFinish
 			if err != nil {
+				logger.Sugar().Error(err)
 				remark = err.Error()
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
@@ -109,11 +112,17 @@ func (e *SolIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *SolIndexer) UpdateEndpoints(endpoints []string) {
-	e.OkEndpoints = endpoints
+func (e *SolIndexer) checkOkEndpoints() error {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
+		return fmt.Errorf("have no available endpoints")
 	}
+	return nil
+}
+
+func (e *SolIndexer) UpdateEndpoints(endpoints []string) {
+	e.OkEndpoints = endpoints
+	_ = e.checkOkEndpoints()
 }

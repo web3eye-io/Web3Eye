@@ -106,6 +106,17 @@
       ],
       "default": "TokenUnkonwn"
     },
+    "chainTokenURIState": {
+      "type": "string",
+      "enum": [
+        "TokenURIDefault",
+        "TokenURIFinish",
+        "TokenURIIncomplete",
+        "TokenURIUnsupport",
+        "TokenURIError"
+      ],
+      "default": "TokenURIDefault"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -128,6 +139,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }
@@ -166,10 +178,21 @@
     "tokenSearchPageRequest": {
       "type": "object",
       "properties": {
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
         "StorageKey": {
           "type": "string"
         },
         "Page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "Limit": {
           "type": "integer",
           "format": "int64"
         }
@@ -181,7 +204,15 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/tokenSearchToken"
+          }
+        },
+        "Vector": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
           }
         },
         "StorageKey": {
@@ -237,6 +268,9 @@
         "URI": {
           "type": "string"
         },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
+        },
         "URIType": {
           "type": "string"
         },
@@ -276,6 +310,7 @@
         "SiblingTokens": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/tokenSiblingToken"
           }
         },
@@ -292,8 +327,9 @@
     "tokenSiblingToken": {
       "type": "object",
       "properties": {
-        "EntID": {
-          "type": "string"
+        "ID": {
+          "type": "integer",
+          "format": "int64"
         },
         "TokenID": {
           "type": "string"
@@ -351,6 +387,13 @@
         "URI": {
           "type": "string",
           "title": "@inject_tag: sql:\"uri\""
+        },
+        "URIStateStr": {
+          "type": "string",
+          "title": "@inject_tag: sql:\"uri_state\""
+        },
+        "URIState": {
+          "$ref": "#/definitions/chainTokenURIState"
         },
         "URIType": {
           "type": "string",

@@ -93,6 +93,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrder"
           }
         }
@@ -144,6 +145,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrder"
           }
         },
@@ -202,12 +204,14 @@
         "TargetItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrderItem"
           }
         },
@@ -303,12 +307,14 @@
         "TargetItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrderItem"
           }
         },
         "OfferItems": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrderItem"
           }
         },
@@ -339,6 +345,7 @@
         "Infos": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/orderOrder"
           }
         }
@@ -366,6 +373,7 @@
         "details": {
           "type": "array",
           "items": {
+            "type": "object",
             "$ref": "#/definitions/protobufAny"
           }
         }

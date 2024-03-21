@@ -97,6 +97,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			endpoint.FieldChainID:   {Type: field.TypeString, Column: endpoint.FieldChainID},
 			endpoint.FieldAddress:   {Type: field.TypeString, Column: endpoint.FieldAddress},
 			endpoint.FieldState:     {Type: field.TypeString, Column: endpoint.FieldState},
+			endpoint.FieldRps:       {Type: field.TypeUint32, Column: endpoint.FieldRps},
 			endpoint.FieldRemark:    {Type: field.TypeString, Column: endpoint.FieldRemark},
 		},
 	}
@@ -219,6 +220,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			token.FieldTokenID:         {Type: field.TypeString, Column: token.FieldTokenID},
 			token.FieldOwner:           {Type: field.TypeString, Column: token.FieldOwner},
 			token.FieldURI:             {Type: field.TypeString, Column: token.FieldURI},
+			token.FieldURIState:        {Type: field.TypeString, Column: token.FieldURIState},
 			token.FieldURIType:         {Type: field.TypeString, Column: token.FieldURIType},
 			token.FieldImageURL:        {Type: field.TypeString, Column: token.FieldImageURL},
 			token.FieldVideoURL:        {Type: field.TypeString, Column: token.FieldVideoURL},
@@ -579,6 +581,11 @@ func (f *EndpointFilter) WhereAddress(p entql.StringP) {
 // WhereState applies the entql string predicate on the state field.
 func (f *EndpointFilter) WhereState(p entql.StringP) {
 	f.Where(p.Field(endpoint.FieldState))
+}
+
+// WhereRps applies the entql uint32 predicate on the rps field.
+func (f *EndpointFilter) WhereRps(p entql.Uint32P) {
+	f.Where(p.Field(endpoint.FieldRps))
 }
 
 // WhereRemark applies the entql string predicate on the remark field.
@@ -1064,6 +1071,11 @@ func (f *TokenFilter) WhereOwner(p entql.StringP) {
 // WhereURI applies the entql string predicate on the uri field.
 func (f *TokenFilter) WhereURI(p entql.StringP) {
 	f.Where(p.Field(token.FieldURI))
+}
+
+// WhereURIState applies the entql string predicate on the uri_state field.
+func (f *TokenFilter) WhereURIState(p entql.StringP) {
+	f.Where(p.Field(token.FieldURIState))
 }
 
 // WhereURIType applies the entql string predicate on the uri_type field.

@@ -2751,6 +2751,8 @@ type EndpointMutation struct {
 	chain_id      *string
 	address       *string
 	state         *string
+	rps           *uint32
+	addrps        *int32
 	remark        *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -3236,6 +3238,62 @@ func (m *EndpointMutation) ResetState() {
 	delete(m.clearedFields, endpoint.FieldState)
 }
 
+// SetRps sets the "rps" field.
+func (m *EndpointMutation) SetRps(u uint32) {
+	m.rps = &u
+	m.addrps = nil
+}
+
+// Rps returns the value of the "rps" field in the mutation.
+func (m *EndpointMutation) Rps() (r uint32, exists bool) {
+	v := m.rps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRps returns the old "rps" field's value of the Endpoint entity.
+// If the Endpoint object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EndpointMutation) OldRps(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRps is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRps requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRps: %w", err)
+	}
+	return oldValue.Rps, nil
+}
+
+// AddRps adds u to the "rps" field.
+func (m *EndpointMutation) AddRps(u int32) {
+	if m.addrps != nil {
+		*m.addrps += u
+	} else {
+		m.addrps = &u
+	}
+}
+
+// AddedRps returns the value that was added to the "rps" field in this mutation.
+func (m *EndpointMutation) AddedRps() (r int32, exists bool) {
+	v := m.addrps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetRps resets all changes to the "rps" field.
+func (m *EndpointMutation) ResetRps() {
+	m.rps = nil
+	m.addrps = nil
+}
+
 // SetRemark sets the "remark" field.
 func (m *EndpointMutation) SetRemark(s string) {
 	m.remark = &s
@@ -3304,7 +3362,7 @@ func (m *EndpointMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EndpointMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.ent_id != nil {
 		fields = append(fields, endpoint.FieldEntID)
 	}
@@ -3328,6 +3386,9 @@ func (m *EndpointMutation) Fields() []string {
 	}
 	if m.state != nil {
 		fields = append(fields, endpoint.FieldState)
+	}
+	if m.rps != nil {
+		fields = append(fields, endpoint.FieldRps)
 	}
 	if m.remark != nil {
 		fields = append(fields, endpoint.FieldRemark)
@@ -3356,6 +3417,8 @@ func (m *EndpointMutation) Field(name string) (ent.Value, bool) {
 		return m.Address()
 	case endpoint.FieldState:
 		return m.State()
+	case endpoint.FieldRps:
+		return m.Rps()
 	case endpoint.FieldRemark:
 		return m.Remark()
 	}
@@ -3383,6 +3446,8 @@ func (m *EndpointMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldAddress(ctx)
 	case endpoint.FieldState:
 		return m.OldState(ctx)
+	case endpoint.FieldRps:
+		return m.OldRps(ctx)
 	case endpoint.FieldRemark:
 		return m.OldRemark(ctx)
 	}
@@ -3450,6 +3515,13 @@ func (m *EndpointMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetState(v)
 		return nil
+	case endpoint.FieldRps:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRps(v)
+		return nil
 	case endpoint.FieldRemark:
 		v, ok := value.(string)
 		if !ok {
@@ -3474,6 +3546,9 @@ func (m *EndpointMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, endpoint.FieldDeletedAt)
 	}
+	if m.addrps != nil {
+		fields = append(fields, endpoint.FieldRps)
+	}
 	return fields
 }
 
@@ -3488,6 +3563,8 @@ func (m *EndpointMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case endpoint.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case endpoint.FieldRps:
+		return m.AddedRps()
 	}
 	return nil, false
 }
@@ -3517,6 +3594,13 @@ func (m *EndpointMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeletedAt(v)
+		return nil
+	case endpoint.FieldRps:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRps(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Endpoint numeric field %s", name)
@@ -3589,6 +3673,9 @@ func (m *EndpointMutation) ResetField(name string) error {
 		return nil
 	case endpoint.FieldState:
 		m.ResetState()
+		return nil
+	case endpoint.FieldRps:
+		m.ResetRps()
 		return nil
 	case endpoint.FieldRemark:
 		m.ResetRemark()
@@ -5144,22 +5231,9 @@ func (m *OrderItemMutation) OldOrderID(ctx context.Context) (v uuid.UUID, err er
 	return oldValue.OrderID, nil
 }
 
-// ClearOrderID clears the value of the "order_id" field.
-func (m *OrderItemMutation) ClearOrderID() {
-	m.order_id = nil
-	m.clearedFields[orderitem.FieldOrderID] = struct{}{}
-}
-
-// OrderIDCleared returns if the "order_id" field was cleared in this mutation.
-func (m *OrderItemMutation) OrderIDCleared() bool {
-	_, ok := m.clearedFields[orderitem.FieldOrderID]
-	return ok
-}
-
 // ResetOrderID resets all changes to the "order_id" field.
 func (m *OrderItemMutation) ResetOrderID() {
 	m.order_id = nil
-	delete(m.clearedFields, orderitem.FieldOrderID)
 }
 
 // SetOrderItemType sets the "order_item_type" field.
@@ -5660,9 +5734,6 @@ func (m *OrderItemMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *OrderItemMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(orderitem.FieldOrderID) {
-		fields = append(fields, orderitem.FieldOrderID)
-	}
 	if m.FieldCleared(orderitem.FieldRemark) {
 		fields = append(fields, orderitem.FieldRemark)
 	}
@@ -5680,9 +5751,6 @@ func (m *OrderItemMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *OrderItemMutation) ClearField(name string) error {
 	switch name {
-	case orderitem.FieldOrderID:
-		m.ClearOrderID()
-		return nil
 	case orderitem.FieldRemark:
 		m.ClearRemark()
 		return nil
@@ -7928,6 +7996,7 @@ type TokenMutation struct {
 	token_id             *string
 	owner                *string
 	uri                  *string
+	uri_state            *string
 	uri_type             *string
 	image_url            *string
 	video_url            *string
@@ -8532,6 +8601,55 @@ func (m *TokenMutation) ResetURI() {
 	delete(m.clearedFields, token.FieldURI)
 }
 
+// SetURIState sets the "uri_state" field.
+func (m *TokenMutation) SetURIState(s string) {
+	m.uri_state = &s
+}
+
+// URIState returns the value of the "uri_state" field in the mutation.
+func (m *TokenMutation) URIState() (r string, exists bool) {
+	v := m.uri_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURIState returns the old "uri_state" field's value of the Token entity.
+// If the Token object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TokenMutation) OldURIState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURIState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURIState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURIState: %w", err)
+	}
+	return oldValue.URIState, nil
+}
+
+// ClearURIState clears the value of the "uri_state" field.
+func (m *TokenMutation) ClearURIState() {
+	m.uri_state = nil
+	m.clearedFields[token.FieldURIState] = struct{}{}
+}
+
+// URIStateCleared returns if the "uri_state" field was cleared in this mutation.
+func (m *TokenMutation) URIStateCleared() bool {
+	_, ok := m.clearedFields[token.FieldURIState]
+	return ok
+}
+
+// ResetURIState resets all changes to the "uri_state" field.
+func (m *TokenMutation) ResetURIState() {
+	m.uri_state = nil
+	delete(m.clearedFields, token.FieldURIState)
+}
+
 // SetURIType sets the "uri_type" field.
 func (m *TokenMutation) SetURIType(s string) {
 	m.uri_type = &s
@@ -9083,7 +9201,7 @@ func (m *TokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TokenMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.ent_id != nil {
 		fields = append(fields, token.FieldEntID)
 	}
@@ -9116,6 +9234,9 @@ func (m *TokenMutation) Fields() []string {
 	}
 	if m.uri != nil {
 		fields = append(fields, token.FieldURI)
+	}
+	if m.uri_state != nil {
+		fields = append(fields, token.FieldURIState)
 	}
 	if m.uri_type != nil {
 		fields = append(fields, token.FieldURIType)
@@ -9177,6 +9298,8 @@ func (m *TokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Owner()
 	case token.FieldURI:
 		return m.URI()
+	case token.FieldURIState:
+		return m.URIState()
 	case token.FieldURIType:
 		return m.URIType()
 	case token.FieldImageURL:
@@ -9228,6 +9351,8 @@ func (m *TokenMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldOwner(ctx)
 	case token.FieldURI:
 		return m.OldURI(ctx)
+	case token.FieldURIState:
+		return m.OldURIState(ctx)
 	case token.FieldURIType:
 		return m.OldURIType(ctx)
 	case token.FieldImageURL:
@@ -9333,6 +9458,13 @@ func (m *TokenMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetURI(v)
+		return nil
+	case token.FieldURIState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURIState(v)
 		return nil
 	case token.FieldURIType:
 		v, ok := value.(string)
@@ -9503,6 +9635,9 @@ func (m *TokenMutation) ClearedFields() []string {
 	if m.FieldCleared(token.FieldURI) {
 		fields = append(fields, token.FieldURI)
 	}
+	if m.FieldCleared(token.FieldURIState) {
+		fields = append(fields, token.FieldURIState)
+	}
 	if m.FieldCleared(token.FieldURIType) {
 		fields = append(fields, token.FieldURIType)
 	}
@@ -9552,6 +9687,9 @@ func (m *TokenMutation) ClearField(name string) error {
 		return nil
 	case token.FieldURI:
 		m.ClearURI()
+		return nil
+	case token.FieldURIState:
+		m.ClearURIState()
 		return nil
 	case token.FieldURIType:
 		m.ClearURIType()
@@ -9623,6 +9761,9 @@ func (m *TokenMutation) ResetField(name string) error {
 		return nil
 	case token.FieldURI:
 		m.ResetURI()
+		return nil
+	case token.FieldURIState:
+		m.ResetURIState()
 		return nil
 	case token.FieldURIType:
 		m.ResetURIType()

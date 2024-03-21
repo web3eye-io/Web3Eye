@@ -79,9 +79,12 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props">
+            <q-td key="TokenID" :props="props">
+              #{{ props.row.TokenID }}
+            </q-td>
             <q-td key="OfferItems" :props="props">
               <span v-if='props.row.OfferItems?.length === 0' />
-              <div v-else class="row justify-start">
+              <div v-else class="row justify-start offer-item">
                 <div class="left">
                   <MyImage
                     :url="(props.row.OfferItems?.[0]?.ImageURL as string)"
@@ -175,7 +178,7 @@ import { formatTime } from 'src/teststore/util'
 import { Transfer } from 'src/teststore/transfer/types'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { ShotToken } from 'src/teststore/contract/types'
+import { Contract, ShotToken } from 'src/teststore/contract/types'
 const MyImage = defineAsyncComponent(
   () => import('src/components/Token/Image.vue')
 )
@@ -218,6 +221,11 @@ const transfers = computed(() =>
 
 const columns = computed(() => [
   {
+    name: 'TokenID',
+    label: 'TokenID',
+    align: 'left',
+  },
+  {
     name: 'OfferItems',
     label: 'Offer Items',
     align: 'left',
@@ -255,8 +263,7 @@ const columns = computed(() => [
 ])
 
 const getTransfers = (offset: number, limit: number) => {
-  transfer.getTransfers(
-    {
+  transfer.getTransfers({
       ChainType: _chainType.value,
       ChainID: _chainID.value,
       Contract: _contract.value,
@@ -281,7 +288,7 @@ const target = computed(() => token.getTokenByID(Number(id1.value)))
 const getToken = () => {
   token.getToken(
     {
-      ID: id1.value,
+      ID: Number(id1.value),
       Message: {},
     },
     () => {
@@ -292,15 +299,17 @@ const getToken = () => {
 
 const contract = useContractStore()
 const tokens = computed(() => contract.shotTokens(_contract.value))
-const getContract = () => {
+const getContract = (offset: number, limit: number) => {
   contract.getContractAndTokens({
       Contract: _contract.value,
-      Offset: 0,
-      Limit: 100,
+      Offset: offset,
+      Limit: limit,
       Message: {},
-    },
-    () => {
-      // TODO
+    }, (error:boolean, _row: Contract, rows: ShotToken[]) => {
+      if(error || rows?.length === 0) {
+        return
+      }
+      getContract(offset + limit, limit)
     }
   )
 }
@@ -324,7 +333,7 @@ onMounted(() => {
     getTransfers(0, 100)
   }
   if (_contract?.value?.length > 0) {
-    getContract()
+    getContract(0, 100)
   }
 })
 </script>
@@ -419,4 +428,8 @@ onMounted(() => {
   font-size: 12px
 .token,.show-more
   padding-left: 5px
+.grid-container
+  padding-bottom: 48px
+.offer-item
+  margin-left: -40px
 </style>

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/chains/indexer"
 	"github.com/web3eye-io/Web3Eye/block-etl/pkg/token"
@@ -49,7 +50,6 @@ func (e *SolIndexer) CheckBlock(ctx context.Context, inBlockNum uint64) (*blockP
 
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 
@@ -82,7 +82,6 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	}
 	block, err := cli.GetBlock(ctx, inBlockNum)
 	if err != nil {
-		e.checkErr(ctx, err)
 		return nil, fmt.Errorf("cannot get sol block,err: %v", err)
 	}
 	txTime := uint64(block.BlockTime.Time().Unix())
@@ -96,7 +95,6 @@ func (e *SolIndexer) IndexTransfer(ctx context.Context, inBlockNum uint64) ([]*c
 	for i := range transfers {
 		metadata, err := cli.GetMetadata(ctx, transfers[i].TokenID)
 		if err != nil {
-			e.checkErr(ctx, err)
 			return nil, fmt.Errorf("cannot get sol token metadata,err: %v", err)
 		}
 		transfers[i].Contract = GenCollectionAddr(metadata)
@@ -141,19 +139,27 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		conds := &tokenProto.Conds{
 			ChainType: &ctMessage.Uint32Val{
 				Value: uint32(e.ChainType),
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			ChainID: &ctMessage.StringVal{
 				Value: e.ChainID,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			Contract: &ctMessage.StringVal{
 				Value: transfer.Contract,
-				Op:    "eq",
+				Op:    cruder.EQ,
 			},
 			TokenID: &ctMessage.StringVal{
 				Value: transfer.TokenID,
-				Op:    "eq",
+				Op:    cruder.EQ,
+			},
+			URIState: &ctMessage.Uint32Val{
+				Value: uint32(basetype.BlockParseState_BlockTypeFinish),
+				Op:    cruder.EQ,
+			},
+			VectorState: &ctMessage.Uint32Val{
+				Value: uint32(tokenProto.ConvertState_Success),
+				Op:    cruder.EQ,
 			},
 		}
 
@@ -169,9 +175,12 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 		}
 		remark := ""
 
+		uriState := basetype.TokenURIState_TokenURIFinish
+		vectorState := tokenProto.ConvertState_Waiting
 		metadata, err := cli.GetMetadata(ctx, transfer.TokenID)
 		if err != nil {
-			e.checkErr(ctx, err)
+			uriState = basetype.TokenURIState_TokenURIError
+			vectorState = tokenProto.ConvertState_Failed
 			logger.Sugar().Warnf("cannot get metadata,err: %v, tokenID: %v", err, transfer.TokenID)
 			remark = fmt.Sprintf("%v,%v", remark, err)
 		}
@@ -187,28 +196,25 @@ func (e *SolIndexer) IndexToken(ctx context.Context, inTransfers []*chains.Token
 			// if cannot get metadata,then set the default value
 			metadata = &token_metadata.Metadata{}
 		}
-
-		if len(metadata.Data.Uri) > indexer.MaxTokenURILength {
-			remark = fmt.Sprintf("%v,tokenURI too long(length: %v),skip to store it", remark, len(metadata.Data.Uri))
-			metadata.Data.Uri = metadata.Data.Uri[:indexer.OverLimitStoreLength]
-		}
+		tokenReq := token.CheckTokenReq(&tokenProto.TokenReq{
+			ChainType:   &e.ChainType,
+			ChainID:     &e.ChainID,
+			Contract:    &transfer.Contract,
+			TokenType:   &transfer.TokenType,
+			TokenID:     &transfer.TokenID,
+			URI:         &metadata.Data.Uri,
+			URIState:    &uriState,
+			URIType:     (*string)(&tokenURIInfo.URIType),
+			ImageURL:    &tokenURIInfo.ImageURL,
+			VideoURL:    &tokenURIInfo.VideoURL,
+			Name:        &metadata.Data.Name,
+			Description: &metadata.Data.Symbol,
+			VectorState: &vectorState,
+			Remark:      &remark,
+		})
 
 		_, err = tokenNMCli.UpsertToken(ctx, &tokenProto.UpsertTokenRequest{
-			Info: &tokenProto.TokenReq{
-				ChainType:   &e.ChainType,
-				ChainID:     &e.ChainID,
-				Contract:    &transfer.Contract,
-				TokenType:   &transfer.TokenType,
-				TokenID:     &transfer.TokenID,
-				URI:         &metadata.Data.Uri,
-				URIType:     (*string)(&tokenURIInfo.URIType),
-				ImageURL:    &tokenURIInfo.ImageURL,
-				VideoURL:    &tokenURIInfo.VideoURL,
-				Name:        &metadata.Data.Name,
-				Description: &metadata.Data.Symbol,
-				VectorState: tokenProto.ConvertState_Waiting.Enum(),
-				Remark:      &remark,
-			},
+			Info: tokenReq,
 		})
 
 		if err != nil {
@@ -312,7 +318,6 @@ func (e *SolIndexer) getContractInfo(ctx context.Context, transfer *chains.Token
 	}
 
 	if err != nil {
-		e.checkErr(ctx, err)
 		remark = err.Error()
 	}
 
@@ -338,7 +343,6 @@ func (e *SolIndexer) SyncCurrentBlockNum(ctx context.Context, updateInterval tim
 
 			blockNum, err := cli.GetSlotHeight(ctx)
 			if err != nil {
-				e.checkErr(ctx, err)
 				logger.Sugar().Errorf("sol failed to get current block number: %v", err)
 				return
 			}

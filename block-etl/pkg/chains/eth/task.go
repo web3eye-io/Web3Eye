@@ -2,6 +2,7 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
@@ -12,9 +13,9 @@ import (
 )
 
 const (
-	CheckTopicInterval     = time.Second * 10
+	CheckTopicInterval     = time.Second * 5
 	FindContractCreator    = false
-	redisExpireDefaultTime = time.Second * 10
+	redisExpireDefaultTime = time.Second * 5
 )
 
 type EthIndexer struct {
@@ -43,42 +44,53 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 	for {
 		select {
 		case num := <-taskBlockNum:
+			logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start to parse")
 			block, err := e.CheckBlock(ctx, num)
 			if err != nil {
 				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 				continue
 			}
 
-			if block.ParseState == basetype.BlockParseState_BlockTypeFinish {
+			if block.ParseState != basetype.BlockParseState_BlockTypeStart {
 				continue
 			}
 
 			err = func() error {
+				err := e.checkOkEndpoints()
+				if err != nil {
+					return err
+				}
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start IndexBlockLogs")
+
 				blockLogs, err := e.IndexBlockLogs(ctx, block.BlockNumber)
 				if err != nil {
 					return err
 				}
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start IndexTransfer")
 
 				filteredT1, err := e.IndexTransfer(ctx, blockLogs.TransferLogs, block.BlockTime)
 				if err != nil {
 					return err
 				}
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start IndexToken")
 
 				contractT1, err := e.IndexToken(ctx, filteredT1)
 				if err != nil {
 					return err
 				}
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start IndexContract")
 
 				err = e.IndexContract(ctx, contractT1, FindContractCreator)
 				if err != nil {
 					return err
 				}
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start IndexOrder")
 
 				contractT2, err := e.IndexOrder(ctx, blockLogs.OrderLogs)
 				if err != nil {
 					return err
 				}
-
+				logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start order IndexContract")
 				err = e.IndexContract(ctx, contractT2, FindContractCreator)
 				if err != nil {
 					return err
@@ -86,17 +98,14 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				return nil
 			}()
 
-			if err != nil {
-				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
-			}
-
 			remark := ""
 			parseState := basetype.BlockParseState_BlockTypeFinish
 			if err != nil {
+				logger.Sugar().Errorw("IndexBlock", "BlockNum", num, "Error", err)
 				remark = err.Error()
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
-
+			logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start order UpdateBlock")
 			_, err = blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
 				Info: &blockProto.BlockReq{
 					ID:         &block.ID,
@@ -117,11 +126,17 @@ func (e *EthIndexer) OnNoAvalibleEndpoints(event func()) {
 	e.ONAEEvents = append(e.ONAEEvents, event)
 }
 
-func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
-	e.OkEndpoints = endpoints
+func (e *EthIndexer) checkOkEndpoints() error {
 	if len(e.OkEndpoints) == 0 {
 		for _, v := range e.ONAEEvents {
 			v()
 		}
+		return fmt.Errorf("have no available endpoints")
 	}
+	return nil
+}
+
+func (e *EthIndexer) UpdateEndpoints(endpoints []string) {
+	e.OkEndpoints = endpoints
+	_ = e.checkOkEndpoints()
 }

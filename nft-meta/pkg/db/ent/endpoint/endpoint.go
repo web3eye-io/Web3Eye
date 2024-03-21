@@ -28,6 +28,8 @@ const (
 	FieldAddress = "address"
 	// FieldState holds the string denoting the state field in the database.
 	FieldState = "state"
+	// FieldRps holds the string denoting the rps field in the database.
+	FieldRps = "rps"
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// Table holds the table name of the endpoint in the database.
@@ -45,6 +47,7 @@ var Columns = []string{
 	FieldChainID,
 	FieldAddress,
 	FieldState,
+	FieldRps,
 	FieldRemark,
 }
 
@@ -76,4 +79,6 @@ var (
 	UpdateDefaultUpdatedAt func() uint32
 	// DefaultDeletedAt holds the default value on creation for the "deleted_at" field.
 	DefaultDeletedAt func() uint32
+	// DefaultRps holds the default value on creation for the "rps" field.
+	DefaultRps uint32
 )

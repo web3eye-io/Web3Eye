@@ -30,6 +30,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *endpointproto.CreateEnd
 		handler.WithChainID(in.Info.ChainID, false),
 		handler.WithAddress(in.Info.Address, true),
 		handler.WithState(in.Info.State, false),
+		handler.WithRPS(in.Info.RPS, false),
 		handler.WithRemark(in.Info.Remark, false),
 	)
 	if err != nil {
@@ -43,6 +44,7 @@ func (s *Server) CreateEndpoint(ctx context.Context, in *endpointproto.CreateEnd
 		return &endpointproto.CreateEndpointResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to CreateEndpoint ,chaintype:%v chainid:%v rps:%v address:%v", info.ChainType, info.ChainID, info.RPS, info.Address)
 	return &endpointproto.CreateEndpointResponse{
 		Info: info,
 	}, nil
@@ -67,6 +69,7 @@ func (s *Server) CreateEndpoints(ctx context.Context, in *endpointproto.CreateEn
 		return &endpointproto.CreateEndpointsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to CreateEndpoints ,have %v infos", len(infos))
 	return &endpointproto.CreateEndpointsResponse{
 		Infos: infos,
 	}, nil
@@ -86,6 +89,7 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *endpointproto.UpdateEnd
 		handler.WithChainID(in.Info.ChainID, false),
 		handler.WithAddress(in.Info.Address, false),
 		handler.WithState(in.Info.State, false),
+		handler.WithRPS(in.Info.RPS, false),
 		handler.WithRemark(in.Info.Remark, false),
 	)
 	if err != nil {
@@ -99,6 +103,7 @@ func (s *Server) UpdateEndpoint(ctx context.Context, in *endpointproto.UpdateEnd
 		return &endpointproto.UpdateEndpointResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to UpdateEndpoint ,chaintype:%v chainid:%v rps:%v address:%v", info.ChainType, info.ChainID, info.RPS, info.Address)
 	return &endpointproto.UpdateEndpointResponse{
 		Info: info,
 	}, nil
@@ -122,6 +127,7 @@ func (s *Server) UpdateEndpoints(ctx context.Context, in *endpointproto.UpdateEn
 			handler.WithChainID(info.ChainID, false),
 			handler.WithAddress(info.Address, false),
 			handler.WithState(info.State, false),
+			handler.WithRPS(info.RPS, false),
 			handler.WithRemark(info.Remark, false),
 		)
 		if err != nil {
@@ -143,6 +149,7 @@ func (s *Server) UpdateEndpoints(ctx context.Context, in *endpointproto.UpdateEn
 		}
 	}
 
+	logger.Sugar().Infof("success to CreateEndpoints ,all have %v infos, failed to update %v infos", len(in.Infos), len(failedInfos))
 	return &endpointproto.UpdateEndpointsResponse{
 		Infos: failedInfos,
 	}, nil
@@ -162,6 +169,7 @@ func (s *Server) GetEndpoint(ctx context.Context, in *endpointproto.GetEndpointR
 		return &endpointproto.GetEndpointResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to GetEndpoint ,chaintype:%v chainid:%v rps:%v address:%v", info.ChainType, info.ChainID, info.RPS, info.Address)
 	return &endpointproto.GetEndpointResponse{
 		Info: info,
 	}, nil
@@ -185,10 +193,11 @@ func (s *Server) GetEndpointOnly(ctx context.Context, in *endpointproto.GetEndpo
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetEndpointOnly", "error", errMsg)
 		return &endpointproto.GetEndpointOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
+	info := infos[0]
 
+	logger.Sugar().Infof("success to GetEndpointOnly ,chaintype:%v chainid:%v rps:%v address:%v", info.ChainType, info.ChainID, info.RPS, info.Address)
 	return &endpointproto.GetEndpointOnlyResponse{
 		Info: infos[0],
 	}, nil
@@ -210,6 +219,7 @@ func (s *Server) GetEndpoints(ctx context.Context, in *endpointproto.GetEndpoint
 		return &endpointproto.GetEndpointsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to GetEndpoints ,all have %v infos", len(infos))
 	return &endpointproto.GetEndpointsResponse{
 		Infos: infos,
 		Total: total,
@@ -271,6 +281,7 @@ func (s *Server) DeleteEndpoint(ctx context.Context, in *endpointproto.DeleteEnd
 		return &endpointproto.DeleteEndpointResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
+	logger.Sugar().Infof("success to DeleteEndpoint ,chaintype:%v chainid:%v rps:%v address:%v", info.ChainType, info.ChainID, info.RPS, info.Address)
 	return &endpointproto.DeleteEndpointResponse{
 		Info: info,
 	}, nil

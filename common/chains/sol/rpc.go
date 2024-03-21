@@ -14,12 +14,10 @@ func (solCli solClients) GetSlotHeight(ctx context.Context) (uint64, error) {
 	height := uint64(0)
 
 	var err error
-	err = solCli.WithClient(ctx, func(ctx context.Context, c *rpc.Client) (bool, error) {
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		height, err = c.GetSlot(ctx, rpc.CommitmentFinalized)
-		if err != nil {
-			return false, err
-		}
-		return false, nil
+		return true, err
 	})
 
 	return height, err
@@ -30,16 +28,14 @@ func (solCli solClients) GetBlock(ctx context.Context, slot uint64) (*rpc.GetBlo
 	maxSupportedTransactionVersion := uint64(0)
 	rewards := false
 	var err error
-	err = solCli.WithClient(ctx, func(ctx context.Context, c *rpc.Client) (bool, error) {
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		block, err = c.GetBlockWithOpts(context.Background(), slot, &rpc.GetBlockOpts{
 			MaxSupportedTransactionVersion: &maxSupportedTransactionVersion,
 			Rewards:                        &rewards,
 			TransactionDetails:             rpc.TransactionDetailsFull,
 		})
-		if err != nil {
-			return true, err
-		}
-		return false, nil
+		return true, err
 	})
 
 	return block, err
@@ -49,15 +45,29 @@ func (solCli solClients) GetTX(ctx context.Context, txSig solana.Signature) (*rp
 	tx := &rpc.GetTransactionResult{}
 	maxSupportedTransactionVersion := uint64(0)
 	var err error
-	err = solCli.WithClient(ctx, func(ctx context.Context, c *rpc.Client) (bool, error) {
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		tx, err = c.GetTransaction(ctx, txSig, &rpc.GetTransactionOpts{MaxSupportedTransactionVersion: &maxSupportedTransactionVersion})
-		if err != nil {
-			return true, err
-		}
-		return false, nil
+		return true, err
 	})
 
 	return tx, err
+}
+
+func (solCli solClients) GetChainID(ctx context.Context) (string, error) {
+	var gHash solana.Hash
+	var err error
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
+		gHash, err = c.GetGenesisHash(ctx)
+		return true, err
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return gHash.String(), err
 }
 
 func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*token_metadata.Metadata, error) {
@@ -73,12 +83,10 @@ func (solCli solClients) GetMetadata(ctx context.Context, mint string) (*token_m
 	}
 
 	accountInfo := &rpc.GetAccountInfoResult{}
-	err = solCli.WithClient(ctx, func(ctx context.Context, c *rpc.Client) (bool, error) {
+	var useTimes uint16 = 1
+	err = solCli.WithClient(ctx, useTimes, func(ctx context.Context, c *rpc.Client) (bool, error) {
 		accountInfo, err = c.GetAccountInfo(ctx, metadataAcc)
-		if err != nil {
-			return true, err
-		}
-		return false, nil
+		return true, err
 	})
 
 	if err != nil {

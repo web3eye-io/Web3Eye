@@ -131,6 +131,10 @@ func init() {
 	endpointDescDeletedAt := endpointMixinFields1[2].Descriptor()
 	// endpoint.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	endpoint.DefaultDeletedAt = endpointDescDeletedAt.Default.(func() uint32)
+	// endpointDescRps is the schema descriptor for rps field.
+	endpointDescRps := endpointFields[4].Descriptor()
+	// endpoint.DefaultRps holds the default value on creation for the rps field.
+	endpoint.DefaultRps = endpointDescRps.Default.(uint32)
 	orderMixin := schema.Order{}.Mixin()
 	order.Policy = privacy.NewPolicies(orderMixin[1], schema.Order{})
 	order.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -207,10 +211,6 @@ func init() {
 	orderitemDescDeletedAt := orderitemMixinFields1[2].Descriptor()
 	// orderitem.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	orderitem.DefaultDeletedAt = orderitemDescDeletedAt.Default.(func() uint32)
-	// orderitemDescOrderID is the schema descriptor for order_id field.
-	orderitemDescOrderID := orderitemFields[0].Descriptor()
-	// orderitem.DefaultOrderID holds the default value on creation for the order_id field.
-	orderitem.DefaultOrderID = orderitemDescOrderID.Default.(func() uuid.UUID)
 	snapshotMixin := schema.Snapshot{}.Mixin()
 	snapshot.Policy = privacy.NewPolicies(snapshotMixin[1], schema.Snapshot{})
 	snapshot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -322,7 +322,7 @@ func init() {
 	// token.DefaultDeletedAt holds the default value on creation for the deleted_at field.
 	token.DefaultDeletedAt = tokenDescDeletedAt.Default.(func() uint32)
 	// tokenDescVectorState is the schema descriptor for vector_state field.
-	tokenDescVectorState := tokenFields[13].Descriptor()
+	tokenDescVectorState := tokenFields[14].Descriptor()
 	// token.DefaultVectorState holds the default value on creation for the vector_state field.
 	token.DefaultVectorState = tokenDescVectorState.Default.(string)
 	transferMixin := schema.Transfer{}.Mixin()

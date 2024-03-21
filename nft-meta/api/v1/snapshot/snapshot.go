@@ -138,7 +138,6 @@ func (s *Server) GetSnapshotOnly(ctx context.Context, in *npool.GetSnapshotOnlyR
 
 	if total != 1 {
 		errMsg := "more than one result or have no result"
-		logger.Sugar().Errorw("GetBlockOnly", "error", errMsg)
 		return &npool.GetSnapshotOnlyResponse{}, status.Error(codes.Internal, errMsg)
 	}
 
