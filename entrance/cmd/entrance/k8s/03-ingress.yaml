@@ -54,3 +54,5 @@ spec:
                   number: 30150
     - host: api.npool.top
       http: *http_rules
+    - host: api.testnet.web3eye.io
+      http: *http_rules
