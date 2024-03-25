@@ -34,3 +34,5 @@ spec:
       http: *http_rules
     - host: cloud-proxy.web3eye.npool.top
       http: *http_rules
+    - host: cloud-proxy.testnet.web3eye.io
+      http: *http_rules
