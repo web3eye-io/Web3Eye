@@ -53,5 +53,5 @@ if [ ! $rc -eq 0 ]; then
 fi
 set -e
 cd $PROJECT_FOLDER
-PATH=/usr/local/bin:$PATH:./node_modules/@quasar/app/bin yarn install --registry https://registry.npm.taobao.org/
+PATH=/usr/local/bin:$PATH:./node_modules/@quasar/app/bin yarn install
 PATH=/usr/local/bin:$PATH:./node_modules/@quasar/app/bin quasar build
