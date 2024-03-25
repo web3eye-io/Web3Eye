@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var timeout = 10 * time.Second
+var timeout = 60 * time.Second
 
 type handler func(context.Context, npool.ManagerClient) (cruder.Any, error)
 

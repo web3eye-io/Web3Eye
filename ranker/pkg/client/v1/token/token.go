@@ -20,7 +20,7 @@ type handler func(context.Context, rankerproto.ManagerClient) (cruder.Any, error
 
 var (
 	cc      grpc.ClientConnInterface = nil
-	timeout                          = 12 * time.Second
+	timeout                          = 60 * time.Second
 )
 
 func WithCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
