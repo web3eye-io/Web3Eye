@@ -125,7 +125,7 @@ func autoToTensor(ctx context.Context) error {
 
 func updateForGenCar(ctx context.Context, id uint32, filePath string) error {
 	s3key := path.Base(filePath)
-	err := oss.UploadFile(ctx, filePath, s3key)
+	err := oss.UploadFile(ctx, filePath, config.GetConfig().Minio.TokenImageBucket, s3key)
 	if err != nil {
 		return err
 	}

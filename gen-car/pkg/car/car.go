@@ -9,7 +9,9 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctfile"
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/common/unixfs"
+	"github.com/web3eye-io/Web3Eye/config"
 )
 
 const (
@@ -37,8 +39,15 @@ func CreateCar(ctx context.Context, carFilePath string, filesPath []string, vers
 	}
 
 	defer func() {
-		err := os.Remove(tarFilePath)
-		logger.Sugar().Error(err)
+		err := oss.UploadFile(ctx, tarFilePath, config.GetConfig().Minio.TarBucket, tarFilePath)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
+
+		err = os.Remove(tarFilePath)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
 	}()
 
 	root, err := unixfs.CreateFilestore(context.Background(), tarFilePath, carFilePath)

@@ -96,7 +96,11 @@ address="http://web3eye-minio:9000"
 access-key="j6dXlhoPx9StulBELGWm"
 secret-key="4VeKOaQBRbLNJPPQu0kgJXYIwpLcZPvjJ1xlunn2"
 region="default"
-token-image-bucket="token-image-bucket"
+token-image-bucket="token-image"
+tar-bucket="tar"
+max-tar-num=50
+car-bucket="car"
+max-car-num=50
 
 [ipfs]
 http-gateway="https://ipfs.io"

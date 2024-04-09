@@ -39,7 +39,7 @@ var runCmd = &cli.Command{
 		return logger.Init(logger.DebugLevel, config.GetConfig().GenCar.LogFile)
 	},
 	Action: func(c *cli.Context) error {
-		err := oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
+		err := oss.Init(config.GetConfig().Minio.Region)
 		if err != nil {
 			panic(err)
 		}

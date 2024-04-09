@@ -23,9 +23,8 @@ import (
 var ErrOssClientNotInit = errors.New("oss client not init")
 
 var (
-	s3Client  *s3.Client
-	_s3Config S3Config
-	client    = &http.Client{
+	s3Client *s3.Client
+	client   = &http.Client{
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
 				Timeout:   20 * time.Second,
@@ -43,25 +42,15 @@ type S3Config struct {
 	EndPoint  string `json:"endpoint"`
 	AccessKey string `json:"access_key"`
 	SecretKey string `json:"secret_key"`
-	Bucket    string `json:"bucket,omitempty"`
 }
 
-func Init(region, bucket string) error {
+func Init(region string) error {
 	s3Config := S3Config{
 		Region:    region,
 		EndPoint:  config.GetConfig().Minio.Address,
 		AccessKey: config.GetConfig().Minio.AccessKey,
 		SecretKey: config.GetConfig().Minio.SecretKey,
-		Bucket:    bucket,
 	}
-	_s3Config = S3Config{
-		Region:    s3Config.Region,
-		EndPoint:  s3Config.EndPoint,
-		AccessKey: s3Config.AccessKey,
-		SecretKey: s3Config.SecretKey,
-		Bucket:    s3Config.Bucket,
-	}
-
 	customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		return aws.Endpoint{
 			URL:               s3Config.EndPoint,
@@ -88,34 +77,29 @@ func Init(region, bucket string) error {
 	return nil
 }
 
-// GetStringValueWithNameSpace not network invoke
-func GetS3Bucket() string {
-	return _s3Config.Bucket
-}
-
 func GetS3Client() *s3.Client {
 	return s3Client
 }
 
-func PutObject(ctx context.Context, key string, body []byte) error {
+func PutObject(ctx context.Context, bucket, key string, body []byte) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit
 	}
 
 	_, err := s3Client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 		Body:   bytes.NewReader(body),
 	})
 	return err
 }
 
-func GetObject(ctx context.Context, key string) ([]byte, error) {
+func GetObject(ctx context.Context, bucket, key string) ([]byte, error) {
 	if s3Client == nil {
 		return nil, ErrOssClientNotInit
 	}
 	s3out, err := s3Client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
 	if err != nil {
@@ -132,7 +116,7 @@ func GetObject(ctx context.Context, key string) ([]byte, error) {
 	return out, nil
 }
 
-func UploadFile(ctx context.Context, filePath, key string) error {
+func UploadFile(ctx context.Context, filePath, bucket, key string) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit
 	}
@@ -152,14 +136,14 @@ func UploadFile(ctx context.Context, filePath, key string) error {
 
 	uploader := manager.NewUploader(s3Client)
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 		Body:   file,
 	})
 	return err
 }
 
-func DownloadFile(ctx context.Context, filePath, key string) error {
+func DownloadFile(ctx context.Context, filePath, bucket, key string) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit
 	}
@@ -171,13 +155,13 @@ func DownloadFile(ctx context.Context, filePath, key string) error {
 
 	downloader := manager.NewDownloader(s3Client)
 	_, err = downloader.Download(ctx, downloadFile, &s3.GetObjectInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
 	return err
 }
 
-func DeleteFiles(ctx context.Context, keys []string) error {
+func DeleteFiles(ctx context.Context, bucket string, keys []string) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit
 	}
@@ -190,7 +174,7 @@ func DeleteFiles(ctx context.Context, keys []string) error {
 	}
 
 	input := &s3.DeleteObjectsInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Delete: &types.Delete{
 			Objects: objIDs,
 			Quiet:   false,
@@ -201,13 +185,13 @@ func DeleteFiles(ctx context.Context, keys []string) error {
 	return err
 }
 
-func GetObjectAttributes(ctx context.Context, key string) (*s3.HeadObjectOutput, error) {
+func GetObjectAttributes(ctx context.Context, bucket, key string) (*s3.HeadObjectOutput, error) {
 	if s3Client == nil {
 		return nil, ErrOssClientNotInit
 	}
 
 	return s3Client.HeadObject(ctx, &s3.HeadObjectInput{
-		Bucket: aws.String(GetS3Bucket()),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
 }

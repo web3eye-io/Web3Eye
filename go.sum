@@ -382,8 +382,6 @@ github.com/favadi/protoc-go-inject-tag v1.3.0 h1:JPrmsmc/uBShG85uY5xGZIa5WJ0IaNZ
 github.com/favadi/protoc-go-inject-tag v1.3.0/go.mod h1:SSkUBgfqw2IJ2p7NPNKWk0Idwxt/qIt2LQgFPUgRGtc=
 github.com/filecoin-project/dagstore v0.7.0 h1:IS0R+69za8dguYWeqz/MI+nb7ONpk03tAkxPCBXEKm0=
 github.com/filecoin-project/dagstore v0.7.0/go.mod h1:YKn4qXih+/2xQWpfJsaKGOi4POw5vH5grDmfPCCnx8g=
-github.com/filecoin-project/filecoin-ffi v1.23.0 h1:2KoFp1WiP+UO3uko1vgJn5EzFR0XI0lFE2nSMMT4RBo=
-github.com/filecoin-project/filecoin-ffi v1.23.0/go.mod h1:pr0xMh3m/uvi65h+F6GObPsS9t1nDvNZkBwbRdoXaco=
 github.com/filecoin-project/go-address v0.0.2-0.20200218010043-eb9bb40ed5be/go.mod h1:SAOwJoakQ8EPjwNIsiakIQKsoKdkcbx8U3IapgCg9R0=
 github.com/filecoin-project/go-address v0.0.3/go.mod h1:jr8JxKsYx+lQlQZmF5i2U0Z+cGQ59wMIps/8YW/lDj8=
 github.com/filecoin-project/go-address v0.0.4/go.mod h1:jr8JxKsYx+lQlQZmF5i2U0Z+cGQ59wMIps/8YW/lDj8=
