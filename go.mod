@@ -362,6 +362,8 @@ replace berty.tech/go-ipfs-log v1.10.0 => github.com/web3eye-io/go-ipfs-log v0.0
 
 replace github.com/filecoin-project/filecoin-ffi v0.30.4-0.20200910194244-f640612a1a1f => ./extern/filecoin-ffi
 
+replace github.com/filecoin-project/filecoin-ffi v1.23.0 => ./extern/filecoin-ffi
+
 replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190204201341-e444a5086c43
 
 replace entgo.io/ent => entgo.io/ent v0.11.2
