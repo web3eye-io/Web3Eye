@@ -253,7 +253,7 @@ func GenCarAndUpdate1(ctx context.Context, carFI *CarFileInfo) error {
 	carFI.S3Bucket = oss.GetS3Bucket()
 	logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
 
-	cleanUpUsedCarFI(ctx, carFI)
+	cleanUpUsedCarFI(carFI)
 	logger.Sugar().Infof("cleanup files related to car file: %v", carFI.CarName)
 
 	// report to dealer
@@ -289,7 +289,7 @@ func GenCarAndUpdate1(ctx context.Context, carFI *CarFileInfo) error {
 	return nil
 }
 
-func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
+func cleanUpUsedCarFI(carFI *CarFileInfo) {
 	os.Remove(filePath(carFI.CarName))
 
 	for _, v := range carFI.TokenList {
