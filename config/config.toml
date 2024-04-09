@@ -93,8 +93,8 @@ topic-transform-image="topic_transform_image"
 
 [minio]
 address="http://web3eye-minio:9000"
-access-key="YacNyvYLuQ1J3mMaCvMy"
-secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
+access-key="j6dXlhoPx9StulBELGWm"
+secret-key="4VeKOaQBRbLNJPPQu0kgJXYIwpLcZPvjJ1xlunn2"
 region="default"
 token-image-bucket="token-image-bucket"
 

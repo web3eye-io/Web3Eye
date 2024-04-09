@@ -11,8 +11,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs
   nfs:
-    path: /home/coast/cybertracer
-    server: 172.16.3.90
+    path: /root/code
+    server: 172.16.31.202
 
 ---
 apiVersion: v1

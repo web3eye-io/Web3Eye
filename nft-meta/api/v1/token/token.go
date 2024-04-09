@@ -271,9 +271,10 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		return err
 	}
 
+	id := fmt.Sprintf("%v", *inInfo.ID)
 	_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
 		Payload: []byte(*inInfo.ImageURL),
-		Key:     *inInfo.EntID,
+		Key:     id,
 	})
 
 	if err != nil {
@@ -290,16 +291,16 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 	vState := npool.ConvertState_Failed
 	h, err := handler.NewHandler(
 		ctx,
-		handler.WithEntID(&in.EntID, true),
+		handler.WithID(&in.ID, true),
 	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "ID", in.ID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	info, err := h.GetToken(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "ID", in.ID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -338,13 +339,13 @@ func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVec
 		handler.WithRemark(&info.Remark, true),
 	)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "ID", in.ID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
 	info, err = h.UpdateToken(ctx)
 	if err != nil {
-		logger.Sugar().Errorw("UpdateImageVector", "EntID", in.EntID, "error", err)
+		logger.Sugar().Errorw("UpdateImageVector", "ID", in.ID, "error", err)
 		return &npool.UpdateImageVectorResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
@@ -521,9 +522,10 @@ func (s *Server) TriggerTokenTransform(ctx context.Context, conds *npool.Conds) 
 
 	logger.Sugar().Infof("put the task of transforming token image to vector,put %v tokens", total)
 	for _, info := range infos {
+		id := fmt.Sprintf("%v", info.ID)
 		_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
 			Payload: []byte(info.ImageURL),
-			Key:     info.EntID,
+			Key:     id,
 		})
 		if err != nil {
 			logger.Sugar().Errorw("TriggerTokenTransform", "msg", "faild to put task to pulsar", "error", err)

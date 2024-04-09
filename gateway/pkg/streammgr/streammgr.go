@@ -82,7 +82,7 @@ func (sc *streamClient) recv(ctx context.Context, cancel context.CancelFunc) {
 				var respInfo *npool.GrpcInfo = nil
 				var errMsg string
 
-				cc, err := grpc.Dial(
+				cc, err := grpc.NewClient(
 					req.Info.TargetServer,
 					grpc.WithTransportCredentials(
 						insecure.NewCredentials(),

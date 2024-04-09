@@ -3,13 +3,18 @@ package autototensor
 import (
 	"context"
 	"os"
+	"path"
+	"strconv"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
+	gen_car "github.com/web3eye-io/Web3Eye/gen-car/pkg/client/v1"
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 	tokenproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/filegetter"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/model"
@@ -64,22 +69,35 @@ func autoToTensor(ctx context.Context) error {
 	}
 
 	for msg := range output {
-		entID := msg.Key()
+		_id := msg.Key()
+		//nolint:gomnd
+		idUint, err := strconv.ParseUint(_id, 10, 32)
+		if err != nil {
+			logger.Sugar().Errorf("failed to update token to nftmeta, err %v", err)
+			return err
+		}
+		id := uint32(idUint)
 
 		imgURL := string(msg.Message.Payload())
 		errRecord := ""
 		var vector []float32
 		func() {
 			filename := uuid.NewString()
-			path, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
+			filePath, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
 				return
 			}
-			defer os.Remove(*path)
+			err = updateForGenCar(ctx, id, *filePath)
+			if err != nil {
+				logger.Sugar().Errorf("failed to update for gen-car file form url, err %v", err)
+				errRecord = err.Error()
+			}
 
-			vector, err = model.ToImageVector(ctx, *path)
+			defer os.Remove(*filePath)
+
+			vector, err = model.ToImageVector(ctx, *filePath)
 			if err != nil {
 				logger.Sugar().Errorf("failed to transform url to vector, err %v", err)
 				errRecord = err.Error()
@@ -87,7 +105,7 @@ func autoToTensor(ctx context.Context) error {
 		}()
 
 		_, err = token.UpdateImageVector(ctx, &tokenproto.UpdateImageVectorRequest{
-			EntID:  entID,
+			ID:     id,
 			Vector: vector,
 			Remark: errRecord,
 		})
@@ -103,4 +121,17 @@ func autoToTensor(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func updateForGenCar(ctx context.Context, id uint32, filePath string) error {
+	s3key := path.Base(filePath)
+	err := oss.UploadFile(ctx, filePath, s3key)
+	if err != nil {
+		return err
+	}
+	_, err = gen_car.ReportFile(ctx, &v1.ReportFileRequest{
+		ID:    id,
+		S3Key: s3key,
+	})
+	return err
 }

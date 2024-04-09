@@ -20,7 +20,7 @@ type handlerFunc func(context.Context, npool.ManagerClient) (cruder.Any, error)
 func withCRUD(ctx context.Context, handler handlerFunc) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		fmt.Sprintf("%v:%v",
 			config.GetConfig().NFTMeta.Domain,
 			config.GetConfig().NFTMeta.GrpcPort),

@@ -26,7 +26,7 @@ func WithCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	defer cancel()
 
 	if cc == nil {
-		conn, err := grpc.Dial(
+		conn, err := grpc.NewClient(
 			fmt.Sprintf("%v:%v",
 				config.GetConfig().Transform.Domain,
 				config.GetConfig().Transform.GrpcPort),

@@ -37,12 +37,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: web3eye-minio
-                  key: accesskey
+                  key: rootUser
             - name: minio_secret_key
               valueFrom:
                 secretKeyRef:
                   name: web3eye-minio
-                  key: secretkey
+                  key: rootPassword
 
       volumes:
         - name: service-config

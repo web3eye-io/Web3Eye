@@ -505,8 +505,9 @@
     "tokenUpdateImageVectorRequest": {
       "type": "object",
       "properties": {
-        "EntID": {
-          "type": "string"
+        "ID": {
+          "type": "integer",
+          "format": "int64"
         },
         "Vector": {
           "type": "array",
