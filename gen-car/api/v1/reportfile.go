@@ -16,8 +16,10 @@ import (
 	"github.com/mr-tron/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
+	dealer_client "github.com/web3eye-io/Web3Eye/dealer/pkg/client/v1"
 	"github.com/web3eye-io/Web3Eye/gen-car/pkg/car"
 	"github.com/web3eye-io/Web3Eye/nft-meta/pkg/client/v1/token"
+	dealer_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 	gencar_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 	token_proto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 )
@@ -227,43 +229,62 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
-	// carFI.RootCID = carInfo.RootCID
-	// carFI.S3Bucket = oss.GetS3Bucket()
-	// logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
+func GenCarAndUpdate1(ctx context.Context, carFI *CarFileInfo) error {
+	files := make([]string, len(carFI.TokenList))
+	for i, token := range carFI.TokenList {
+		files[i] = filePath(token.FileName)
+	}
 
-	// cleanUpUsedCarFI(ctx, carFI)
-	// logger.Sugar().Infof("cleanup files related to car file: %v", carFI.CarName)
+	carInfo, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
+	if err != nil {
+		return err
+	}
+	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, carInfo.RootCID)
 
-	// // report to dealer
-	// items := make([]*dealer_proto.ContentItem, len(carFI.TokenList))
-	// for i, v := range carFI.TokenList {
-	// 	items[i] = &dealer_proto.ContentItem{
-	// 		ID:        v.ID,
-	// 		URI:       v.S3Key,
-	// 		ChainType: v.BaseInfo.ChainType,
-	// 		ChainID:   v.BaseInfo.ChainID,
-	// 		Contract:  v.BaseInfo.Contract,
-	// 		TokenID:   v.BaseInfo.TokenID,
-	// 		FileName:  v.FileName,
-	// 	}
-	// }
+	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
+	if err != nil {
+		return err
+	}
 
-	// snapshot, err := dealer_client.CreateSnapshot(
-	// 	ctx,
-	// 	&dealer_proto.CreateSnapshotRequest{
-	// 		SnapshotCommP: carInfo.CommPCID,
-	// 		SnapshotRoot:  carInfo.RootCID,
-	// 		SnapshotURI:   carFI.CarName,
-	// 		Items:         items,
-	// 	},
-	// )
-	// if err != nil {
-	// 	return err
-	// }
-	// if snapshot != nil {
-	// 	logger.Sugar().Infof("report to dealer for create snapshot: %v, car: %v", snapshot.Info.ID, carFI.CarName)
-	// }
+	carFI.RootCID = carInfo.RootCID
+	carFI.S3Bucket = oss.GetS3Bucket()
+	logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
+
+	cleanUpUsedCarFI(ctx, carFI)
+	logger.Sugar().Infof("cleanup files related to car file: %v", carFI.CarName)
+
+	// report to dealer
+	items := make([]*dealer_proto.ContentItem, len(carFI.TokenList))
+	for i, v := range carFI.TokenList {
+		items[i] = &dealer_proto.ContentItem{
+			ID:        v.ID,
+			URI:       v.S3Key,
+			ChainType: v.BaseInfo.ChainType,
+			ChainID:   v.BaseInfo.ChainID,
+			Contract:  v.BaseInfo.Contract,
+			TokenID:   v.BaseInfo.TokenID,
+			FileName:  v.FileName,
+		}
+	}
+
+	snapshot, err := dealer_client.CreateSnapshot(
+		ctx,
+		&dealer_proto.CreateSnapshotRequest{
+			SnapshotCommP: carInfo.CommPCID,
+			SnapshotRoot:  carInfo.RootCID,
+			SnapshotURI:   carFI.CarName,
+			Items:         items,
+		},
+	)
+	if err != nil {
+		return err
+	}
+	if snapshot != nil {
+		logger.Sugar().Infof("report to dealer for create snapshot: %v, car: %v", snapshot.Info.ID, carFI.CarName)
+	}
 
 	return nil
 }
