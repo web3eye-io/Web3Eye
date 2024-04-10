@@ -256,7 +256,7 @@ func TransformImage(ctx context.Context, inInfo *npool.Token) error {
 		return fmt.Errorf("vector state is`t waiting")
 	}
 
-	if len(inInfo.ImageURL) == 0 {
+	if inInfo.ImageURL == "" {
 		return fmt.Errorf("have no image url")
 	}
 
