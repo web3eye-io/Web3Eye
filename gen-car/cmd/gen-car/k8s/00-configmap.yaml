@@ -4,6 +4,7 @@ metadata:
   name: gen-car-environment
   namespace: kube-system
 data:
-  gen_car_max_tar_size: "10971520"
-  minio_max_tar_num: "19"
-  minio_max_car_num: "19"
+  # 18253611010=17G
+  gen_car_max_tar_size: "18253611010"
+  minio_max_tar_num: "20"
+  minio_max_car_num: "20"
