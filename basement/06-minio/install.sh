@@ -17,5 +17,10 @@ helm install -n kube-system web3eye-minio minio/minio -f $SHELL_FOLDER/value.yam
 # helm repo add minio https://charts.min.io
 # kubectl create ns ame
 # helm install --set accessKey=admin,secretKey=12341234,rootUser=admin,rootPassword=12341234,mode=distributed,replicas=4,service.type=NodePort,persistence.storageClass=nfs-storage,persistence.size=500Gi,resources.requests.memory=4Gi -name minio minio/minio --debug --wait --timeout 10m
+
 sleep 5
 kubectl get pods -n kube-system | grep web3eye-minio
+
+if [ $web3eye_minio_set_node_port == "true" ];then
+    kubectl apply -f $SHELL_FOLDER/01-web3eye-minio-nodeport-service.yaml
+fi
