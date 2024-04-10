@@ -69,7 +69,7 @@ func CreateCar(ctx context.Context, carFilePath string, filesPath []string, vers
 	if err != nil {
 		return nil, fmt.Errorf("failed to open filestore from carv2 in path %s: %w", tmp, err)
 	}
-	defer fs.Close() //nolint:errcheck
+	defer fs.Close()
 
 	f, err := os.Create(carFilePath)
 	if err != nil {
