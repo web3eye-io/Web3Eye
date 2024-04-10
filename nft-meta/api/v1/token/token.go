@@ -253,7 +253,7 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 // if the VectorState is waiting,then will auto to transform imageUrl
 func TransformImage(ctx context.Context, inInfo *npool.Token) error {
 	if inInfo.VectorState.String() != npool.ConvertState_Waiting.String() {
-		return fmt.Errorf("vector state is`t waiting")
+		return nil
 	}
 
 	if inInfo.ImageURL == "" {

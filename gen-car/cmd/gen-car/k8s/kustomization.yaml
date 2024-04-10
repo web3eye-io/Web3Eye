@@ -1,3 +1,4 @@
 resources:
+  - 00-configmap.yaml
   - 01-gen-car.viper.yaml
   - 02-gen-car.yaml

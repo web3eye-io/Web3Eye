@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gen-car-environment
+  namespace: kube-system
+data:
+  gen_car_max_tar_size: "10971520"
+  minio_max_tar_num: "19"
+  minio_max_car_num: "19"

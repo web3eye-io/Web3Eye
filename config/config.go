@@ -78,11 +78,12 @@ type Entrance struct {
 }
 
 type GenCar struct {
-	Domain   string `toml:"domain" env:"domain"`
-	HTTPPort int    `toml:"http-port" env:"http_port"`
-	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogFile  string `toml:"log-file" env:"log_file"`
-	DataDir  string `toml:"data-dir" env:"data_dir"`
+	Domain     string `toml:"domain" env:"domain"`
+	HTTPPort   int    `toml:"http-port" env:"http_port"`
+	GrpcPort   int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile    string `toml:"log-file" env:"log_file"`
+	DataDir    string `toml:"data-dir" env:"data_dir"`
+	MaxTarSize uint64 `toml:"max-tar-size" env:"max_tar_size"`
 }
 
 type Dealer struct {

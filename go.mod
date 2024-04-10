@@ -42,6 +42,7 @@ require (
 	github.com/ipfs/go-merkledag v0.11.0
 	github.com/ipfs/kubo v0.21.0
 	github.com/ipld/go-car v0.6.1
+	github.com/ipld/go-ipld-prime v0.20.0
 	github.com/libp2p/go-libp2p v0.27.7
 	github.com/milvus-io/milvus-sdk-go/v2 v2.3.0
 	github.com/mr-tron/base58 v1.2.0
@@ -209,7 +210,6 @@ require (
 	github.com/ipld/edelweiss v0.2.0 // indirect
 	github.com/ipld/go-car/v2 v2.10.1 // indirect
 	github.com/ipld/go-codec-dagpb v1.6.0 // indirect
-	github.com/ipld/go-ipld-prime v0.20.0 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect

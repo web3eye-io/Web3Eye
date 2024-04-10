@@ -52,6 +52,8 @@ http-port=30170
 grpc-port=30171
 data-dir="/tmp/gencar_data"
 log-file="/var/log/gen-car.log"
+# max-tar-size=18253611008
+max-tar-size=20971520
 
 [retriever]
 domain="retriever"
@@ -98,9 +100,9 @@ secret-key="4VeKOaQBRbLNJPPQu0kgJXYIwpLcZPvjJ1xlunn2"
 region="default"
 token-image-bucket="token-image"
 tar-bucket="tar"
-max-tar-num=50
+max-tar-num=20
 car-bucket="car"
-max-car-num=50
+max-car-num=20
 
 [ipfs]
 http-gateway="https://ipfs.io"

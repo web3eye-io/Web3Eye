@@ -37,10 +37,6 @@ var (
 const (
 	DefaultDownloadChanLen  = 100
 	DefaultDownloadParallel = 3
-	// 17GB
-	// maxUnTarSize = 18253611008
-	// 4M
-	maxUnTarSize = 4194304
 )
 
 type TokenBaseInfo struct {
@@ -143,7 +139,7 @@ func RunCarManager() {
 
 	logger.Sugar().Info("start run car manager")
 
-	go carManager.checkAndGenCar(maxUnTarSize)
+	go carManager.checkAndGenCar(int64(config.GetConfig().GenCar.MaxTarSize))
 	carManager.runDownloadTask(DefaultDownloadParallel)
 }
 
@@ -220,6 +216,8 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 	for i, token := range carFI.TokenList {
 		files[i] = filePath(token.FileName)
 	}
+
+	defer cleanUpUsedCarFI(ctx, carFI)
 
 	carInfo, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
 	if err != nil {
@@ -326,7 +324,7 @@ func deleteOverFiles(ctx context.Context, topN int, bucket string) error {
 		return err
 	}
 	sort.Slice(out.Contents, func(i, j int) bool {
-		return out.Contents[i].LastModified.Before(*out.Contents[j].LastModified)
+		return out.Contents[i].LastModified.After(*out.Contents[j].LastModified)
 	})
 	out.Contents = out.Contents[topN:]
 	files := []string{}
@@ -336,5 +334,5 @@ func deleteOverFiles(ctx context.Context, topN int, bucket string) error {
 	if len(files) == 0 {
 		return nil
 	}
-	return oss.DeleteFiles(ctx, config.GetConfig().Minio.CarBucket, files)
+	return oss.DeleteFiles(ctx, bucket, files)
 }
