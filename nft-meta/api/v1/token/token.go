@@ -107,7 +107,7 @@ func (s *Server) CreateToken(ctx context.Context, in *npool.CreateTokenRequest) 
 		return &npool.CreateTokenResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	err = TransformImage(ctx, inInfo)
+	err = TransformImage(ctx, info)
 	if err != nil {
 		logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 	}
@@ -158,8 +158,7 @@ func (s *Server) UpsertToken(ctx context.Context, in *npool.UpsertTokenRequest) 
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	in.Info.EntID = &info.EntID
-	err = TransformImage(ctx, in.Info)
+	err = TransformImage(ctx, info)
 	if err != nil {
 		logger.Sugar().Errorw("UpsertToken", "action", "publish imageurl to pulsar", "error", err)
 	}
@@ -195,8 +194,8 @@ func (s *Server) CreateTokens(ctx context.Context, in *npool.CreateTokensRequest
 		return &npool.CreateTokensResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	for i := 0; i < len(inInfos); i++ {
-		err := TransformImage(ctx, inInfos[i])
+	for i := 0; i < len(infos); i++ {
+		err := TransformImage(ctx, infos[i])
 		if err != nil {
 			logger.Sugar().Errorw("CreateToken", "action", "publish imageurl to pulsar", "error", err)
 		}
@@ -252,18 +251,13 @@ func (s *Server) UpdateToken(ctx context.Context, in *npool.UpdateTokenRequest) 
 }
 
 // if the VectorState is waiting,then will auto to transform imageUrl
-func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
-	if inInfo.EntID == nil {
-		return fmt.Errorf("not set entID")
-	}
-
+func TransformImage(ctx context.Context, inInfo *npool.Token) error {
 	if inInfo.VectorState.String() != npool.ConvertState_Waiting.String() {
-		return nil
+		return fmt.Errorf("vector state is`t waiting")
 	}
 
-	inInfo.VectorState = npool.ConvertState_Failed.Enum()
-	if inInfo.ImageURL == nil {
-		return nil
+	if len(inInfo.ImageURL) == 0 {
+		return fmt.Errorf("have no image url")
 	}
 
 	pProducer, err := getPulsar()
@@ -271,17 +265,12 @@ func TransformImage(ctx context.Context, inInfo *npool.TokenReq) error {
 		return err
 	}
 
-	id := fmt.Sprintf("%v", *inInfo.ID)
+	id := fmt.Sprintf("%v", inInfo.ID)
 	_, err = pProducer.producer.Send(ctx, &pulsar.ProducerMessage{
-		Payload: []byte(*inInfo.ImageURL),
+		Payload: []byte(inInfo.ImageURL),
 		Key:     id,
 	})
-
-	if err != nil {
-		return err
-	}
-	inInfo.VectorState = npool.ConvertState_Processing.Enum()
-	return nil
+	return err
 }
 
 func (s *Server) UpdateImageVector(ctx context.Context, in *npool.UpdateImageVectorRequest) (*npool.UpdateImageVectorResponse, error) {
