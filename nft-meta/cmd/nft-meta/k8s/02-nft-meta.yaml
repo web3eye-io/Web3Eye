@@ -31,8 +31,8 @@ spec:
             - name: mysql_password
               valueFrom:
                 secretKeyRef:
-                  name: mysql
-                  key: mysql-root-password
+                  name: mysql-password-secret
+                  key: rootpassword
             - name: redis_password
               valueFrom:
                 secretKeyRef:
