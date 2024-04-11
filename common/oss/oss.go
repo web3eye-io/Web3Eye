@@ -185,7 +185,7 @@ func DeleteFiles(ctx context.Context, bucket string, keys []string) error {
 	return err
 }
 
-func DeleteFile(ctx context.Context, bucket string, key string) error {
+func DeleteFile(ctx context.Context, bucket, key string) error {
 	if s3Client == nil {
 		return ErrOssClientNotInit
 	}
