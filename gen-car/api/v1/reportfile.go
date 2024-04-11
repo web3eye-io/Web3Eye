@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path"
 	"sort"
 	"strings"
 
@@ -85,7 +84,7 @@ func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequ
 		return nil, err
 	}
 
-	resInfo.FileName = fmt.Sprintf("%v%v", sha2sum, path.Ext(in.S3Key))
+	resInfo.FileName = fmt.Sprintf("%v-%v", sha2sum, in.S3Key)
 
 	go PutTokenResInfo(resInfo)
 
