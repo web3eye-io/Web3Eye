@@ -9,12 +9,6 @@ pipeline {
     GOPATH = "$GOTMPENV/gopath"
     GOBIN = "$GOROOT/bin"
     PATH = "$PATH:$GOBIN"
-    ALL_PROXY="socks5://172.16.31.202:20170"
-    all_proxy="socks5://172.16.31.202:20170"
-    HTTP_PROXY="socks5://172.16.31.202:20170"
-    http_proxy="socks5://172.16.31.202:20170"
-    HTTPS_PROXY="socks5://172.16.31.202:20170"
-    https_proxy="socks5://172.16.31.202:20170"
     GO111MODULE = "on"
   }
   stages {

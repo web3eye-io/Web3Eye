@@ -66,8 +66,7 @@ cd $output_d
 
 user=$(whoami)
 if [ "$user" == "root" ]; then
-    env |grep PROXY
-    docker build -t ${registry}/${OrginazeName}/$service_name:$version .
+    docker build -t ${registry}/${OrginazeName}/$service_name:$version . --build-arg http_proxy='socks5://172.16.31.202:20170'
 else
-    sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version .
+    sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version . --build-arg http_proxy='socks5://172.16.31.202:20170'
 fi
