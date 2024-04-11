@@ -321,13 +321,6 @@ func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
 		return
 	}
 
-	//nolint
-	// err = oss.DeleteFiles(ctx, config.GetConfig().Minio.TokenImageBucket, files)
-	// if err != nil {
-	// 	logger.Sugar().Error(err)
-	// 	return
-	// }
-
 	err = deleteOverFiles(ctx, int(config.GetConfig().Minio.MaxCarNum), config.GetConfig().Minio.CarBucket)
 	if err != nil {
 		logger.Sugar().Error(err)
