@@ -185,6 +185,20 @@ func DeleteFiles(ctx context.Context, bucket string, keys []string) error {
 	return err
 }
 
+func DeleteFile(ctx context.Context, bucket string, key string) error {
+	if s3Client == nil {
+		return ErrOssClientNotInit
+	}
+
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    &key,
+	}
+
+	_, err := s3Client.DeleteObject(ctx, input)
+	return err
+}
+
 func GetObjectAttributes(ctx context.Context, bucket, key string) (*s3.HeadObjectOutput, error) {
 	if s3Client == nil {
 		return nil, ErrOssClientNotInit

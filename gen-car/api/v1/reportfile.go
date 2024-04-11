@@ -161,6 +161,11 @@ func (cm *CarManager) runDownloadTask(parallel int) {
 					logger.Sugar().Errorf("failed to download file from s3, err: %v", err)
 					continue
 				}
+				err = oss.DeleteFile(context.Background(), config.GetConfig().Minio.TokenImageBucket, info.S3Key)
+				if err != nil {
+					logger.Sugar().Warnf("failed to delete file from s3, err: %v", err)
+				}
+
 				cm.genCarChan <- info
 			}
 		}()
