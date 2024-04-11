@@ -66,6 +66,7 @@ cd $output_d
 
 user=$(whoami)
 if [ "$user" == "root" ]; then
+    env |grep PROXY
     docker build -t ${registry}/${OrginazeName}/$service_name:$version .
 else
     sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version .
