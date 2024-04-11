@@ -346,6 +346,9 @@ func deleteOverFiles(ctx context.Context, topN int, bucket string) error {
 	sort.Slice(out.Contents, func(i, j int) bool {
 		return out.Contents[i].LastModified.After(*out.Contents[j].LastModified)
 	})
+	if len(out.Contents) < topN {
+		return nil
+	}
 	out.Contents = out.Contents[topN:]
 	files := []string{}
 	for _, v := range out.Contents {
