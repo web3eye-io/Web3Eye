@@ -298,8 +298,7 @@ func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
 
 	files := []string{}
 	for _, v := range carFI.TokenList {
-		//nolint
-		// os.Remove(filePath(v.FileName))
+		os.Remove(filePath(v.FileName))
 		files = append(files, v.S3Key, v.FileName)
 	}
 
