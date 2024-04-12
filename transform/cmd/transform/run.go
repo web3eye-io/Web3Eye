@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
@@ -48,11 +49,13 @@ var runCmd = &cli.Command{
 	Action: func(c *cli.Context) error {
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
-
+		ctx, cancel := context.WithCancel(c.Context)
+		defer cancel()
 		go model.Run()
 		go runGRPCServer(config.GetConfig().Transform.GrpcPort)
 		go runHTTPServer(config.GetConfig().Transform.HTTPPort)
-		go autototensor.Run()
+		go autototensor.Run(ctx)
+
 		<-sigchan
 		os.Exit(1)
 

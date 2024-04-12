@@ -23,26 +23,18 @@ import (
 )
 
 const (
-	TaskCheckInterval = time.Second
-	// this mean MaxTaskCheckInterval=TaskCheckInterval*2^MaxTCIIndex
-	// If TaskCheckInterval start as 1 second and MaxTCIIndex is 10,the max TaskCheckInterval is 1024=1*2^10
-	MaxTCIIndex = 10
+	TaskPauseInterval = 3 * time.Second
 )
 
-func Run() {
-	logger.Sugar().Info("start to check and deal the vector_state")
-	taskCheckInterval := TaskCheckInterval
-	index := 0
-	for {
-		<-time.NewTicker(taskCheckInterval).C
-		if err := autoToTensor(context.Background()); err != nil && index < MaxTCIIndex {
-			index++
-		} else if err == nil && index > 0 {
-			index = 0
+func Run(ctx context.Context) {
+	go func() {
+		err := autoToTensor(ctx)
+		if err != nil {
+			logger.Sugar().Error(err)
+			panic(err)
 		}
-		// TODO:check value of taskCheckInterval, maybe it will overflow
-		taskCheckInterval = TaskCheckInterval << index
-	}
+	}()
+	<-ctx.Done()
 }
 
 func autoToTensor(ctx context.Context) error {
@@ -80,10 +72,12 @@ func autoToTensor(ctx context.Context) error {
 
 		imgURL := string(msg.Message.Payload())
 		errRecord := ""
+		retry := false
 		var vector []float32
 		func() {
 			filename := uuid.NewString()
-			filePath, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
+			var filePath *string
+			filePath, retry, err = filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
@@ -93,9 +87,9 @@ func autoToTensor(ctx context.Context) error {
 			if err != nil {
 				logger.Sugar().Errorf("failed to update for gen-car file form url, err %v", err)
 				errRecord = err.Error()
+			} else {
+				defer os.Remove(*filePath)
 			}
-
-			defer os.Remove(*filePath)
 
 			vector, err = model.ToImageVector(ctx, *filePath)
 			if err != nil {
@@ -103,20 +97,28 @@ func autoToTensor(ctx context.Context) error {
 				errRecord = err.Error()
 			}
 		}()
+		if retry {
+			consumer.NackID(msg.ID())
+			continue
+		}
 
 		_, err = token.UpdateImageVector(ctx, &tokenproto.UpdateImageVectorRequest{
 			ID:     id,
 			Vector: vector,
 			Remark: errRecord,
 		})
+
 		if err != nil {
 			logger.Sugar().Errorf("failed to update token to nftmeta, err %v", err)
-			return err
+			time.Sleep(TaskPauseInterval)
+			continue
 		}
+
 		err = consumer.AckID(msg.ID())
 		if err != nil {
 			logger.Sugar().Errorf("failed to ask id to pulsar, err %v", err)
-			return err
+			time.Sleep(TaskPauseInterval)
+			continue
 		}
 	}
 

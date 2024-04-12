@@ -28,7 +28,7 @@ const (
 	whBitsize        = 32
 )
 
-func GetFileFromURL(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
+func GetFileFromURL(ctx context.Context, url, dirPath, fileName string) (path *string, retry bool, err error) {
 	switch {
 	case strings.HasPrefix(url, ArURLHead):
 		return DownloadAreaveFile(ctx, url, dirPath, fileName)
@@ -41,9 +41,9 @@ func GetFileFromURL(ctx context.Context, url, dirPath, fileName string) (path *s
 	}
 }
 
-func DownloadAreaveFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
+func DownloadAreaveFile(ctx context.Context, url, dirPath, fileName string) (path *string, retry bool, err error) {
 	if !strings.HasPrefix(url, ArURLHead) {
-		return nil, errors.New("url format is not areave")
+		return nil, false, errors.New("url format is not areave")
 	}
 
 	noHeadURL := strings.TrimPrefix(url, ArURLHead)
@@ -51,9 +51,9 @@ func DownloadAreaveFile(ctx context.Context, url, dirPath, fileName string) (pat
 	return DownloadHTTPFile(ctx, httpURL, dirPath, fileName)
 }
 
-func DownloadIPFSFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
+func DownloadIPFSFile(ctx context.Context, url, dirPath, fileName string) (path *string, retry bool, err error) {
 	if !strings.HasPrefix(url, IPFSUrlHead) {
-		return nil, errors.New("url format is not areave")
+		return nil, false, errors.New("url format is not areave")
 	}
 
 	noHeadURL := strings.TrimPrefix(url, IPFSUrlHead)
@@ -61,22 +61,30 @@ func DownloadIPFSFile(ctx context.Context, url, dirPath, fileName string) (path 
 	return DownloadHTTPFile(ctx, httpURL, dirPath, fileName)
 }
 
-func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path *string, err error) {
+func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path *string, retry bool, err error) {
 	if !strings.HasPrefix(url, HTTPUrlHead) && !strings.HasPrefix(url, HTTPSUrlHead) {
-		return nil, errors.New("url format is not http")
+		return nil, false, errors.New("url format is not http")
 	}
 
 	body := bytes.NewBuffer([]byte{})
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, body)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusRequestTimeout || resp.StatusCode == http.StatusTooManyRequests {
+		return nil, true, fmt.Errorf("please retry,status code: %v", resp.StatusCode)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, false, fmt.Errorf("failed to get resorce form url,status code: %v", resp.StatusCode)
+	}
 
 	// get content-type
 	typeTree := strings.Split(resp.Header.Get("Content-Type"), "/")
@@ -88,7 +96,7 @@ func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path 
 		formatDetect = make([]byte, formatDataLen)
 		_, err = resp.Body.Read(formatDetect)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
 		contentType := http.DetectContentType(formatDetect)
@@ -99,36 +107,36 @@ func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path 
 	filePath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, typeTree[len(typeTree)-1])
 	out, err := os.Create(filePath)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	defer out.Close()
 
 	_, err = out.Write(formatDetect)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	// from resp body get file stream
 	_, err = io.Copy(out, resp.Body)
-	return &filePath, err
+	return &filePath, false, err
 }
 
-func Base64SVGToPng(base64data, dirPath, fileName string) (pngPath *string, err error) {
+func Base64SVGToPng(base64data, dirPath, fileName string) (pngPath *string, retry bool, err error) {
 	svgPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "svg")
 	err = Base64SVGToSVG(base64data, svgPath)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	defer os.Remove(svgPath)
 
 	_pngPath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, "png")
 	err = SVGToPng(svgPath, _pngPath)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	return &_pngPath, nil
+	return &_pngPath, false, nil
 }
 
 func SVGToPng(svgPath, pngPath string) error {
