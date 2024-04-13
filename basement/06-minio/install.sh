@@ -24,3 +24,5 @@ kubectl get pods -n kube-system | grep web3eye-minio
 if [ $web3eye_minio_set_node_port == "true" ];then
     kubectl apply -f $SHELL_FOLDER/01-web3eye-minio-nodeport-service.yaml
 fi
+
+kubectl apply -f $SHELL_FOLDER/02-ingress.yaml

@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-ingress
+  namespace: kube-system
+  annotations:
+    k8s.kuboard.cn/displayName: minio
+    k8s.kuboard.cn/workload: minio
+    kubernetes.io/ingress.class: "traefik-internet"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure, web
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-common-headers@kubernetescrd
+spec:
+  rules:
+    - host: data.testnet.web3eye.io
+      http: &http_rules
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web3eye-minio-console
+                port:
+                  number: 9001
