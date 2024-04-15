@@ -66,7 +66,7 @@ cd $output_d
 
 user=$(whoami)
 if [ "$user" == "root" ]; then
-    docker build -t ${registry}/${OrginazeName}/$service_name:$version . --build-arg http_proxy='http://172.16.31.202:20171'
+    docker build -t ${registry}/${OrginazeName}/$service_name:$version . 
 else
-    sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version . --build-arg http_proxy='http://172.16.31.202:20171'
+    sudo docker build -t ${registry}/${OrginazeName}/$service_name:$version . 
 fi
