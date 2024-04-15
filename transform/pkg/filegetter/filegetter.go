@@ -14,9 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/canhlinh/svg2png"
-	"github.com/web3eye-io/Web3Eye/common/utils"
 )
 
 const (
@@ -107,21 +105,6 @@ func DownloadHTTPFile(ctx context.Context, url, dirPath, fileName string) (path 
 
 	// create file to recive file stream
 	filePath := fmt.Sprintf("%v/%v.%v", dirPath, fileName, typeTree[len(typeTree)-1])
-	// debug
-	if strings.Contains(filePath, "html") {
-		logger.Sugar().Info("----------------------------------------------------")
-		logger.Sugar().Info("resp.Status:", resp.Status)
-		logger.Sugar().Info("resp.StatusCode:", resp.StatusCode)
-		logger.Sugar().Info("resp.ContentLength:", resp.ContentLength)
-		logger.Sugar().Info("resp.Proto:", resp.Proto)
-		logger.Sugar().Info("resp.Request.RequestURI:", resp.Request.RequestURI)
-		logger.Sugar().Info("resp.Request.Method:", resp.Request.Method)
-		logger.Sugar().Info("resp.Request.URL:", resp.Request.URL)
-		logger.Sugar().Info("resp.Request.ContentLength:", resp.Request.ContentLength)
-		logger.Sugar().Info("resp.Request.Host:", resp.Request.Host)
-		logger.Sugar().Info("utils.PrettyStruct(resp.Header):", utils.PrettyStruct(resp.Header))
-		logger.Sugar().Info("----------------------------------------------------")
-	}
 	out, err := os.Create(filePath)
 	if err != nil {
 		return nil, false, err
