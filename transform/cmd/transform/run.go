@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
@@ -14,6 +15,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	cli "github.com/urfave/cli/v2"
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/common/servermux"
 	"github.com/web3eye-io/Web3Eye/config"
 	"google.golang.org/grpc"
@@ -38,16 +40,22 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
+		err := oss.Init(config.GetConfig().Minio.Region)
+		if err != nil {
+			return err
+		}
 		return logger.Init(logger.DebugLevel, config.GetConfig().Transform.LogFile)
 	},
 	Action: func(c *cli.Context) error {
 		sigchan := make(chan os.Signal, 1)
 		signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
-
+		ctx, cancel := context.WithCancel(c.Context)
+		defer cancel()
 		go model.Run()
 		go runGRPCServer(config.GetConfig().Transform.GrpcPort)
 		go runHTTPServer(config.GetConfig().Transform.HTTPPort)
-		go autototensor.Run()
+		go autototensor.Run(ctx)
+
 		<-sigchan
 		os.Exit(1)
 

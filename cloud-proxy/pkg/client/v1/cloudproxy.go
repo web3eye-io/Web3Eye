@@ -69,7 +69,7 @@ func (p *CloudProxyCC) NewStream(
 func withCRUD(ctx context.Context, handler handler) (cruder.Any, error) {
 	_ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		fmt.Sprintf("%v:%v",
 			config.GetConfig().CloudProxy.Domain,
 			config.GetConfig().CloudProxy.GrpcPort),
@@ -91,7 +91,7 @@ func withNoConnClose(ctx context.Context, handler handler) (cruder.Any, error) {
 		config.GetConfig().CloudProxy.GrpcPort)
 	logger.Sugar().Infow("withNoConnClose", "action", "prepare to connect to cloudproxy", "address", addr)
 
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		addr,
 		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))

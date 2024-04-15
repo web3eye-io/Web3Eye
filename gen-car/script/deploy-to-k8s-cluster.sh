@@ -37,7 +37,7 @@ fi
 DOCKER_REGISTRY=uhub.service.ucloud.cn
 # For testing or production environment, pass the second variable
 if [[ "x" != "x$2" ]]; then
-   DOCKER_REGISTRY=$2
+  DOCKER_REGISTRY=$2
 fi
 
 service_name=$(

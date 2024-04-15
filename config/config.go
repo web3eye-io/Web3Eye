@@ -78,11 +78,12 @@ type Entrance struct {
 }
 
 type GenCar struct {
-	Domain   string `toml:"domain" env:"domain"`
-	HTTPPort int    `toml:"http-port" env:"http_port"`
-	GrpcPort int    `toml:"grpc-port" env:"grpc_port"`
-	LogFile  string `toml:"log-file" env:"log_file"`
-	DataDir  string `toml:"data-dir" env:"data_dir"`
+	Domain     string `toml:"domain" env:"domain"`
+	HTTPPort   int    `toml:"http-port" env:"http_port"`
+	GrpcPort   int    `toml:"grpc-port" env:"grpc_port"`
+	LogFile    string `toml:"log-file" env:"log_file"`
+	DataDir    string `toml:"data-dir" env:"data_dir"`
+	MaxTarSize uint64 `toml:"max-tar-size" env:"max_tar_size"`
 }
 
 type Dealer struct {
@@ -143,6 +144,10 @@ type Minio struct {
 	SecretKey        string `toml:"secret-key" env:"secret_key"`
 	Region           string `toml:"region" env:"region"`
 	TokenImageBucket string `toml:"token-image-bucket" env:"token_image_bucket"`
+	CarBucket        string `toml:"car-bucket" env:"car_bucket"`
+	MaxCarNum        uint16 `toml:"max-car-num" env:"max_car_num"`
+	TarBucket        string `toml:"tar-bucket" env:"tar_bucket"`
+	MaxTarNum        uint16 `toml:"max-tar-num" env:"max_tar_num"`
 }
 
 type IPFS struct {

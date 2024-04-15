@@ -33,7 +33,7 @@ var runCmd = &cli.Command{
 		return logger.Sync()
 	},
 	Before: func(ctx *cli.Context) error {
-		defer oss.Init(config.GetConfig().Minio.Region, config.GetConfig().Minio.TokenImageBucket)
+		defer oss.Init(config.GetConfig().Minio.Region)
 		return logger.Init(logger.DebugLevel, config.GetConfig().Dealer.LogFile)
 	},
 	Action: func(ctx *cli.Context) error {

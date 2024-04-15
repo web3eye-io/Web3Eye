@@ -11,6 +11,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/web3eye-io/Web3Eye/common/oss"
+	"github.com/web3eye-io/Web3Eye/config"
 	orbit "github.com/web3eye-io/Web3Eye/dealer/pkg/orbit"
 	dealerpb "github.com/web3eye-io/Web3Eye/proto/web3eye/dealer/v1"
 
@@ -136,7 +137,7 @@ func (b *backup) backupOne(ctx context.Context, index uint64) error {
 			return err
 		}
 	} else {
-		buf, err := oss.GetObject(ctx, snapshot.SnapshotURI)
+		buf, err := oss.GetObject(ctx, config.GetConfig().Minio.CarBucket, snapshot.SnapshotURI)
 		if err != nil {
 			return err
 		}

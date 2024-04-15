@@ -6,12 +6,14 @@ package v1
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"os"
-	"path"
+	"sort"
 	"strings"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
 	"github.com/mr-tron/base58"
 	"github.com/web3eye-io/Web3Eye/common/oss"
@@ -30,6 +32,11 @@ const (
 
 var (
 	dataDir = config.GetConfig().GenCar.DataDir
+)
+
+const (
+	DefaultDownloadChanLen  = 100
+	DefaultDownloadParallel = 3
 )
 
 type TokenBaseInfo struct {
@@ -55,7 +62,7 @@ func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequ
 		logger.Sugar().Infof("failed get token by id, err: %v", in.ID, err)
 		return nil, err
 	}
-	objAttr, err := oss.GetObjectAttributes(ctx, in.S3Key)
+	objAttr, err := oss.GetObjectAttributes(ctx, config.GetConfig().Minio.TokenImageBucket, in.S3Key)
 	if err != nil {
 		logger.Sugar().Infof("failed get token image by id, err: %v", in.ID, err)
 		return nil, err
@@ -77,7 +84,7 @@ func (s *Server) ReportFile(ctx context.Context, in *gencar_proto.ReportFileRequ
 		return nil, err
 	}
 
-	resInfo.FileName = fmt.Sprintf("%v%v", sha2sum, path.Ext(in.S3Key))
+	resInfo.FileName = fmt.Sprintf("%v-%v", sha2sum, in.S3Key)
 
 	go PutTokenResInfo(resInfo)
 
@@ -112,15 +119,6 @@ type CarManager struct {
 	genCarClose   chan struct{}
 }
 
-const (
-	DefaultDownloadChanLen  = 100
-	DefaultDownloadParallel = 3
-	// 17GB
-	// maxUnTarSize = 18253611008
-	// 4M
-	maxUnTarSize = 4194304
-)
-
 var carManager *CarManager
 
 func RunCarManager() {
@@ -141,7 +139,7 @@ func RunCarManager() {
 
 	logger.Sugar().Info("start run car manager")
 
-	go carManager.checkAndGenCar(maxUnTarSize)
+	go carManager.checkAndGenCar(int64(config.GetConfig().GenCar.MaxTarSize))
 	carManager.runDownloadTask(DefaultDownloadParallel)
 }
 
@@ -157,10 +155,16 @@ func (cm *CarManager) runDownloadTask(parallel int) {
 		go func() {
 			for {
 				info := <-cm.downloadChan
-				err := oss.DownloadFile(context.Background(), filePath(info.FileName), info.S3Key)
+				err := oss.DownloadFile(context.Background(), filePath(info.FileName), config.GetConfig().Minio.TokenImageBucket, info.S3Key)
 				if err != nil {
 					logger.Sugar().Errorf("failed to download file from s3, err: %v", err)
+					continue
 				}
+				err = oss.DeleteFile(context.Background(), config.GetConfig().Minio.TokenImageBucket, info.S3Key)
+				if err != nil {
+					logger.Sugar().Warnf("failed to delete file from s3, err: %v", err)
+				}
+
 				cm.genCarChan <- info
 			}
 		}()
@@ -176,7 +180,6 @@ type CarFileInfo struct {
 	TokenList []*TokenResInfo
 	Size      int64
 	CarName   string
-	S3Bucket  string
 	RootCID   string
 }
 
@@ -219,19 +222,39 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 		files[i] = filePath(token.FileName)
 	}
 
+	defer cleanUpUsedCarFI(ctx, carFI)
+
 	carInfo, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
 	if err != nil {
 		return err
 	}
 	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, carInfo.RootCID)
 
-	err = oss.UploadFile(ctx, filePath(carFI.CarName), carFI.CarName)
+	err = oss.UploadFile(ctx, filePath(carFI.CarName), config.GetConfig().Minio.CarBucket, carFI.CarName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GenCarAndUpdate1(ctx context.Context, carFI *CarFileInfo) error {
+	files := make([]string, len(carFI.TokenList))
+	for i, token := range carFI.TokenList {
+		files[i] = filePath(token.FileName)
+	}
+
+	carInfo, err := car.CreateCar(ctx, filePath(carFI.CarName), files, car.DefaultCarVersion)
+	if err != nil {
+		return err
+	}
+	logger.Sugar().Infof("gen car file: %v successfully, rootCID: %v", carFI.CarName, carInfo.RootCID)
+
+	err = oss.UploadFile(ctx, filePath(carFI.CarName), config.GetConfig().Minio.CarBucket, carFI.CarName)
 	if err != nil {
 		return err
 	}
 
 	carFI.RootCID = carInfo.RootCID
-	carFI.S3Bucket = oss.GetS3Bucket()
 	logger.Sugar().Infof("update car file: %v to s3 successfully", carFI.CarName)
 
 	cleanUpUsedCarFI(ctx, carFI)
@@ -273,7 +296,62 @@ func GenCarAndUpdate(ctx context.Context, carFI *CarFileInfo) error {
 func cleanUpUsedCarFI(ctx context.Context, carFI *CarFileInfo) {
 	os.Remove(filePath(carFI.CarName))
 
+	files := []string{}
 	for _, v := range carFI.TokenList {
 		os.Remove(filePath(v.FileName))
+		files = append(files, v.S3Key, v.FileName)
 	}
+
+	testFile, err := os.Create(fmt.Sprintf("%v/%v.list", config.GetConfig().GenCar.DataDir, carFI.CarName))
+	if err != nil {
+		logger.Sugar().Error(err)
+		return
+	}
+	defer testFile.Close()
+	filesByte, err := json.Marshal(files)
+	if err != nil {
+		logger.Sugar().Error(err)
+		return
+	}
+	_, err = testFile.Write(filesByte)
+	if err != nil {
+		logger.Sugar().Error(err)
+		return
+	}
+
+	err = deleteOverFiles(ctx, int(config.GetConfig().Minio.MaxCarNum), config.GetConfig().Minio.CarBucket)
+	if err != nil {
+		logger.Sugar().Error(err)
+		return
+	}
+
+	err = deleteOverFiles(ctx, int(config.GetConfig().Minio.MaxTarNum), config.GetConfig().Minio.TarBucket)
+	if err != nil {
+		logger.Sugar().Error(err)
+		return
+	}
+}
+
+func deleteOverFiles(ctx context.Context, topN int, bucket string) error {
+	out, err := oss.GetS3Client().ListObjects(ctx, &s3.ListObjectsInput{
+		Bucket: &bucket,
+	})
+	if err != nil {
+		return err
+	}
+	sort.Slice(out.Contents, func(i, j int) bool {
+		return out.Contents[i].LastModified.After(*out.Contents[j].LastModified)
+	})
+	if len(out.Contents) < topN {
+		return nil
+	}
+	out.Contents = out.Contents[topN:]
+	files := []string{}
+	for _, v := range out.Contents {
+		files = append(files, *v.Key)
+	}
+	if len(files) == 0 {
+		return nil
+	}
+	return oss.DeleteFiles(ctx, bucket, files)
 }

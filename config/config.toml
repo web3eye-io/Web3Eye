@@ -50,8 +50,10 @@ log-file="/var/log/dealer.log"
 domain="gen-car"
 http-port=30170
 grpc-port=30171
-data-dir="/tmp/gencar_data"
+data-dir="/gen_car_data"
 log-file="/var/log/gen-car.log"
+# max-tar-size=18253611008
+max-tar-size=20971520
 
 [retriever]
 domain="retriever"
@@ -93,10 +95,14 @@ topic-transform-image="topic_transform_image"
 
 [minio]
 address="http://web3eye-minio:9000"
-access-key="YacNyvYLuQ1J3mMaCvMy"
-secret-key="AIYvh7F5TlzxagPySkD5flSIZhLGssZ432UKNqMJ"
+access-key="j6dXlhoPx9StulBELGWm"
+secret-key="4VeKOaQBRbLNJPPQu0kgJXYIwpLcZPvjJ1xlunn2"
 region="default"
-token-image-bucket="token-image-bucket"
+token-image-bucket="token-image"
+tar-bucket="tar"
+max-tar-num=20
+car-bucket="car"
+max-car-num=20
 
 [ipfs]
 http-gateway="https://ipfs.io"

@@ -27,7 +27,9 @@ func ClientCalcCommP(ctx context.Context, inpath string) (*CommPRet, error) {
 	}
 	defer func() {
 		err := rdr.Close()
-		logger.Sugar().Error(err)
+		if err != nil {
+			logger.Sugar().Error(err)
+		}
 	}()
 
 	// check that the data is a car file; if it's not, retrieval won't work

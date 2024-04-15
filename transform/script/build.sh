@@ -62,7 +62,7 @@ for PLATFORM in "${PLATFORMS[@]}"; do
     git_revision=$(git rev-parse HEAD 2>/dev/null || echo unknow)
 
     echo "Building project for $PLATFORM -- $version $compile_date $git_revision"
-    GOOS=${OS} GOARCH=${ARCH} go build -v -ldflags "-s -w \
+    GOOS=${OS} GOARCH=${ARCH} CGO_ENABLED=0 go build -v -ldflags "-s -w \
         -X $pkg.buildDate=${compile_date} \
         -X $pkg.gitCommit=${git_revision} \
         -X $pkg.gitVersion=${version}     \

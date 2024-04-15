@@ -37,12 +37,27 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: web3eye-minio
-                  key: accesskey
+                  key: rootUser
             - name: minio_secret_key
               valueFrom:
                 secretKeyRef:
                   name: web3eye-minio
-                  key: secretkey
+                  key: rootPassword
+            - name: gen_car_max_tar_size
+              valueFrom:
+                configMapKeyRef:
+                  name: gen-car-environment
+                  key: gen_car_max_tar_size
+            - name: minio_max_tar_num
+              valueFrom:
+                configMapKeyRef:
+                  name: gen-car-environment
+                  key: minio_max_tar_num
+            - name: minio_max_car_num
+              valueFrom:
+                configMapKeyRef:
+                  name: gen-car-environment
+                  key: minio_max_car_num
 
       volumes:
         - name: service-config

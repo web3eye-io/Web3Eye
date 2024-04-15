@@ -15,5 +15,5 @@ helm install milvus -n kube-system $SHELL_FOLDER/milvus-$MILVUS_CHART_VERSION
 sleep 20
 kubectl get pods -n kube-system | grep milvus
 
-# helm install milvus milvus/milvus --set cpu=1
-# helm install milvus milvus/milvus --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false --set standalone.resources.limits.cpu: 3
+# helm install milvus $SHELL_FOLDER/milvus-$MILVUS_CHART_VERSION --set cpu=1 --set etcd.replicaCount=1
+# helm install milvus $SHELL_FOLDER/milvus-$MILVUS_CHART_VERSION --set cluster.enabled=false --set etcd.replicaCount=1 --set minio.mode=standalone --set pulsar.enabled=false --set standalone.resources.limits.cpu=3

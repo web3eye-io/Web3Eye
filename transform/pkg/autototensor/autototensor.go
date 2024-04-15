@@ -3,13 +3,18 @@ package autototensor
 import (
 	"context"
 	"os"
+	"path"
+	"strconv"
 	"time"
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/google/uuid"
 	"github.com/web3eye-io/Web3Eye/common/ctpulsar"
+	"github.com/web3eye-io/Web3Eye/common/oss"
 	"github.com/web3eye-io/Web3Eye/config"
+	gen_car "github.com/web3eye-io/Web3Eye/gen-car/pkg/client/v1"
+	v1 "github.com/web3eye-io/Web3Eye/proto/web3eye/gencar/v1"
 	tokenproto "github.com/web3eye-io/Web3Eye/proto/web3eye/nftmeta/v1/token"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/filegetter"
 	"github.com/web3eye-io/Web3Eye/transform/pkg/model"
@@ -18,26 +23,18 @@ import (
 )
 
 const (
-	TaskCheckInterval = time.Second
-	// this mean MaxTaskCheckInterval=TaskCheckInterval*2^MaxTCIIndex
-	// If TaskCheckInterval start as 1 second and MaxTCIIndex is 10,the max TaskCheckInterval is 1024=1*2^10
-	MaxTCIIndex = 10
+	TaskPauseInterval = 3 * time.Second
 )
 
-func Run() {
-	logger.Sugar().Info("start to check and deal the vector_state")
-	taskCheckInterval := TaskCheckInterval
-	index := 0
-	for {
-		<-time.NewTicker(taskCheckInterval).C
-		if err := autoToTensor(context.Background()); err != nil && index < MaxTCIIndex {
-			index++
-		} else if err == nil && index > 0 {
-			index = 0
+func Run(ctx context.Context) {
+	go func() {
+		err := autoToTensor(ctx)
+		if err != nil {
+			logger.Sugar().Error(err)
+			panic(err)
 		}
-		// TODO:check value of taskCheckInterval, maybe it will overflow
-		taskCheckInterval = TaskCheckInterval << index
-	}
+	}()
+	<-ctx.Done()
 }
 
 func autoToTensor(ctx context.Context) error {
@@ -64,43 +61,79 @@ func autoToTensor(ctx context.Context) error {
 	}
 
 	for msg := range output {
-		entID := msg.Key()
+		_id := msg.Key()
+		//nolint:gomnd
+		idUint, err := strconv.ParseUint(_id, 10, 32)
+		if err != nil {
+			logger.Sugar().Errorf("failed to update token to nftmeta, err %v", err)
+			return err
+		}
+		id := uint32(idUint)
 
 		imgURL := string(msg.Message.Payload())
 		errRecord := ""
+		retry := false
 		var vector []float32
 		func() {
 			filename := uuid.NewString()
-			path, err := filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
+			var filePath *string
+			filePath, retry, err = filegetter.GetFileFromURL(ctx, imgURL, config.GetConfig().Transform.DataDir, filename)
 			if err != nil {
 				logger.Sugar().Errorf("failed to download file form url, err %v", err)
 				errRecord = err.Error()
 				return
 			}
-			defer os.Remove(*path)
+			err = updateForGenCar(ctx, id, *filePath)
+			if err != nil {
+				logger.Sugar().Errorf("failed to update for gen-car file form url, err %v", err)
+				errRecord = err.Error()
+			} else {
+				defer os.Remove(*filePath)
+			}
 
-			vector, err = model.ToImageVector(ctx, *path)
+			vector, err = model.ToImageVector(ctx, *filePath)
 			if err != nil {
 				logger.Sugar().Errorf("failed to transform url to vector, err %v", err)
 				errRecord = err.Error()
 			}
 		}()
+		if retry {
+			consumer.NackID(msg.ID())
+			continue
+		}
 
 		_, err = token.UpdateImageVector(ctx, &tokenproto.UpdateImageVectorRequest{
-			EntID:  entID,
+			ID:     id,
 			Vector: vector,
 			Remark: errRecord,
 		})
+
 		if err != nil {
 			logger.Sugar().Errorf("failed to update token to nftmeta, err %v", err)
-			return err
+			time.Sleep(TaskPauseInterval)
+			continue
 		}
+
 		err = consumer.AckID(msg.ID())
 		if err != nil {
 			logger.Sugar().Errorf("failed to ask id to pulsar, err %v", err)
-			return err
+			time.Sleep(TaskPauseInterval)
+			continue
 		}
 	}
 
 	return nil
+}
+
+func updateForGenCar(ctx context.Context, id uint32, filePath string) error {
+	s3key := path.Base(filePath)
+	err := oss.UploadFile(ctx, filePath, config.GetConfig().Minio.TokenImageBucket, s3key)
+	if err != nil {
+		return err
+	}
+	_, err = gen_car.ReportFile(ctx, &v1.ReportFileRequest{
+		ID:    id,
+		S3Key: s3key,
+	})
+	return err
 }

@@ -105,7 +105,7 @@ func (e *EthIndexer) IndexBlock(ctx context.Context, taskBlockNum chan uint64) {
 				remark = err.Error()
 				parseState = basetype.BlockParseState_BlockTypeFailed
 			}
-			logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start order UpdateBlock")
+			logger.Sugar().Infow("IndexBlock", "BlockNum", num, "DebugMsg", "start order UpdateBlock", "ParseState", parseState)
 			_, err = blockNMCli.UpdateBlock(ctx, &blockProto.UpdateBlockRequest{
 				Info: &blockProto.BlockReq{
 					ID:         &block.ID,
