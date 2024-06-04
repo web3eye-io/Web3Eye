@@ -273,7 +273,8 @@ pipeline {
           # sync remote tags
           git tag -l | xargs git tag -d
           git fetch origin --prune
-          
+          echo $?
+
           set +e
           prod_tag=$(git tag|grep '[02468]$'|sort -V|tail -n 1| tr -d '\n')
           docker images | grep web3eye | grep $prod_tag
