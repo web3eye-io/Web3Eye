@@ -21,3 +21,13 @@ spec:
                 name: web3eye-minio-console
                 port:
                   number: 9001
+    - host: minio.respeer.ai
+      http: &minio_http_rules
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web3eye-minio
+                port:
+                  number: 9000
